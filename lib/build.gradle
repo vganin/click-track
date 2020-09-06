@@ -5,6 +5,16 @@ plugins {
 
 kotlin {
     android()
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib')
+            }
+        }
+    }
+
+    explicitApi()
 }
 
 android {
