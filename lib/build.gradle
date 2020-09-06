@@ -1,0 +1,23 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform'
+    id 'com.android.library'
+}
+
+kotlin {
+    android()
+}
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 29
+    }
+
+    sourceSets {
+        main {
+            setRoot 'src/androidMain'
+        }
+    }
+}
