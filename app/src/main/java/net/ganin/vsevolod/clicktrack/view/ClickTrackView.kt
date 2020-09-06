@@ -19,14 +19,16 @@ import net.ganin.vsevolod.clicktrack.lib.Cue
 @Composable
 fun ClickTrackView(clickTrack: ClickTrack) = WithConstraints {
     val width = with(DensityAmbient.current) { maxWidth.toPx() }
-
     val marks = clickTrack.asMarks(width)
 
-    Canvas(modifier = Modifier.fillMaxSize(), onDraw = {
-        for (mark in marks) {
-            drawLine(Color.Cyan, Offset(mark.x, 0f), Offset(mark.x, size.height))
+    Canvas(
+        modifier = Modifier.fillMaxSize(),
+        onDraw = {
+            for (mark in marks) {
+                drawLine(Color.Cyan, Offset(mark.x, 0f), Offset(mark.x, size.height))
+            }
         }
-    })
+    )
 
     for (mark in marks) {
         Text(
