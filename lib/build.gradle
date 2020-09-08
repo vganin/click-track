@@ -7,6 +7,11 @@ kotlin {
     android()
 
     sourceSets {
+        all {
+            languageSettings {
+                useExperimentalAnnotation('kotlin.time.ExperimentalTime')
+            }
+        }
         commonMain {
             dependencies {
                 implementation kotlin('stdlib')

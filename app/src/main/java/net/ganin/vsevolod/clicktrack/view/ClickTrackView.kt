@@ -15,20 +15,18 @@ import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.unit.dp
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
+import kotlin.time.Duration
 
 @Composable
 fun ClickTrackView(clickTrack: ClickTrack) = WithConstraints {
     val width = with(DensityAmbient.current) { maxWidth.toPx() }
     val marks = clickTrack.asMarks(width)
 
-    Canvas(
-        modifier = Modifier.fillMaxSize(),
-        onDraw = {
-            for (mark in marks) {
-                drawLine(Color.Cyan, Offset(mark.x, 0f), Offset(mark.x, size.height))
-            }
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        for (mark in marks) {
+            drawLine(Color.Cyan, Offset(mark.x, 0f), Offset(mark.x, size.height))
         }
-    )
+    }
 
     for (mark in marks) {
         Text(
@@ -47,11 +45,15 @@ private class Mark(
 
 private fun ClickTrack.asMarks(width: Float): List<Mark> {
     val result = mutableListOf<Mark>()
+    val duration = durationInTime
 
-    result += Mark(0f, initialCue.toText())
-    result += followingCues.asSequence()
-        .filter { it.timestamp < duration }
-        .map { Mark(x = (it.timestamp * width / duration), it.cue.toText()) }
+    var currentTimestamp = Duration.ZERO
+    for (cue in cues) {
+        val nextTimestamp = currentTimestamp + cue.durationInTime
+        val nextX: Float = (nextTimestamp / duration * width).toFloat()
+        result += Mark(x = nextX, cue.cue.toText())
+        currentTimestamp = nextTimestamp
+    }
 
     return result.distinctBy(Mark::x)
 }

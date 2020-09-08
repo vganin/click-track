@@ -2,36 +2,49 @@ package net.ganin.vsevolod.clicktrack.view
 
 import androidx.compose.runtime.Composable
 import androidx.ui.tooling.preview.Preview
-import net.ganin.vsevolod.clicktrack.lib.ClickTrack
-import net.ganin.vsevolod.clicktrack.lib.Cue
-import net.ganin.vsevolod.clicktrack.lib.CueWithTimestamp
-import net.ganin.vsevolod.clicktrack.lib.TimeSignature
+import net.ganin.vsevolod.clicktrack.lib.*
+
+@Composable
+fun ContentView(clickTrack: ClickTrack) {
+    ClickTrackView(clickTrack = clickTrack)
+}
 
 @Preview
 @Composable
-fun ContentView() {
-    val testClickTrack = ClickTrack(
-        duration = 100f,
-        initialCue = Cue(
-            bpm = 100,
-            timeSignature = TimeSignature(4, 4)
-        ),
-        followingCues = listOf(
-            CueWithTimestamp(
-                timestamp = 50f,
-                cue = Cue(
-                    bpm = 125,
-                    timeSignature = TimeSignature(3, 4)
-                )
+fun PreviewContentView() {
+    ClickTrackView(
+        clickTrack = ClickTrack(
+            cues = listOf(
+                CueWithDuration(
+                    duration = CueDuration.Beats(4),
+                    cue = Cue(
+                        bpm = 100,
+                        timeSignature = TimeSignature(3, 4)
+                    )
+                ),
+                CueWithDuration(
+                    duration = CueDuration.Beats(4),
+                    cue = Cue(
+                        bpm = 150,
+                        timeSignature = TimeSignature(3, 4)
+                    )
+                ),
+                CueWithDuration(
+                    duration = CueDuration.Beats(4),
+                    cue = Cue(
+                        bpm = 200,
+                        timeSignature = TimeSignature(4, 4)
+                    )
+                ),
+                CueWithDuration(
+                    duration = CueDuration.Beats(4),
+                    cue = Cue(
+                        bpm = 100,
+                        timeSignature = TimeSignature(4, 4)
+                    )
+                ),
             ),
-            CueWithTimestamp(
-                timestamp = 75f,
-                cue = Cue(
-                    bpm = 90,
-                    timeSignature = TimeSignature(4, 4)
-                )
-            )
+            loop = false
         )
     )
-    ClickTrackView(clickTrack = testClickTrack)
 }

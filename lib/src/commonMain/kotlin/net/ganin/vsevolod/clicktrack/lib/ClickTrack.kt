@@ -1,12 +1,12 @@
 package net.ganin.vsevolod.clicktrack.lib
 
-public class ClickTrack(
-    public val duration: Float,
-    public val initialCue: Cue,
-    public val followingCues: List<CueWithTimestamp>
-)
+import kotlin.time.Duration
 
-public class CueWithTimestamp(
-    public val timestamp: Float,
-    public val cue: Cue
-)
+public class ClickTrack(
+    public val cues: List<CueWithDuration>,
+    public val loop: Boolean
+) {
+    public val durationInTime: Duration
+        get() = cues.map(CueWithDuration::durationInTime).reduce { acc, duration -> acc + duration }
+}
+
