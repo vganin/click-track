@@ -4,6 +4,6 @@ import androidx.compose.runtime.Composable
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 
 @Composable
-fun ContentView(clickTrack: ClickTrack) {
-    ClickTrackView(clickTrack = clickTrack)
+fun ContentView(clickTrack: ClickTrack, onPlayToggle: (Boolean) -> Unit) {
+    ClickTrackAndPlayView(clickTrack, onPlayToggle)
 }
