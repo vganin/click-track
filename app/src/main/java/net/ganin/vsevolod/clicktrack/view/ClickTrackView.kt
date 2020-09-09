@@ -13,8 +13,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.unit.dp
-import net.ganin.vsevolod.clicktrack.lib.ClickTrack
-import net.ganin.vsevolod.clicktrack.lib.Cue
+import androidx.ui.tooling.preview.Preview
+import net.ganin.vsevolod.clicktrack.lib.*
 import kotlin.time.Duration
 
 @Composable
@@ -24,7 +24,11 @@ fun ClickTrackView(clickTrack: ClickTrack) = WithConstraints {
 
     Canvas(modifier = Modifier.fillMaxSize()) {
         for (mark in marks) {
-            drawLine(Color.Cyan, Offset(mark.x, 0f), Offset(mark.x, size.height))
+            drawLine(
+                color = Color.Cyan,
+                start = Offset(mark.x, 0f),
+                end = Offset(mark.x, size.height),
+            )
         }
     }
 
@@ -59,3 +63,43 @@ private fun ClickTrack.asMarks(width: Float): List<Mark> {
 }
 
 private fun Cue.toText() = "$bpm bpm ${timeSignature.noteCount}/${timeSignature.noteDuration}"
+
+@Preview
+@Composable
+fun PreviewClickTrackView() {
+    ClickTrackView(
+        clickTrack = ClickTrack(
+            cues = listOf(
+                CueWithDuration(
+                    duration = CueDuration.Beats(4),
+                    cue = Cue(
+                        bpm = 100,
+                        timeSignature = TimeSignature(3, 4)
+                    )
+                ),
+                CueWithDuration(
+                    duration = CueDuration.Beats(4),
+                    cue = Cue(
+                        bpm = 150,
+                        timeSignature = TimeSignature(3, 4)
+                    )
+                ),
+                CueWithDuration(
+                    duration = CueDuration.Beats(4),
+                    cue = Cue(
+                        bpm = 200,
+                        timeSignature = TimeSignature(4, 4)
+                    )
+                ),
+                CueWithDuration(
+                    duration = CueDuration.Beats(4),
+                    cue = Cue(
+                        bpm = 100,
+                        timeSignature = TimeSignature(4, 4)
+                    )
+                ),
+            ),
+            loop = false
+        )
+    )
+}
