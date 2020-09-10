@@ -5,5 +5,5 @@ import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 
 @Composable
 fun ContentView(clickTrack: ClickTrack, onPlayToggle: (Boolean) -> Unit) {
-    ClickTrackAndPlayView(clickTrack, onPlayToggle)
+    ClickTrackAndPlayStopView(clickTrack = clickTrack, onPlayToggle = onPlayToggle)
 }
