@@ -6,9 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 
 @Composable
@@ -32,11 +33,11 @@ fun ClickTrackAndPlayView(
         }
     ) {
         val iconResourceId = if (isPlaying) {
-            android.R.drawable.ic_media_pause
+            R.drawable.ic_click_stop
         } else {
-            android.R.drawable.ic_media_play
+            R.drawable.ic_click_play
         }
-        Icon(asset = imageResource(iconResourceId))
+        Icon(asset = vectorResource(iconResourceId))
     }
 }
 
