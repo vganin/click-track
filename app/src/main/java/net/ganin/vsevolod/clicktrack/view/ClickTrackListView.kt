@@ -1,7 +1,9 @@
 package net.ganin.vsevolod.clicktrack.view
 
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -14,12 +16,14 @@ fun ClickTrackListView(
     modifier: Modifier = Modifier
 ) {
     LazyColumnFor(items, modifier) { clickTrack ->
-        ClickTrackView(
-            clickTrack,
-            modifier = Modifier
-                .height(100.dp)
-                .fillParentMaxWidth()
-        )
+        Card(modifier = Modifier.padding(8.dp)) {
+            ClickTrackView(
+                clickTrack,
+                modifier = Modifier
+                    .fillParentMaxWidth()
+                    .height(100.dp)
+            )
+        }
     }
 }
 
