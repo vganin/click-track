@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.multiplatform'
     id 'com.android.library'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
 kotlin {
@@ -10,11 +11,12 @@ kotlin {
         all {
             languageSettings {
                 useExperimentalAnnotation('kotlin.time.ExperimentalTime')
+                useExperimentalAnnotation('kotlinx.serialization.ExperimentalSerializationApi')
             }
         }
         commonMain {
             dependencies {
-                implementation kotlin('stdlib')
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinXSerializationVersion"
             }
         }
     }

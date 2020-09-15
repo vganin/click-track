@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.squareup.sqldelight'
 }
 
 android {
@@ -64,6 +65,10 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$composeVersion"
     implementation "androidx.compose.runtime:runtime-rxjava2:$composeVersion"
     androidTestImplementation "androidx.ui:ui-test:$composeVersion"
+
+    implementation "com.squareup.sqldelight:android-driver:1.4.3"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinXSerializationVersion"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

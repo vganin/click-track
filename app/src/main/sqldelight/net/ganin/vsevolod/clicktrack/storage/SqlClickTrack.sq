@@ -1,0 +1,11 @@
+CREATE TABLE ClickTrack (
+    serialized TEXT NOT NULL
+);
+
+all:
+SELECT *
+FROM ClickTrack;
+
+insert:
+INSERT INTO ClickTrack (serialized)
+VALUES (?);

@@ -1,5 +1,8 @@
 package net.ganin.vsevolod.clicktrack.lib
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 public class Cue(
     public val bpm: Int,
     public val timeSignature: TimeSignature

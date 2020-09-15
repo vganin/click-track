@@ -6,6 +6,7 @@ import androidx.compose.ui.platform.setContent
 import kotlinx.coroutines.*
 import net.ganin.vsevolod.clicktrack.audio.ClickTrackPlayer
 import net.ganin.vsevolod.clicktrack.lib.*
+import net.ganin.vsevolod.clicktrack.storage.ClickTrackRepository
 import net.ganin.vsevolod.clicktrack.view.ContentView
 import java.util.concurrent.Executors
 
@@ -40,6 +41,8 @@ class MainActivity : AppCompatActivity() {
     }.asCoroutineDispatcher()
 
     private var playerJob: Job? = null
+
+    private val clickTrackRepository = ClickTrackRepository(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

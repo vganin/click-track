@@ -1,5 +1,8 @@
 package net.ganin.vsevolod.clicktrack.lib
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 public class TimeSignature(
     public val noteCount: Int,
     public val noteDuration: Int
