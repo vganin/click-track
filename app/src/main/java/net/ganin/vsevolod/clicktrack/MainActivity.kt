@@ -47,8 +47,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val allClickTracks = clickTrackRepository.all()
+
         setContent {
-            ContentView(testClickTrack, ::togglePlaying)
+            ContentView(allClickTracks)
         }
     }
 

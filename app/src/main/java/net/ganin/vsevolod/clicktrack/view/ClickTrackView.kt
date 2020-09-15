@@ -2,9 +2,7 @@ package net.ganin.vsevolod.clicktrack.view
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.absoluteOffsetPx
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -19,27 +17,36 @@ import net.ganin.vsevolod.clicktrack.lib.Cue
 import kotlin.time.Duration
 
 @Composable
-fun ClickTrackView(clickTrack: ClickTrack) = WithConstraints {
-    val width = with(DensityAmbient.current) { maxWidth.toPx() }
-    val marks = clickTrack.asMarks(width)
+fun ClickTrackView(
+    clickTrack: ClickTrack,
+    modifier: Modifier = Modifier
+) {
+    WithConstraints(modifier = modifier) {
+        val width = with(DensityAmbient.current) { maxWidth.toPx() }
+        val marks = clickTrack.asMarks(width)
 
-    Canvas(modifier = Modifier.fillMaxSize()) {
+        Canvas(
+            modifier = Modifier
+                .heightIn(minHeight, maxHeight)
+                .widthIn(minWidth, maxWidth)
+        ) {
+            for (mark in marks) {
+                drawLine(
+                    color = Color.Cyan,
+                    start = Offset(mark.x, 0f),
+                    end = Offset(mark.x, size.height),
+                )
+            }
+        }
+
         for (mark in marks) {
-            drawLine(
-                color = Color.Cyan,
-                start = Offset(mark.x, 0f),
-                end = Offset(mark.x, size.height),
+            Text(
+                modifier = Modifier
+                    .absoluteOffsetPx(x = mutableStateOf(mark.x))
+                    .absoluteOffset(y = 16.dp),
+                text = mark.text
             )
         }
-    }
-
-    for (mark in marks) {
-        Text(
-            modifier = Modifier
-                .absoluteOffsetPx(x = mutableStateOf(mark.x))
-                .absoluteOffset(y = 16.dp),
-            text = mark.text
-        )
     }
 }
 
@@ -68,5 +75,8 @@ private fun Cue.toText() = "$bpm bpm ${timeSignature.noteCount}/${timeSignature.
 @Preview
 @Composable
 fun PreviewClickTrackView() {
-    ClickTrackView(PREVIEW_CLICK_TRACK)
+    ClickTrackView(
+        PREVIEW_CLICK_TRACK_1,
+        modifier = Modifier.fillMaxSize()
+    )
 }
