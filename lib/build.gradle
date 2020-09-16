@@ -1,7 +1,8 @@
 plugins {
     id 'org.jetbrains.kotlin.multiplatform'
-    id 'com.android.library'
     id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'com.android.library'
+    id 'kotlin-android-extensions'
 }
 
 kotlin {
@@ -10,6 +11,7 @@ kotlin {
     sourceSets {
         all {
             languageSettings {
+                useExperimentalAnnotation('kotlin.ExperimentalMultiplatform')
                 useExperimentalAnnotation('kotlin.time.ExperimentalTime')
                 useExperimentalAnnotation('kotlinx.serialization.ExperimentalSerializationApi')
             }
@@ -36,5 +38,9 @@ android {
         main {
             setRoot 'src/androidMain'
         }
+    }
+
+    androidExtensions {
+        features = ['parcelize']
     }
 }

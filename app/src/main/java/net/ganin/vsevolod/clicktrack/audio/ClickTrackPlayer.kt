@@ -3,24 +3,42 @@ package net.ganin.vsevolod.clicktrack.audio
 import android.content.Context
 import android.media.MediaPlayer
 import android.media.audiofx.AutomaticGainControl
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.*
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.audio.ClickTrackPlayer.Const.CLICK_MINIMAL_INTERVAL
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.CueWithDuration
-import kotlin.coroutines.coroutineContext
+import net.ganin.vsevolod.clicktrack.redux.Dispatch
+import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
+import kotlin.coroutines.CoroutineContext
 import kotlin.time.minutes
 
-class ClickTrackPlayer(private val context: Context) {
+class ClickTrackPlayer(
+    private val context: Context,
+    private val mainCoroutineScope: CoroutineScope,
+    private val playerCoroutineContext: CoroutineContext,
+    private val dispatch: Dispatch
+) {
+    private var playerJob: Job? = null
 
-    suspend fun play(clickTrack: ClickTrack) {
+    fun play(clickTrack: ClickTrack) = mainCoroutineScope.launch {
+        playerJob = mainCoroutineScope.launch(playerCoroutineContext) {
+            suspendPlay(clickTrack)
+            dispatch(StopPlay)
+        }
+    }
+
+    fun stop() = mainCoroutineScope.launch {
+        playerJob?.cancel()
+    }
+
+    private suspend fun suspendPlay(clickTrack: ClickTrack) {
         val mediaPlayer = MediaPlayer.create(context, R.raw.click)
         val agc = mediaPlayer.tryAttachAgc()
         try {
             do {
                 clickTrack.cues.forEach { mediaPlayer.play(it) }
-            } while (clickTrack.loop && coroutineContext.isActive)
+            } while (clickTrack.loop && playerCoroutineContext.isActive)
         } finally {
             agc?.release()
             mediaPlayer.release()

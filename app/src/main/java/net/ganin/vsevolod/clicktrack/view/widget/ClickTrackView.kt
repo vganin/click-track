@@ -1,4 +1,4 @@
-package net.ganin.vsevolod.clicktrack.view
+package net.ganin.vsevolod.clicktrack.view.widget
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Text
@@ -14,12 +14,13 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
+import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlin.time.Duration
 
 @Composable
 fun ClickTrackView(
     clickTrack: ClickTrack,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     WithConstraints(modifier = modifier) {
         val width = with(DensityAmbient.current) { maxWidth.toPx() }

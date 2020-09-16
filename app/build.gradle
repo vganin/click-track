@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-android-extensions'
     id 'com.squareup.sqldelight'
 }
 
@@ -34,10 +35,18 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = '1.8'
         useIR = true
+        languageVersion = '1.4'
 
-        freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
+        freeCompilerArgs += '-Xopt-in=kotlin.time.ExperimentalTime'
+        freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi'
+        freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.InternalCoroutinesApi'
+        freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.FlowPreview'
+    }
+
+    androidExtensions {
+        features = ['parcelize']
     }
 
     composeOptions {

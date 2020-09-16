@@ -1,4 +1,4 @@
-package net.ganin.vsevolod.clicktrack.view
+package net.ganin.vsevolod.clicktrack.view.preview
 
 import net.ganin.vsevolod.clicktrack.lib.*
 

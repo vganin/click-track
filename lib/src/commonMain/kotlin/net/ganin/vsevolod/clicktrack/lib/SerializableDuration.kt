@@ -7,13 +7,16 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import net.ganin.vsevolod.clicktrack.lib.android.AndroidParcelable
+import net.ganin.vsevolod.clicktrack.lib.android.AndroidParcelize
 import kotlin.time.Duration
 import kotlin.time.nanoseconds
 
 @Serializable(with = DurationSerializer::class)
+@AndroidParcelize
 public class SerializableDuration(
     public val value: Duration
-)
+) : AndroidParcelable
 
 public object DurationSerializer : KSerializer<SerializableDuration> {
 

@@ -1,4 +1,4 @@
-package net.ganin.vsevolod.clicktrack.view
+package net.ganin.vsevolod.clicktrack.view.widget
 
 import androidx.compose.animation.OffsetPropKey
 import androidx.compose.animation.core.Spring
@@ -7,7 +7,8 @@ import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.transition
 import androidx.compose.foundation.Icon
 import androidx.compose.material.FloatingActionButton
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -17,21 +18,17 @@ import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.graphics.vector.VectorAssetBuilder
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
-import net.ganin.vsevolod.clicktrack.view.PlayStopIconState.PLAY
-import net.ganin.vsevolod.clicktrack.view.PlayStopIconState.STOP
+import net.ganin.vsevolod.clicktrack.view.widget.PlayStopIconState.PLAY
+import net.ganin.vsevolod.clicktrack.view.widget.PlayStopIconState.STOP
 
 @Composable
 fun PlayStopView(
     modifier: Modifier = Modifier,
-    isPlayingState: MutableState<Boolean> = remember { mutableStateOf(false) },
-    onPlayToggle: (Boolean) -> Unit = { isPlayingState.value = !isPlayingState.value }
+    isPlaying: Boolean = false,
+    onToggle: () -> Unit = {},
 ) {
-    var isPlaying by isPlayingState
     FloatingActionButton(
-        onClick = {
-            isPlaying = !isPlaying
-            onPlayToggle(isPlaying)
-        },
+        onClick = onToggle,
         modifier = modifier,
         icon = { PlayStopIcon(isPlaying) }
     )
@@ -107,7 +104,6 @@ private fun PathBuilder.lineTo(point: Offset) = lineTo(point.x, point.y)
 
 @Preview
 @Composable
-fun PreviewPlayStopView(
-) {
+fun PreviewPlayStopView() {
     PlayStopView()
 }
