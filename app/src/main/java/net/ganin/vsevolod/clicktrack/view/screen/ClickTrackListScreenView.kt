@@ -31,7 +31,8 @@ fun ClickTrackListScreenView(
                     .height(100.dp)
                     .clickable(onClick = {
                         dispatch(NavigateToClickTrackScreen(clickTrack))
-                    })
+                    }),
+                drawTextMarks = false
             )
         }
     }

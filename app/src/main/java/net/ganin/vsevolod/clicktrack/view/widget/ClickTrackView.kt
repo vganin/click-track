@@ -21,6 +21,7 @@ import kotlin.time.Duration
 fun ClickTrackView(
     clickTrack: ClickTrack,
     modifier: Modifier = Modifier,
+    drawTextMarks: Boolean = true
 ) {
     WithConstraints(modifier = modifier) {
         val width = with(DensityAmbient.current) { maxWidth.toPx() }
@@ -40,13 +41,15 @@ fun ClickTrackView(
             }
         }
 
-        for (mark in marks) {
-            Text(
-                modifier = Modifier
-                    .absoluteOffsetPx(x = mutableStateOf(mark.x))
-                    .absoluteOffset(y = 16.dp),
-                text = mark.text
-            )
+        if (drawTextMarks) {
+            for (mark in marks) {
+                Text(
+                    modifier = Modifier
+                        .absoluteOffsetPx(x = mutableStateOf(mark.x))
+                        .absoluteOffset(y = 16.dp),
+                    text = mark.text
+                )
+            }
         }
     }
 }
@@ -61,10 +64,11 @@ private fun ClickTrack.asMarks(width: Float): List<Mark> {
     val duration = durationInTime
 
     var currentTimestamp = Duration.ZERO
+    var currentX = 0f
     for (cue in cues) {
+        result += Mark(x = currentX, cue.cue.toText())
         val nextTimestamp = currentTimestamp + cue.durationInTime
-        val nextX: Float = (nextTimestamp / duration * width).toFloat()
-        result += Mark(x = nextX, cue.cue.toText())
+        currentX = (nextTimestamp / duration * width).toFloat()
         currentTimestamp = nextTimestamp
     }
 
