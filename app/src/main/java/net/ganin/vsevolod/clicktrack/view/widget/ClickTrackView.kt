@@ -2,7 +2,11 @@ package net.ganin.vsevolod.clicktrack.view.widget
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.absoluteOffsetPx
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -16,16 +20,23 @@ import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlin.time.Duration
+import kotlin.time.seconds
+
+class ClickTrackViewState(
+    val clickTrack: ClickTrack,
+    val drawTextMarks: Boolean,
+    val playbackTimestamp: Duration?,
+)
 
 @Composable
 fun ClickTrackView(
-    clickTrack: ClickTrack,
+    state: ClickTrackViewState,
     modifier: Modifier = Modifier,
-    drawTextMarks: Boolean = true
 ) {
     WithConstraints(modifier = modifier) {
         val width = with(DensityAmbient.current) { maxWidth.toPx() }
-        val marks = clickTrack.asMarks(width)
+        val marks = state.clickTrack.asMarks(width)
+        val playbackX = state.playbackTimestamp?.toX(state.clickTrack.durationInTime, width)
 
         Canvas(
             modifier = Modifier
@@ -39,9 +50,17 @@ fun ClickTrackView(
                     end = Offset(mark.x, size.height),
                 )
             }
+
+            if (playbackX != null) {
+                drawLine(
+                    color = Color.LightGray,
+                    start = Offset(playbackX, 0f),
+                    end = Offset(playbackX, size.height),
+                )
+            }
         }
 
-        if (drawTextMarks) {
+        if (state.drawTextMarks) {
             for (mark in marks) {
                 Text(
                     modifier = Modifier
@@ -66,13 +85,17 @@ private fun ClickTrack.asMarks(width: Float): List<Mark> {
     var currentTimestamp = Duration.ZERO
     var currentX = 0f
     for (cue in cues) {
-        result += Mark(x = currentX, cue.cue.toText())
+        result += Mark(currentX, cue.cue.toText())
         val nextTimestamp = currentTimestamp + cue.durationInTime
-        currentX = (nextTimestamp / duration * width).toFloat()
+        currentX = nextTimestamp.toX(duration, width)
         currentTimestamp = nextTimestamp
     }
 
     return result.distinctBy(Mark::x)
+}
+
+private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
+    return (this / totalDuration * viewWidth).toFloat()
 }
 
 private fun Cue.toText() = "$bpm bpm ${timeSignature.noteCount}/${timeSignature.noteDuration}"
@@ -81,7 +104,11 @@ private fun Cue.toText() = "$bpm bpm ${timeSignature.noteCount}/${timeSignature.
 @Composable
 fun PreviewClickTrackView() {
     ClickTrackView(
-        PREVIEW_CLICK_TRACK_1,
+        ClickTrackViewState(
+            clickTrack = PREVIEW_CLICK_TRACK_1,
+            drawTextMarks = true,
+            playbackTimestamp = 1.seconds
+        ),
         modifier = Modifier.fillMaxSize()
     )
 }

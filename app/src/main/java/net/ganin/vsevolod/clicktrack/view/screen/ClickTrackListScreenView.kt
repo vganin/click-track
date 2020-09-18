@@ -16,6 +16,7 @@ import net.ganin.vsevolod.clicktrack.state.actions.NavigateToClickTrackScreen
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_2
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackView
+import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackViewState
 
 @Composable
 fun ClickTrackListScreenView(
@@ -25,14 +26,13 @@ fun ClickTrackListScreenView(
     LazyColumnFor(state.items, modifier = Modifier.fillMaxSize()) { clickTrack ->
         Card(modifier = Modifier.padding(8.dp)) {
             ClickTrackView(
-                clickTrack,
+                ClickTrackViewState(clickTrack, drawTextMarks = false, playbackTimestamp = null),
                 modifier = Modifier
                     .fillParentMaxWidth()
                     .height(100.dp)
                     .clickable(onClick = {
                         dispatch(NavigateToClickTrackScreen(clickTrack))
                     }),
-                drawTextMarks = false
             )
         }
     }

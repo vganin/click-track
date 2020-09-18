@@ -1,7 +1,7 @@
 package net.ganin.vsevolod.clicktrack.state.epic
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import net.ganin.vsevolod.clicktrack.audio.ClickTrackPlayer
 import net.ganin.vsevolod.clicktrack.redux.Action
@@ -21,7 +21,7 @@ class ClickTrackPlayerEpic(
     override fun act(actions: Flow<Action>): Flow<Action> {
         return store.state
             .map { it.backstack.frontScreen().optionalCast<Screen.ClickTrack>()?.state }
-            .distinctUntilChanged()
+            .distinctUntilChangedBy { it?.isPlaying }
             .consumeEach { state ->
                 if (state == null) {
                     clickTrackPlayer.stop()

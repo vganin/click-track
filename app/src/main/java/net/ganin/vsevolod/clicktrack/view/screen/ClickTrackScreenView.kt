@@ -11,6 +11,7 @@ import net.ganin.vsevolod.clicktrack.state.ClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.actions.TogglePlay
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackView
+import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackViewState
 import net.ganin.vsevolod.clicktrack.view.widget.PlayStopView
 
 @Composable
@@ -19,7 +20,14 @@ fun ClickTrackScreenView(
     dispatch: (Action) -> Unit = {}
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        ClickTrackView(state.clickTrack, Modifier.fillMaxSize())
+        ClickTrackView(
+            state = ClickTrackViewState(
+                clickTrack = state.clickTrack,
+                drawTextMarks = true,
+                playbackTimestamp = state.playbackTimestamp?.value,
+            ),
+            modifier = Modifier.fillMaxSize()
+        )
         PlayStopView(
             modifier = Modifier.constrainAs(createRef()) {
                 centerHorizontallyTo(parent)
@@ -38,6 +46,7 @@ fun PreviewClickTrackScreenView() {
         ClickTrackScreenState(
             clickTrack = PREVIEW_CLICK_TRACK_1,
             isPlaying = false,
+            playbackTimestamp = null
         )
     )
 }
