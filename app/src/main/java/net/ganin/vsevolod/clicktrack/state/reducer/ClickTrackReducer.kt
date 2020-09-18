@@ -1,12 +1,12 @@
 package net.ganin.vsevolod.clicktrack.state.reducer
 
-import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.state.ClickTrackScreenState
+import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.state.Screen
 import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
 import net.ganin.vsevolod.clicktrack.state.actions.TogglePlay
-import net.ganin.vsevolod.clicktrack.state.actions.UpdatePlaybackTimestamp
+import net.ganin.vsevolod.clicktrack.state.actions.UpdatePlaybackStamp
 
 fun Screen.ClickTrack.reduceClickTrackScreen(action: Action): Screen {
     return Screen.ClickTrack(
@@ -18,7 +18,7 @@ private fun ClickTrackScreenState.reduce(action: Action): ClickTrackScreenState 
     val isPlaying = isPlaying.reduce(action)
     return copy(
         isPlaying = isPlaying,
-        playbackTimestamp = playbackTimestamp.reduce(action, isPlaying)
+        playbackStamp = playbackStamp.reduce(action, isPlaying)
     )
 }
 
@@ -30,10 +30,10 @@ private fun Boolean.reduce(action: Action): Boolean {
     }
 }
 
-private fun SerializableDuration?.reduce(action: Action, isPlaying: Boolean): SerializableDuration? {
+private fun PlaybackStamp?.reduce(action: Action, isPlaying: Boolean): PlaybackStamp? {
     return when {
         !isPlaying -> null
-        action is UpdatePlaybackTimestamp -> SerializableDuration(action.value)
+        action is UpdatePlaybackStamp -> action.value
         else -> this
     }
 }

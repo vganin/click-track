@@ -35,7 +35,7 @@ private fun ScreenBackstack.reduce(action: NavigationAction): ScreenBackstack {
                 state = ClickTrackScreenState(
                     clickTrack = action.data,
                     isPlaying = false,
-                    playbackTimestamp = null,
+                    playbackStamp = null,
                 )
             )
         )

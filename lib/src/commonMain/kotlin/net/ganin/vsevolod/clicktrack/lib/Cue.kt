@@ -7,10 +7,6 @@ import net.ganin.vsevolod.clicktrack.lib.android.AndroidParcelize
 @Serializable
 @AndroidParcelize
 public class Cue(
-    public val bpm: Int,
+    public val bpm: BeatsPerMinute,
     public val timeSignature: TimeSignature
-) : AndroidParcelable {
-    init {
-        require(bpm >= 0) { "Bpm should be greater than 0 but was: $bpm" }
-    }
-}
+) : AndroidParcelable

@@ -3,8 +3,13 @@ package net.ganin.vsevolod.clicktrack
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.setContent
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import net.ganin.vsevolod.clicktrack.audio.ClickTrackPlayer
 import net.ganin.vsevolod.clicktrack.redux.EpicMiddleware
 import net.ganin.vsevolod.clicktrack.redux.Store

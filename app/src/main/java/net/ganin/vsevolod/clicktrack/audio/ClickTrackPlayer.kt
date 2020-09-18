@@ -10,17 +10,17 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.audio.ClickTrackPlayer.Const.CLICK_MINIMAL_INTERVAL
-import net.ganin.vsevolod.clicktrack.audio.ClickTrackPlayer.Const.PLAYBACK_UPDATE_RATE
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.CueWithDuration
+import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
+import net.ganin.vsevolod.clicktrack.lib.interval
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
+import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
-import net.ganin.vsevolod.clicktrack.state.actions.UpdatePlaybackTimestamp
+import net.ganin.vsevolod.clicktrack.state.actions.UpdatePlaybackStamp
 import net.ganin.vsevolod.clicktrack.utils.coroutine.delay
 import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.coroutineContext
 import kotlin.time.Duration
-import kotlin.time.milliseconds
 import kotlin.time.minutes
 
 class ClickTrackPlayer(
@@ -48,9 +48,17 @@ class ClickTrackPlayer(
         val agc = mediaPlayer.tryAttachAgc()
         try {
             do {
-                val updaterJob = launch { updatePlaybackTimestamps() }
-                clickTrack.cues.forEach { mediaPlayer.play(it) }
-                updaterJob.cancel()
+                var playedFor = Duration.ZERO
+                for (cue in clickTrack.cues) {
+                    mediaPlayer.play(cue) {
+                        val playbackStamp = PlaybackStamp(
+                            timestamp = SerializableDuration(playedFor + it),
+                            correspondingCue = cue.cue
+                        )
+                        dispatch(UpdatePlaybackStamp(playbackStamp))
+                    }
+                    playedFor += cue.durationInTime
+                }
             } while (clickTrack.loop && playerCoroutineContext.isActive)
         } finally {
             agc?.release()
@@ -58,12 +66,19 @@ class ClickTrackPlayer(
         }
     }
 
-    private suspend fun MediaPlayer.play(cueWithDuration: CueWithDuration) {
-        val delay = 1.minutes / cueWithDuration.cue.bpm
-        var leftToPlay = cueWithDuration.durationInTime
-        while (leftToPlay > CLICK_MINIMAL_INTERVAL) {
+    private suspend fun MediaPlayer.play(
+        cueWithDuration: CueWithDuration,
+        onBeatPlayed: (playedFor: Duration) -> Unit
+    ) {
+        val cue = cueWithDuration.cue
+        val delay = cue.bpm.interval
+        val duration = cueWithDuration.durationInTime
+
+        var playedFor = Duration.ZERO
+        while ((duration - playedFor) > CLICK_MINIMAL_INTERVAL) {
             start()
-            leftToPlay -= delay
+            onBeatPlayed(playedFor)
+            playedFor += delay
             delay(delay)
         }
     }
@@ -72,17 +87,7 @@ class ClickTrackPlayer(
         return AutomaticGainControl.create(audioSessionId)
     }
 
-    private suspend fun updatePlaybackTimestamps() {
-        var playbackTimestamp = Duration.ZERO
-        do {
-            dispatch(UpdatePlaybackTimestamp(playbackTimestamp))
-            delay(PLAYBACK_UPDATE_RATE)
-            playbackTimestamp += PLAYBACK_UPDATE_RATE
-        } while (coroutineContext.isActive)
-    }
-
     private object Const {
         val CLICK_MINIMAL_INTERVAL = 1.minutes / 1000 // Max. 1000 bpm
-        val PLAYBACK_UPDATE_RATE = 16.milliseconds
     }
 }

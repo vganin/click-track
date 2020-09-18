@@ -24,7 +24,7 @@ fun ClickTrackScreenView(
             state = ClickTrackViewState(
                 clickTrack = state.clickTrack,
                 drawTextMarks = true,
-                playbackTimestamp = state.playbackTimestamp?.value,
+                playbackTimestamp = state.playbackStamp,
             ),
             modifier = Modifier.fillMaxSize()
         )
@@ -46,7 +46,7 @@ fun PreviewClickTrackScreenView() {
         ClickTrackScreenState(
             clickTrack = PREVIEW_CLICK_TRACK_1,
             isPlaying = false,
-            playbackTimestamp = null
+            playbackStamp = null
         )
     )
 }

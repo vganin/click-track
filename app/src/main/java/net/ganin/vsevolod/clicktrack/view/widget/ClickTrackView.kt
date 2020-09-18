@@ -1,12 +1,15 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
+import androidx.compose.animation.animatedFloat
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.absoluteOffsetPx
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
@@ -18,6 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
+import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
+import net.ganin.vsevolod.clicktrack.lib.interval
+import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlin.time.Duration
 import kotlin.time.seconds
@@ -25,7 +31,7 @@ import kotlin.time.seconds
 class ClickTrackViewState(
     val clickTrack: ClickTrack,
     val drawTextMarks: Boolean,
-    val playbackTimestamp: Duration?,
+    val playbackTimestamp: PlaybackStamp?,
 )
 
 @Composable
@@ -34,14 +40,25 @@ fun ClickTrackView(
     modifier: Modifier = Modifier,
 ) {
     WithConstraints(modifier = modifier) {
-        val width = with(DensityAmbient.current) { maxWidth.toPx() }
+        val width = with(DensityAmbient.current) { minWidth.toPx() }
         val marks = state.clickTrack.asMarks(width)
-        val playbackX = state.playbackTimestamp?.toX(state.clickTrack.durationInTime, width)
+
+        val playbackStampX = state.playbackTimestamp?.run {
+            fun Duration.toX() = toX(state.clickTrack.durationInTime, width)
+            val timestamp = timestamp.value
+            val animationDuration = correspondingCue.bpm.interval
+            val initial = timestamp.toX()
+            val target = (timestamp + animationDuration).toX()
+            val animatedX = animatedFloat(initial).apply {
+                animateTo(target, tween(animationDuration.toLongMilliseconds().toInt(), easing = LinearEasing))
+            }
+            animatedX.value
+        }
 
         Canvas(
             modifier = Modifier
-                .heightIn(minHeight, maxHeight)
-                .widthIn(minWidth, maxWidth)
+                .height(minHeight)
+                .width(minWidth)
         ) {
             for (mark in marks) {
                 drawLine(
@@ -51,11 +68,11 @@ fun ClickTrackView(
                 )
             }
 
-            if (playbackX != null) {
+            if (playbackStampX != null) {
                 drawLine(
                     color = Color.LightGray,
-                    start = Offset(playbackX, 0f),
-                    end = Offset(playbackX, size.height),
+                    start = Offset(playbackStampX, 0f),
+                    end = Offset(playbackStampX, size.height),
                 )
             }
         }
@@ -98,7 +115,7 @@ private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
     return (this / totalDuration * viewWidth).toFloat()
 }
 
-private fun Cue.toText() = "$bpm bpm ${timeSignature.noteCount}/${timeSignature.noteDuration}"
+private fun Cue.toText() = "${bpm.value} bpm ${timeSignature.noteCount}/${timeSignature.noteDuration}"
 
 @Preview
 @Composable
@@ -107,7 +124,7 @@ fun PreviewClickTrackView() {
         ClickTrackViewState(
             clickTrack = PREVIEW_CLICK_TRACK_1,
             drawTextMarks = true,
-            playbackTimestamp = 1.seconds
+            playbackTimestamp = PlaybackStamp(SerializableDuration(1.seconds), PREVIEW_CLICK_TRACK_1.cues[0].cue)
         ),
         modifier = Modifier.fillMaxSize()
     )
