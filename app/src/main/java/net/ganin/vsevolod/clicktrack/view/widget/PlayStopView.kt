@@ -23,9 +23,9 @@ import net.ganin.vsevolod.clicktrack.view.widget.PlayStopIconState.STOP
 
 @Composable
 fun PlayStopView(
-    modifier: Modifier = Modifier,
     isPlaying: Boolean = false,
     onToggle: () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     FloatingActionButton(
         onClick = onToggle,

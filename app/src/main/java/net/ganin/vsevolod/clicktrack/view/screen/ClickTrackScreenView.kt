@@ -29,12 +29,12 @@ fun ClickTrackScreenView(
             modifier = Modifier.fillMaxSize()
         )
         PlayStopView(
+            isPlaying = state.isPlaying,
+            onToggle = { dispatch(TogglePlay) },
             modifier = Modifier.constrainAs(createRef()) {
                 centerHorizontallyTo(parent)
                 bottom.linkTo(parent.bottom, margin = 16.dp)
-            },
-            isPlaying = state.isPlaying,
-            onToggle = { dispatch(TogglePlay) }
+            }
         )
     }
 }
