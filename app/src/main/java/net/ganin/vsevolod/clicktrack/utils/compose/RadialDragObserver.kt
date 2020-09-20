@@ -18,8 +18,10 @@ class RadialDragObserver(
         val downPosition = downPosition ?: return Offset.Zero
         val draggedToPosition = downPosition + dragDistance
 
-        val angleDiff = (downPosition - center).vectorAngle - (draggedToPosition - center).vectorAngle
+        val angleDiff = (draggedToPosition - center).vectorAngle - (downPosition - center).vectorAngle
         onRadialDrag.invoke(angleDiff)
+
+        this.downPosition = draggedToPosition
 
         return dragDistance
     }

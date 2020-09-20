@@ -3,9 +3,8 @@ package net.ganin.vsevolod.clicktrack.view.widget
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
@@ -41,7 +40,7 @@ fun BpmWheel(
 }
 
 @Composable
-private fun Wheel(modifier: Modifier = Modifier) = WithConstraints {
+private fun Wheel(modifier: Modifier = Modifier) = WithConstraints(modifier) {
     val density = DensityAmbient.current
     val width = minWidth
     val height = minHeight
@@ -53,7 +52,7 @@ private fun Wheel(modifier: Modifier = Modifier) = WithConstraints {
     Stack(
         modifier = modifier
             .dragGestureFilter(RadialDragObserver(Offset(x = widthPx / 2, y = heightPx / 2)) { angleDiff ->
-                buttonAngle += angleDiff
+                buttonAngle -= angleDiff
             })
     ) {
         Surface(
@@ -106,5 +105,5 @@ private fun Wheel(modifier: Modifier = Modifier) = WithConstraints {
 @Preview
 @Composable
 fun PreviewBpmWheel() {
-    BpmWheel(modifier = Modifier.width(200.dp).height(400.dp))
+    BpmWheel(modifier = Modifier.size(200.dp))
 }
