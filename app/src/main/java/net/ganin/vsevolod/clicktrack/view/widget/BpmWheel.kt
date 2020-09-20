@@ -1,8 +1,13 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -13,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.geometry.Offset
@@ -36,32 +42,47 @@ fun BpmWheel(
     state: MutableState<BeatsPerMinute> = mutableStateOf(60.bpm),
     modifier: Modifier = Modifier,
 ) {
-    Wheel(modifier)
+    Column(modifier) {
+        Text(
+            text = "${state.value.value} bpm",
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Wheel(
+            onAngleChange = {
+                state.value += it.toInt()
+            },
+            modifier = Modifier
+                .aspectRatio(1f)
+                .align(Alignment.CenterHorizontally)
+        )
+    }
 }
 
 @Composable
-private fun Wheel(modifier: Modifier = Modifier) = WithConstraints(modifier) {
-    val density = DensityAmbient.current
-    val width = minWidth
-    val height = minHeight
-    val widthPx = with(density) { width.toPx() }
-    val heightPx = with(density) { height.toPx() }
-
+private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Modifier) {
     var buttonAngle: Float by remember { mutableStateOf(90f) }
 
-    Stack(
-        modifier = modifier
-            .dragGestureFilter(RadialDragObserver(Offset(x = widthPx / 2, y = heightPx / 2)) { angleDiff ->
-                buttonAngle -= angleDiff
-            })
-    ) {
+    WithConstraints(modifier) {
+        val density = DensityAmbient.current
+        val width = minWidth
+        val height = minHeight
+        val widthPx = with(density) { width.toPx() }
+        val heightPx = with(density) { height.toPx() }
+
         Surface(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .dragGestureFilter(RadialDragObserver(Offset(x = widthPx / 2, y = heightPx / 2)) { angleDiff ->
+                    Log.d("TEEST", "$angleDiff")
+                    buttonAngle -= angleDiff
+                    onAngleChange(angleDiff)
+                }),
             elevation = 4.dp,
             shape = CircleShape,
             color = Color.Transparent
         ) {
-            val wheelWidth = 40.dp
+            val wheelWidth = 25.dp
             val wheelWidthPx = with(density) { wheelWidth.toPx() }
 
             Canvas(

@@ -14,6 +14,22 @@ public class BeatsPerMinute(
     init {
         require(value >= 0) { "Bpm should be greater than 0 but was: $value" }
     }
+
+    public operator fun plus(o: Int): BeatsPerMinute {
+        return BeatsPerMinute((value + o).coerceAtLeast(0))
+    }
+
+    public operator fun plus(o: BeatsPerMinute): BeatsPerMinute {
+        return this + o.value
+    }
+
+    public operator fun minus(o: Int): BeatsPerMinute {
+        return BeatsPerMinute((value - o).coerceAtLeast(0))
+    }
+
+    public operator fun minus(o: BeatsPerMinute): BeatsPerMinute {
+        return this - o.value
+    }
 }
 
 public val Int.bpm: BeatsPerMinute get() = BeatsPerMinute(this)

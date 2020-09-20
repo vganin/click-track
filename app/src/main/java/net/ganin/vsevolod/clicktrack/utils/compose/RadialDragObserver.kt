@@ -2,6 +2,7 @@ package net.ganin.vsevolod.clicktrack.utils.compose
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.gesture.DragObserver
+import kotlin.math.atan2
 
 class RadialDragObserver(
     private val center: Offset,
@@ -18,11 +19,17 @@ class RadialDragObserver(
         val downPosition = downPosition ?: return Offset.Zero
         val draggedToPosition = downPosition + dragDistance
 
-        val angleDiff = (draggedToPosition - center).vectorAngle - (downPosition - center).vectorAngle
+        val angleDiff = angleBetween(downPosition - center, draggedToPosition - center)
         onRadialDrag.invoke(angleDiff)
 
         this.downPosition = draggedToPosition
 
         return dragDistance
+    }
+
+    private fun angleBetween(from: Offset, to: Offset): Float {
+        val dot = from.x * to.x + from.y * to.y
+        val det = from.x * to.y - from.y * to.x
+        return atan2(det, dot).toDegrees()
     }
 }
