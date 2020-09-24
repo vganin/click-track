@@ -88,6 +88,8 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
             Canvas(
                 modifier = Modifier.fillMaxSize().padding(wheelWidth / 2)
             ) {
+                if (size.maxDimension <= 0) return@Canvas
+
                 drawArc(
                     brush = RadialGradient(
                         0.0f to Color.Magenta,
