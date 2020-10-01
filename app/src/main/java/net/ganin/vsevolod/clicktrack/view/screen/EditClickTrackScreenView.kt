@@ -43,7 +43,7 @@ fun EditClickTrackScreenView(
     modifier: Modifier = Modifier
 ) {
     val loopState = remember { mutableStateOf(state.value.loop) }
-    val cuesState = remember { state.value.cues.toMutableStateList() }
+    val cuesState = remember { state.value.cues.map { mutableStateOf(it) }.toMutableStateList() }
 
     val scrollState = rememberScrollState(0f)
     ScrollableColumn(scrollState = scrollState, modifier = modifier) {
@@ -55,14 +55,12 @@ fun EditClickTrackScreenView(
             })
         }
 
-        cuesState.forEachIndexed { index, cueWithDuration ->
-            val cueWithDurationState = remember { mutableStateOf(cueWithDuration) }
+        cuesState.forEach { cueWithDurationState ->
             EditCueWithDurationView(state = cueWithDurationState)
-//            cuesState[index] = cueWithDurationState.value
         }
 
         FloatingActionButton(
-            onClick = { cuesState += defaultCue() },
+            onClick = { cuesState += mutableStateOf(defaultCue()) },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Image(asset = vectorResource(id = R.drawable.ic_add_24))
@@ -72,7 +70,7 @@ fun EditClickTrackScreenView(
     }
 
     state.value = ClickTrack(
-        cues = cuesState.toList(),
+        cues = cuesState.map { it.value },
         loop = loopState.value
     )
 }
