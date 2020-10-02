@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
         epicMiddleware.register(
             FinishAppEpic(this, store, Dispatchers.Main),
-            LoadDataEpic(clickTrackRepository),
+            LoadDataEpic(store, clickTrackRepository),
             ClickTrackPlayerEpic(
                 store,
                 ClickTrackPlayer(
