@@ -9,7 +9,8 @@ class NewClickTrackNameSuggester(private val storage: ClickTrackRepository) {
             .asSequence()
             .mapNotNull(::findDefaultNameNumber)
             .maxOrNull()
-        return format(maxUsedDefaultNameNumber ?: 1)
+            ?: 0
+        return format(maxUsedDefaultNameNumber + 1)
     }
 
     private fun findDefaultNameNumber(input: String): Int? {
