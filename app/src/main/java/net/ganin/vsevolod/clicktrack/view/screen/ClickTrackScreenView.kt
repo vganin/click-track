@@ -44,7 +44,7 @@ fun ClickTrackScreenView(
 fun PreviewClickTrackScreenView() {
     ClickTrackScreenView(
         ClickTrackScreenState(
-            clickTrack = PREVIEW_CLICK_TRACK_1,
+            clickTrack = PREVIEW_CLICK_TRACK_1.clickTrack,
             isPlaying = false,
             playbackStamp = null
         )

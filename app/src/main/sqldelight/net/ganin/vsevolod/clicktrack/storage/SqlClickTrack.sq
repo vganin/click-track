@@ -1,11 +1,13 @@
 CREATE TABLE ClickTrack (
+    name TEXT NOT NULL PRIMARY KEY,
     serialized TEXT NOT NULL
 );
 
-all:
-SELECT *
-FROM ClickTrack;
+getAll:
+SELECT * FROM ClickTrack;
 
-insert:
-INSERT INTO ClickTrack (serialized)
-VALUES (?);
+getAllNames:
+SELECT name FROM ClickTrack;
+
+put:
+INSERT OR REPLACE INTO ClickTrack VALUES ?;

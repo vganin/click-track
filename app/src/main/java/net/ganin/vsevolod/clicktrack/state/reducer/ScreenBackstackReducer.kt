@@ -3,9 +3,11 @@ package net.ganin.vsevolod.clicktrack.state.reducer
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.state.ClickTrackListScreenState
 import net.ganin.vsevolod.clicktrack.state.ClickTrackScreenState
+import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.Screen
 import net.ganin.vsevolod.clicktrack.state.ScreenBackstack
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
+import net.ganin.vsevolod.clicktrack.state.actions.NavigateToAddNewClickTrackScreen
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToClickTrackListScreen
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToClickTrackScreen
 import net.ganin.vsevolod.clicktrack.state.actions.NavigationAction
@@ -36,6 +38,13 @@ private fun ScreenBackstack.reduce(action: NavigationAction): ScreenBackstack {
                     clickTrack = action.data,
                     isPlaying = false,
                     playbackStamp = null,
+                )
+            )
+        )
+        is NavigateToAddNewClickTrackScreen -> push(
+            Screen.EditClickTrack(
+                state = EditClickTrackScreenState(
+                    clickTrack = action.initialClickTrack,
                 )
             )
         )

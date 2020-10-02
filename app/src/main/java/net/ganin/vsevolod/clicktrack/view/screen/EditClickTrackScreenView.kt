@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Switch
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
@@ -22,32 +22,32 @@ import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
+import net.ganin.vsevolod.clicktrack.lib.ClickTrackWithMeta
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
 import net.ganin.vsevolod.clicktrack.lib.CueWithDuration
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
 import net.ganin.vsevolod.clicktrack.lib.TimeSignature
 import net.ganin.vsevolod.clicktrack.lib.bpm
+import net.ganin.vsevolod.clicktrack.redux.Dispatch
+import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
+import net.ganin.vsevolod.clicktrack.state.actions.SaveClickTrack
 import net.ganin.vsevolod.clicktrack.view.widget.EditCueWithDurationView
 import kotlin.time.minutes
 
 @Composable
 fun EditClickTrackScreenView(
-    state: MutableState<ClickTrack>,
-    defaultCue: () -> CueWithDuration = {
-        CueWithDuration(
-            duration = CueDuration.Beats(4),
-            cue = Cue(60.bpm, TimeSignature(4, 4))
-        )
-    },
-    modifier: Modifier = Modifier
+    state: EditClickTrackScreenState,
+    dispatch: Dispatch = {}
 ) {
-    val loopState = remember { mutableStateOf(state.value.loop) }
-    val cuesState = remember { state.value.cues.map { mutableStateOf(it) }.toMutableStateList() }
+    val nameState = remember { mutableStateOf(state.clickTrack.name) }
+    val loopState = remember { mutableStateOf(state.clickTrack.clickTrack.loop) }
+    val cuesState = remember { state.clickTrack.clickTrack.cues.map { mutableStateOf(it) }.toMutableStateList() }
 
     val scrollState = rememberScrollState(0f)
-    ScrollableColumn(scrollState = scrollState, modifier = modifier) {
+    ScrollableColumn(scrollState = scrollState, modifier = Modifier.fillMaxSize()) {
         Row {
+            TextField(value = nameState.value, onValueChange = { nameState.value = it })
             Text(text = "Should loop")
             Spacer(modifier = Modifier.width(8.dp))
             Switch(checked = loopState.value, onCheckedChange = {
@@ -60,7 +60,7 @@ fun EditClickTrackScreenView(
         }
 
         FloatingActionButton(
-            onClick = { cuesState += mutableStateOf(defaultCue()) },
+            onClick = { cuesState += mutableStateOf(state.defaultCue) },
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
             Image(asset = vectorResource(id = R.drawable.ic_add_24))
@@ -69,9 +69,17 @@ fun EditClickTrackScreenView(
         scrollState.scrollTo(scrollState.maxValue)
     }
 
-    state.value = ClickTrack(
-        cues = cuesState.map { it.value },
-        loop = loopState.value
+    // Intentionally save on every re-composition
+    dispatch(
+        SaveClickTrack(
+            clickTrack = ClickTrackWithMeta(
+                name = nameState.value,
+                clickTrack = ClickTrack(
+                    cues = cuesState.map { it.value },
+                    loop = loopState.value
+                )
+            )
+        )
     )
 }
 
@@ -80,27 +88,29 @@ fun EditClickTrackScreenView(
 @Composable
 fun PreviewEditClickTrackScreenView() {
     EditClickTrackScreenView(
-        state = mutableStateOf(
-            ClickTrack(
-                cues = listOf(
-                    CueWithDuration(
-                        cue = Cue(
-                            bpm = 60.bpm,
-                            timeSignature = TimeSignature(3, 4)
+        state = EditClickTrackScreenState(
+            clickTrack = ClickTrackWithMeta(
+                name = "Good click track",
+                clickTrack = ClickTrack(
+                    cues = listOf(
+                        CueWithDuration(
+                            cue = Cue(
+                                bpm = 60.bpm,
+                                timeSignature = TimeSignature(3, 4)
+                            ),
+                            duration = CueDuration.Beats(4),
                         ),
-                        duration = CueDuration.Beats(4),
-                    ),
-                    CueWithDuration(
-                        cue = Cue(
-                            bpm = 120.bpm,
-                            timeSignature = TimeSignature(5, 4)
+                        CueWithDuration(
+                            cue = Cue(
+                                bpm = 120.bpm,
+                                timeSignature = TimeSignature(5, 4)
+                            ),
+                            duration = CueDuration.Time(SerializableDuration(1.minutes)),
                         ),
-                        duration = CueDuration.Time(SerializableDuration(1.minutes)),
                     ),
-                ),
-                loop = true,
+                    loop = true,
+                )
             )
         ),
-        modifier = Modifier.fillMaxSize()
     )
 }

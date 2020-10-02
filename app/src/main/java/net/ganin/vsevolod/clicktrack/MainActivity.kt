@@ -17,15 +17,19 @@ import net.ganin.vsevolod.clicktrack.state.AppState
 import net.ganin.vsevolod.clicktrack.state.Screen
 import net.ganin.vsevolod.clicktrack.state.actions.LoadDataAction
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
+import net.ganin.vsevolod.clicktrack.state.epic.AddNewClickTrackEpic
 import net.ganin.vsevolod.clicktrack.state.epic.ClickTrackPlayerEpic
 import net.ganin.vsevolod.clicktrack.state.epic.FinishAppEpic
 import net.ganin.vsevolod.clicktrack.state.epic.LoadDataEpic
+import net.ganin.vsevolod.clicktrack.state.epic.SaveClickTrackEpic
 import net.ganin.vsevolod.clicktrack.state.frontScreen
 import net.ganin.vsevolod.clicktrack.state.reducer.reduce
+import net.ganin.vsevolod.clicktrack.state.utils.NewClickTrackNameSuggester
 import net.ganin.vsevolod.clicktrack.storage.ClickTrackRepository
 import net.ganin.vsevolod.clicktrack.view.ContentView
 import net.ganin.vsevolod.clicktrack.view.screen.ClickTrackListScreenView
 import net.ganin.vsevolod.clicktrack.view.screen.ClickTrackScreenView
+import net.ganin.vsevolod.clicktrack.view.screen.EditClickTrackScreenView
 import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
@@ -70,6 +74,8 @@ class MainActivity : AppCompatActivity() {
                     dispatch = store::dispatch,
                 )
             ),
+            AddNewClickTrackEpic(NewClickTrackNameSuggester(clickTrackRepository)),
+            SaveClickTrackEpic(clickTrackRepository),
         )
 
         mainScope.launch {
@@ -104,6 +110,7 @@ class MainActivity : AppCompatActivity() {
                 when (frontScreen) {
                     is Screen.ClickTrackList -> ClickTrackListScreenView(frontScreen.state, store::dispatch)
                     is Screen.ClickTrack -> ClickTrackScreenView(frontScreen.state, store::dispatch)
+                    is Screen.EditClickTrack -> EditClickTrackScreenView(frontScreen.state, store::dispatch)
                 }
             }
         }

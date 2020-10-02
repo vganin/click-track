@@ -6,20 +6,38 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.ganin.vsevolod.clicktrack.Database
-import net.ganin.vsevolod.clicktrack.lib.ClickTrack
+import net.ganin.vsevolod.clicktrack.lib.ClickTrackWithMeta
+import net.ganin.vsevolod.clicktrack.storage.ClickTrack as StorageClickTrack
 
 class ClickTrackRepository(
     context: Context,
     private val database: Database = Database(AndroidSqliteDriver(Database.Schema, context, "click_track.db")),
     private val json: Json = Json
 ) {
-    fun insert(clickTrack: ClickTrack) {
-        val serialized = json.encodeToString(clickTrack)
-        database.sqlClickTrackQueries.insert(serialized)
+    fun put(clickTrack: ClickTrackWithMeta) {
+        database.sqlClickTrackQueries.put(clickTrack.toStorage())
     }
 
-    fun all(): List<ClickTrack> {
-        return database.sqlClickTrackQueries.all().executeAsList()
-            .map { json.decodeFromString(it) }
+    fun all(): List<ClickTrackWithMeta> {
+        return database.sqlClickTrackQueries.getAll().executeAsList()
+            .map { it.toCommon() }
+    }
+
+    fun allNames(): List<String> {
+        return database.sqlClickTrackQueries.getAllNames().executeAsList()
+    }
+
+    private fun ClickTrackWithMeta.toStorage(): StorageClickTrack {
+        return StorageClickTrack(
+            name = name,
+            serialized = json.encodeToString(clickTrack)
+        )
+    }
+
+    private fun StorageClickTrack.toCommon(): ClickTrackWithMeta {
+        return ClickTrackWithMeta(
+            name = name,
+            clickTrack = json.decodeFromString(serialized)
+        )
     }
 }

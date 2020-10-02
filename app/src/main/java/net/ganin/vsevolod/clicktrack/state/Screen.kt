@@ -5,6 +5,7 @@ import kotlinx.android.parcel.Parcelize
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.state.reducer.reduceClickTrackListScreen
 import net.ganin.vsevolod.clicktrack.state.reducer.reduceClickTrackScreen
+import net.ganin.vsevolod.clicktrack.state.reducer.reduceEditClickTrackScreen
 
 sealed class Screen : Parcelable {
 
@@ -21,6 +22,13 @@ sealed class Screen : Parcelable {
     class ClickTrack(val state: ClickTrackScreenState) : Screen() {
         override fun reduce(action: Action): Screen {
             return reduceClickTrackScreen(action)
+        }
+    }
+
+    @Parcelize
+    class EditClickTrack(val state: EditClickTrackScreenState) : Screen() {
+        override fun reduce(action: Action): Screen {
+            return reduceEditClickTrackScreen(action)
         }
     }
 }
