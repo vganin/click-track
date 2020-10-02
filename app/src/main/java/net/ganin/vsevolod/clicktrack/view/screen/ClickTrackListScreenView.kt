@@ -64,7 +64,7 @@ fun ClickTrackListScreenView(
             onClick = { dispatch(AddNewClickTrack) },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(8.dp)
+                .padding(16.dp)
         ) {
             Image(asset = vectorResource(id = R.drawable.ic_add_24))
         }
