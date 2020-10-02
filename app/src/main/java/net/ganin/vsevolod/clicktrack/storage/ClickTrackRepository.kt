@@ -18,6 +18,10 @@ class ClickTrackRepository(
         database.sqlClickTrackQueries.put(clickTrack.toStorage())
     }
 
+    fun remove(clickTrack: ClickTrackWithMeta) {
+        database.sqlClickTrackQueries.remove(clickTrack.name)
+    }
+
     fun all(): List<ClickTrackWithMeta> {
         return database.sqlClickTrackQueries.getAll().executeAsList()
             .map { it.toCommon() }

@@ -21,6 +21,7 @@ import net.ganin.vsevolod.clicktrack.state.epic.AddNewClickTrackEpic
 import net.ganin.vsevolod.clicktrack.state.epic.ClickTrackPlayerEpic
 import net.ganin.vsevolod.clicktrack.state.epic.FinishAppEpic
 import net.ganin.vsevolod.clicktrack.state.epic.LoadDataEpic
+import net.ganin.vsevolod.clicktrack.state.epic.RemoveClickTrackEpic
 import net.ganin.vsevolod.clicktrack.state.epic.SaveClickTrackEpic
 import net.ganin.vsevolod.clicktrack.state.frontScreen
 import net.ganin.vsevolod.clicktrack.state.reducer.reduce
@@ -76,6 +77,7 @@ class MainActivity : AppCompatActivity() {
             ),
             AddNewClickTrackEpic(NewClickTrackNameSuggester(clickTrackRepository)),
             SaveClickTrackEpic(clickTrackRepository),
+            RemoveClickTrackEpic(clickTrackRepository)
         )
 
         mainScope.launch {

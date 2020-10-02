@@ -11,3 +11,6 @@ SELECT name FROM ClickTrack;
 
 put:
 INSERT OR REPLACE INTO ClickTrack VALUES ?;
+
+remove:
+DELETE FROM ClickTrack WHERE name = ?;
