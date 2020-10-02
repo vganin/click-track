@@ -76,7 +76,9 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-rxjava2:$composeVersion"
     androidTestImplementation "androidx.ui:ui-test:$composeVersion"
 
-    implementation "com.squareup.sqldelight:android-driver:1.4.3"
+    def sqlDelightVersion = '1.4.3'
+    implementation "com.squareup.sqldelight:android-driver:$sqlDelightVersion"
+    implementation "com.squareup.sqldelight:coroutines-extensions-jvm:$sqlDelightVersion"
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinXSerializationVersion"
 

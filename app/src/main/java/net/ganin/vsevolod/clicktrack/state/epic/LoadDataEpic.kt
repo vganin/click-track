@@ -2,6 +2,7 @@ package net.ganin.vsevolod.clicktrack.state.epic
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.redux.Epic
@@ -16,6 +17,7 @@ class LoadDataEpic(
     override fun act(actions: Flow<Action>): Flow<Action> {
         return actions
             .filterIsInstance<LoadDataAction>()
-            .map { DataLoadedAction(clickTrackRepository.all()) }
+            .flatMapLatest { clickTrackRepository.all() }
+            .map(::DataLoadedAction)
     }
 }
