@@ -1,8 +1,10 @@
 package net.ganin.vsevolod.clicktrack.view.screen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,15 +38,25 @@ fun ClickTrackListScreenView(
             modifier = Modifier.weight(1f)
         ) { clickTrack ->
             Card(modifier = Modifier.padding(8.dp)) {
-                ClickTrackView(
-                    ClickTrackViewState(clickTrack.clickTrack, drawTextMarks = false, playbackTimestamp = null),
-                    modifier = Modifier
-                        .fillParentMaxWidth()
-                        .height(100.dp)
-                        .clickable(onClick = {
-                            dispatch(NavigateToClickTrackScreen(clickTrack.clickTrack))
-                        }),
-                )
+                Stack(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = clickTrack.name,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    ClickTrackView(
+                        state = ClickTrackViewState(
+                            clickTrack.clickTrack,
+                            drawTextMarks = false,
+                            playbackTimestamp = null
+                        ),
+                        modifier = Modifier
+                            .fillParentMaxWidth()
+                            .height(100.dp)
+                            .clickable(onClick = {
+                                dispatch(NavigateToClickTrackScreen(clickTrack.clickTrack))
+                            }),
+                    )
+                }
             }
         }
 
