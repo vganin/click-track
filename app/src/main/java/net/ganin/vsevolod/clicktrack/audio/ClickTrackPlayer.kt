@@ -16,6 +16,7 @@ import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
 import net.ganin.vsevolod.clicktrack.lib.interval
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
+import net.ganin.vsevolod.clicktrack.state.actions.ResetPlaybackStamp
 import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
 import net.ganin.vsevolod.clicktrack.state.actions.UpdatePlaybackStamp
 import net.ganin.vsevolod.clicktrack.utils.coroutine.delay
@@ -48,6 +49,7 @@ class ClickTrackPlayer(
         val agc = mediaPlayer.tryAttachAgc()
         try {
             do {
+                dispatch(ResetPlaybackStamp)
                 var playedFor = Duration.ZERO
                 for (cue in clickTrack.cues) {
                     mediaPlayer.play(cue) {
@@ -59,7 +61,7 @@ class ClickTrackPlayer(
                     }
                     playedFor += cue.durationInTime
                 }
-            } while (clickTrack.loop && playerCoroutineContext.isActive)
+            } while (clickTrack.loop && coroutineContext.isActive)
         } finally {
             agc?.release()
             mediaPlayer.release()

@@ -6,6 +6,7 @@ import net.ganin.vsevolod.clicktrack.state.ClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.state.Screen
 import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackDataLoadedAction
+import net.ganin.vsevolod.clicktrack.state.actions.ResetPlaybackStamp
 import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
 import net.ganin.vsevolod.clicktrack.state.actions.TogglePlay
 import net.ganin.vsevolod.clicktrack.state.actions.UpdatePlaybackStamp
@@ -44,6 +45,7 @@ private fun PlaybackStamp?.reduce(action: Action, isPlaying: Boolean): PlaybackS
     return when {
         !isPlaying -> null
         action is UpdatePlaybackStamp -> action.value
+        action is ResetPlaybackStamp -> null
         else -> this
     }
 }

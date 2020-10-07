@@ -14,4 +14,5 @@ object TogglePlay : Action
 
 object StopPlay : Action
 
+object ResetPlaybackStamp : Action
 class UpdatePlaybackStamp(val value: PlaybackStamp) : Action
