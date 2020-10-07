@@ -28,7 +28,7 @@ class ClickTrackPlayerEpic(
                 } else {
                     val isPlaying = state.isPlaying
                     val clickTrack = state.clickTrack
-                    if (isPlaying) clickTrackPlayer.play(clickTrack) else clickTrackPlayer.stop()
+                    if (isPlaying) clickTrackPlayer.play(clickTrack.clickTrack) else clickTrackPlayer.stop()
                 }
             }
     }

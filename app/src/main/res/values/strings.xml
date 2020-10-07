@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ClickTrack</string>
+    <string name="click_track_list">Your click tracks</string>
+    <string name="edit_click_track">Edit click track…</string>
 </resources>

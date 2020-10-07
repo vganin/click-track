@@ -12,10 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
@@ -37,6 +40,19 @@ fun ClickTrackListScreenView(
     state: ClickTrackListScreenState,
     dispatch: Dispatch = {},
 ) {
+    Scaffold(
+        topBar = { ClickTrackListScreenTopBar() },
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        ClickTrackListScreenContent(state, dispatch)
+    }
+}
+
+@Composable
+private fun ClickTrackListScreenContent(
+    state: ClickTrackListScreenState,
+    dispatch: Dispatch = {},
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         LazyColumnFor(
             items = state.items,
@@ -54,6 +70,13 @@ fun ClickTrackListScreenView(
             Image(asset = vectorResource(id = R.drawable.ic_add_24))
         }
     }
+}
+
+@Composable
+private fun ClickTrackListScreenTopBar() {
+    TopAppBar(title = {
+        Text(text = stringResource(id = R.string.click_track_list))
+    })
 }
 
 @Composable
@@ -81,7 +104,7 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithMeta, dis
                         .fillParentMaxWidth()
                         .height(100.dp)
                         .clickable(onClick = {
-                            dispatch(NavigateToClickTrackScreen(clickTrack.clickTrack))
+                            dispatch(NavigateToClickTrackScreen(clickTrack))
                         }),
                 )
             }

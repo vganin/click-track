@@ -13,7 +13,7 @@ import net.ganin.vsevolod.clicktrack.lib.bpm
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.redux.Epic
 import net.ganin.vsevolod.clicktrack.state.actions.AddNewClickTrack
-import net.ganin.vsevolod.clicktrack.state.actions.NavigateToAddNewClickTrackScreen
+import net.ganin.vsevolod.clicktrack.state.actions.NavigateToEditClickTrackScreen
 import net.ganin.vsevolod.clicktrack.state.utils.NewClickTrackNameSuggester
 
 class AddNewClickTrackEpic(private val newClickTrackNameSuggester: NewClickTrackNameSuggester) : Epic {
@@ -24,7 +24,7 @@ class AddNewClickTrackEpic(private val newClickTrackNameSuggester: NewClickTrack
             .map {
                 val suggestedNewClickTrackName = newClickTrackNameSuggester.suggestNewClickTrackName()
                 val newClickTrack = defaultNewClickTrack(suggestedNewClickTrackName)
-                NavigateToAddNewClickTrackScreen(newClickTrack)
+                NavigateToEditClickTrackScreen(newClickTrack)
             }
     }
 

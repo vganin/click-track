@@ -1,6 +1,5 @@
 package net.ganin.vsevolod.clicktrack.state.actions
 
-import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.ClickTrackWithMeta
 import net.ganin.vsevolod.clicktrack.redux.Action
 
@@ -13,6 +12,6 @@ object NavigateBack : NavigationAction()
 
 class NavigateToClickTrackListScreen(val data: List<ClickTrackWithMeta>) : NavigationAction()
 
-class NavigateToClickTrackScreen(val data: ClickTrack) : NavigationAction()
+class NavigateToClickTrackScreen(val data: ClickTrackWithMeta) : NavigationAction()
 
-class NavigateToAddNewClickTrackScreen(val initialClickTrack: ClickTrackWithMeta) : NavigationAction()
+class NavigateToEditClickTrackScreen(val data: ClickTrackWithMeta) : NavigationAction()

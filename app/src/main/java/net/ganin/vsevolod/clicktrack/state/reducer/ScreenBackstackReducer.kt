@@ -7,9 +7,9 @@ import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.Screen
 import net.ganin.vsevolod.clicktrack.state.ScreenBackstack
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
-import net.ganin.vsevolod.clicktrack.state.actions.NavigateToAddNewClickTrackScreen
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToClickTrackListScreen
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToClickTrackScreen
+import net.ganin.vsevolod.clicktrack.state.actions.NavigateToEditClickTrackScreen
 import net.ganin.vsevolod.clicktrack.state.actions.NavigationAction
 import net.ganin.vsevolod.clicktrack.state.pop
 import net.ganin.vsevolod.clicktrack.state.push
@@ -41,10 +41,10 @@ private fun ScreenBackstack.reduce(action: NavigationAction): ScreenBackstack {
                 )
             )
         )
-        is NavigateToAddNewClickTrackScreen -> push(
+        is NavigateToEditClickTrackScreen -> push(
             Screen.EditClickTrack(
                 state = EditClickTrackScreenState(
-                    clickTrack = action.initialClickTrack,
+                    clickTrack = action.data,
                 )
             )
         )
