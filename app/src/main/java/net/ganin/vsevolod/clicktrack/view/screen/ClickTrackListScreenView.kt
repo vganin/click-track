@@ -3,8 +3,8 @@ package net.ganin.vsevolod.clicktrack.view.screen
 import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -86,7 +86,7 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithMeta, dis
                     dispatch(RemoveClickTrack(clickTrack))
                 })
         ) {
-            Stack(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize()) {
                 Text(
                     text = clickTrack.name,
                     modifier = Modifier.padding(8.dp)

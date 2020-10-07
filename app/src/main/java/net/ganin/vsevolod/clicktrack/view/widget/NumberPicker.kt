@@ -8,9 +8,9 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.animation.FlingConfig
 import androidx.compose.foundation.animation.fling
 import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -79,7 +79,7 @@ fun NumberPicker(
 
         Spacer(modifier = Modifier.height(spacing))
 
-        Stack(
+        Box(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .offsetPx(y = mutableStateOf(coercedAnimatedOffset))
@@ -122,7 +122,7 @@ private fun Label(text: String, modifier: Modifier) {
 @Preview
 @Composable
 fun PreviewNumberPicker() {
-    Stack(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
         NumberPicker(
             state = mutableStateOf(0),
             modifier = Modifier.align(Alignment.Center)

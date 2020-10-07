@@ -1,8 +1,8 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -49,7 +49,7 @@ fun TimeSignatureView(
 @Preview
 @Composable
 fun PreviewTimeSignatureView() {
-    Stack(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
         TimeSignatureView(
             state = mutableStateOf(TimeSignature(4, 4)),
             modifier = Modifier.align(Alignment.Center)
