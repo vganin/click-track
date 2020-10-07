@@ -1,6 +1,5 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Column
@@ -74,7 +73,6 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
             modifier = Modifier
                 .fillMaxSize()
                 .dragGestureFilter(RadialDragObserver(Offset(x = widthPx / 2, y = heightPx / 2)) { angleDiff ->
-                    Log.d("TEEST", "$angleDiff")
                     buttonAngle -= angleDiff
                     onAngleChange(angleDiff)
                 }),
