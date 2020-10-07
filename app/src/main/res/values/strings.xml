@@ -2,4 +2,5 @@
     <string name="app_name">ClickTrack</string>
     <string name="click_track_list">Your click tracks</string>
     <string name="edit_click_track">Edit click track…</string>
+    <string name="delete_click_track_confirmation">Do you really want to delete this click track?</string>
 </resources>

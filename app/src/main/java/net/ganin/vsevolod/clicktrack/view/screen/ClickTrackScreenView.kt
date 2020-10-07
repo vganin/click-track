@@ -4,8 +4,10 @@ import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
+import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,6 +15,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
@@ -86,16 +90,47 @@ private fun ClickTrackScreenTopBar(
                 Icon(asset = vectorResource(id = R.drawable.ic_edit_24))
             }
 
-            var deleteEnabled by remember { mutableStateOf(true) }
+            var showDeleteConfirmation by remember { mutableStateOf(false) }
             IconButton(
                 onClick = {
-                    dispatch(RemoveClickTrack(state.clickTrack))
-                    dispatch(NavigateBack)
-                    deleteEnabled = false
+                    showDeleteConfirmation = true
                 },
-                enabled = deleteEnabled
             ) {
                 Icon(asset = vectorResource(id = R.drawable.ic_delete_24))
+            }
+
+            if (showDeleteConfirmation) {
+                val dismiss: () -> Unit = remember {
+                    { showDeleteConfirmation = false }
+                }
+                val confirm: () -> Unit = remember {
+                    {
+                        dispatch(RemoveClickTrack(state.clickTrack))
+                        dispatch(NavigateBack)
+                    }
+                }
+                AlertDialog(
+                    onDismissRequest = dismiss,
+                    text = {
+                        Text(text = stringResource(id = R.string.delete_click_track_confirmation))
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = confirm,
+                            shape = RectangleShape
+                        ) {
+                            Text(text = stringResource(id = android.R.string.ok))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = dismiss,
+                            shape = RectangleShape
+                        ) {
+                            Text(text = stringResource(id = android.R.string.no))
+                        }
+                    }
+                )
             }
         }
     )
