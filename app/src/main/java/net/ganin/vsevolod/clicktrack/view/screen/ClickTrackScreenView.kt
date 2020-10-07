@@ -5,6 +5,7 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.FabPosition
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TextButton
@@ -18,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.redux.Action
@@ -40,6 +40,13 @@ fun ClickTrackScreenView(
 ) {
     Scaffold(
         topBar = { ClickTrackScreenTopBar(state, dispatch) },
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            PlayStopView(
+                isPlaying = state.isPlaying,
+                onToggle = { dispatch(TogglePlay) },
+            )
+        },
         modifier = Modifier.fillMaxSize(),
     ) {
         ClickTrackScreenContent(state, dispatch)
@@ -59,14 +66,6 @@ private fun ClickTrackScreenContent(
                 playbackTimestamp = state.playbackStamp,
             ),
             modifier = Modifier.fillMaxSize()
-        )
-        PlayStopView(
-            isPlaying = state.isPlaying,
-            onToggle = { dispatch(TogglePlay) },
-            modifier = Modifier.constrainAs(createRef()) {
-                centerHorizontallyTo(parent)
-                bottom.linkTo(parent.bottom, margin = 16.dp)
-            }
         )
     }
 }

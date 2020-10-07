@@ -1,6 +1,6 @@
 package net.ganin.vsevolod.clicktrack.view.screen
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumnFor
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material.Card
+import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.res.stringResource
@@ -42,6 +42,12 @@ fun ClickTrackListScreenView(
 ) {
     Scaffold(
         topBar = { ClickTrackListScreenTopBar() },
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            FloatingActionButton(onClick = { dispatch(AddNewClickTrack) }) {
+                Icon(asset = vectorResource(id = R.drawable.ic_add_24))
+            }
+        },
         modifier = Modifier.fillMaxSize(),
     ) {
         ClickTrackListScreenContent(state, dispatch)
@@ -59,15 +65,6 @@ private fun ClickTrackListScreenContent(
             modifier = Modifier.weight(1f)
         ) { clickTrack ->
             ClickTrackListItem(clickTrack, dispatch)
-        }
-
-        FloatingActionButton(
-            onClick = { dispatch(AddNewClickTrack) },
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(16.dp)
-        ) {
-            Image(asset = vectorResource(id = R.drawable.ic_add_24))
         }
     }
 }

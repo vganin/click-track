@@ -30,8 +30,9 @@ fun PlayStopView(
     FloatingActionButton(
         onClick = onToggle,
         modifier = modifier,
-        icon = { PlayStopIcon(isPlaying) }
-    )
+    ) {
+        PlayStopIcon(isPlaying)
+    }
 }
 
 private enum class PlayStopIconState {
@@ -83,7 +84,6 @@ private fun PlayStopIcon(isPlaying: Boolean) {
     )
 }
 
-@Composable
 private fun iconAsset(a: Offset, b: Offset, c: Offset, d: Offset): VectorAsset {
     return VectorAssetBuilder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)
         .addPath(
@@ -94,7 +94,7 @@ private fun iconAsset(a: Offset, b: Offset, c: Offset, d: Offset): VectorAsset {
                 .lineTo(d)
                 .close()
                 .getNodes(),
-            fill = SolidColor(Color.Black)
+            fill = SolidColor(Color.White)
         )
         .build()
 }
