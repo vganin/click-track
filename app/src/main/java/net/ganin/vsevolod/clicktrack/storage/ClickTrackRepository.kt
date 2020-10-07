@@ -14,21 +14,25 @@ class ClickTrackRepository(
     private val database: Database = Database(AndroidSqliteDriver(Database.Schema, context, "click_track.db")),
     private val json: Json = Json
 ) {
+    fun getAll(): List<ClickTrackWithMeta> {
+        return database.sqlClickTrackQueries.getAll().executeAsList()
+            .map { it.toCommon() }
+    }
+
+    fun getAllNames(): List<String> {
+        return database.sqlClickTrackQueries.getAllNames().executeAsList()
+    }
+
+    fun getByName(name: String): ClickTrackWithMeta? {
+        return database.sqlClickTrackQueries.getByName(name).executeAsOneOrNull()?.toCommon()
+    }
+
     fun put(clickTrack: ClickTrackWithMeta) {
         database.sqlClickTrackQueries.put(clickTrack.toStorage())
     }
 
     fun remove(clickTrack: ClickTrackWithMeta) {
         database.sqlClickTrackQueries.remove(clickTrack.name)
-    }
-
-    fun all(): List<ClickTrackWithMeta> {
-        return database.sqlClickTrackQueries.getAll().executeAsList()
-            .map { it.toCommon() }
-    }
-
-    fun allNames(): List<String> {
-        return database.sqlClickTrackQueries.getAllNames().executeAsList()
     }
 
     private fun ClickTrackWithMeta.toStorage(): StorageClickTrack {

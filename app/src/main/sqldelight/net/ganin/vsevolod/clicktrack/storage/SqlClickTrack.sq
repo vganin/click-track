@@ -9,6 +9,9 @@ SELECT * FROM ClickTrack;
 getAllNames:
 SELECT name FROM ClickTrack;
 
+getByName:
+SELECT * FROM ClickTrack WHERE name = (:name);
+
 put:
 INSERT OR REPLACE INTO ClickTrack VALUES ?;
 

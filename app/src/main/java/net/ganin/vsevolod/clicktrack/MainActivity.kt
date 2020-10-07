@@ -15,7 +15,7 @@ import net.ganin.vsevolod.clicktrack.redux.EpicMiddleware
 import net.ganin.vsevolod.clicktrack.redux.Store
 import net.ganin.vsevolod.clicktrack.state.AppState
 import net.ganin.vsevolod.clicktrack.state.Screen
-import net.ganin.vsevolod.clicktrack.state.actions.LoadDataAction
+import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackListLoadRequestAction
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
 import net.ganin.vsevolod.clicktrack.state.epic.AddNewClickTrackEpic
 import net.ganin.vsevolod.clicktrack.state.epic.ClickTrackPlayerEpic
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             store.state.collect { render(it) }
         }
 
-        store.dispatch(LoadDataAction)
+        store.dispatch(ClickTrackListLoadRequestAction)
     }
 
     override fun onDestroy() {
