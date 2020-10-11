@@ -6,7 +6,7 @@ import net.ganin.vsevolod.clicktrack.lib.android.AndroidParcelize
 
 @Serializable
 @AndroidParcelize
-public class ClickTrackWithMeta(
+public data class ClickTrackWithMeta(
     public val name: String,
     public val clickTrack: ClickTrack
 ) : AndroidParcelable

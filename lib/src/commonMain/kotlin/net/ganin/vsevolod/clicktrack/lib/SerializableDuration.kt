@@ -14,7 +14,7 @@ import kotlin.time.nanoseconds
 
 @Serializable(with = DurationSerializer::class)
 @AndroidParcelize
-public class SerializableDuration(
+public data class SerializableDuration(
     public val value: Duration
 ) : AndroidParcelable
 

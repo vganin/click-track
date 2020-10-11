@@ -17,6 +17,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
@@ -24,6 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.ClickTrackWithMeta
@@ -60,6 +64,25 @@ fun EditClickTrackScreenView(
     ) {
         EditClickTrackScreenContent(nameState, loopState, cuesState, dispatch)
     }
+
+    val name = nameState.value
+    val loop = loopState.value
+    val cues = cuesState.map { it.value }
+    onCommit(name, loop, cues) {
+        GlobalScope.launch(Dispatchers.Main) {
+            dispatch(
+                SaveClickTrack(
+                    clickTrack = ClickTrackWithMeta(
+                        name = name,
+                        clickTrack = ClickTrack(
+                            cues = cues,
+                            loop = loop
+                        )
+                    )
+                )
+            )
+        }
+    }
 }
 
 @Composable
@@ -86,19 +109,6 @@ private fun EditClickTrackScreenContent(
 
         scrollState.scrollTo(scrollState.maxValue)
     }
-
-    // Intentionally save on every re-composition
-    dispatch(
-        SaveClickTrack(
-            clickTrack = ClickTrackWithMeta(
-                name = nameState.value,
-                clickTrack = ClickTrack(
-                    cues = cuesState.map { it.value },
-                    loop = loopState.value
-                )
-            )
-        )
-    )
 }
 
 @Composable

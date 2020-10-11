@@ -8,7 +8,7 @@ import kotlin.time.minutes
 
 @Serializable
 @AndroidParcelize
-public class BeatsPerMinute(
+public data class BeatsPerMinute(
     public val value: Int
 ) : AndroidParcelable {
     init {

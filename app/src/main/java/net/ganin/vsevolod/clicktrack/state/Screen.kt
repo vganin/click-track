@@ -12,21 +12,21 @@ sealed class Screen : Parcelable {
     abstract fun reduce(action: Action): Screen
 
     @Parcelize
-    class ClickTrackList(val state: ClickTrackListScreenState) : Screen() {
+    data class ClickTrackList(val state: ClickTrackListScreenState) : Screen() {
         override fun reduce(action: Action): Screen {
             return reduceClickTrackListScreen(action)
         }
     }
 
     @Parcelize
-    class ClickTrack(val state: ClickTrackScreenState) : Screen() {
+    data class ClickTrack(val state: ClickTrackScreenState) : Screen() {
         override fun reduce(action: Action): Screen {
             return reduceClickTrackScreen(action)
         }
     }
 
     @Parcelize
-    class EditClickTrack(val state: EditClickTrackScreenState) : Screen() {
+    data class EditClickTrack(val state: EditClickTrackScreenState) : Screen() {
         override fun reduce(action: Action): Screen {
             return reduceEditClickTrackScreen(action)
         }

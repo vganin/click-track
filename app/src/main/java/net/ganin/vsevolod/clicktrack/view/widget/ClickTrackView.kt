@@ -28,7 +28,7 @@ import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlin.time.Duration
 import kotlin.time.seconds
 
-class ClickTrackViewState(
+data class ClickTrackViewState(
     val clickTrack: ClickTrack,
     val drawTextMarks: Boolean,
     val playbackTimestamp: PlaybackStamp?,

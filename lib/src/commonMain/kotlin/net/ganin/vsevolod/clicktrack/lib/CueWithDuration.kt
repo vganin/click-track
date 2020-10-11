@@ -7,7 +7,7 @@ import kotlin.time.Duration
 
 @Serializable
 @AndroidParcelize
-public class CueWithDuration(
+public data class CueWithDuration(
     public val duration: CueDuration,
     public val cue: Cue
 ) : AndroidParcelable {

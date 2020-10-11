@@ -6,7 +6,7 @@ import net.ganin.vsevolod.clicktrack.lib.android.AndroidParcelize
 
 @Serializable
 @AndroidParcelize
-public class TimeSignature(
+public data class TimeSignature(
     public val noteCount: Int,
     public val noteDuration: Int
 ) : AndroidParcelable {

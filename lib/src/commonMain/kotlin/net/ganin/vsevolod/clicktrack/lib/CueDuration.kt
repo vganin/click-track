@@ -9,9 +9,9 @@ public sealed class CueDuration : AndroidParcelable {
 
     @Serializable
     @AndroidParcelize
-    public class Beats(public val value: Int) : CueDuration()
+    public data class Beats(public val value: Int) : CueDuration()
 
     @Serializable
     @AndroidParcelize
-    public class Time(public val value: SerializableDuration) : CueDuration()
+    public data class Time(public val value: SerializableDuration) : CueDuration()
 }

@@ -6,7 +6,7 @@ import net.ganin.vsevolod.clicktrack.lib.android.AndroidParcelize
 
 @Serializable
 @AndroidParcelize
-public class Cue(
+public data class Cue(
     public val bpm: BeatsPerMinute,
     public val timeSignature: TimeSignature
 ) : AndroidParcelable

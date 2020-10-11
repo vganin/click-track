@@ -5,4 +5,4 @@ import kotlinx.android.parcel.Parcelize
 import net.ganin.vsevolod.clicktrack.lib.ClickTrackWithMeta
 
 @Parcelize
-class ClickTrackListScreenState(val items: List<ClickTrackWithMeta>) : Parcelable
+data class ClickTrackListScreenState(val items: List<ClickTrackWithMeta>) : Parcelable
