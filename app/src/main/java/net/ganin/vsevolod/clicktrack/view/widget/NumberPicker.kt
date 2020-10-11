@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawOpacity
@@ -32,6 +33,7 @@ import kotlin.math.abs
 @Composable
 fun NumberPicker(
     state: MutableState<Int>,
+    range: IntRange? = null,
     modifier: Modifier = Modifier
 ) {
     val numbersColumnHeight = 36.dp
@@ -40,7 +42,17 @@ fun NumberPicker(
 
     fun animatedStateValue(offset: Float): Int = state.value - (offset / halvedNumbersColumnHeightPx).toInt()
 
-    val animatedOffset = animatedFloat(initVal = 0f)
+    val animatedOffset = animatedFloat(initVal = 0f).apply {
+        if (range != null) {
+            val offsetRange = remember(state.value, range) {
+                val value = state.value
+                val first = -(range.last - value) * halvedNumbersColumnHeightPx
+                val last = -(range.first - value) * halvedNumbersColumnHeightPx
+                first..last
+            }
+            setBounds(offsetRange.start, offsetRange.endInclusive)
+        }
+    }
     val coercedAnimatedOffset = animatedOffset.value % halvedNumbersColumnHeightPx
     val animatedStateValue = animatedStateValue(animatedOffset.value)
 
@@ -84,20 +96,21 @@ fun NumberPicker(
                 .align(Alignment.CenterHorizontally)
                 .offsetPx(y = mutableStateOf(coercedAnimatedOffset))
         ) {
+            val baseLabelModifier = Modifier.align(Alignment.Center)
             Label(
                 text = (animatedStateValue - 1).toString(),
-                modifier = Modifier
+                modifier = baseLabelModifier
                     .offset(y = -halvedNumbersColumnHeight)
                     .drawOpacity(coercedAnimatedOffset / halvedNumbersColumnHeightPx)
             )
             Label(
                 text = animatedStateValue.toString(),
-                modifier = Modifier
+                modifier = baseLabelModifier
                     .drawOpacity(1 - abs(coercedAnimatedOffset) / halvedNumbersColumnHeightPx)
             )
             Label(
                 text = (animatedStateValue + 1).toString(),
-                modifier = Modifier
+                modifier = baseLabelModifier
                     .offset(y = halvedNumbersColumnHeight)
                     .drawOpacity(-coercedAnimatedOffset / halvedNumbersColumnHeightPx)
             )
@@ -124,7 +137,8 @@ private fun Label(text: String, modifier: Modifier) {
 fun PreviewNumberPicker() {
     Box(modifier = Modifier.fillMaxSize()) {
         NumberPicker(
-            state = mutableStateOf(0),
+            state = mutableStateOf(9),
+            range = 0..10,
             modifier = Modifier.align(Alignment.Center)
         )
     }
