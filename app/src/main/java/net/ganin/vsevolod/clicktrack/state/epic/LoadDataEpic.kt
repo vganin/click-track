@@ -35,7 +35,7 @@ class LoadDataEpic(
                 .map { it.backstack.frontScreen() }
                 .distinctUntilChangedBy { it?.javaClass }
                 .filterIsInstance<Screen.ClickTrack>()
-                .map { ClickTrackLoadRequestAction(it.state.clickTrack.name) },
+                .map { ClickTrackLoadRequestAction(it.state.clickTrack.id) },
 
             actions
                 .filterIsInstance<ClickTrackListLoadRequestAction>()
@@ -44,7 +44,7 @@ class LoadDataEpic(
 
             actions
                 .filterIsInstance<ClickTrackLoadRequestAction>()
-                .mapNotNull { clickTrackRepository.getByName(it.name) }
+                .mapNotNull { clickTrackRepository.get(it.id) }
                 .map(::ClickTrackDataLoadedAction),
         )
     }

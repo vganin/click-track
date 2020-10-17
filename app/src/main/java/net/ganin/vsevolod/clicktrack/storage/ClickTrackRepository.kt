@@ -6,7 +6,8 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.ganin.vsevolod.clicktrack.Database
-import net.ganin.vsevolod.clicktrack.lib.ClickTrackWithMeta
+import net.ganin.vsevolod.clicktrack.lib.ClickTrack
+import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.storage.ClickTrack as StorageClickTrack
 
 class ClickTrackRepository(
@@ -14,7 +15,7 @@ class ClickTrackRepository(
     private val database: Database = Database(AndroidSqliteDriver(Database.Schema, context, "click_track.db")),
     private val json: Json = Json
 ) {
-    fun getAll(): List<ClickTrackWithMeta> {
+    fun getAll(): List<ClickTrackWithId> {
         return database.sqlClickTrackQueries.getAll().executeAsList()
             .map { it.toCommon() }
     }
@@ -23,29 +24,46 @@ class ClickTrackRepository(
         return database.sqlClickTrackQueries.getAllNames().executeAsList()
     }
 
-    fun getByName(name: String): ClickTrackWithMeta? {
-        return database.sqlClickTrackQueries.getByName(name).executeAsOneOrNull()?.toCommon()
+    fun get(id: Long): ClickTrackWithId? {
+        return database.sqlClickTrackQueries.getById(id).executeAsOneOrNull()
+            ?.toCommon()
     }
 
-    fun put(clickTrack: ClickTrackWithMeta) {
-        database.sqlClickTrackQueries.put(clickTrack.toStorage())
-    }
-
-    fun remove(clickTrack: ClickTrackWithMeta) {
-        database.sqlClickTrackQueries.remove(clickTrack.name)
-    }
-
-    private fun ClickTrackWithMeta.toStorage(): StorageClickTrack {
-        return StorageClickTrack(
-            name = name,
-            serialized = json.encodeToString(clickTrack)
+    fun insert(clickTrack: ClickTrack): ClickTrackWithId {
+        val insertedRowId: Long = database.sqlClickTrackQueries.transactionWithResult {
+            database.sqlClickTrackQueries.insert(
+                name = clickTrack.name,
+                serializedValue = json.encodeToString(clickTrack)
+            )
+            database.sqlClickTrackQueries.lastRowId().executeAsOne()
+        }
+        return ClickTrackWithId(
+            id = insertedRowId,
+            value = clickTrack
         )
     }
 
-    private fun StorageClickTrack.toCommon(): ClickTrackWithMeta {
-        return ClickTrackWithMeta(
-            name = name,
-            clickTrack = json.decodeFromString(serialized)
+    fun update(id: Long, clickTrack: ClickTrack) {
+        database.sqlClickTrackQueries.update(
+            id = id,
+            name = clickTrack.name,
+            serializedValue = clickTrack.serializeToString()
         )
     }
+
+    fun update(clickTrackWithId: ClickTrackWithId) = update(clickTrackWithId.id, clickTrackWithId.value)
+
+    fun remove(id: Long) {
+        database.sqlClickTrackQueries.removeById(id)
+    }
+
+    private fun StorageClickTrack.toCommon(): ClickTrackWithId {
+        return ClickTrackWithId(
+            id = id,
+            value = serializedValue.deserializeToClickTrack()
+        )
+    }
+
+    private fun ClickTrack.serializeToString(): String = json.encodeToString(this)
+    private fun String.deserializeToClickTrack(): ClickTrack = json.decodeFromString(this)
 }

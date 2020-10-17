@@ -1,6 +1,6 @@
 package net.ganin.vsevolod.clicktrack.state.reducer
 
-import net.ganin.vsevolod.clicktrack.lib.ClickTrackWithMeta
+import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.state.ClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
@@ -26,9 +26,9 @@ private fun ClickTrackScreenState.reduce(action: Action): ClickTrackScreenState 
     )
 }
 
-private fun ClickTrackWithMeta.reduce(action: Action): ClickTrackWithMeta {
+private fun ClickTrackWithId.reduce(action: Action): ClickTrackWithId {
     return when (action) {
-        is ClickTrackDataLoadedAction -> if (action.data.name == name) action.data else this
+        is ClickTrackDataLoadedAction -> if (action.data.id == id) action.data else this
         else -> this
     }
 }

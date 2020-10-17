@@ -49,19 +49,18 @@ fun ClickTrackScreenView(
         },
         modifier = Modifier.fillMaxSize(),
     ) {
-        ClickTrackScreenContent(state, dispatch)
+        ClickTrackScreenContent(state)
     }
 }
 
 @Composable
 private fun ClickTrackScreenContent(
     state: ClickTrackScreenState,
-    dispatch: (Action) -> Unit = {}
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         ClickTrackView(
             state = ClickTrackViewState(
-                clickTrack = state.clickTrack.clickTrack,
+                clickTrack = state.clickTrack.value,
                 drawTextMarks = true,
                 playbackTimestamp = state.playbackStamp,
             ),
@@ -76,7 +75,7 @@ private fun ClickTrackScreenTopBar(
     dispatch: (Action) -> Unit = {}
 ) {
     TopAppBar(
-        title = { Text(text = state.clickTrack.name) },
+        title = { Text(text = state.clickTrack.value.name) },
         actions = {
             var editEnabled by remember { mutableStateOf(true) }
             IconButton(
@@ -104,7 +103,7 @@ private fun ClickTrackScreenTopBar(
                 }
                 val confirm: () -> Unit = remember {
                     {
-                        dispatch(RemoveClickTrack(state.clickTrack))
+                        dispatch(RemoveClickTrack(state.clickTrack.id))
                         dispatch(NavigateBack)
                     }
                 }

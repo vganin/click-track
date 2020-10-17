@@ -23,7 +23,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
-import net.ganin.vsevolod.clicktrack.lib.ClickTrackWithMeta
+import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.ClickTrackListScreenState
 import net.ganin.vsevolod.clicktrack.state.actions.AddNewClickTrack
@@ -77,23 +77,23 @@ private fun ClickTrackListScreenTopBar() {
 }
 
 @Composable
-private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithMeta, dispatch: Dispatch) {
+private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispatch: Dispatch) {
     WithConstraints {
         Card(
             modifier = Modifier
                 .padding(8.dp)
                 .swipeToRemove(constraints = constraints, onDelete = {
-                    dispatch(RemoveClickTrack(clickTrack))
+                    dispatch(RemoveClickTrack(clickTrack.id))
                 })
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    text = clickTrack.name,
+                    text = clickTrack.value.name,
                     modifier = Modifier.padding(8.dp)
                 )
                 ClickTrackView(
                     state = ClickTrackViewState(
-                        clickTrack.clickTrack,
+                        clickTrack.value,
                         drawTextMarks = false,
                         playbackTimestamp = null
                     ),

@@ -122,11 +122,11 @@ private fun Cue.toText() = "${bpm.value} bpm ${timeSignature.noteCount}/${timeSi
 fun PreviewClickTrackView() {
     ClickTrackView(
         ClickTrackViewState(
-            clickTrack = PREVIEW_CLICK_TRACK_1.clickTrack,
+            clickTrack = PREVIEW_CLICK_TRACK_1.value,
             drawTextMarks = true,
             playbackTimestamp = PlaybackStamp(
                 timestamp = SerializableDuration(1.seconds),
-                correspondingCue = PREVIEW_CLICK_TRACK_1.clickTrack.cues[0].cue
+                correspondingCue = PREVIEW_CLICK_TRACK_1.value.cues[0].cue
             )
         ),
         modifier = Modifier.fillMaxSize()

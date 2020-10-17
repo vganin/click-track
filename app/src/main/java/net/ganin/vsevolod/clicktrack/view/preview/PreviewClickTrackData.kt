@@ -1,16 +1,17 @@
 package net.ganin.vsevolod.clicktrack.view.preview
 
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
-import net.ganin.vsevolod.clicktrack.lib.ClickTrackWithMeta
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
 import net.ganin.vsevolod.clicktrack.lib.CueWithDuration
 import net.ganin.vsevolod.clicktrack.lib.TimeSignature
 import net.ganin.vsevolod.clicktrack.lib.bpm
+import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 
-val PREVIEW_CLICK_TRACK_1 = ClickTrackWithMeta(
-    name = "Preview 1",
-    clickTrack = ClickTrack(
+val PREVIEW_CLICK_TRACK_1 = ClickTrackWithId(
+    id = 1,
+    value = ClickTrack(
+        name = "Preview 1",
         cues = listOf(
             CueWithDuration(
                 duration = CueDuration.Beats(4),
@@ -45,9 +46,10 @@ val PREVIEW_CLICK_TRACK_1 = ClickTrackWithMeta(
     ),
 )
 
-val PREVIEW_CLICK_TRACK_2 = ClickTrackWithMeta(
-    name = "Preview 2",
-    clickTrack = ClickTrack(
+val PREVIEW_CLICK_TRACK_2 = ClickTrackWithId(
+    id = 2,
+    value = ClickTrack(
+        name = "Preview 2",
         cues = listOf(
             CueWithDuration(
                 duration = CueDuration.Beats(2),

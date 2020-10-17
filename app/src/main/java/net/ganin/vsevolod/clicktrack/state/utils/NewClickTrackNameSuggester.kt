@@ -4,7 +4,7 @@ import net.ganin.vsevolod.clicktrack.storage.ClickTrackRepository
 
 class NewClickTrackNameSuggester(private val storage: ClickTrackRepository) {
 
-    fun suggestNewClickTrackName(): String {
+    fun suggest(): String {
         val maxUsedDefaultNameNumber = storage.getAllNames()
             .asSequence()
             .mapNotNull(::findDefaultNameNumber)

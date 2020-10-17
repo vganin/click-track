@@ -17,7 +17,6 @@ import net.ganin.vsevolod.clicktrack.state.AppState
 import net.ganin.vsevolod.clicktrack.state.Screen
 import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackListLoadRequestAction
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
-import net.ganin.vsevolod.clicktrack.state.epic.AddNewClickTrackEpic
 import net.ganin.vsevolod.clicktrack.state.epic.ClickTrackPlayerEpic
 import net.ganin.vsevolod.clicktrack.state.epic.FinishAppEpic
 import net.ganin.vsevolod.clicktrack.state.epic.LoadDataEpic
@@ -75,8 +74,7 @@ class MainActivity : AppCompatActivity() {
                     dispatch = store::dispatch,
                 )
             ),
-            AddNewClickTrackEpic(NewClickTrackNameSuggester(clickTrackRepository)),
-            SaveClickTrackEpic(clickTrackRepository),
+            SaveClickTrackEpic(clickTrackRepository, NewClickTrackNameSuggester(clickTrackRepository)),
             RemoveClickTrackEpic(clickTrackRepository)
         )
 

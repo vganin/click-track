@@ -15,7 +15,7 @@ class RemoveClickTrackEpic(private val storage: ClickTrackRepository) : Epic {
         return actions
             .filterIsInstance<RemoveClickTrack>()
             .map {
-                storage.remove(it.clickTrack)
+                storage.remove(it.id)
                 ClickTrackListLoadRequestAction
             }
     }

@@ -8,6 +8,7 @@ import kotlin.time.Duration
 @Serializable
 @AndroidParcelize
 public data class ClickTrack(
+    public val name: String,
     public val cues: List<CueWithDuration>,
     public val loop: Boolean
 ) : AndroidParcelable {

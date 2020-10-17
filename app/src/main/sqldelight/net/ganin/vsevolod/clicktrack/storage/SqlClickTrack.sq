@@ -1,7 +1,11 @@
 CREATE TABLE ClickTrack (
-    name TEXT NOT NULL PRIMARY KEY,
-    serialized TEXT NOT NULL
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    serializedValue TEXT NOT NULL
 );
+
+lastRowId:
+SELECT last_insert_rowid();
 
 getAll:
 SELECT * FROM ClickTrack;
@@ -9,11 +13,14 @@ SELECT * FROM ClickTrack;
 getAllNames:
 SELECT name FROM ClickTrack;
 
-getByName:
-SELECT * FROM ClickTrack WHERE name = (:name);
+getById:
+SELECT * FROM ClickTrack WHERE id = (?);
 
-put:
-INSERT OR REPLACE INTO ClickTrack VALUES ?;
+insert:
+INSERT INTO ClickTrack (name, serializedValue) VALUES (?, ?);
 
-remove:
-DELETE FROM ClickTrack WHERE name = ?;
+update:
+UPDATE ClickTrack SET name = ?, serializedValue = ? WHERE id = ?;
+
+removeById:
+DELETE FROM ClickTrack WHERE id = ?;

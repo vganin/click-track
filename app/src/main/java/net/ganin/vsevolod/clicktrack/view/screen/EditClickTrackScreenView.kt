@@ -30,16 +30,16 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
-import net.ganin.vsevolod.clicktrack.lib.ClickTrackWithMeta
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
 import net.ganin.vsevolod.clicktrack.lib.CueWithDuration
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
 import net.ganin.vsevolod.clicktrack.lib.TimeSignature
 import net.ganin.vsevolod.clicktrack.lib.bpm
+import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
-import net.ganin.vsevolod.clicktrack.state.actions.SaveClickTrack
+import net.ganin.vsevolod.clicktrack.state.actions.UpdateClickTrack
 import net.ganin.vsevolod.clicktrack.view.widget.EditCueWithDurationView
 import kotlin.time.minutes
 
@@ -48,9 +48,9 @@ fun EditClickTrackScreenView(
     state: EditClickTrackScreenState,
     dispatch: Dispatch = {}
 ) {
-    val nameState = remember { mutableStateOf(state.clickTrack.name) }
-    val loopState = remember { mutableStateOf(state.clickTrack.clickTrack.loop) }
-    val cuesState = remember { state.clickTrack.clickTrack.cues.map { mutableStateOf(it) }.toMutableStateList() }
+    val nameState = remember { mutableStateOf(state.clickTrack.value.name) }
+    val loopState = remember { mutableStateOf(state.clickTrack.value.loop) }
+    val cuesState = remember { state.clickTrack.value.cues.map { mutableStateOf(it) }.toMutableStateList() }
 
     Scaffold(
         topBar = { EditClickTrackScreenTopBar() },
@@ -62,7 +62,7 @@ fun EditClickTrackScreenView(
         },
         modifier = Modifier.fillMaxSize(),
     ) {
-        EditClickTrackScreenContent(nameState, loopState, cuesState, dispatch)
+        EditClickTrackScreenContent(nameState, loopState, cuesState)
     }
 
     val name = nameState.value
@@ -71,12 +71,12 @@ fun EditClickTrackScreenView(
     onCommit(name, loop, cues) {
         GlobalScope.launch(Dispatchers.Main) {
             dispatch(
-                SaveClickTrack(
-                    clickTrack = ClickTrackWithMeta(
-                        name = name,
-                        clickTrack = ClickTrack(
+                UpdateClickTrack(
+                    clickTrack = state.clickTrack.copy(
+                        value = ClickTrack(
+                            name = name,
                             cues = cues,
-                            loop = loop
+                            loop = loop,
                         )
                     )
                 )
@@ -90,7 +90,6 @@ private fun EditClickTrackScreenContent(
     nameState: MutableState<String>,
     loopState: MutableState<Boolean>,
     cuesState: List<MutableState<CueWithDuration>>,
-    dispatch: Dispatch = {}
 ) {
     val scrollState = rememberScrollState(0f)
     ScrollableColumn(scrollState = scrollState, modifier = Modifier.fillMaxSize()) {
@@ -123,9 +122,10 @@ private fun EditClickTrackScreenTopBar() {
 fun PreviewEditClickTrackScreenView() {
     EditClickTrackScreenView(
         state = EditClickTrackScreenState(
-            clickTrack = ClickTrackWithMeta(
-                name = "Good click track",
-                clickTrack = ClickTrack(
+            clickTrack = ClickTrackWithId(
+                id = 0,
+                value = ClickTrack(
+                    name = "Good click track",
                     cues = listOf(
                         CueWithDuration(
                             cue = Cue(
