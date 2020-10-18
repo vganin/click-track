@@ -1,122 +1,90 @@
 package net.ganin.vsevolod.clicktrack
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.platform.setContent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.AbstractSavedStateViewModelFactory
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import net.ganin.vsevolod.clicktrack.audio.ClickTrackPlayer
+import net.ganin.vsevolod.clicktrack.di.module.ActivityScopedAppStateEpic
+import net.ganin.vsevolod.clicktrack.redux.Action
+import net.ganin.vsevolod.clicktrack.redux.Epic
 import net.ganin.vsevolod.clicktrack.redux.EpicMiddleware
 import net.ganin.vsevolod.clicktrack.redux.Store
 import net.ganin.vsevolod.clicktrack.state.AppState
-import net.ganin.vsevolod.clicktrack.state.Screen
 import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackListLoadRequestAction
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
-import net.ganin.vsevolod.clicktrack.state.epic.ClickTrackPlayerEpic
-import net.ganin.vsevolod.clicktrack.state.epic.FinishAppEpic
-import net.ganin.vsevolod.clicktrack.state.epic.LoadDataEpic
-import net.ganin.vsevolod.clicktrack.state.epic.RemoveClickTrackEpic
-import net.ganin.vsevolod.clicktrack.state.epic.SaveClickTrackEpic
 import net.ganin.vsevolod.clicktrack.state.frontScreen
-import net.ganin.vsevolod.clicktrack.state.reducer.reduce
-import net.ganin.vsevolod.clicktrack.state.utils.NewClickTrackNameSuggester
-import net.ganin.vsevolod.clicktrack.storage.ClickTrackRepository
 import net.ganin.vsevolod.clicktrack.view.ContentView
-import net.ganin.vsevolod.clicktrack.view.screen.ClickTrackListScreenView
-import net.ganin.vsevolod.clicktrack.view.screen.ClickTrackScreenView
-import net.ganin.vsevolod.clicktrack.view.screen.EditClickTrackScreenView
-import java.util.concurrent.Executors
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    private val mainScope = MainScope()
-    private val backgroundScope = CoroutineScope(Dispatchers.Default)
-
-    private lateinit var store: Store<AppState>
-
-    private val clickTrackPlayerDispatcher = Executors.newSingleThreadExecutor { runnable ->
-        Thread(runnable, "click_track").apply {
-            priority = Thread.MAX_PRIORITY
-        }
-    }.asCoroutineDispatcher()
-
-    private val clickTrackRepository = ClickTrackRepository(this)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val initialState = savedInstanceState?.getParcelable(SavedStateConst.APP_STATE_KEY)
-            ?: AppState.INITIAL
-
-        val epicMiddleware = EpicMiddleware<AppState>(Dispatchers.Default)
-
-        store = Store(
-            initialState,
-            AppState::reduce,
-            backgroundScope,
-            epicMiddleware
-        )
-
-        epicMiddleware.register(
-            FinishAppEpic(this, store, Dispatchers.Main),
-            LoadDataEpic(store, clickTrackRepository),
-            ClickTrackPlayerEpic(
-                store,
-                ClickTrackPlayer(
-                    context = this@MainActivity,
-                    mainCoroutineScope = mainScope,
-                    playerCoroutineContext = clickTrackPlayerDispatcher,
-                    dispatch = store::dispatch,
-                )
-            ),
-            SaveClickTrackEpic(clickTrackRepository, NewClickTrackNameSuggester(clickTrackRepository)),
-            RemoveClickTrackEpic(clickTrackRepository)
-        )
-
-        mainScope.launch {
-            // FIXME: Don't use method reference here because of compiler crash for now
-            store.state.collect { render(it) }
-        }
-
-        store.dispatch(ClickTrackListLoadRequestAction)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        backgroundScope.cancel()
-        mainScope.cancel()
-        clickTrackPlayerDispatcher.close()
-    }
-
-    override fun onBackPressed() {
-        store.dispatch(NavigateBack)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putParcelable(SavedStateConst.APP_STATE_KEY, store.state.value)
-    }
-
-    private fun render(appState: AppState) {
-        val frontScreen = appState.backstack.frontScreen() ?: return
-
-        setContent {
-            ContentView {
-                when (frontScreen) {
-                    is Screen.ClickTrackList -> ClickTrackListScreenView(frontScreen.state, store::dispatch)
-                    is Screen.ClickTrack -> ClickTrackScreenView(frontScreen.state, store::dispatch)
-                    is Screen.EditClickTrack -> EditClickTrackScreenView(frontScreen.state, store::dispatch)
-                }
+    private val viewModel: MainViewModel by viewModels {
+        object : AbstractSavedStateViewModelFactory(this@MainActivity, null) {
+            override fun <T : ViewModel?> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T {
+                require(modelClass == MainViewModel::class.java)
+                @Suppress("UNCHECKED_CAST") // Checked earlier
+                return MainViewModel(application as Application, handle) as T
             }
         }
     }
 
-    private object SavedStateConst {
-        const val APP_STATE_KEY = "app_state"
+    @Inject
+    lateinit var appStateStore: Store<AppState>
+
+    @Inject
+    lateinit var epicMiddleware: EpicMiddleware<AppState>
+
+    @Inject
+    @ActivityScopedAppStateEpic
+    lateinit var epics: Set<@JvmSuppressWildcards Epic>
+
+    private val renderScope = MainScope()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        inject()
+
+        epicMiddleware.register(*epics.toTypedArray())
+
+        renderScope.launch {
+            // FIXME: Don't use method reference here because of compiler crash for now
+            appStateStore.state.collect { render(it) }
+        }
+
+        appStateStore.dispatch(ClickTrackListLoadRequestAction)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        epicMiddleware.unregister(*epics.toTypedArray())
+        renderScope.cancel()
+    }
+
+    override fun onBackPressed() {
+        appStateStore.dispatch(NavigateBack)
+    }
+
+    private fun inject() {
+        viewModel.daggerComponent.activityComponentBuilder()
+            .activity(this)
+            .build()
+            .inject(this)
+    }
+
+    private fun render(appState: AppState) {
+        val frontScreen = appState.backstack.frontScreen() ?: return
+        setContent {
+            ContentView(frontScreen, ::dispatch)
+        }
+    }
+
+    private fun dispatch(action: Action) = appStateStore.dispatch(action)
 }

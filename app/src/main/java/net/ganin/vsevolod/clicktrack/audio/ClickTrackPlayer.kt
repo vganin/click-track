@@ -10,37 +10,47 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.audio.ClickTrackPlayer.Const.CLICK_MINIMAL_INTERVAL
+import net.ganin.vsevolod.clicktrack.di.component.ViewModelScoped
+import net.ganin.vsevolod.clicktrack.di.module.ApplicationContext
+import net.ganin.vsevolod.clicktrack.di.module.MainDispatcher
+import net.ganin.vsevolod.clicktrack.di.module.PlayerDispatcher
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.CueWithDuration
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
 import net.ganin.vsevolod.clicktrack.lib.interval
-import net.ganin.vsevolod.clicktrack.redux.Dispatch
+import net.ganin.vsevolod.clicktrack.redux.Action
+import net.ganin.vsevolod.clicktrack.redux.Store
+import net.ganin.vsevolod.clicktrack.state.AppState
 import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.state.actions.ResetPlaybackStamp
 import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
 import net.ganin.vsevolod.clicktrack.state.actions.UpdatePlaybackStamp
 import net.ganin.vsevolod.clicktrack.utils.coroutine.delay
-import kotlin.coroutines.CoroutineContext
+import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.minutes
 
-class ClickTrackPlayer(
-    private val context: Context,
-    private val mainCoroutineScope: CoroutineScope,
-    private val playerCoroutineContext: CoroutineContext,
-    private val dispatch: Dispatch
+@ViewModelScoped
+class ClickTrackPlayer @Inject constructor(
+    @ApplicationContext private val context: Context,
+    @MainDispatcher private val mainScope: CoroutineScope,
+    @PlayerDispatcher private val playerScope: CoroutineScope,
+    private val store: Store<AppState>
 ) {
     private var playerJob: Job? = null
 
-    fun play(clickTrack: ClickTrack) = mainCoroutineScope.launch {
+    fun play(clickTrack: ClickTrack): Job = mainScope.launch {
         playerJob?.cancel()
-        playerJob = launch(playerCoroutineContext) {
-            suspendPlay(clickTrack)
-            dispatch(StopPlay)
+        playerJob = launch(playerScope.coroutineContext) {
+            try {
+                suspendPlay(clickTrack)
+            } finally {
+                dispatch(StopPlay)
+            }
         }
     }
 
-    fun stop() = mainCoroutineScope.launch {
+    fun stop() = mainScope.launch {
         playerJob?.cancel()
     }
 
@@ -88,6 +98,8 @@ class ClickTrackPlayer(
     private fun MediaPlayer.tryAttachAgc(): AutomaticGainControl? {
         return AutomaticGainControl.create(audioSessionId)
     }
+
+    private fun dispatch(action: Action) = store.dispatch(action)
 
     private object Const {
         val CLICK_MINIMAL_INTERVAL = 1.minutes / 1000 // Max. 1000 bpm

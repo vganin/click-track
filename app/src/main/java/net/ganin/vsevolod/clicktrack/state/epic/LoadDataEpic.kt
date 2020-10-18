@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.merge
+import net.ganin.vsevolod.clicktrack.di.component.ViewModelScoped
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.redux.Epic
 import net.ganin.vsevolod.clicktrack.redux.Store
@@ -17,8 +18,10 @@ import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackListLoadRequestActi
 import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackLoadRequestAction
 import net.ganin.vsevolod.clicktrack.state.frontScreen
 import net.ganin.vsevolod.clicktrack.storage.ClickTrackRepository
+import javax.inject.Inject
 
-class LoadDataEpic(
+@ViewModelScoped
+class LoadDataEpic @Inject constructor(
     private val store: Store<AppState>,
     private val clickTrackRepository: ClickTrackRepository,
 ) : Epic {

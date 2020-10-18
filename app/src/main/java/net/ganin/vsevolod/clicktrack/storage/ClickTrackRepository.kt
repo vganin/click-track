@@ -6,15 +6,20 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.ganin.vsevolod.clicktrack.Database
+import net.ganin.vsevolod.clicktrack.di.component.ViewModelScoped
+import net.ganin.vsevolod.clicktrack.di.module.ApplicationContext
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
+import javax.inject.Inject
 import net.ganin.vsevolod.clicktrack.storage.ClickTrack as StorageClickTrack
 
-class ClickTrackRepository(
-    context: Context,
-    private val database: Database = Database(AndroidSqliteDriver(Database.Schema, context, "click_track.db")),
-    private val json: Json = Json
+@ViewModelScoped
+class ClickTrackRepository @Inject constructor(
+    @ApplicationContext context: Context
 ) {
+    private val database: Database = Database(AndroidSqliteDriver(Database.Schema, context, "click_track.db"))
+    private val json: Json = Json
+
     fun getAll(): List<ClickTrackWithId> {
         return database.sqlClickTrackQueries.getAll().executeAsList()
             .map { it.toCommon() }

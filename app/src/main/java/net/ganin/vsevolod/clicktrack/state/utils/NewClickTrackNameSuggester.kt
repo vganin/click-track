@@ -1,8 +1,11 @@
 package net.ganin.vsevolod.clicktrack.state.utils
 
 import net.ganin.vsevolod.clicktrack.storage.ClickTrackRepository
+import javax.inject.Inject
 
-class NewClickTrackNameSuggester(private val storage: ClickTrackRepository) {
+class NewClickTrackNameSuggester @Inject constructor(
+    private val storage: ClickTrackRepository
+) {
 
     fun suggest(): String {
         val maxUsedDefaultNameNumber = storage.getAllNames()

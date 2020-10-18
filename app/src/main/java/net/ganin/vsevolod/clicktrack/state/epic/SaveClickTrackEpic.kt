@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import net.ganin.vsevolod.clicktrack.di.component.ViewModelScoped
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
@@ -18,8 +19,10 @@ import net.ganin.vsevolod.clicktrack.state.actions.UpdateClickTrack
 import net.ganin.vsevolod.clicktrack.state.utils.NewClickTrackNameSuggester
 import net.ganin.vsevolod.clicktrack.storage.ClickTrackRepository
 import net.ganin.vsevolod.clicktrack.utils.flow.consumeEach
+import javax.inject.Inject
 
-class SaveClickTrackEpic(
+@ViewModelScoped
+class SaveClickTrackEpic @Inject constructor(
     private val storage: ClickTrackRepository,
     private val newClickTrackNameSuggester: NewClickTrackNameSuggester
 ) : Epic {
