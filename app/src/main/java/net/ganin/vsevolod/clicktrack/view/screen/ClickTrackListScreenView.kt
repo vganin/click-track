@@ -16,6 +16,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.res.stringResource
@@ -64,7 +65,9 @@ private fun ClickTrackListScreenContent(
             items = state.items,
             modifier = Modifier.weight(1f)
         ) { clickTrack ->
-            ClickTrackListItem(clickTrack, dispatch)
+            key(clickTrack.id) {
+                ClickTrackListItem(clickTrack, dispatch)
+            }
         }
     }
 }
