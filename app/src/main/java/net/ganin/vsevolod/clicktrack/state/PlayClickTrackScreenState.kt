@@ -5,7 +5,7 @@ import kotlinx.android.parcel.Parcelize
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 
 @Parcelize
-data class ClickTrackScreenState(
+data class PlayClickTrackScreenState(
     val clickTrack: ClickTrackWithId,
     val isPlaying: Boolean,
     val playbackStamp: PlaybackStamp?

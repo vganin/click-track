@@ -37,7 +37,7 @@ class LoadDataEpic @Inject constructor(
             store.state
                 .map { it.backstack.frontScreen() }
                 .distinctUntilChangedBy { it?.javaClass }
-                .filterIsInstance<Screen.ClickTrack>()
+                .filterIsInstance<Screen.PlayClickTrack>()
                 .map { ClickTrackLoadRequestAction(it.state.clickTrack.id) },
 
             actions

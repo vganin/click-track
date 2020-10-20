@@ -2,7 +2,7 @@ package net.ganin.vsevolod.clicktrack.state.reducer
 
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Action
-import net.ganin.vsevolod.clicktrack.state.ClickTrackScreenState
+import net.ganin.vsevolod.clicktrack.state.PlayClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.state.Screen
 import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackDataLoadedAction
@@ -11,13 +11,13 @@ import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
 import net.ganin.vsevolod.clicktrack.state.actions.TogglePlay
 import net.ganin.vsevolod.clicktrack.state.actions.UpdatePlaybackStamp
 
-fun Screen.ClickTrack.reduceClickTrackScreen(action: Action): Screen {
-    return Screen.ClickTrack(
+fun Screen.PlayClickTrack.reducePlayClickTrackScreen(action: Action): Screen {
+    return Screen.PlayClickTrack(
         state = state.reduce(action)
     )
 }
 
-private fun ClickTrackScreenState.reduce(action: Action): ClickTrackScreenState {
+private fun PlayClickTrackScreenState.reduce(action: Action): PlayClickTrackScreenState {
     val isPlaying = isPlaying.reduce(action)
     return copy(
         clickTrack = clickTrack.reduce(action),

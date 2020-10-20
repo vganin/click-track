@@ -23,7 +23,7 @@ import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
-import net.ganin.vsevolod.clicktrack.state.ClickTrackScreenState
+import net.ganin.vsevolod.clicktrack.state.PlayClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToEditClickTrackScreen
 import net.ganin.vsevolod.clicktrack.state.actions.RemoveClickTrack
@@ -34,8 +34,8 @@ import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackViewState
 import net.ganin.vsevolod.clicktrack.view.widget.PlayStopView
 
 @Composable
-fun ClickTrackScreenView(
-    state: ClickTrackScreenState,
+fun PlayClickTrackScreenView(
+    state: PlayClickTrackScreenState,
     dispatch: Dispatch = {},
 ) {
     Scaffold(
@@ -55,7 +55,7 @@ fun ClickTrackScreenView(
 
 @Composable
 private fun ClickTrackScreenContent(
-    state: ClickTrackScreenState,
+    state: PlayClickTrackScreenState,
 ) {
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         ClickTrackView(
@@ -71,7 +71,7 @@ private fun ClickTrackScreenContent(
 
 @Composable
 private fun ClickTrackScreenTopBar(
-    state: ClickTrackScreenState,
+    state: PlayClickTrackScreenState,
     dispatch: (Action) -> Unit = {}
 ) {
     TopAppBar(
@@ -137,8 +137,8 @@ private fun ClickTrackScreenTopBar(
 @Preview
 @Composable
 fun PreviewClickTrackScreenView() {
-    ClickTrackScreenView(
-        ClickTrackScreenState(
+    PlayClickTrackScreenView(
+        PlayClickTrackScreenState(
             clickTrack = PREVIEW_CLICK_TRACK_1,
             isPlaying = false,
             playbackStamp = null

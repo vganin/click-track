@@ -23,7 +23,7 @@ class ClickTrackPlayerEpic @Inject constructor(
 
     override fun act(actions: Flow<Action>): Flow<Action> {
         return store.state
-            .map { it.backstack.frontScreen().optionalCast<Screen.ClickTrack>()?.state }
+            .map { it.backstack.frontScreen().optionalCast<Screen.PlayClickTrack>()?.state }
             .distinctUntilChangedBy { it?.isPlaying }
             .consumeEach { state ->
                 if (state == null) {
