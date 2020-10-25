@@ -45,6 +45,7 @@ private fun ScreenBackstack.reduce(action: NavigationAction): ScreenBackstack {
             Screen.EditClickTrack(
                 state = EditClickTrackScreenState(
                     clickTrack = action.data,
+                    isErrorInName = false,
                 )
             )
         )

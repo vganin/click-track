@@ -6,7 +6,8 @@ import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 
 object AddNewClickTrack : Action
 
-class UpdateClickTrack(val clickTrack: ClickTrackWithId) : Action
+class PersistClickTrack(val clickTrack: ClickTrackWithId) : Action
+class UpdateClickTrack(val clickTrack: ClickTrackWithId, val isErrorInName: Boolean) : Action
 
 class RemoveClickTrack(val id: Long) : Action
 

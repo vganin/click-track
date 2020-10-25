@@ -12,6 +12,7 @@ import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 @Parcelize
 data class EditClickTrackScreenState(
     val clickTrack: ClickTrackWithId,
+    val isErrorInName: Boolean,
     val defaultCue: CueWithDuration = CueWithDuration(
         duration = CueDuration.Beats(4),
         cue = Cue(60.bpm, TimeSignature(4, 4))

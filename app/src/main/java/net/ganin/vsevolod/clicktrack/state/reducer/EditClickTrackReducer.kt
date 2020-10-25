@@ -14,13 +14,21 @@ fun Screen.EditClickTrack.reduceEditClickTrackScreen(action: Action): Screen {
 
 private fun EditClickTrackScreenState.reduce(action: Action): EditClickTrackScreenState {
     return copy(
-        clickTrack = clickTrack.reduce(action)
+        clickTrack = clickTrack.reduce(action),
+        isErrorInName = isErrorInName.reduceIsErrorInName(action),
     )
 }
 
 private fun ClickTrackWithId.reduce(action: Action): ClickTrackWithId {
     return when (action) {
         is UpdateClickTrack -> action.clickTrack
+        else -> this
+    }
+}
+
+private fun Boolean.reduceIsErrorInName(action: Action): Boolean {
+    return when (action) {
+        is UpdateClickTrack -> action.isErrorInName
         else -> this
     }
 }

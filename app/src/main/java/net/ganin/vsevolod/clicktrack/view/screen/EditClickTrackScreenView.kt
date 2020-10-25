@@ -6,10 +6,12 @@ import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.TextField
@@ -39,7 +41,7 @@ import net.ganin.vsevolod.clicktrack.lib.bpm
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
-import net.ganin.vsevolod.clicktrack.state.actions.UpdateClickTrack
+import net.ganin.vsevolod.clicktrack.state.actions.PersistClickTrack
 import net.ganin.vsevolod.clicktrack.view.widget.EditCueWithDurationView
 import kotlin.time.minutes
 
@@ -62,7 +64,7 @@ fun EditClickTrackScreenView(
         },
         modifier = Modifier.fillMaxSize(),
     ) {
-        EditClickTrackScreenContent(nameState, loopState, cuesState)
+        EditClickTrackScreenContent(nameState, state.isErrorInName, loopState, cuesState)
     }
 
     val name = nameState.value
@@ -71,7 +73,7 @@ fun EditClickTrackScreenView(
     onCommit(name, loop, cues) {
         GlobalScope.launch(Dispatchers.Main) {
             dispatch(
-                UpdateClickTrack(
+                PersistClickTrack(
                     clickTrack = state.clickTrack.copy(
                         value = ClickTrack(
                             name = name,
@@ -88,13 +90,22 @@ fun EditClickTrackScreenView(
 @Composable
 private fun EditClickTrackScreenContent(
     nameState: MutableState<String>,
+    isErrorInName: Boolean,
     loopState: MutableState<Boolean>,
     cuesState: List<MutableState<CueWithDuration>>,
 ) {
     val scrollState = rememberScrollState(0f)
     ScrollableColumn(scrollState = scrollState, modifier = Modifier.fillMaxSize()) {
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = nameState.value,
+            onValueChange = { nameState.value = it },
+            placeholder = { Text(text = stringResource(R.string.click_track_name_hint)) },
+            textStyle = MaterialTheme.typography.h6,
+            isErrorValue = isErrorInName
+        )
+
         Row {
-            TextField(value = nameState.value, onValueChange = { nameState.value = it })
             Text(text = "Should loop")
             Spacer(modifier = Modifier.width(8.dp))
             Switch(checked = loopState.value, onCheckedChange = {
@@ -144,7 +155,8 @@ fun PreviewEditClickTrackScreenView() {
                     ),
                     loop = true,
                 )
-            )
+            ),
+            isErrorInName = false,
         ),
     )
 }
