@@ -1,6 +1,5 @@
 package net.ganin.vsevolod.clicktrack.view.screen
 
-import androidx.compose.foundation.Icon
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.Row
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
@@ -59,7 +59,7 @@ fun EditClickTrackScreenView(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(onClick = { cuesState += mutableStateOf(state.defaultCue) }) {
-                Icon(asset = vectorResource(id = R.drawable.ic_add_24))
+                Icon(vectorResource(id = R.drawable.ic_add_24))
             }
         },
         modifier = Modifier.fillMaxSize(),

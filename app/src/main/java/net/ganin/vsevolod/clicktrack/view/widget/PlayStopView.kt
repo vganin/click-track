@@ -5,8 +5,8 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.transitionDefinition
 import androidx.compose.animation.transition
-import androidx.compose.foundation.Icon
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -75,7 +75,7 @@ private fun PlayStopIcon(isPlaying: Boolean) {
     )
 
     Icon(
-        asset = iconAsset(
+        iconAsset(
             transition[pointA],
             transition[pointB],
             transition[pointC],

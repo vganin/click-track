@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.BackspaceKeyEditOp
 import androidx.compose.ui.text.input.CommitTextEditOp
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.InputSessionToken
+import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.MinutesPerHour
@@ -120,6 +121,7 @@ fun DurationPicker(
                         value = TextFieldValue(),
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done,
+                        keyboardOptions = KeyboardOptions(),
                         onEditCommand = { operations ->
                             operations.forEach { operation ->
                                 when (operation) {

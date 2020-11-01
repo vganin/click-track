@@ -1,6 +1,5 @@
 package net.ganin.vsevolod.clicktrack.view.screen
 
-import androidx.compose.foundation.Icon
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -13,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
@@ -46,7 +46,7 @@ fun ClickTrackListScreenView(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(onClick = { dispatch(AddNewClickTrack) }) {
-                Icon(asset = vectorResource(id = R.drawable.ic_add_24))
+                Icon(vectorResource(id = R.drawable.ic_add_24))
             }
         },
         modifier = Modifier.fillMaxSize(),
