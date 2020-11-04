@@ -1,13 +1,28 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.ripple.RippleIndication
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus
 import androidx.compose.ui.focus.FocusRequester
@@ -26,6 +41,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.MinutesPerHour
 import androidx.compose.ui.unit.SecondsPerMinute
+import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
 import java.text.DecimalFormat
@@ -77,20 +93,24 @@ fun DurationPicker(
         internalStringState.value = state.value.asString()
     }
 
+    fun updateInternalStringState(newInternalStringState: String) {
+        internalStringState.value = newInternalStringState
+        state.value = newInternalStringState.toDuration()
+    }
+
     fun enterDigit(char: Char) {
         if (char.isDigit() && internalStringState.value.first() == '0') {
-            internalStringState.value = internalStringState.value.drop(1) + char
+            updateInternalStringState(internalStringState.value.drop(1) + char)
         }
-        state.value = internalStringState.value.toDuration()
     }
 
     fun removeDigit() {
-        internalStringState.value = '0' + internalStringState.value.dropLast(1)
-        state.value = internalStringState.value.toDuration()
+        updateInternalStringState('0' + internalStringState.value.dropLast(1))
     }
 
     val inputService = TextInputServiceAmbient.current!!
     var inputSessionToken: InputSessionToken? by remember { mutableStateOf(null) }
+    var isFocused by remember { mutableStateOf(false) }
     val focusRequester = FocusRequester()
 
     @Composable
@@ -111,12 +131,21 @@ fun DurationPicker(
         }.toString()
     }
 
-    Text(
-        text = formatInternalState(),
+    val activeColor = MaterialTheme.colors.primary
+    val inactiveColor = MaterialTheme.colors.onSurface
+    val borderColor = if (isFocused) activeColor else inactiveColor
+
+    Row(
         modifier = Modifier
             .focusRequester(focusRequester)
             .focusObserver { focusState ->
-                if (focusState.isFocused && inputSessionToken == null) {
+                if (isFocused == focusState.isFocused) {
+                    return@focusObserver
+                }
+
+                isFocused = focusState.isFocused
+
+                if (isFocused && inputSessionToken == null) {
                     inputSessionToken = inputService.startInput(
                         value = TextFieldValue(),
                         keyboardType = KeyboardType.Number,
@@ -136,14 +165,39 @@ fun DurationPicker(
                             }
                         }
                     )
-                } else if (!focusState.isFocused && inputSessionToken != null) {
+                } else if (!isFocused && inputSessionToken != null) {
                     inputSessionToken?.let(inputService::stopInput)
                     inputSessionToken = null
                 }
             }
             .focus()
-            .tapGestureFilter { focusRequester.requestFocus() },
-    )
+            .tapGestureFilter { focusRequester.requestFocus() }
+            .border(
+                border = BorderStroke(1.dp, borderColor),
+                shape = MaterialTheme.shapes.small,
+            )
+            .padding(8.dp)
+    ) {
+        val baseModifier = Modifier.align(Alignment.CenterVertically)
+
+        Text(
+            text = formatInternalState(),
+            modifier = baseModifier,
+        )
+
+        Spacer(Modifier.width(8.dp))
+
+        Box(
+            modifier = baseModifier
+                .size(16.dp, 16.dp)
+                .clickable(
+                    onClick = { state.value = Duration.ZERO },
+                    indication = RippleIndication(bounded = false)
+                )
+        ) {
+            Icon(asset = Icons.Default.Close)
+        }
+    }
 }
 
 private val twoDigitsFormat = DecimalFormat("00")
