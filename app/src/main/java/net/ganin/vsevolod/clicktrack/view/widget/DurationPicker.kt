@@ -1,8 +1,6 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.ripple.RippleIndication
@@ -131,12 +128,9 @@ fun DurationPicker(
         }.toString()
     }
 
-    val activeColor = MaterialTheme.colors.primary
-    val inactiveColor = MaterialTheme.colors.onSurface
-    val borderColor = if (isFocused) activeColor else inactiveColor
-
     Row(
         modifier = Modifier
+            .focusableBorder()
             .focusRequester(focusRequester)
             .focusObserver { focusState ->
                 if (isFocused == focusState.isFocused) {
@@ -172,10 +166,6 @@ fun DurationPicker(
             }
             .focus()
             .tapGestureFilter { focusRequester.requestFocus() }
-            .border(
-                border = BorderStroke(1.dp, borderColor),
-                shape = MaterialTheme.shapes.small,
-            )
             .padding(8.dp)
     ) {
         val baseModifier = Modifier.align(Alignment.CenterVertically)
@@ -205,7 +195,7 @@ private fun Int.twoDigits() = twoDigitsFormat.format(this)
 
 @Preview
 @Composable
-fun PreviewTimePicker() {
+fun PreviewDurationPicker() {
     val sharedState = remember { mutableStateOf(1.hours + 2.minutes + 3.seconds + 4.milliseconds) }
     Column {
         DurationPicker(sharedState)

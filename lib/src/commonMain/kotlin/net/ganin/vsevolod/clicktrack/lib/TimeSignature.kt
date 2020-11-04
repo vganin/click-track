@@ -11,7 +11,7 @@ public data class TimeSignature(
     public val noteDuration: Int
 ) : AndroidParcelable {
     init {
-        require(noteCount >= 0) { "Note count should be greater than 0 but was: $noteCount" }
-        require(noteDuration >= 0) { "Note durations should be greater than 0 but was: $noteDuration" }
+        require(noteCount >= 0) { "Note count should be non-negative but was: $noteCount" }
+        require(noteDuration >= 0) { "Note durations should be non-negative but was: $noteDuration" }
     }
 }
