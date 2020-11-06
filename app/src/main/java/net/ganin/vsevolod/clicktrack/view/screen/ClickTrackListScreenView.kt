@@ -15,12 +15,13 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
@@ -46,7 +47,7 @@ fun ClickTrackListScreenView(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(onClick = { dispatch(AddNewClickTrack) }) {
-                Icon(vectorResource(id = R.drawable.ic_add_24))
+                Icon(Icons.Default.Add)
             }
         },
         modifier = Modifier.fillMaxSize(),

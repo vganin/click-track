@@ -10,6 +10,9 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.redux.Action
@@ -85,7 +87,7 @@ private fun ClickTrackScreenTopBar(
                 },
                 enabled = editEnabled
             ) {
-                Icon(vectorResource(id = R.drawable.ic_edit_24))
+                Icon(Icons.Default.Edit)
             }
 
             var showDeleteConfirmation by remember { mutableStateOf(false) }
@@ -94,7 +96,7 @@ private fun ClickTrackScreenTopBar(
                     showDeleteConfirmation = true
                 },
             ) {
-                Icon(asset = vectorResource(id = R.drawable.ic_delete_24))
+                Icon(Icons.Default.Delete)
             }
 
             if (showDeleteConfirmation) {

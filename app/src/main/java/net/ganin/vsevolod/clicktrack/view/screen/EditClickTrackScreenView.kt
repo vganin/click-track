@@ -16,6 +16,8 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -24,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import kotlinx.coroutines.Dispatchers
@@ -59,7 +60,7 @@ fun EditClickTrackScreenView(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(onClick = { cuesState += mutableStateOf(state.defaultCue) }) {
-                Icon(vectorResource(id = R.drawable.ic_add_24))
+                Icon(Icons.Default.Add)
             }
         },
         modifier = Modifier.fillMaxSize(),
