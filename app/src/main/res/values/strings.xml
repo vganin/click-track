@@ -5,7 +5,7 @@
     <string name="delete_click_track_confirmation">Do you really want to delete this click track?</string>
     <string name="click_track_name_hint">Name your click track…</string>
     <string name="cue_duration_beats">Beats</string>
-    <string name="cue_duration_minutes">Minutes</string>
+    <string name="cue_duration_time">Time</string>
     <string name="duration_picker_seconds">s</string>
     <string name="duration_picker_minutes">m</string>
     <string name="duration_picker_hours">h</string>

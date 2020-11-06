@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,6 +30,7 @@ import androidx.compose.ui.focusRequester
 import androidx.compose.ui.gesture.tapGestureFilter
 import androidx.compose.ui.platform.TextInputServiceAmbient
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.BackspaceKeyEditOp
 import androidx.compose.ui.text.input.CommitTextEditOp
 import androidx.compose.ui.text.input.ImeAction
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.input.InputSessionToken
 import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.MinutesPerHour
 import androidx.compose.ui.unit.SecondsPerMinute
 import androidx.compose.ui.unit.dp
@@ -130,6 +133,7 @@ fun DurationPicker(
 
     Row(
         modifier = Modifier
+            .fillMaxWidth()
             .focusableBorder()
             .focusRequester(focusRequester)
             .focusObserver { focusState ->
@@ -172,7 +176,8 @@ fun DurationPicker(
 
         Text(
             text = formatInternalState(),
-            modifier = baseModifier,
+            modifier = baseModifier.weight(1.0f),
+            style = TextStyle(textAlign = TextAlign.Center)
         )
 
         Spacer(Modifier.width(8.dp))

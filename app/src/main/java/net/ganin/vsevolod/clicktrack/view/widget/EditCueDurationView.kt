@@ -81,18 +81,22 @@ fun EditCueDurationView(
             }
         }
 
+        val commonCueDurationModifier = Modifier
+            .align(Alignment.CenterVertically)
+            .width(DURATION_FIELD_WIDTH)
+
         when (durationTypeState.value) {
             CueDurationType.BEATS -> {
                 EditBeatsView(
                     state = beatsDurationState,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = commonCueDurationModifier
                 )
                 state.value = beatsDurationState.value
             }
             CueDurationType.TIME -> {
                 EditTimeView(
                     state = timeDurationState,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = commonCueDurationModifier
                 )
                 state.value = timeDurationState.value
             }
@@ -151,8 +155,6 @@ private fun DurationTypeDropdown(
     )
 }
 
-private val DROPDOWN_TOGGLE_WIDTH = 140.dp
-
 @Composable
 private fun EditBeatsView(
     state: MutableState<CueDuration.Beats>,
@@ -160,28 +162,7 @@ private fun EditBeatsView(
 ) {
     val beatsCountState: MutableState<Int> = remember { mutableStateOf(state.value.value) }
 
-    BeatsNumberTextField(
-        text = beatsCountState.value.toString(),
-        onValueChange = { newValue ->
-            val newInt = when {
-                newValue.isEmpty() -> 0
-                newValue.length in 1..6 -> newValue.toIntOrNull()
-                else -> null
-            } ?: return@BeatsNumberTextField
-            beatsCountState.value = newInt
-        },
-        modifier = modifier,
-    )
-
-    state.value = CueDuration.Beats(beatsCountState.value)
-}
-
-@Composable
-private fun BeatsNumberTextField(
-    text: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier,
-) {
+    var text by remember { mutableStateOf(beatsCountState.value.toString()) }
     var selection by remember { mutableStateOf(TextRange.Zero) }
     var composition by remember { mutableStateOf<TextRange?>(null) }
 
@@ -205,11 +186,17 @@ private fun BeatsNumberTextField(
     CoreTextField(
         value = textFieldValue,
         onValueChange = { newValue ->
+            val newText = newValue.text
+            val newInt = when {
+                newText.isEmpty() -> 0
+                newText.length in 1..6 -> newText.toIntOrNull()
+                else -> null
+            } ?: return@CoreTextField
+
+            text = newText
             selection = newValue.selection
             composition = newValue.composition
-            if (text != newValue.text) {
-                onValueChange(newValue.text)
-            }
+            beatsCountState.value = newInt
         },
         cursorColor = AmbientContentColor.current,
         modifier = modifier
@@ -227,6 +214,8 @@ private fun BeatsNumberTextField(
                     GlobalScope.launch(Dispatchers.Main) {
                         selection = TextRange(0, text.length)
                     }
+                } else {
+                    text = beatsCountState.value.toString()
                 }
             }
             .padding(8.dp),
@@ -235,6 +224,8 @@ private fun BeatsNumberTextField(
         softWrap = false,
         maxLines = 1
     )
+
+    state.value = CueDuration.Beats(beatsCountState.value)
 }
 
 @Composable
@@ -263,7 +254,7 @@ private val CueDurationType.displayStringResId: Int
     get() {
         return when (this) {
             CueDurationType.BEATS -> R.string.cue_duration_beats
-            CueDurationType.TIME -> R.string.cue_duration_minutes
+            CueDurationType.TIME -> R.string.cue_duration_time
         }
     }
 
@@ -274,6 +265,9 @@ private val CueDuration.type: CueDurationType
             is CueDuration.Time -> CueDurationType.TIME
         }
     }
+
+private val DROPDOWN_TOGGLE_WIDTH = 110.dp
+private val DURATION_FIELD_WIDTH = 140.dp
 
 @Preview
 @Composable
