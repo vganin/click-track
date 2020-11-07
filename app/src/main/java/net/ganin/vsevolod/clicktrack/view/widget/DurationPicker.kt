@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -55,6 +54,7 @@ import kotlin.time.seconds
 @Composable
 fun DurationPicker(
     state: MutableState<Duration>,
+    modifier: Modifier = Modifier,
 ) {
     /** Converts CharSequence in format "hhmmss" to Duration */
     fun CharSequence.toDuration(): Duration {
@@ -133,8 +133,7 @@ fun DurationPicker(
     }
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .focusableBorder()
             .focusRequester(focusRequester)
             .focusObserver { focusState ->
