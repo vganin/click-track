@@ -107,12 +107,11 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
 
                 drawArc(
                     brush = RadialGradient(
-                        0.0f to gradientInteriorColor,
-                        (1.0f - WHEEL_WIDTH_MULTIPLIER) to gradientInteriorColor,
+                        0.5f to gradientInteriorColor,
                         1.0f to gradientExteriorEndColor,
                         centerX = center.x,
                         centerY = center.y,
-                        radius = size.width
+                        radius = (size.width + wheelWidthPx) / 2
                     ),
                     startAngle = 0f,
                     sweepAngle = 360f,
