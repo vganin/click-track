@@ -9,4 +9,5 @@
     <string name="duration_picker_seconds">s</string>
     <string name="duration_picker_minutes">m</string>
     <string name="duration_picker_hours">h</string>
+    <string name="repeat">Repeat click track?</string>
 </resources>

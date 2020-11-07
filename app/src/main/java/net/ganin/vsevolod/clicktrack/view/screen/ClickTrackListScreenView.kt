@@ -3,11 +3,12 @@ package net.ganin.vsevolod.clicktrack.view.screen
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumnFor
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
@@ -32,6 +33,7 @@ import net.ganin.vsevolod.clicktrack.state.actions.AddNewClickTrack
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToClickTrackScreen
 import net.ganin.vsevolod.clicktrack.state.actions.RemoveClickTrack
 import net.ganin.vsevolod.clicktrack.utils.compose.swipeToRemove
+import net.ganin.vsevolod.clicktrack.view.common.Constants
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_2
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackView
@@ -61,14 +63,15 @@ private fun ClickTrackListScreenContent(
     state: ClickTrackListScreenState,
     dispatch: Dispatch = {},
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        LazyColumnFor(
-            items = state.items,
-            modifier = Modifier.weight(1f)
-        ) { clickTrack ->
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        items(state.items) { clickTrack ->
             key(clickTrack.id) {
                 ClickTrackListItem(clickTrack, dispatch)
             }
+        }
+
+        item {
+            Spacer(modifier = Modifier.size(Constants.FAB_SIZE_WITH_PADDINGS))
         }
     }
 }
@@ -88,7 +91,8 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
                 .padding(8.dp)
                 .swipeToRemove(constraints = constraints, onDelete = {
                     dispatch(RemoveClickTrack(clickTrack.id))
-                })
+                }),
+            elevation = 2.dp
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(

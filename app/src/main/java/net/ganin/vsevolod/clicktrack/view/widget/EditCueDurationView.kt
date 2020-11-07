@@ -8,14 +8,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.CoreTextField
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -44,6 +45,7 @@ import kotlinx.coroutines.launch
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
+import net.ganin.vsevolod.clicktrack.view.common.focusableBorder
 import kotlin.time.Duration
 import kotlin.time.minutes
 
@@ -61,6 +63,8 @@ fun EditCueDurationView(
             state = durationTypeState,
             modifier = Modifier.align(Alignment.CenterVertically)
         )
+        
+        Spacer(modifier = Modifier.width(8.dp))
 
         val beatsDurationState = remember(CueDurationType.BEATS) {
             state.value.let {
@@ -120,9 +124,7 @@ private fun DurationTypeDropdown(
             )
             .width(DROPDOWN_TOGGLE_WIDTH),
         toggle = {
-            Row(
-                modifier = Modifier.padding(start = 16.dp)
-            ) {
+            Row {
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
@@ -133,14 +135,21 @@ private fun DurationTypeDropdown(
                         style = MaterialTheme.typography.subtitle1,
                     )
                 }
-                IconButton(onClick = onToggleClick) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .size(16.dp, 16.dp)
+                        .clickable(
+                            onClick = onToggleClick,
+                            indication = RippleIndication(bounded = false)
+                        )
+                ) {
                     Icon(Icons.Default.ArrowDropDown)
                 }
             }
         },
         expanded = toggleState.value,
         onDismissRequest = { toggleState.value = false },
-        dropdownModifier = Modifier.width(DROPDOWN_TOGGLE_WIDTH),
         dropdownOffset = Position(-DROPDOWN_TOGGLE_WIDTH, 0.dp),
         dropdownContent = {
             CueDurationType.values().forEach { durationType ->
@@ -266,7 +275,7 @@ private val CueDuration.type: CueDurationType
         }
     }
 
-private val DROPDOWN_TOGGLE_WIDTH = 110.dp
+private val DROPDOWN_TOGGLE_WIDTH = 64.dp
 private val DURATION_FIELD_WIDTH = 140.dp
 
 @Preview

@@ -47,6 +47,7 @@ android {
         freeCompilerArgs += '-Xopt-in=androidx.compose.ui.focus.ExperimentalFocus'
         freeCompilerArgs += '-Xopt-in=androidx.compose.ui.text.ExperimentalTextApi'
         freeCompilerArgs += '-Xopt-in=androidx.compose.foundation.layout.ExperimentalLayout'
+        freeCompilerArgs += '-Xopt-in=androidx.compose.foundation.lazy.ExperimentalLazyDsl'
     }
 
     androidExtensions {

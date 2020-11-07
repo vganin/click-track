@@ -4,6 +4,8 @@ import androidx.compose.animation.animatedFloat
 import androidx.compose.animation.core.ExponentialDecay
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.TargetAnimation
+import androidx.compose.foundation.AmbientTextStyle
+import androidx.compose.foundation.ProvideTextStyle
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.animation.FlingConfig
 import androidx.compose.foundation.animation.fling
@@ -16,6 +18,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.offsetPx
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +30,7 @@ import androidx.compose.ui.draw.drawOpacity
 import androidx.compose.ui.gesture.longPressGestureFilter
 import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
 import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import kotlin.math.abs
@@ -33,8 +38,9 @@ import kotlin.math.abs
 @Composable
 fun NumberPicker(
     state: MutableState<Int>,
+    modifier: Modifier = Modifier,
     range: IntRange? = null,
-    modifier: Modifier = Modifier
+    textStyle: TextStyle = AmbientTextStyle.current
 ) {
     val numbersColumnHeight = 36.dp
     val halvedNumbersColumnHeight = numbersColumnHeight / 2
@@ -87,7 +93,9 @@ fun NumberPicker(
     ) {
         val spacing = 4.dp
 
-        Arrow(ArrowDirection.UP)
+        val arrowColor = AmbientEmphasisLevels.current.disabled.applyEmphasis(MaterialTheme.colors.onSecondary)
+
+        Arrow(direction = ArrowDirection.UP, tint = arrowColor)
 
         Spacer(modifier = Modifier.height(spacing))
 
@@ -97,28 +105,30 @@ fun NumberPicker(
                 .offsetPx(y = mutableStateOf(coercedAnimatedOffset))
         ) {
             val baseLabelModifier = Modifier.align(Alignment.Center)
-            Label(
-                text = (animatedStateValue - 1).toString(),
-                modifier = baseLabelModifier
-                    .offset(y = -halvedNumbersColumnHeight)
-                    .drawOpacity(coercedAnimatedOffset / halvedNumbersColumnHeightPx)
-            )
-            Label(
-                text = animatedStateValue.toString(),
-                modifier = baseLabelModifier
-                    .drawOpacity(1 - abs(coercedAnimatedOffset) / halvedNumbersColumnHeightPx)
-            )
-            Label(
-                text = (animatedStateValue + 1).toString(),
-                modifier = baseLabelModifier
-                    .offset(y = halvedNumbersColumnHeight)
-                    .drawOpacity(-coercedAnimatedOffset / halvedNumbersColumnHeightPx)
-            )
+            ProvideTextStyle(value = textStyle) {
+                Label(
+                    text = (animatedStateValue - 1).toString(),
+                    modifier = baseLabelModifier
+                        .offset(y = -halvedNumbersColumnHeight)
+                        .drawOpacity(coercedAnimatedOffset / halvedNumbersColumnHeightPx)
+                )
+                Label(
+                    text = animatedStateValue.toString(),
+                    modifier = baseLabelModifier
+                        .drawOpacity(1 - abs(coercedAnimatedOffset) / halvedNumbersColumnHeightPx)
+                )
+                Label(
+                    text = (animatedStateValue + 1).toString(),
+                    modifier = baseLabelModifier
+                        .offset(y = halvedNumbersColumnHeight)
+                        .drawOpacity(-coercedAnimatedOffset / halvedNumbersColumnHeightPx)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(spacing))
 
-        Arrow(ArrowDirection.DOWN)
+        Arrow(direction = ArrowDirection.DOWN, tint = arrowColor)
     }
 }
 

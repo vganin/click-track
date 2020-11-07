@@ -1,15 +1,15 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
+import androidx.compose.foundation.AmbientTextStyle
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RadialGradient
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.toRadians
 import androidx.ui.tooling.preview.Preview
@@ -34,26 +35,34 @@ import net.ganin.vsevolod.clicktrack.lib.BeatsPerMinute
 import net.ganin.vsevolod.clicktrack.lib.bpm
 import net.ganin.vsevolod.clicktrack.utils.compose.RadialDragObserver
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 @Composable
 fun BpmWheel(
     state: MutableState<BeatsPerMinute> = mutableStateOf(60.bpm),
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = AmbientTextStyle.current,
+    bpmRange: IntRange = 1..999,
+    sensitivity: Float = 0.08f
 ) {
-    Column(modifier) {
-        Text(
-            text = "${state.value.value} bpm",
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
+    val bpmRangeInFloat = remember(bpmRange) { bpmRange.first.toFloat()..bpmRange.last.toFloat() }
+    var internalFloatState by remember { mutableStateOf(state.value.value.toFloat()) }
+
+    Box(modifier) {
         Wheel(
             onAngleChange = {
-                state.value += it.toInt()
+                internalFloatState = (internalFloatState + it * sensitivity).coerceIn(bpmRangeInFloat)
+                state.value = internalFloatState.roundToInt().bpm
             },
             modifier = Modifier
+                .align(Alignment.Center)
                 .aspectRatio(1f)
-                .align(Alignment.CenterHorizontally)
+        )
+        Text(
+            text = state.value.value.toString(),
+            modifier = Modifier.align(Alignment.Center),
+            style = textStyle
         )
     }
 }
@@ -69,19 +78,27 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
         val widthPx = with(density) { width.toPx() }
         val heightPx = with(density) { height.toPx() }
 
+        val dragObserver = remember(widthPx, heightPx) {
+            RadialDragObserver(Offset(x = widthPx / 2, y = heightPx / 2)) { angleDiff ->
+                buttonAngle -= angleDiff
+                onAngleChange(angleDiff)
+            }
+        }
+
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .dragGestureFilter(RadialDragObserver(Offset(x = widthPx / 2, y = heightPx / 2)) { angleDiff ->
-                    buttonAngle -= angleDiff
-                    onAngleChange(angleDiff)
-                }),
+                .dragGestureFilter(dragObserver),
             elevation = 4.dp,
             shape = CircleShape,
             color = Color.Transparent
         ) {
-            val wheelWidth = 25.dp
+            val wheelWidth = width * WHEEL_WIDTH_MULTIPLIER
             val wheelWidthPx = with(density) { wheelWidth.toPx() }
+
+            val controllerButtonColor = MaterialTheme.colors.onSecondary
+            val gradientInteriorColor = MaterialTheme.colors.primary
+            val gradientExteriorEndColor = MaterialTheme.colors.secondary
 
             Canvas(
                 modifier = Modifier.fillMaxSize().padding(wheelWidth / 2)
@@ -90,8 +107,9 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
 
                 drawArc(
                     brush = RadialGradient(
-                        0.0f to Color.Magenta,
-                        0.9f to Color.Cyan,
+                        0.0f to gradientInteriorColor,
+                        (1.0f - WHEEL_WIDTH_MULTIPLIER) to gradientInteriorColor,
+                        1.0f to gradientExteriorEndColor,
                         centerX = center.x,
                         centerY = center.y,
                         radius = size.width
@@ -111,7 +129,7 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
                 )
 
                 drawArc(
-                    color = Color.White.copy(alpha = 0.5f),
+                    color = controllerButtonColor.copy(alpha = 0.5f),
                     topLeft = buttonOffset,
                     size = buttonSize,
                     startAngle = 0f,
@@ -122,6 +140,8 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
         }
     }
 }
+
+private const val WHEEL_WIDTH_MULTIPLIER = 0.125f
 
 @Preview
 @Composable

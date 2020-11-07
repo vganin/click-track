@@ -1,4 +1,4 @@
-package net.ganin.vsevolod.clicktrack.view.widget
+package net.ganin.vsevolod.clicktrack.view.common
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border

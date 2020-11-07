@@ -1,12 +1,15 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.AmbientContentColor
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.PathBuilder
+import androidx.compose.ui.graphics.vector.VectorAsset
 import androidx.compose.ui.graphics.vector.VectorAssetBuilder
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
@@ -20,8 +23,18 @@ enum class ArrowDirection {
 }
 
 @Composable
-fun Arrow(direction: ArrowDirection) {
-    val vectorAsset = remember(direction) {
+fun Arrow(
+    direction: ArrowDirection,
+    modifier: Modifier = Modifier,
+    tint: Color = AmbientContentColor.current
+) {
+    val vectorAsset = arrowVectorResource(direction)
+    Icon(asset = vectorAsset, modifier = modifier, tint = tint)
+}
+
+@Composable
+fun arrowVectorResource(direction: ArrowDirection): VectorAsset {
+    return remember(direction) {
         VectorAssetBuilder(defaultWidth = 24.dp, defaultHeight = 12.dp, viewportWidth = 2f, viewportHeight = 2f)
             .addPath(
                 pathData = when (direction) {
@@ -54,7 +67,6 @@ fun Arrow(direction: ArrowDirection) {
             )
             .build()
     }
-    Image(asset = vectorAsset)
 }
 
 @Preview

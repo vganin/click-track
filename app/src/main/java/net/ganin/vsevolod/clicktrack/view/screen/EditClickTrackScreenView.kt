@@ -1,13 +1,16 @@
 package net.ganin.vsevolod.clicktrack.view.screen
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -24,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -43,6 +47,7 @@ import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.actions.PersistClickTrack
+import net.ganin.vsevolod.clicktrack.view.common.Constants.FAB_SIZE_WITH_PADDINGS
 import net.ganin.vsevolod.clicktrack.view.widget.EditCueWithDurationView
 import kotlin.time.minutes
 
@@ -95,30 +100,40 @@ private fun EditClickTrackScreenContent(
     loopState: MutableState<Boolean>,
     cuesState: List<MutableState<CueWithDuration>>,
 ) {
-    val scrollState = rememberScrollState(0f)
-    ScrollableColumn(scrollState = scrollState, modifier = Modifier.fillMaxSize()) {
-        TextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = nameState.value,
-            onValueChange = { nameState.value = it },
-            placeholder = { Text(text = stringResource(R.string.click_track_name_hint)) },
-            textStyle = MaterialTheme.typography.h6,
-            isErrorValue = isErrorInName
-        )
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        item {
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = nameState.value,
+                onValueChange = { nameState.value = it },
+                placeholder = { Text(text = stringResource(R.string.click_track_name_hint)) },
+                textStyle = MaterialTheme.typography.h6,
+                isErrorValue = isErrorInName
+            )
 
-        Row {
-            Text(text = "Should loop")
-            Spacer(modifier = Modifier.width(8.dp))
-            Switch(checked = loopState.value, onCheckedChange = {
-                loopState.value = !loopState.value
-            })
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.padding(16.dp).align(Alignment.Center)) {
+                    Text(text = stringResource(R.string.repeat))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Switch(checked = loopState.value, onCheckedChange = {
+                        loopState.value = !loopState.value
+                    })
+                }
+            }
         }
 
-        cuesState.forEach { cueWithDurationState ->
-            EditCueWithDurationView(state = cueWithDurationState)
+        items(items = cuesState) { cueWithDurationState ->
+            Card(
+                modifier = Modifier.padding(8.dp),
+                elevation = 2.dp
+            ) {
+                EditCueWithDurationView(state = cueWithDurationState)
+            }
         }
 
-        scrollState.scrollTo(scrollState.maxValue)
+        item {
+            Spacer(modifier = Modifier.size(FAB_SIZE_WITH_PADDINGS))
+        }
     }
 }
 

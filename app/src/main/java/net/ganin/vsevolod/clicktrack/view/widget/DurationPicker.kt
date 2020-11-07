@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.SecondsPerMinute
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
+import net.ganin.vsevolod.clicktrack.view.common.focusableBorder
 import java.text.DecimalFormat
 import kotlin.time.Duration
 import kotlin.time.hours
