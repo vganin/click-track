@@ -14,6 +14,6 @@ public data class ClickTrack(
 ) : AndroidParcelable {
 
     public val durationInTime: Duration by lazy {
-        cues.map(CueWithDuration::durationInTime).reduce { acc, duration -> acc + duration }
+        cues.map(CueWithDuration::durationInTime).reduceOrNull { acc, duration -> acc + duration } ?: Duration.ZERO
     }
 }

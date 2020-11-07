@@ -23,12 +23,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
@@ -47,6 +49,7 @@ import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.actions.PersistClickTrack
+import net.ganin.vsevolod.clicktrack.utils.compose.swipeToRemove
 import net.ganin.vsevolod.clicktrack.view.common.Constants.FAB_SIZE_WITH_PADDINGS
 import net.ganin.vsevolod.clicktrack.view.widget.EditCueWithDurationView
 import kotlin.time.minutes
@@ -98,7 +101,7 @@ private fun EditClickTrackScreenContent(
     nameState: MutableState<String>,
     isErrorInName: Boolean,
     loopState: MutableState<Boolean>,
-    cuesState: List<MutableState<CueWithDuration>>,
+    cuesState: MutableList<MutableState<CueWithDuration>>,
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         item {
@@ -122,18 +125,35 @@ private fun EditClickTrackScreenContent(
             }
         }
 
-        items(items = cuesState) { cueWithDurationState ->
-            Card(
-                modifier = Modifier.padding(8.dp),
-                elevation = 2.dp
-            ) {
-                EditCueWithDurationView(state = cueWithDurationState)
+        itemsIndexed(items = cuesState) { index, cueState ->
+            key(index, cueState) {
+                WithConstraints {
+                    CueListItem(
+                        state = cueState,
+                        modifier = Modifier.swipeToRemove(constraints = constraints, onDelete = {
+                            cuesState.removeAt(index)
+                        })
+                    )
+                }
             }
         }
 
         item {
             Spacer(modifier = Modifier.size(FAB_SIZE_WITH_PADDINGS))
         }
+    }
+}
+
+@Composable
+private fun CueListItem(
+    state: MutableState<CueWithDuration>,
+    modifier: Modifier
+) {
+    Card(
+        modifier = modifier.padding(8.dp),
+        elevation = 2.dp
+    ) {
+        EditCueWithDurationView(state)
     }
 }
 
