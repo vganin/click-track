@@ -24,7 +24,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.gesture.dragGestureFilter
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RadialGradient
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.DensityAmbient
 import androidx.compose.ui.text.TextStyle
@@ -96,9 +96,8 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
             val wheelWidth = width * WHEEL_WIDTH_MULTIPLIER
             val wheelWidthPx = with(density) { wheelWidth.toPx() }
 
-            val controllerButtonColor = MaterialTheme.colors.onSecondary
-            val gradientInteriorColor = MaterialTheme.colors.primary
-            val gradientExteriorEndColor = MaterialTheme.colors.secondary
+            val wheelColor = MaterialTheme.colors.primary
+            val controllerButtonColor = MaterialTheme.colors.onPrimary
 
             Canvas(
                 modifier = Modifier.fillMaxSize().padding(wheelWidth / 2)
@@ -106,13 +105,7 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
                 if (size.maxDimension <= 0) return@Canvas
 
                 drawArc(
-                    brush = RadialGradient(
-                        0.5f to gradientInteriorColor,
-                        1.0f to gradientExteriorEndColor,
-                        centerX = center.x,
-                        centerY = center.y,
-                        radius = (size.width + wheelWidthPx) / 2
-                    ),
+                    brush = SolidColor(wheelColor),
                     startAngle = 0f,
                     sweepAngle = 360f,
                     useCenter = false,

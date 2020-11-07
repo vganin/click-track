@@ -95,10 +95,6 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
             elevation = 2.dp
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
-                Text(
-                    text = clickTrack.value.name,
-                    modifier = Modifier.padding(8.dp)
-                )
                 ClickTrackView(
                     state = ClickTrackViewState(
                         clickTrack.value,
@@ -111,6 +107,10 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
                         .clickable(onClick = {
                             dispatch(NavigateToClickTrackScreen(clickTrack))
                         }),
+                )
+                Text(
+                    text = clickTrack.value.name,
+                    modifier = Modifier.padding(8.dp)
                 )
             }
         }

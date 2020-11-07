@@ -67,6 +67,11 @@ fun NumberInputField(
             state.value = newInt
         },
         cursorColor = AmbientContentColor.current,
+        textStyle = AmbientTextStyle.current
+            .copy(
+                color = AmbientContentColor.current,
+                textAlign = TextAlign.Center
+            ),
         modifier = modifier
             .focusableBorder()
             .focusObserver {
@@ -88,7 +93,6 @@ fun NumberInputField(
             }
             .padding(8.dp),
         keyboardType = KeyboardType.Number,
-        textStyle = AmbientTextStyle.current.copy(textAlign = TextAlign.Center),
         softWrap = false,
         maxLines = 1
     )
