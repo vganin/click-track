@@ -33,7 +33,7 @@ import net.ganin.vsevolod.clicktrack.state.actions.TogglePlay
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackView
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackViewState
-import net.ganin.vsevolod.clicktrack.view.widget.PlayStopView
+import net.ganin.vsevolod.clicktrack.view.widget.PlayStopButton
 
 @Composable
 fun PlayClickTrackScreenView(
@@ -44,7 +44,7 @@ fun PlayClickTrackScreenView(
         topBar = { ClickTrackScreenTopBar(state, dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            PlayStopView(
+            PlayStopButton(
                 isPlaying = state.isPlaying,
                 onToggle = { dispatch(TogglePlay) },
             )

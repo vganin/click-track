@@ -22,7 +22,7 @@ import net.ganin.vsevolod.clicktrack.view.widget.PlayStopIconState.PLAY
 import net.ganin.vsevolod.clicktrack.view.widget.PlayStopIconState.STOP
 
 @Composable
-fun PlayStopView(
+fun PlayStopButton(
     isPlaying: Boolean = false,
     onToggle: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -104,6 +104,6 @@ private fun PathBuilder.lineTo(point: Offset) = lineTo(point.x, point.y)
 
 @Preview
 @Composable
-fun PreviewPlayStopView() {
-    PlayStopView()
+fun PreviewPlayStopButton() {
+    PlayStopButton()
 }
