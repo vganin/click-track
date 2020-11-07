@@ -5,19 +5,17 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.layout.absoluteOffset
-import androidx.compose.foundation.layout.absoluteOffsetPx
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Layout
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.DensityAmbient
-import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
@@ -78,14 +76,39 @@ fun ClickTrackView(
         }
 
         if (state.drawTextMarks) {
-            for (mark in marks) {
-                Text(
-                    modifier = Modifier
-                        .absoluteOffsetPx(x = mutableStateOf(mark.x))
-                        .absoluteOffset(y = 16.dp),
-                    text = mark.text
-                )
-            }
+            Layout(
+                modifier = Modifier.wrapContentSize(),
+                children = {
+                    for (mark in marks) {
+                        Text(text = mark.text, modifier = Modifier.wrapContentSize())
+                    }
+                },
+                measureBlock = { measurables, constraints ->
+                    val placeables = measurables.map { measurable ->
+                        measurable.measure(constraints)
+                    }
+
+                    layout(constraints.maxWidth, constraints.maxHeight) {
+                        var currentEndX = 0
+                        var currentEndY = 0
+
+                        placeables.forEachIndexed { index, placeable ->
+                            val mark = marks[index]
+                            val markX = mark.x.toInt()
+
+                            if (markX < currentEndX) {
+                                currentEndY += placeable.height
+                            } else {
+                                currentEndY = 0
+                            }
+
+                            placeable.placeRelative(x = markX, y = currentEndY)
+
+                            currentEndX = markX + placeable.width
+                        }
+                    }
+                }
+            )
         }
     }
 }
