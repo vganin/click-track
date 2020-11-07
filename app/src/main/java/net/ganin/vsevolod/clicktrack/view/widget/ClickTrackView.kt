@@ -5,7 +5,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Text
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -55,14 +54,12 @@ fun ClickTrackView(
             animatedX.value
         }
 
-        val canvasColor = MaterialTheme.colors.surface
         val markColor = MaterialTheme.colors.onSurface
 
         Canvas(
             modifier = Modifier
                 .height(minHeight)
                 .width(minWidth)
-                .background(color = canvasColor)
         ) {
             for (mark in marks) {
                 drawLine(

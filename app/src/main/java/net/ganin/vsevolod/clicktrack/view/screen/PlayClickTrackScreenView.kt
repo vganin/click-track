@@ -1,12 +1,14 @@
 package net.ganin.vsevolod.clicktrack.view.screen
 
 import androidx.compose.foundation.Text
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
@@ -59,7 +61,11 @@ fun PlayClickTrackScreenView(
 private fun ClickTrackScreenContent(
     state: PlayClickTrackScreenState,
 ) {
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.surface)
+    ) {
         ClickTrackView(
             state = ClickTrackViewState(
                 clickTrack = state.clickTrack.value,
