@@ -2,7 +2,7 @@ package net.ganin.vsevolod.clicktrack.state.actions
 
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Action
-import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
+import net.ganin.vsevolod.clicktrack.state.PlaybackState
 
 object AddNewClickTrack : Action
 
@@ -11,12 +11,10 @@ class UpdateClickTrack(val clickTrack: ClickTrackWithId, val isErrorInName: Bool
 
 class RemoveClickTrack(val id: Long) : Action
 
-object TogglePlay : Action
+class UpdateCurrentlyPlaying(val playbackState: PlaybackState?) : Action
 
+class StartPlay(val clickTrack: ClickTrackWithId) : Action
 object StopPlay : Action
-
-object ResetPlaybackStamp : Action
-class UpdatePlaybackStamp(val value: PlaybackStamp) : Action
 
 object ClickTrackListLoadRequestAction : Action
 class ClickTrackListDataLoadedAction(val data: List<ClickTrackWithId>) : Action

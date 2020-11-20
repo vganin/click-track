@@ -42,7 +42,7 @@ import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackViewState
 @Composable
 fun ClickTrackListScreenView(
     state: ClickTrackListScreenState,
-    dispatch: Dispatch = {},
+    dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
         topBar = { ClickTrackListScreenTopBar() },
@@ -61,7 +61,7 @@ fun ClickTrackListScreenView(
 @Composable
 private fun ClickTrackListScreenContent(
     state: ClickTrackListScreenState,
-    dispatch: Dispatch = {},
+    dispatch: Dispatch = Dispatch {},
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(state.items) { clickTrack ->

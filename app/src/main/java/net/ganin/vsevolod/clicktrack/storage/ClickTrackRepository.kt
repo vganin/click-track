@@ -56,7 +56,7 @@ class ClickTrackRepository @Inject constructor(
         )
     }
 
-    fun update(clickTrackWithId: ClickTrackWithId) = update(clickTrackWithId.id, clickTrackWithId.value)
+    fun update(clickTrack: ClickTrackWithId) = update(clickTrack.id, clickTrack.value)
 
     fun remove(id: Long) {
         database.sqlClickTrackQueries.removeById(id)

@@ -10,8 +10,8 @@ object FinishApp : Action
 
 object NavigateBack : NavigationAction()
 
-class NavigateToClickTrackListScreen(val data: List<ClickTrackWithId>) : NavigationAction()
+class NavigateToClickTrackListScreen(val clickTrack: List<ClickTrackWithId>) : NavigationAction()
 
-class NavigateToClickTrackScreen(val data: ClickTrackWithId) : NavigationAction()
+class NavigateToClickTrackScreen(val clickTrack: ClickTrackWithId) : NavigationAction()
 
-class NavigateToEditClickTrackScreen(val data: ClickTrackWithId) : NavigationAction()
+class NavigateToEditClickTrackScreen(val clickTrack: ClickTrackWithId) : NavigationAction()

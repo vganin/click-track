@@ -7,6 +7,7 @@ import net.ganin.vsevolod.clicktrack.MainViewModel
 import net.ganin.vsevolod.clicktrack.di.module.AppStateModule
 import net.ganin.vsevolod.clicktrack.di.module.ViewModelScopedAppStateEpicModule
 import net.ganin.vsevolod.clicktrack.di.module.ViewModelScopedCoroutineModule
+import net.ganin.vsevolod.clicktrack.di.module.ViewModelScopedPlayerModule
 import javax.inject.Scope
 
 @Scope
@@ -18,6 +19,7 @@ annotation class ViewModelScoped
         AppStateModule::class,
         ViewModelScopedAppStateEpicModule::class,
         ViewModelScopedCoroutineModule::class,
+        ViewModelScopedPlayerModule::class
     ]
 )
 interface ViewModelComponent {

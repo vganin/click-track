@@ -14,9 +14,9 @@ import net.ganin.vsevolod.clicktrack.redux.Epic
 import net.ganin.vsevolod.clicktrack.redux.EpicMiddleware
 import net.ganin.vsevolod.clicktrack.redux.Store
 import net.ganin.vsevolod.clicktrack.state.AppState
-import net.ganin.vsevolod.clicktrack.state.epic.ClickTrackPlayerEpic
 import net.ganin.vsevolod.clicktrack.state.epic.FinishAppEpic
 import net.ganin.vsevolod.clicktrack.state.epic.LoadDataEpic
+import net.ganin.vsevolod.clicktrack.state.epic.PlayerEpic
 import net.ganin.vsevolod.clicktrack.state.epic.RemoveClickTrackEpic
 import net.ganin.vsevolod.clicktrack.state.epic.SaveClickTrackEpic
 import net.ganin.vsevolod.clicktrack.state.reducer.reduce
@@ -74,7 +74,7 @@ abstract class ViewModelScopedAppStateEpicModule {
     @Binds
     @IntoSet
     @ViewModelScopedAppStateEpic
-    abstract fun bindClickTrackPlayerEpic(epic: ClickTrackPlayerEpic): Epic
+    abstract fun bindPlayerEpic(epic: PlayerEpic): Epic
 
     @ViewModelScoped
     @Binds

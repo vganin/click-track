@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import net.ganin.vsevolod.clicktrack.di.component.ApplicationScoped
+import net.ganin.vsevolod.clicktrack.di.component.PlayerServiceScoped
 import net.ganin.vsevolod.clicktrack.di.component.ViewModelScoped
 import java.util.concurrent.Executors
 import javax.inject.Qualifier
@@ -35,22 +36,6 @@ class ApplicationScopedCoroutineModule {
     @ApplicationScoped
     @ComputationDispatcher
     fun provideComputationDispatcher(): CoroutineDispatcher = Dispatchers.Default
-
-    @Provides
-    @ApplicationScoped
-    @PlayerDispatcher
-    fun providePlayerDispatcher(): CoroutineDispatcher {
-        return Executors.newSingleThreadExecutor { runnable ->
-            Thread(runnable, "click_track").apply {
-                priority = Thread.MAX_PRIORITY
-            }
-        }.asCoroutineDispatcher()
-    }
-
-    @Provides
-    @ApplicationScoped
-    @PlayerDispatcher
-    fun providePlayerScope(@PlayerDispatcher dispatcher: CoroutineDispatcher) = CoroutineScope(dispatcher)
 }
 
 @Module
@@ -65,4 +50,24 @@ class ViewModelScopedCoroutineModule {
     @ViewModelScoped
     @ComputationDispatcher
     fun provideComputationScope(@ComputationDispatcher dispatcher: CoroutineDispatcher) = CoroutineScope(dispatcher)
+}
+
+@Module
+class PlayerServiceScopedCoroutineModule {
+
+    @Provides
+    @PlayerServiceScoped
+    @PlayerDispatcher
+    fun providePlayerDispatcher(): CoroutineDispatcher {
+        return Executors.newSingleThreadExecutor { runnable ->
+            Thread(runnable, "click_track").apply {
+                priority = Thread.MAX_PRIORITY
+            }
+        }.asCoroutineDispatcher()
+    }
+
+    @Provides
+    @PlayerServiceScoped
+    @MainDispatcher
+    fun provideMainScope(@MainDispatcher dispatcher: CoroutineDispatcher) = CoroutineScope(dispatcher)
 }

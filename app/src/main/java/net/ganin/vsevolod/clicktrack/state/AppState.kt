@@ -5,7 +5,8 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class AppState(
-    val backstack: ScreenBackstack
+    val backstack: ScreenBackstack,
+    val currentlyPlaying: PlaybackState?
 ) : Parcelable {
 
     companion object {
@@ -18,7 +19,8 @@ data class AppState(
                         )
                     )
                 )
-            )
+            ),
+            currentlyPlaying = null
         )
     }
 }

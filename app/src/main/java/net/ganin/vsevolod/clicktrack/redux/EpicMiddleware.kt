@@ -51,9 +51,11 @@ class EpicMiddleware<T>(private val epicCoroutineContext: CoroutineContext) : Mi
     override fun interfere(store: Store<T>, dispatch: SuspendDispatch): SuspendDispatch {
         require(this.store == null) { "Interfering twice" }
         this.store = store
-        return { action ->
-            dispatch(action)
-            actions.send(action)
+        return object : SuspendDispatch {
+            override suspend fun invoke(action: Action) {
+                dispatch(action)
+                actions.send(action)
+            }
         }
     }
 }

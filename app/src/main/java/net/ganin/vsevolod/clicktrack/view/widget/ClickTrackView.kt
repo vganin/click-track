@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Layout
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
@@ -21,7 +22,6 @@ import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
-import net.ganin.vsevolod.clicktrack.lib.interval
 import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlin.time.Duration
@@ -43,15 +43,23 @@ fun ClickTrackView(
         val marks = state.clickTrack.asMarks(width)
 
         val playbackStampX = state.playbackTimestamp?.run {
-            fun Duration.toX() = toX(state.clickTrack.durationInTime, width)
-            val timestamp = timestamp.value
-            val animationDuration = correspondingCue.bpm.interval
-            val initial = timestamp.toX()
-            val target = (timestamp + animationDuration).toX()
-            val animatedX = animatedFloat(initial).apply {
-                animateTo(target, tween(animationDuration.toLongMilliseconds().toInt(), easing = LinearEasing))
+            val animationData = remember(this) {
+                fun Duration.toX() = toX(state.clickTrack.durationInTime, width)
+                val timestamp = timestamp.value
+                val animationDuration = duration.value
+                object {
+                    val initial = timestamp.toX()
+                    val target = (timestamp + animationDuration).toX()
+                    val duration = animationDuration
+                }
             }
-            animatedX.value
+            animatedFloat(animationData.initial).apply {
+                val animationDurationMillis = animationData.duration.toLongMilliseconds().toInt()
+                animateTo(
+                    targetValue = animationData.target,
+                    anim = tween(animationDurationMillis, easing = LinearEasing)
+                )
+            }.value
         }
 
         val markColor = MaterialTheme.colors.onSurface
@@ -152,7 +160,7 @@ fun PreviewClickTrackView() {
             drawTextMarks = true,
             playbackTimestamp = PlaybackStamp(
                 timestamp = SerializableDuration(1.seconds),
-                correspondingCue = PREVIEW_CLICK_TRACK_1.value.cues[0].cue
+                duration = SerializableDuration(Duration.ZERO)
             )
         ),
         modifier = Modifier.fillMaxSize()

@@ -25,13 +25,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
-import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.PlayClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToEditClickTrackScreen
 import net.ganin.vsevolod.clicktrack.state.actions.RemoveClickTrack
-import net.ganin.vsevolod.clicktrack.state.actions.TogglePlay
+import net.ganin.vsevolod.clicktrack.state.actions.StartPlay
+import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackView
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackViewState
@@ -40,7 +40,7 @@ import net.ganin.vsevolod.clicktrack.view.widget.PlayStopButton
 @Composable
 fun PlayClickTrackScreenView(
     state: PlayClickTrackScreenState,
-    dispatch: Dispatch = {},
+    dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
         topBar = { ClickTrackScreenTopBar(state, dispatch) },
@@ -48,7 +48,10 @@ fun PlayClickTrackScreenView(
         floatingActionButton = {
             PlayStopButton(
                 isPlaying = state.isPlaying,
-                onToggle = { dispatch(TogglePlay) },
+                onToggle = {
+                    val action = if (state.isPlaying) StopPlay else StartPlay(state.clickTrack)
+                    dispatch(action)
+                },
             )
         },
         modifier = Modifier.fillMaxSize(),
@@ -80,7 +83,7 @@ private fun ClickTrackScreenContent(
 @Composable
 private fun ClickTrackScreenTopBar(
     state: PlayClickTrackScreenState,
-    dispatch: (Action) -> Unit = {}
+    dispatch: Dispatch = Dispatch {}
 ) {
     TopAppBar(
         title = { Text(text = state.clickTrack.value.name) },

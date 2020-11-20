@@ -9,25 +9,25 @@ import net.ganin.vsevolod.clicktrack.state.reducer.reducePlayClickTrackScreen
 
 sealed class Screen : Parcelable {
 
-    abstract fun reduce(action: Action): Screen
+    abstract fun reduce(action: Action, currentlyPlaying: PlaybackState?): Screen
 
     @Parcelize
     data class ClickTrackList(val state: ClickTrackListScreenState) : Screen() {
-        override fun reduce(action: Action): Screen {
+        override fun reduce(action: Action, currentlyPlaying: PlaybackState?): Screen {
             return reduceClickTrackListScreen(action)
         }
     }
 
     @Parcelize
     data class PlayClickTrack(val state: PlayClickTrackScreenState) : Screen() {
-        override fun reduce(action: Action): Screen {
-            return reducePlayClickTrackScreen(action)
+        override fun reduce(action: Action, currentlyPlaying: PlaybackState?): Screen {
+            return reducePlayClickTrackScreen(action, currentlyPlaying)
         }
     }
 
     @Parcelize
     data class EditClickTrack(val state: EditClickTrackScreenState) : Screen() {
-        override fun reduce(action: Action): Screen {
+        override fun reduce(action: Action, currentlyPlaying: PlaybackState?): Screen {
             return reduceEditClickTrackScreen(action)
         }
     }
