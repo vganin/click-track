@@ -1,0 +1,29 @@
+name: Android Release Build
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+jobs:
+  android-release:
+    name: Android Release Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: Assemble
+        run: ./gradlew :app:bundleRelease -PisCiBuild -PbuildNumber=$GITHUB_RUN_NUMBER
+      - name: Sign
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.GPC_KEYSTORE }}
+          alias: ${{ secrets.GPC_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.GPC_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.GPC_KEY_PASSWORD }}
+      - name: Upload
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ steps.sign_app.outputs.signedReleaseFile }}

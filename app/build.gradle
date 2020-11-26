@@ -6,6 +6,13 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def keystorePropertiesFile = file("keystore.properties")
+def hasKeystoreProperties = keystorePropertiesFile.exists()
+def keystoreProperties = new Properties()
+if (hasKeystoreProperties) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     compileSdkVersion 29
 
@@ -13,16 +20,30 @@ android {
         applicationId "net.ganin.vsevolod.clicktrack"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 1
+        versionCode rootProject.ext.buildNumber ?: 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (hasKeystoreProperties) {
+            release {
+                storeFile file(keystoreProperties['releaseStoreFile'])
+                storePassword keystoreProperties['releaseStorePassword']
+                keyAlias keystoreProperties['releaseKeyAlias']
+                keyPassword keystoreProperties['releaseKeyPassword']
+            }
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (hasKeystoreProperties) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 

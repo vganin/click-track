@@ -1,0 +1,18 @@
+rootProject.ext {
+    localProperties = new Properties()
+    def localPropertiesFile = new File(rootDir, 'local.properties')
+    if (localPropertiesFile.exists()) {
+        localProperties.load(localPropertiesFile.newDataInputStream())
+    }
+
+    fusedProperties = System.getenv() + properties + localProperties
+
+    isCiBuild = booleanProperty('isCiBuild')
+    buildNumber = fusedProperties['buildNumber'] as Integer
+}
+
+@SuppressWarnings('GrMethodMayBeStatic') // Can't make static - `fusedProperties` is not static
+private boolean booleanProperty(String name) {
+    def rawValue = fusedProperties[name]
+    return rawValue == "" ? true : rawValue?.toBoolean()
+}

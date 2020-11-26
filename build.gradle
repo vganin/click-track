@@ -1,4 +1,6 @@
 buildscript {
+    rootProject.apply from: 'properties.gradle'
+
     ext {
         kotlinVersion = '1.4.10'
         composeVersion = '1.0.0-alpha06'
@@ -9,7 +11,11 @@ buildscript {
         google()
         jcenter()
     }
+
     dependencies {
+        // FIXME(https://github.com/cashapp/sqldelight/issues/2058)
+        classpath "xml-apis:xml-apis:1.4.01"
+
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
         classpath 'com.android.tools.build:gradle:4.2.0-alpha16'
