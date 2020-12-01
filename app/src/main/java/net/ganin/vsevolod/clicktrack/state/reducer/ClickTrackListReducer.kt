@@ -6,8 +6,14 @@ import net.ganin.vsevolod.clicktrack.state.Screen
 import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackListDataLoadedAction
 
 fun Screen.ClickTrackList.reduceClickTrackListScreen(action: Action): Screen {
+    return copy(
+        state = state.reduce(action)
+    )
+}
+
+private fun ClickTrackListScreenState.reduce(action: Action): ClickTrackListScreenState {
     return when (action) {
-        is ClickTrackListDataLoadedAction -> Screen.ClickTrackList(ClickTrackListScreenState(action.data))
+        is ClickTrackListDataLoadedAction -> ClickTrackListScreenState(action.data)
         else -> this
     }
 }

@@ -7,7 +7,7 @@ import net.ganin.vsevolod.clicktrack.state.Screen
 import net.ganin.vsevolod.clicktrack.state.actions.UpdateClickTrack
 
 fun Screen.EditClickTrack.reduceEditClickTrackScreen(action: Action): Screen {
-    return Screen.EditClickTrack(
+    return copy(
         state = state.reduce(action)
     )
 }
