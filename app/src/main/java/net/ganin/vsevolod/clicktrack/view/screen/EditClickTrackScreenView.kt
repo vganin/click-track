@@ -24,19 +24,14 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.onCommit
+import androidx.compose.runtime.onActive
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
@@ -49,7 +44,10 @@ import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.actions.PersistClickTrack
+import net.ganin.vsevolod.clicktrack.utils.compose.ObservableMutableState
+import net.ganin.vsevolod.clicktrack.utils.compose.observableMutableStateOf
 import net.ganin.vsevolod.clicktrack.utils.compose.swipeToRemove
+import net.ganin.vsevolod.clicktrack.utils.compose.toObservableMutableStateList
 import net.ganin.vsevolod.clicktrack.view.common.Constants.FAB_SIZE_WITH_PADDINGS
 import net.ganin.vsevolod.clicktrack.view.widget.EditCueWithDurationView
 import kotlin.time.minutes
@@ -59,40 +57,41 @@ fun EditClickTrackScreenView(
     state: EditClickTrackScreenState,
     dispatch: Dispatch = Dispatch {}
 ) {
-    val nameState = remember { mutableStateOf(state.clickTrack.value.name) }
-    val loopState = remember { mutableStateOf(state.clickTrack.value.loop) }
-    val cuesState = remember { state.clickTrack.value.cues.map { mutableStateOf(it) }.toMutableStateList() }
+    val nameState = remember { observableMutableStateOf(state.clickTrack.value.name) }
+    val loopState = remember { observableMutableStateOf(state.clickTrack.value.loop) }
+    val cuesState = remember { state.clickTrack.value.cues.map(::observableMutableStateOf).toObservableMutableStateList() }
+
+    fun update() {
+        dispatch(
+            PersistClickTrack(
+                clickTrack = state.clickTrack.copy(
+                    value = ClickTrack(
+                        name = nameState.value,
+                        loop = loopState.value,
+                        cues = cuesState.map(ObservableMutableState<CueWithDuration>::value),
+                    )
+                )
+            )
+        )
+    }
+    onActive {
+        nameState.observe { update() }
+        loopState.observe { update() }
+        cuesState.observe { update() }
+        cuesState.forEach { it.observe { update() } }
+    }
 
     Scaffold(
         topBar = { EditClickTrackScreenTopBar() },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(onClick = { cuesState += mutableStateOf(state.defaultCue) }) {
+            FloatingActionButton(onClick = { cuesState += observableMutableStateOf(state.defaultCue).observe { update() } }) {
                 Icon(Icons.Default.Add)
             }
         },
         modifier = Modifier.fillMaxSize(),
     ) {
         EditClickTrackScreenContent(nameState, state.isErrorInName, loopState, cuesState)
-    }
-
-    val name = nameState.value
-    val loop = loopState.value
-    val cues = cuesState.map { it.value }
-    onCommit(name, loop, cues) {
-        GlobalScope.launch(Dispatchers.Main) {
-            dispatch(
-                PersistClickTrack(
-                    clickTrack = state.clickTrack.copy(
-                        value = ClickTrack(
-                            name = name,
-                            cues = cues,
-                            loop = loop,
-                        )
-                    )
-                )
-            )
-        }
     }
 }
 
@@ -101,7 +100,7 @@ private fun EditClickTrackScreenContent(
     nameState: MutableState<String>,
     isErrorInName: Boolean,
     loopState: MutableState<Boolean>,
-    cuesState: MutableList<MutableState<CueWithDuration>>,
+    cuesState: MutableList<out MutableState<CueWithDuration>>,
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         item {

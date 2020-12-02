@@ -8,19 +8,32 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.onActive
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.lib.TimeSignature
+import net.ganin.vsevolod.clicktrack.utils.compose.observableMutableStateOf
 
 @Composable
 fun TimeSignatureView(
     state: MutableState<TimeSignature>,
     modifier: Modifier = Modifier
 ) {
-    val noteCountState = remember { mutableStateOf(state.value.noteCount) }
-    val noteDurationState = remember { mutableStateOf(state.value.noteDuration) }
+    val noteCountState = remember { observableMutableStateOf(state.value.noteCount) }
+    val noteDurationState = remember { observableMutableStateOf(state.value.noteDuration) }
+
+    onActive {
+        fun update() {
+            state.value = TimeSignature(
+                noteCount = noteCountState.value,
+                noteDuration = noteDurationState.value
+            )
+        }
+        noteCountState.observe { update() }
+        noteDurationState.observe { update() }
+    }
 
     Row(modifier = modifier) {
         val commonModifier = Modifier.align(Alignment.CenterVertically)
@@ -44,11 +57,6 @@ fun TimeSignatureView(
             range = commonNumberRange,
         )
     }
-
-    state.value = TimeSignature(
-        noteCount = noteCountState.value,
-        noteDuration = noteDurationState.value
-    )
 }
 
 @Preview

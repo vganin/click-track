@@ -8,6 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.onActive
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ import net.ganin.vsevolod.clicktrack.lib.CueWithDuration
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
 import net.ganin.vsevolod.clicktrack.lib.TimeSignature
 import net.ganin.vsevolod.clicktrack.lib.bpm
+import net.ganin.vsevolod.clicktrack.utils.compose.observableMutableStateOf
 import kotlin.time.minutes
 
 @Composable
@@ -26,9 +28,24 @@ fun EditCueWithDurationView(
     state: MutableState<CueWithDuration>,
     modifier: Modifier = Modifier
 ) {
-    val bpmState = remember { mutableStateOf(state.value.cue.bpm) }
-    val timeSignatureState = remember { mutableStateOf(state.value.cue.timeSignature) }
-    val durationState = remember { mutableStateOf(state.value.duration) }
+    val bpmState = remember { observableMutableStateOf(state.value.cue.bpm) }
+    val timeSignatureState = remember { observableMutableStateOf(state.value.cue.timeSignature) }
+    val durationState = remember { observableMutableStateOf(state.value.duration) }
+
+    onActive {
+        fun update() {
+            state.value = CueWithDuration(
+                cue = Cue(
+                    bpm = bpmState.value,
+                    timeSignature = timeSignatureState.value
+                ),
+                duration = durationState.value
+            )
+        }
+        bpmState.observe { update() }
+        timeSignatureState.observe { update() }
+        durationState.observe { update() }
+    }
 
     Row(modifier = modifier.padding(8.dp)) {
         val viewModifier = Modifier.align(Alignment.CenterVertically)
@@ -44,14 +61,6 @@ fun EditCueWithDurationView(
             textStyle = MaterialTheme.typography.h6
         )
     }
-
-    state.value = CueWithDuration(
-        cue = Cue(
-            bpm = bpmState.value,
-            timeSignature = timeSignatureState.value
-        ),
-        duration = durationState.value
-    )
 }
 
 @Preview

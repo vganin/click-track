@@ -31,6 +31,7 @@ import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
+import net.ganin.vsevolod.clicktrack.utils.compose.observableMutableStateOf
 import kotlin.time.Duration
 import kotlin.time.minutes
 
@@ -51,23 +52,24 @@ fun EditCueDurationView(
 
         Spacer(modifier = Modifier.width(8.dp))
 
+        val onDurationChange: (CueDuration) -> Unit = { state.value = it }
         val beatsDurationState = remember(CueDurationType.BEATS) {
             state.value.let {
                 if (it is CueDuration.Beats) {
-                    mutableStateOf(it)
+                    observableMutableStateOf(it)
                 } else {
-                    mutableStateOf(defaultBeatsDuration())
+                    observableMutableStateOf(defaultBeatsDuration())
                 }
-            }
+            }.observe(onDurationChange)
         }
         val timeDurationState = remember(CueDurationType.TIME) {
             state.value.let {
                 if (it is CueDuration.Time) {
-                    mutableStateOf(it)
+                    observableMutableStateOf(it)
                 } else {
-                    mutableStateOf(defaultTimeDuration())
+                    observableMutableStateOf(defaultTimeDuration())
                 }
-            }
+            }.observe(onDurationChange)
         }
 
         val commonCueDurationModifier = Modifier
@@ -154,13 +156,15 @@ private fun EditBeatsView(
     state: MutableState<CueDuration.Beats>,
     modifier: Modifier = Modifier
 ) {
-    val beatsNumberState: MutableState<Int> = remember { mutableStateOf(state.value.value) }
+    val beatsNumberState: MutableState<Int> = remember {
+        observableMutableStateOf(state.value.value).observe {
+            state.value = CueDuration.Beats(it)
+        }
+    }
 
     ProvideTextStyle(MaterialTheme.typography.subtitle1) {
         NumberInputField(beatsNumberState, modifier)
     }
-
-    state.value = CueDuration.Beats(beatsNumberState.value)
 }
 
 @Composable
@@ -168,13 +172,15 @@ private fun EditTimeView(
     state: MutableState<CueDuration.Time>,
     modifier: Modifier = Modifier
 ) {
-    val durationState: MutableState<Duration> = remember { mutableStateOf(state.value.value.value) }
+    val durationState: MutableState<Duration> = remember {
+        observableMutableStateOf(state.value.value.value).observe {
+            state.value = CueDuration.Time(SerializableDuration(it))
+        }
+    }
 
     ProvideTextStyle(MaterialTheme.typography.subtitle1) {
         DurationPicker(durationState, modifier)
     }
-
-    state.value = CueDuration.Time(SerializableDuration(durationState.value))
 }
 
 private enum class CueDurationType {
