@@ -1,16 +1,17 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
-import androidx.compose.foundation.AmbientTextStyle
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Text
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.AmbientTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -19,32 +20,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.WithConstraints
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.gesture.dragGestureFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.layout.WithConstraints
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.toRadians
-import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.lib.BeatsPerMinute
 import net.ganin.vsevolod.clicktrack.lib.bpm
 import net.ganin.vsevolod.clicktrack.utils.compose.RadialDragObserver
+import net.ganin.vsevolod.clicktrack.utils.compose.toRadians
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
 @Composable
 fun BpmWheel(
-    state: MutableState<BeatsPerMinute> = mutableStateOf(60.bpm),
+    state: MutableState<BeatsPerMinute>,
     modifier: Modifier = Modifier,
     textStyle: TextStyle = AmbientTextStyle.current,
     bpmRange: IntRange = 1..999,
-    sensitivity: Float = 0.08f
+    sensitivity: Float = 0.08f,
 ) {
     val bpmRangeInFloat = remember(bpmRange) { bpmRange.first.toFloat()..bpmRange.last.toFloat() }
     var internalFloatState by remember { mutableStateOf(state.value.value.toFloat()) }
@@ -72,7 +73,7 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
     var buttonAngle: Float by remember { mutableStateOf(90f) }
 
     WithConstraints(modifier) {
-        val density = DensityAmbient.current
+        val density = AmbientDensity.current
         val width = minWidth
         val height = minHeight
         val widthPx = with(density) { width.toPx() }
@@ -138,5 +139,8 @@ private const val WHEEL_WIDTH_MULTIPLIER = 0.125f
 @Preview
 @Composable
 fun PreviewBpmWheel() {
-    BpmWheel(modifier = Modifier.size(200.dp))
+    BpmWheel(
+        state = mutableStateOf(60.bpm),
+        modifier = Modifier.size(200.dp)
+    )
 }

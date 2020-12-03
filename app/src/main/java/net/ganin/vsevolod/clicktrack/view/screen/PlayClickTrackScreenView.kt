@@ -1,6 +1,5 @@
 package net.ganin.vsevolod.clicktrack.view.screen
 
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +9,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -23,7 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
-import androidx.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.PlayClickTrackScreenState
@@ -51,7 +51,7 @@ fun PlayClickTrackScreenView(
                 onToggle = {
                     val action = if (state.isPlaying) StopPlay else StartPlay(state.clickTrack)
                     dispatch(action)
-                },
+                }
             )
         },
         modifier = Modifier.fillMaxSize(),

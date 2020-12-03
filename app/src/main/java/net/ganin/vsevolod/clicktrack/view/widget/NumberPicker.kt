@@ -4,9 +4,6 @@ import androidx.compose.animation.animatedFloat
 import androidx.compose.animation.core.ExponentialDecay
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.TargetAnimation
-import androidx.compose.foundation.AmbientTextStyle
-import androidx.compose.foundation.ProvideTextStyle
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.animation.FlingConfig
 import androidx.compose.foundation.animation.fling
 import androidx.compose.foundation.gestures.draggable
@@ -16,23 +13,25 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.offsetPx
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.AmbientEmphasisLevels
+import androidx.compose.material.AmbientTextStyle
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ProvideTextStyle
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawOpacity
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.gesture.longPressGestureFilter
 import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
-import androidx.compose.ui.platform.DensityAmbient
+import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import kotlin.math.abs
 
 @Composable
@@ -44,7 +43,7 @@ fun NumberPicker(
 ) {
     val numbersColumnHeight = 36.dp
     val halvedNumbersColumnHeight = numbersColumnHeight / 2
-    val halvedNumbersColumnHeightPx = with(DensityAmbient.current) { halvedNumbersColumnHeight.toPx() }
+    val halvedNumbersColumnHeightPx = with(AmbientDensity.current) { halvedNumbersColumnHeight.toPx() }
 
     fun animatedStateValue(offset: Float): Int = state.value - (offset / halvedNumbersColumnHeightPx).toInt()
 
@@ -93,7 +92,7 @@ fun NumberPicker(
     ) {
         val spacing = 4.dp
 
-        val arrowColor = AmbientEmphasisLevels.current.disabled.applyEmphasis(MaterialTheme.colors.onSecondary)
+        val arrowColor = MaterialTheme.colors.onSecondary.copy(alpha = ContentAlpha.disabled)
 
         Arrow(direction = ArrowDirection.UP, tint = arrowColor)
 
@@ -102,26 +101,26 @@ fun NumberPicker(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .offsetPx(y = mutableStateOf(coercedAnimatedOffset))
+                .offset(y = { coercedAnimatedOffset })
         ) {
             val baseLabelModifier = Modifier.align(Alignment.Center)
-            ProvideTextStyle(value = textStyle) {
+            ProvideTextStyle(textStyle) {
                 Label(
                     text = (animatedStateValue - 1).toString(),
                     modifier = baseLabelModifier
                         .offset(y = -halvedNumbersColumnHeight)
-                        .drawOpacity(coercedAnimatedOffset / halvedNumbersColumnHeightPx)
+                        .alpha(coercedAnimatedOffset / halvedNumbersColumnHeightPx)
                 )
                 Label(
                     text = animatedStateValue.toString(),
                     modifier = baseLabelModifier
-                        .drawOpacity(1 - abs(coercedAnimatedOffset) / halvedNumbersColumnHeightPx)
+                        .alpha(1 - abs(coercedAnimatedOffset) / halvedNumbersColumnHeightPx)
                 )
                 Label(
                     text = (animatedStateValue + 1).toString(),
                     modifier = baseLabelModifier
                         .offset(y = halvedNumbersColumnHeight)
-                        .drawOpacity(-coercedAnimatedOffset / halvedNumbersColumnHeightPx)
+                        .alpha(-coercedAnimatedOffset / halvedNumbersColumnHeightPx)
                 )
             }
         }

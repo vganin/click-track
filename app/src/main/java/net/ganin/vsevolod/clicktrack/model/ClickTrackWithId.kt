@@ -1,7 +1,7 @@
 package net.ganin.vsevolod.clicktrack.model
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 
 @Parcelize

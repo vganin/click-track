@@ -2,7 +2,7 @@ plugins {
     id 'org.jetbrains.kotlin.multiplatform'
     id 'org.jetbrains.kotlin.plugin.serialization'
     id 'com.android.library'
-    id 'kotlin-android-extensions'
+    id 'kotlin-parcelize'
 }
 
 kotlin {
@@ -38,9 +38,5 @@ android {
         main {
             setRoot 'src/androidMain'
         }
-    }
-
-    androidExtensions {
-        features = ['parcelize']
     }
 }

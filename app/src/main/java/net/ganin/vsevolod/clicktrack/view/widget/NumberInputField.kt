@@ -1,9 +1,10 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
-import androidx.compose.foundation.AmbientContentColor
-import androidx.compose.foundation.AmbientTextStyle
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.CoreTextField
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AmbientContentColor
+import androidx.compose.material.AmbientTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -17,8 +18,8 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,7 +33,6 @@ fun NumberInputField(
 ) {
     var text by remember { mutableStateOf(state.value.toString()) }
     var selection by remember { mutableStateOf(TextRange.Zero) }
-    var composition by remember { mutableStateOf<TextRange?>(null) }
 
     fun TextRange.constrain(minimumValue: Int, maximumValue: Int): TextRange {
         val newStart = start.coerceIn(minimumValue, maximumValue)
@@ -46,12 +46,11 @@ fun NumberInputField(
     val textFieldValue = TextFieldValue(
         text = text,
         selection = selection.constrain(0, text.length),
-        composition = composition?.constrain(0, text.length)
     )
 
     var isFocused by remember { mutableStateOf(false) }
 
-    CoreTextField(
+    BasicTextField(
         value = textFieldValue,
         onValueChange = { newValue ->
             val newText = newValue.text
@@ -59,11 +58,10 @@ fun NumberInputField(
                 newText.isEmpty() -> 0
                 newText.length <= maxDigitsCount -> newText.toIntOrNull()
                 else -> null
-            } ?: return@CoreTextField
+            } ?: return@BasicTextField
 
             text = newText
             selection = newValue.selection
-            composition = newValue.composition
             state.value = newInt
         },
         cursorColor = AmbientContentColor.current,
@@ -92,8 +90,10 @@ fun NumberInputField(
                 }
             }
             .padding(8.dp),
-        keyboardType = KeyboardType.Number,
-        softWrap = false,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number
+        ),
+        singleLine = true,
         maxLines = 1
     )
 }

@@ -1,7 +1,7 @@
 package net.ganin.vsevolod.clicktrack.state
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.state.reducer.reduceClickTrackListScreen
 import net.ganin.vsevolod.clicktrack.state.reducer.reduceEditClickTrackScreen

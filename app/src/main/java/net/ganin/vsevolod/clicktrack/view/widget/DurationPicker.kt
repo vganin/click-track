@@ -1,6 +1,6 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
-import androidx.compose.foundation.Text
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,9 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.ripple.RippleIndication
+import androidx.compose.material.ripple.rememberRippleIndication
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -27,21 +28,21 @@ import androidx.compose.ui.focus.isFocused
 import androidx.compose.ui.focusObserver
 import androidx.compose.ui.focusRequester
 import androidx.compose.ui.gesture.tapGestureFilter
-import androidx.compose.ui.platform.TextInputServiceAmbient
+import androidx.compose.ui.platform.AmbientTextInputService
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.BackspaceKeyEditOp
 import androidx.compose.ui.text.input.CommitTextEditOp
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.ImeOptions
 import androidx.compose.ui.text.input.InputSessionToken
-import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.MinutesPerHour
 import androidx.compose.ui.unit.SecondsPerMinute
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.view.common.focusableBorder
 import java.text.DecimalFormat
@@ -109,7 +110,7 @@ fun DurationPicker(
         updateInternalStringState('0' + internalStringState.value.dropLast(1))
     }
 
-    val inputService = TextInputServiceAmbient.current!!
+    val inputService = AmbientTextInputService.current!!
     var inputSessionToken: InputSessionToken? by remember { mutableStateOf(null) }
     var isFocused by remember { mutableStateOf(false) }
     val focusRequester = FocusRequester()
@@ -146,9 +147,10 @@ fun DurationPicker(
                 if (isFocused && inputSessionToken == null) {
                     inputSessionToken = inputService.startInput(
                         value = TextFieldValue(),
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                        keyboardOptions = KeyboardOptions(),
+                        imeOptions = ImeOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done,
+                        ),
                         onEditCommand = { operations ->
                             operations.forEach { operation ->
                                 when (operation) {
@@ -187,10 +189,10 @@ fun DurationPicker(
                 .size(16.dp, 16.dp)
                 .clickable(
                     onClick = { state.value = Duration.ZERO },
-                    indication = RippleIndication(bounded = false)
+                    indication = rememberRippleIndication(bounded = false)
                 )
         ) {
-            Icon(asset = Icons.Default.Close)
+            Icon(imageVector = Icons.Default.Close)
         }
     }
 }

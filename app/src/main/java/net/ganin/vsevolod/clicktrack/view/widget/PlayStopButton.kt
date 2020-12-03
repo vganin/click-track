@@ -13,18 +13,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathBuilder
-import androidx.compose.ui.graphics.vector.VectorAsset
-import androidx.compose.ui.graphics.vector.VectorAssetBuilder
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.view.widget.PlayStopIconState.PLAY
 import net.ganin.vsevolod.clicktrack.view.widget.PlayStopIconState.STOP
 
 @Composable
 fun PlayStopButton(
-    isPlaying: Boolean = false,
-    onToggle: () -> Unit = {},
+    isPlaying: Boolean,
+    onToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     FloatingActionButton(
@@ -84,8 +83,8 @@ private fun PlayStopIcon(isPlaying: Boolean) {
     )
 }
 
-private fun iconAsset(a: Offset, b: Offset, c: Offset, d: Offset): VectorAsset {
-    return VectorAssetBuilder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)
+private fun iconAsset(a: Offset, b: Offset, c: Offset, d: Offset): ImageVector {
+    return ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)
         .addPath(
             pathData = PathBuilder()
                 .moveTo(a)
@@ -105,5 +104,8 @@ private fun PathBuilder.lineTo(point: Offset) = lineTo(point.x, point.y)
 @Preview
 @Composable
 fun PreviewPlayStopButton() {
-    PlayStopButton()
+    PlayStopButton(
+        isPlaying = false,
+        onToggle = {},
+    )
 }

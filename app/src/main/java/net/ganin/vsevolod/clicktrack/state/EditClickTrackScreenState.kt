@@ -1,7 +1,7 @@
 package net.ganin.vsevolod.clicktrack.state
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
 import net.ganin.vsevolod.clicktrack.lib.CueWithDuration

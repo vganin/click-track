@@ -1,8 +1,6 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.ProvideTextStyle
-import androidx.compose.foundation.Text
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,9 +13,11 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ProvideTextStyle
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.ripple.RippleIndication
+import androidx.compose.material.ripple.rememberRippleIndication
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -25,9 +25,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Position
 import androidx.compose.ui.unit.dp
-import androidx.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
@@ -38,9 +38,9 @@ import kotlin.time.minutes
 @Composable
 fun EditCueDurationView(
     state: MutableState<CueDuration>,
+    modifier: Modifier = Modifier,
     defaultBeatsDuration: () -> CueDuration.Beats = { CueDuration.Beats(4) },
     defaultTimeDuration: () -> CueDuration.Time = { CueDuration.Time(SerializableDuration(1.minutes)) },
-    modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier) {
         val durationTypeState = remember { mutableStateOf(state.value.type) }
@@ -107,7 +107,7 @@ private fun DurationTypeDropdown(
         toggleModifier = modifier
             .clickable(
                 onClick = onToggleClick,
-                indication = RippleIndication()
+                indication = rememberRippleIndication()
             )
             .width(DROPDOWN_TOGGLE_WIDTH),
         toggle = {
@@ -128,7 +128,7 @@ private fun DurationTypeDropdown(
                         .size(16.dp, 16.dp)
                         .clickable(
                             onClick = onToggleClick,
-                            indication = RippleIndication(bounded = false)
+                            indication = rememberRippleIndication(bounded = false)
                         )
                 ) {
                     Icon(Icons.Default.ArrowDropDown)
@@ -154,7 +154,7 @@ private fun DurationTypeDropdown(
 @Composable
 private fun EditBeatsView(
     state: MutableState<CueDuration.Beats>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val beatsNumberState: MutableState<Int> = remember {
         observableMutableStateOf(state.value.value).observe {
@@ -170,7 +170,7 @@ private fun EditBeatsView(
 @Composable
 private fun EditTimeView(
     state: MutableState<CueDuration.Time>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val durationState: MutableState<Duration> = remember {
         observableMutableStateOf(state.value.value.value).observe {
@@ -212,7 +212,7 @@ private val DURATION_FIELD_WIDTH = 140.dp
 @Composable
 fun PreviewEditCueDurationView() {
     Column(modifier = Modifier.fillMaxSize()) {
-        EditCueDurationView(mutableStateOf(CueDuration.Beats(999999)))
-        EditCueDurationView(mutableStateOf(CueDuration.Time(SerializableDuration(1.minutes))))
+        EditCueDurationView(state = mutableStateOf(CueDuration.Beats(999999)))
+        EditCueDurationView(state = mutableStateOf(CueDuration.Time(SerializableDuration(1.minutes))))
     }
 }

@@ -4,20 +4,19 @@ import androidx.compose.animation.animatedFloat
 import androidx.compose.foundation.animation.FlingConfig
 import androidx.compose.foundation.animation.fling
 import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.layout.offsetPx
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
 import androidx.compose.ui.unit.Constraints
 import kotlin.math.absoluteValue
 
-@Composable
 fun Modifier.swipeToRemove(
     constraints: Constraints,
     onDelete: () -> Unit
-): Modifier {
+): Modifier = composed {
     val width = constraints.maxWidth.toFloat()
 
     val draggable = remember { mutableStateOf(true) }
@@ -26,7 +25,7 @@ fun Modifier.swipeToRemove(
         setBounds(-width, 0f)
     }
 
-    return this
+    this
         .draggable(
             enabled = draggable.value,
             orientation = Orientation.Horizontal,
@@ -45,5 +44,5 @@ fun Modifier.swipeToRemove(
                 }
             }
         )
-        .offsetPx(x = positionOffset.asState())
+        .offset(x = { positionOffset.value })
 }
