@@ -2,9 +2,10 @@ package net.ganin.vsevolod.clicktrack.state.epic
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
-import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.merge
 import net.ganin.vsevolod.clicktrack.di.component.ViewModelScoped
 import net.ganin.vsevolod.clicktrack.redux.Action
@@ -12,10 +13,8 @@ import net.ganin.vsevolod.clicktrack.redux.Epic
 import net.ganin.vsevolod.clicktrack.redux.Store
 import net.ganin.vsevolod.clicktrack.state.AppState
 import net.ganin.vsevolod.clicktrack.state.Screen
-import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackDataLoadedAction
-import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackListDataLoadedAction
-import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackListLoadRequestAction
-import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackLoadRequestAction
+import net.ganin.vsevolod.clicktrack.state.actions.UpdateClickTrack
+import net.ganin.vsevolod.clicktrack.state.actions.UpdateClickTrackList
 import net.ganin.vsevolod.clicktrack.state.frontScreen
 import net.ganin.vsevolod.clicktrack.storage.ClickTrackRepository
 import javax.inject.Inject
@@ -31,24 +30,26 @@ class LoadDataEpic @Inject constructor(
             store.state
                 .map { it.backstack.frontScreen() }
                 .distinctUntilChangedBy { it?.javaClass }
-                .filterIsInstance<Screen.ClickTrackList>()
-                .map { ClickTrackListLoadRequestAction },
+                .flatMapLatest { screen ->
+                    if (screen is Screen.ClickTrackList) {
+                        clickTrackRepository.getAll()
+                    } else {
+                        emptyFlow()
+                    }
+                }
+                .map(::UpdateClickTrackList),
 
             store.state
                 .map { it.backstack.frontScreen() }
                 .distinctUntilChangedBy { it?.javaClass }
-                .filterIsInstance<Screen.PlayClickTrack>()
-                .map { ClickTrackLoadRequestAction(it.state.clickTrack.id) },
-
-            actions
-                .filterIsInstance<ClickTrackListLoadRequestAction>()
-                .map { clickTrackRepository.getAll() }
-                .map(::ClickTrackListDataLoadedAction),
-
-            actions
-                .filterIsInstance<ClickTrackLoadRequestAction>()
-                .mapNotNull { clickTrackRepository.get(it.id) }
-                .map(::ClickTrackDataLoadedAction),
+                .flatMapLatest { screen ->
+                    if (screen is Screen.PlayClickTrack) {
+                        clickTrackRepository.getById(screen.state.clickTrack.id).filterNotNull()
+                    } else {
+                        emptyFlow()
+                    }
+                }
+                .map(::UpdateClickTrack),
         )
     }
 }

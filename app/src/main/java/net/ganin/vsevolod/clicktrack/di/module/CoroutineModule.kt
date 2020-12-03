@@ -43,13 +43,7 @@ class ViewModelScopedCoroutineModule {
 
     @Provides
     @ViewModelScoped
-    @MainDispatcher
-    fun provideMainScope(@MainDispatcher dispatcher: CoroutineDispatcher) = CoroutineScope(dispatcher)
-
-    @Provides
-    @ViewModelScoped
-    @ComputationDispatcher
-    fun provideComputationScope(@ComputationDispatcher dispatcher: CoroutineDispatcher) = CoroutineScope(dispatcher)
+    fun provideCoroutineScope(@MainDispatcher dispatcher: CoroutineDispatcher) = CoroutineScope(dispatcher)
 }
 
 @Module
@@ -60,14 +54,9 @@ class PlayerServiceScopedCoroutineModule {
     @PlayerDispatcher
     fun providePlayerDispatcher(): CoroutineDispatcher {
         return Executors.newSingleThreadExecutor { runnable ->
-            Thread(runnable, "click_track").apply {
+            Thread(runnable, "ClickTrackPlayer").apply {
                 priority = Thread.MAX_PRIORITY
             }
         }.asCoroutineDispatcher()
     }
-
-    @Provides
-    @PlayerServiceScoped
-    @MainDispatcher
-    fun provideMainScope(@MainDispatcher dispatcher: CoroutineDispatcher) = CoroutineScope(dispatcher)
 }

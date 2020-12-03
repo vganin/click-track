@@ -2,6 +2,7 @@ package net.ganin.vsevolod.clicktrack.redux
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
@@ -19,18 +20,18 @@ interface SuspendDispatch {
 class Store<T>(
     initialState: T,
     reducer: Reducer<T>,
-    private val storeCoroutineScope: CoroutineScope,
+    storeCoroutineScope: CoroutineScope,
     vararg middlewares: Middleware<T>
 ) {
     private val _state = MutableNonConflatedStateFlow(initialState)
     val state: NonConflatedStateFlow<T> = _state
 
-    private val actions = Channel<Action>()
+    private val actions = Channel<Action>(UNLIMITED)
 
     init {
         val initialDispatch: SuspendDispatch = object : SuspendDispatch {
             override suspend fun invoke(action: Action) {
-                _state.value = reducer(_state.value, action)
+                _state.setValue(reducer(_state.value, action))
             }
         }
         val dispatch = middlewares.fold(initialDispatch) { dispatch, middleware ->
@@ -43,8 +44,6 @@ class Store<T>(
     }
 
     fun dispatch(action: Action) {
-        storeCoroutineScope.launch {
-            actions.send(action)
-        }
+        actions.offer(action)
     }
 }

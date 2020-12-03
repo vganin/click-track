@@ -4,7 +4,7 @@ import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.Screen
-import net.ganin.vsevolod.clicktrack.state.actions.UpdateClickTrack
+import net.ganin.vsevolod.clicktrack.state.actions.StoreUpdateClickTrack
 
 fun Screen.EditClickTrack.reduceEditClickTrackScreen(action: Action): Screen {
     return copy(
@@ -21,14 +21,14 @@ private fun EditClickTrackScreenState.reduce(action: Action): EditClickTrackScre
 
 private fun ClickTrackWithId.reduce(action: Action): ClickTrackWithId {
     return when (action) {
-        is UpdateClickTrack -> action.clickTrack
+        is StoreUpdateClickTrack.Result -> action.clickTrack
         else -> this
     }
 }
 
 private fun Boolean.reduceIsErrorInName(action: Action): Boolean {
     return when (action) {
-        is UpdateClickTrack -> action.isErrorInName
+        is StoreUpdateClickTrack.Result -> action.isErrorInName
         else -> this
     }
 }

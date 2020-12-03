@@ -2,6 +2,9 @@ package net.ganin.vsevolod.clicktrack.storage
 
 import android.content.Context
 import com.squareup.sqldelight.android.AndroidSqliteDriver
+import com.squareup.sqldelight.runtime.coroutines.asFlow
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -20,18 +23,18 @@ class ClickTrackRepository @Inject constructor(
     private val database: Database = Database(AndroidSqliteDriver(Database.Schema, context, "click_track.db"))
     private val json: Json = Json
 
-    fun getAll(): List<ClickTrackWithId> {
-        return database.sqlClickTrackQueries.getAll().executeAsList()
-            .map { it.toCommon() }
+    fun getAll(): Flow<List<ClickTrackWithId>> {
+        return database.sqlClickTrackQueries.getAll().asFlow()
+            .map { it.executeAsList().map { elem -> elem.toCommon() } }
     }
 
     fun getAllNames(): List<String> {
         return database.sqlClickTrackQueries.getAllNames().executeAsList()
     }
 
-    fun get(id: Long): ClickTrackWithId? {
-        return database.sqlClickTrackQueries.getById(id).executeAsOneOrNull()
-            ?.toCommon()
+    fun getById(id: Long): Flow<ClickTrackWithId?> {
+        return database.sqlClickTrackQueries.getById(id).asFlow()
+            .map { it.executeAsOneOrNull()?.toCommon() }
     }
 
     fun insert(clickTrack: ClickTrack): ClickTrackWithId {

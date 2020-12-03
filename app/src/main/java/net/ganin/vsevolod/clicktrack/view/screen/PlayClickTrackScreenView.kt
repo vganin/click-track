@@ -29,9 +29,9 @@ import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.PlayClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToEditClickTrackScreen
-import net.ganin.vsevolod.clicktrack.state.actions.RemoveClickTrack
 import net.ganin.vsevolod.clicktrack.state.actions.StartPlay
 import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
+import net.ganin.vsevolod.clicktrack.state.actions.StoreRemoveClickTrack
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackView
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackViewState
@@ -114,7 +114,7 @@ private fun ClickTrackScreenTopBar(
                 }
                 val confirm: () -> Unit = remember {
                     {
-                        dispatch(RemoveClickTrack(state.clickTrack.id))
+                        dispatch(StoreRemoveClickTrack(state.clickTrack.id))
                         dispatch(NavigateBack)
                     }
                 }

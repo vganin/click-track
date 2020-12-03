@@ -29,9 +29,9 @@ import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.ClickTrackListScreenState
-import net.ganin.vsevolod.clicktrack.state.actions.AddNewClickTrack
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToClickTrackScreen
-import net.ganin.vsevolod.clicktrack.state.actions.RemoveClickTrack
+import net.ganin.vsevolod.clicktrack.state.actions.StoreAddNewClickTrack
+import net.ganin.vsevolod.clicktrack.state.actions.StoreRemoveClickTrack
 import net.ganin.vsevolod.clicktrack.utils.compose.swipeToRemove
 import net.ganin.vsevolod.clicktrack.view.common.Constants
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
@@ -48,7 +48,7 @@ fun ClickTrackListScreenView(
         topBar = { ClickTrackListScreenTopBar() },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(onClick = { dispatch(AddNewClickTrack) }) {
+            FloatingActionButton(onClick = { dispatch(StoreAddNewClickTrack) }) {
                 Icon(Icons.Default.Add)
             }
         },
@@ -90,7 +90,7 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
             modifier = Modifier
                 .padding(8.dp)
                 .swipeToRemove(constraints = constraints, onDelete = {
-                    dispatch(RemoveClickTrack(clickTrack.id))
+                    dispatch(StoreRemoveClickTrack(clickTrack.id))
                 }),
             elevation = 2.dp
         ) {

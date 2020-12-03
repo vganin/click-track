@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.StateFlow
 interface NonConflatedStateFlow<T> : StateFlow<T>
 
 interface MutableNonConflatedStateFlow<T> : NonConflatedStateFlow<T> {
-    override var value: T
+    suspend fun setValue(value: T)
 }
 
 fun <T> MutableNonConflatedStateFlow(initialValue: T): MutableNonConflatedStateFlow<T> {
@@ -16,10 +16,12 @@ fun <T> MutableNonConflatedStateFlow(initialValue: T): MutableNonConflatedStateF
         onBufferOverflow = BufferOverflow.SUSPEND
     ).apply { tryEmit(initialValue) }
     return object : MutableNonConflatedStateFlow<T>, MutableSharedFlow<T> by sharedFlow {
-        override var value: T
+
+        override val value: T
             get() = sharedFlow.replayCache[0]
-            set(value) {
-                sharedFlow.tryEmit(value)
-            }
+
+        override suspend fun setValue(value: T) {
+            sharedFlow.emit(value)
+        }
     }
 }

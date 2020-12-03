@@ -4,8 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import net.ganin.vsevolod.clicktrack.di.module.ComputationDispatcher
-import net.ganin.vsevolod.clicktrack.di.module.MainDispatcher
 import net.ganin.vsevolod.clicktrack.di.module.ViewModelScopedAppStateEpic
 import net.ganin.vsevolod.clicktrack.player.PlayerServiceAccess
 import net.ganin.vsevolod.clicktrack.redux.Epic
@@ -23,12 +21,7 @@ class MainViewModel(
         .build()
 
     @Inject
-    @MainDispatcher
-    lateinit var mainScope: CoroutineScope
-
-    @Inject
-    @ComputationDispatcher
-    lateinit var computationScope: CoroutineScope
+    lateinit var coroutineScope: CoroutineScope
 
     @Inject
     lateinit var epicMiddleware: EpicMiddleware<AppState>
@@ -49,7 +42,6 @@ class MainViewModel(
     override fun onCleared() {
         playerServiceAccess.disconnect()
         epicMiddleware.unregister(*epics.toTypedArray())
-        mainScope.cancel()
-        computationScope.cancel()
+        coroutineScope.cancel()
     }
 }

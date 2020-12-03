@@ -5,7 +5,7 @@ import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.state.PlayClickTrackScreenState
 import net.ganin.vsevolod.clicktrack.state.PlaybackState
 import net.ganin.vsevolod.clicktrack.state.Screen
-import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackDataLoadedAction
+import net.ganin.vsevolod.clicktrack.state.actions.UpdateClickTrack
 
 fun Screen.PlayClickTrack.reducePlayClickTrackScreen(action: Action, currentlyPlaying: PlaybackState?): Screen {
     return copy(
@@ -23,7 +23,7 @@ private fun PlayClickTrackScreenState.reduce(
 
 private fun ClickTrackWithId.reduce(action: Action): ClickTrackWithId {
     return when (action) {
-        is ClickTrackDataLoadedAction -> if (action.data.id == id) action.data else this
+        is UpdateClickTrack -> if (action.data.id == id) action.data else this
         else -> this
     }
 }

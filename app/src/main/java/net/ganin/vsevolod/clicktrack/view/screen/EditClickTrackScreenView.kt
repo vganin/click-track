@@ -43,7 +43,7 @@ import net.ganin.vsevolod.clicktrack.lib.bpm
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
-import net.ganin.vsevolod.clicktrack.state.actions.PersistClickTrack
+import net.ganin.vsevolod.clicktrack.state.actions.StoreUpdateClickTrack
 import net.ganin.vsevolod.clicktrack.utils.compose.ObservableMutableState
 import net.ganin.vsevolod.clicktrack.utils.compose.observableMutableStateOf
 import net.ganin.vsevolod.clicktrack.utils.compose.swipeToRemove
@@ -63,7 +63,7 @@ fun EditClickTrackScreenView(
 
     fun update() {
         dispatch(
-            PersistClickTrack(
+            StoreUpdateClickTrack(
                 clickTrack = state.clickTrack.copy(
                     value = ClickTrack(
                         name = nameState.value,

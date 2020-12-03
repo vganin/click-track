@@ -35,7 +35,8 @@ class AppStateModule {
     @ViewModelScoped
     fun provideStore(
         savedStateHandle: SavedStateHandle,
-        @ComputationDispatcher scope: CoroutineScope,
+        coroutineScope: CoroutineScope,
+        @ComputationDispatcher coroutineDispatcher: CoroutineDispatcher,
         epicMiddleware: EpicMiddleware<AppState>,
     ): Store<AppState> {
         val initialState = savedStateHandle.get<Bundle?>(SavedStateConst.APP_STATE_BUNDLE_KEY)
@@ -45,7 +46,7 @@ class AppStateModule {
         val store = Store(
             initialState,
             AppState::reduce,
-            scope,
+            CoroutineScope(coroutineScope.coroutineContext + coroutineDispatcher),
             epicMiddleware
         )
 

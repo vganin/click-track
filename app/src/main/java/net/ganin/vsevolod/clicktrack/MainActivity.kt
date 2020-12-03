@@ -17,7 +17,6 @@ import net.ganin.vsevolod.clicktrack.redux.Epic
 import net.ganin.vsevolod.clicktrack.redux.EpicMiddleware
 import net.ganin.vsevolod.clicktrack.redux.Store
 import net.ganin.vsevolod.clicktrack.state.AppState
-import net.ganin.vsevolod.clicktrack.state.actions.ClickTrackListLoadRequestAction
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
 import net.ganin.vsevolod.clicktrack.state.frontScreen
 import net.ganin.vsevolod.clicktrack.view.ContentView
@@ -56,10 +55,10 @@ class MainActivity : AppCompatActivity() {
 
         renderScope.launch {
             // FIXME: Don't use method reference here because of compiler crash for now
-            appStateStore.state.collect { render(it) }
+            appStateStore.state.collect {
+                render(it)
+            }
         }
-
-        appStateStore.dispatch(ClickTrackListLoadRequestAction)
     }
 
     override fun onDestroy() {

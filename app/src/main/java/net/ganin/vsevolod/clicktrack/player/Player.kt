@@ -61,7 +61,7 @@ class PlayerImpl @Inject constructor(
     override suspend fun stop(): Unit = withContext(mainDispatcher) {
         playerJob?.cancel()
         playerJob = null
-        playbackState.value = null
+        playbackState.setValue(null)
     }
 
     override fun playbackState(): Flow<PlaybackState?> = playbackState
@@ -71,21 +71,25 @@ class PlayerImpl @Inject constructor(
         val agc = mediaPlayer.tryAttachAgc()
         try {
             do {
-                playbackState.value = PlaybackState(
-                    clickTrack = clickTrack,
-                    playbackStamp = PlaybackStamp(
-                        timestamp = SerializableDuration(Duration.ZERO),
-                        duration = SerializableDuration(Duration.ZERO)
+                playbackState.setValue(
+                    PlaybackState(
+                        clickTrack = clickTrack,
+                        playbackStamp = PlaybackStamp(
+                            timestamp = SerializableDuration(Duration.ZERO),
+                            duration = SerializableDuration(Duration.ZERO)
+                        )
                     )
                 )
                 var playedFor = Duration.ZERO
                 for (cue in clickTrack.value.cues) {
                     mediaPlayer.playImpl(cue, onBeatPlayed = { beatTimestamp ->
-                        playbackState.value = PlaybackState(
-                            clickTrack = clickTrack,
-                            playbackStamp = PlaybackStamp(
-                                timestamp = SerializableDuration(playedFor + beatTimestamp),
-                                duration = SerializableDuration(9999.seconds /* FIXME: Why this works well? */)
+                        playbackState.setValue(
+                            PlaybackState(
+                                clickTrack = clickTrack,
+                                playbackStamp = PlaybackStamp(
+                                    timestamp = SerializableDuration(playedFor + beatTimestamp),
+                                    duration = SerializableDuration(9999.seconds /* FIXME: Why this works well? */)
+                                )
                             )
                         )
                     })

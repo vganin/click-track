@@ -14,10 +14,9 @@ import net.ganin.vsevolod.clicktrack.lib.TimeSignature
 import net.ganin.vsevolod.clicktrack.lib.bpm
 import net.ganin.vsevolod.clicktrack.redux.Action
 import net.ganin.vsevolod.clicktrack.redux.Epic
-import net.ganin.vsevolod.clicktrack.state.actions.AddNewClickTrack
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToEditClickTrackScreen
-import net.ganin.vsevolod.clicktrack.state.actions.PersistClickTrack
-import net.ganin.vsevolod.clicktrack.state.actions.UpdateClickTrack
+import net.ganin.vsevolod.clicktrack.state.actions.StoreAddNewClickTrack
+import net.ganin.vsevolod.clicktrack.state.actions.StoreUpdateClickTrack
 import net.ganin.vsevolod.clicktrack.state.utils.NewClickTrackNameSuggester
 import net.ganin.vsevolod.clicktrack.storage.ClickTrackRepository
 import javax.inject.Inject
@@ -31,17 +30,17 @@ class SaveClickTrackEpic @Inject constructor(
     override fun act(actions: Flow<Action>): Flow<Action> {
         return merge(
             actions
-                .filterIsInstance<AddNewClickTrack>()
+                .filterIsInstance<StoreAddNewClickTrack>()
                 .map {
                     val suggestedNewClickTrackName = newClickTrackNameSuggester.suggest()
                     val newClickTrack = storage.insert(defaultNewClickTrack(suggestedNewClickTrackName))
                     NavigateToEditClickTrackScreen(newClickTrack)
                 },
-            actions.filterIsInstance<PersistClickTrack>()
+            actions.filterIsInstance<StoreUpdateClickTrack>()
                 .transform {
                     val clickTrack = it.clickTrack
                     val (validatedClickTrack, isErrorInName) = validate(clickTrack.value)
-                    emit(UpdateClickTrack(clickTrack, isErrorInName))
+                    emit(StoreUpdateClickTrack.Result(clickTrack, isErrorInName))
                     if (!isErrorInName) {
                         storage.update(clickTrack.copy(value = validatedClickTrack))
                     }

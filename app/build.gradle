@@ -110,6 +110,7 @@ dependencies {
 
     def sqlDelightVersion = '1.4.3'
     implementation "com.squareup.sqldelight:android-driver:$sqlDelightVersion"
+    implementation "com.squareup.sqldelight:coroutines-extensions-jvm:$sqlDelightVersion"
 
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinXSerializationVersion"
 
