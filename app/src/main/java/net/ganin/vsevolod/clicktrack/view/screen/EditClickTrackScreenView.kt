@@ -13,6 +13,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
@@ -21,6 +22,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.key
@@ -43,6 +45,7 @@ import net.ganin.vsevolod.clicktrack.lib.bpm
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.EditClickTrackScreenState
+import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
 import net.ganin.vsevolod.clicktrack.state.actions.StoreUpdateClickTrack
 import net.ganin.vsevolod.clicktrack.utils.compose.ObservableMutableState
 import net.ganin.vsevolod.clicktrack.utils.compose.observableMutableStateOf
@@ -55,7 +58,7 @@ import kotlin.time.minutes
 @Composable
 fun EditClickTrackScreenView(
     state: EditClickTrackScreenState,
-    dispatch: Dispatch = Dispatch {}
+    dispatch: Dispatch = Dispatch {},
 ) {
     val nameState = remember { observableMutableStateOf(state.clickTrack.value.name) }
     val loopState = remember { observableMutableStateOf(state.clickTrack.value.loop) }
@@ -82,7 +85,7 @@ fun EditClickTrackScreenView(
     }
 
     Scaffold(
-        topBar = { EditClickTrackScreenTopBar() },
+        topBar = { EditClickTrackScreenTopBar(dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(onClick = { cuesState += observableMutableStateOf(state.defaultCue).observe { update() } }) {
@@ -146,7 +149,7 @@ private fun EditClickTrackScreenContent(
 @Composable
 private fun CueListItem(
     state: MutableState<CueWithDuration>,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
     Card(
         modifier = modifier.padding(8.dp),
@@ -157,10 +160,15 @@ private fun CueListItem(
 }
 
 @Composable
-private fun EditClickTrackScreenTopBar() {
-    TopAppBar(title = {
-        Text(text = stringResource(id = R.string.edit_click_track))
-    })
+private fun EditClickTrackScreenTopBar(dispatch: Dispatch) {
+    TopAppBar(
+        navigationIcon = {
+            IconButton(onClick = { dispatch(NavigateBack) }) {
+                Icon(imageVector = Icons.Default.ArrowBack)
+            }
+        },
+        title = { Text(text = stringResource(id = R.string.edit_click_track)) }
+    )
 }
 
 @Preview

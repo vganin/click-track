@@ -13,6 +13,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
@@ -83,9 +84,14 @@ private fun ClickTrackScreenContent(
 @Composable
 private fun ClickTrackScreenTopBar(
     state: PlayClickTrackScreenState,
-    dispatch: Dispatch = Dispatch {}
+    dispatch: Dispatch = Dispatch {},
 ) {
     TopAppBar(
+        navigationIcon = {
+            IconButton(onClick = { dispatch(NavigateBack) }) {
+                Icon(imageVector = Icons.Default.ArrowBack)
+            }
+        },
         title = { Text(text = state.clickTrack.value.name) },
         actions = {
             var editEnabled by remember { mutableStateOf(true) }
