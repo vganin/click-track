@@ -6,10 +6,13 @@ import androidx.compose.animation.core.TransitionState
 import androidx.compose.animation.core.createAnimation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.invalidate
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.AmbientAnimationClock
 
 enum class ComposableTransitionState {
@@ -21,8 +24,10 @@ fun <Key, State> ComposableSwitcher(
     currentKey: Key,
     currentState: State,
     transitionDefinition: TransitionDefinition<ComposableTransitionState>,
+    snapOnInitialComposition: Boolean = true,
     content: @Composable (Key, State, TransitionState) -> Unit,
 ) {
+    val isInitialComposition = isInitialComposition()
     val state = remember { ItemTransitionInnerState<Key, State>() }
 
     if (currentKey != state.currentKey) {
@@ -64,13 +69,19 @@ fun <Key, State> ComposableSwitcher(
                         visible -> ComposableTransitionState.VISIBLE
                         else -> ComposableTransitionState.EXITING
                     }
-                    anim.toState(targetState)
+
+                    if (snapOnInitialComposition && isInitialComposition) {
+                        anim.snapToState(targetState)
+                    } else {
+                        anim.toState(targetState)
+                    }
                 }
 
                 children(anim)
             }
         }
     }
+
     Box {
         state.invalidate = invalidate
         state.items.forEach { (itemKey, itemState, itemTransition) ->
@@ -81,6 +92,12 @@ fun <Key, State> ComposableSwitcher(
             }
         }
     }
+}
+
+@Composable
+private fun isInitialComposition(): Boolean {
+    var isInitialComposition by remember { mutableStateOf(true) }
+    return isInitialComposition.also { isInitialComposition = false }
 }
 
 private class ItemTransitionInnerState<Key, State> {
