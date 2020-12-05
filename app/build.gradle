@@ -64,6 +64,7 @@ android {
         freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi'
         freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.InternalCoroutinesApi'
         freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.FlowPreview'
+        freeCompilerArgs += '-Xopt-in=androidx.compose.runtime.ComposeCompilerApi'
         freeCompilerArgs += '-Xopt-in=androidx.compose.ui.focus.ExperimentalFocus'
         freeCompilerArgs += '-Xopt-in=androidx.compose.ui.text.ExperimentalTextApi'
         freeCompilerArgs += '-Xopt-in=androidx.compose.ui.node.ExperimentalLayoutNodeApi'
