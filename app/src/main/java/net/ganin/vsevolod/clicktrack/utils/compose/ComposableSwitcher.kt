@@ -72,6 +72,8 @@ fun <Key, State> ComposableSwitcher(
 
                     if (snapOnInitialComposition && isInitialComposition) {
                         anim.snapToState(targetState)
+                        // FIXME(https://issuetracker.google.com/issues/174837340)
+                        anim.onStateChangeFinished?.invoke(targetState)
                     } else {
                         anim.toState(targetState)
                     }
