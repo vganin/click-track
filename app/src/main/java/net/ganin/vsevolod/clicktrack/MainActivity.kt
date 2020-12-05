@@ -19,6 +19,7 @@ import net.ganin.vsevolod.clicktrack.redux.Store
 import net.ganin.vsevolod.clicktrack.state.AppState
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
 import net.ganin.vsevolod.clicktrack.state.frontScreen
+import net.ganin.vsevolod.clicktrack.state.frontScreenPosition
 import net.ganin.vsevolod.clicktrack.view.ContentView
 import javax.inject.Inject
 
@@ -80,8 +81,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun render(appState: AppState) {
         val frontScreen = appState.backstack.frontScreen() ?: return
+        val frontScreenPosition = appState.backstack.frontScreenPosition()
         setContent {
-            ContentView(frontScreen, ::dispatch)
+            ContentView(frontScreen, frontScreenPosition, ::dispatch)
         }
     }
 

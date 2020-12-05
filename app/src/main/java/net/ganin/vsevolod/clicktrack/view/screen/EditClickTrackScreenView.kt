@@ -58,6 +58,7 @@ import kotlin.time.minutes
 @Composable
 fun EditClickTrackScreenView(
     state: EditClickTrackScreenState,
+    modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
     val nameState = remember { observableMutableStateOf(state.clickTrack.value.name) }
@@ -92,7 +93,7 @@ fun EditClickTrackScreenView(
                 Icon(Icons.Default.Add)
             }
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
     ) {
         EditClickTrackScreenContent(nameState, state.isErrorInName, loopState, cuesState)
     }

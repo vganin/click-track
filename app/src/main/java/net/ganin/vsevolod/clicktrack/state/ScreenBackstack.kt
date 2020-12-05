@@ -6,6 +6,10 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ScreenBackstack(val screens: List<Screen>) : Parcelable
 
+fun ScreenBackstack.frontScreenPosition(): Int {
+    return screens.lastIndex
+}
+
 fun ScreenBackstack.frontScreen(): Screen? {
     return screens.lastOrNull()
 }

@@ -42,6 +42,7 @@ import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackViewState
 @Composable
 fun ClickTrackListScreenView(
     state: ClickTrackListScreenState,
+    modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
@@ -52,7 +53,7 @@ fun ClickTrackListScreenView(
                 Icon(Icons.Default.Add)
             }
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
     ) {
         ClickTrackListScreenContent(state, dispatch)
     }

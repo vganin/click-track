@@ -41,6 +41,7 @@ import net.ganin.vsevolod.clicktrack.view.widget.PlayStopButton
 @Composable
 fun PlayClickTrackScreenView(
     state: PlayClickTrackScreenState,
+    modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
@@ -55,7 +56,7 @@ fun PlayClickTrackScreenView(
                 }
             )
         },
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
     ) {
         ClickTrackScreenContent(state)
     }
