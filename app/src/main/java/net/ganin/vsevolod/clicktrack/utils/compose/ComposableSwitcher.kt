@@ -6,7 +6,6 @@ import androidx.compose.animation.core.TransitionState
 import androidx.compose.animation.core.createAnimation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.invalidate
 import androidx.compose.runtime.key
 import androidx.compose.runtime.onCommit
@@ -25,8 +24,26 @@ fun <Key, State> ComposableSwitcher(
     snapOnInitialComposition: Boolean = true,
     content: @Composable (Key, State, TransitionState) -> Unit,
 ) {
-    val isInitialComposition = currentComposer.inserting
-    val state = remember { ItemTransitionInnerState<Key, State>() }
+    val state = remember {
+        if (snapOnInitialComposition) {
+            ItemTransitionInnerState(
+                currentKey = currentKey,
+                items = mutableListOf(ItemTransitionItem(
+                    key = currentKey,
+                    state = currentState,
+                    content = { children ->
+                        val targetState = transitionDefinition.getStateFor(ComposableTransitionState.VISIBLE)
+                        children(targetState)
+                    }
+                )),
+            )
+        } else {
+            ItemTransitionInnerState(
+                // we use Any here as something which will not be equals to the real initial value
+                currentKey = Any(),
+            )
+        }
+    }
 
     if (currentKey != state.currentKey) {
         state.currentKey = currentKey
@@ -68,13 +85,7 @@ fun <Key, State> ComposableSwitcher(
                         else -> ComposableTransitionState.EXITING
                     }
 
-                    if (snapOnInitialComposition && isInitialComposition) {
-                        anim.snapToState(targetState)
-                        // FIXME(https://issuetracker.google.com/issues/174837340)
-                        anim.onStateChangeFinished?.invoke(targetState)
-                    } else {
-                        anim.toState(targetState)
-                    }
+                    anim.toState(targetState)
                 }
 
                 children(anim)
@@ -94,11 +105,11 @@ fun <Key, State> ComposableSwitcher(
     }
 }
 
-private class ItemTransitionInnerState<Key, State> {
-    // we use Any here as something which will not be equals to the real initial value
-    var currentKey: Any? = Any()
-    var items = mutableListOf<ItemTransitionItem<Key, State>>()
-    var invalidate: () -> Unit = { }
+private class ItemTransitionInnerState<Key, State>(
+    var currentKey: Any?,
+    val items: MutableList<ItemTransitionItem<Key, State>> = mutableListOf(),
+) {
+    var invalidate: () -> Unit = {}
 }
 
 private data class ItemTransitionItem<Key, State>(
