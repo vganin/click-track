@@ -89,10 +89,8 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
     WithConstraints {
         Card(
             modifier = Modifier
-                .padding(8.dp)
-                .swipeToRemove(constraints = constraints, onDelete = {
-                    dispatch(StoreRemoveClickTrack(clickTrack.id))
-                }),
+                .swipeToRemove(constraints = constraints, onDelete = { dispatch(StoreRemoveClickTrack(clickTrack.id)) })
+                .padding(8.dp),
             elevation = 2.dp
         ) {
             Box(modifier = Modifier.fillMaxSize()) {

@@ -1,6 +1,7 @@
 package net.ganin.vsevolod.clicktrack.utils.compose
 
 import androidx.compose.animation.animatedFloat
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.animation.FlingConfig
 import androidx.compose.foundation.animation.fling
 import androidx.compose.foundation.gestures.draggable
@@ -10,12 +11,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
 import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 fun Modifier.swipeToRemove(
     constraints: Constraints,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
 ): Modifier = composed {
     val width = constraints.maxWidth.toFloat()
 
@@ -24,6 +27,8 @@ fun Modifier.swipeToRemove(
     val positionOffset = animatedFloat(0f).apply {
         setBounds(-width, 0f)
     }
+
+    val heightExpandRatio = animatedFloat(initVal = 1f)
 
     this
         .draggable(
@@ -37,7 +42,9 @@ fun Modifier.swipeToRemove(
                 positionOffset.fling(velocity, config) { _, endValue, _ ->
                     if (endValue.absoluteValue > 0) {
                         draggable.value = false
-                        onDelete()
+                        heightExpandRatio.animateTo(0f, spring()) { _, _ ->
+                            onDelete()
+                        }
                     } else {
                         draggable.value = true
                     }
@@ -45,4 +52,11 @@ fun Modifier.swipeToRemove(
             }
         )
         .offset(x = { positionOffset.value })
+        .layout { measurable, constraints ->
+            val placeable = measurable.measure(constraints)
+            val height = (placeable.height * heightExpandRatio.value).roundToInt()
+            layout(placeable.width, height) {
+                placeable.place(0, 0)
+            }
+        }
 }
