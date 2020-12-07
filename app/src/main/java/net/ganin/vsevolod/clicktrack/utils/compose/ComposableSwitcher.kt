@@ -91,6 +91,8 @@ fun <Key, State> ComposableSwitcher(
                 children(anim)
             }
         }
+    } else {
+        state.items.find { it.key == currentKey }?.state = currentState
     }
 
     Box {
@@ -114,7 +116,7 @@ private class ItemTransitionInnerState<Key, State>(
 
 private data class ItemTransitionItem<Key, State>(
     val key: Key,
-    val state: State,
+    var state: State,
     val content: ItemTransitionContent,
 )
 
