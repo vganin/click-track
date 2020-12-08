@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
@@ -28,12 +30,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.key
 import androidx.compose.runtime.onActive
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.WithConstraints
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
@@ -78,6 +82,7 @@ fun EditClickTrackScreenView(
             )
         )
     }
+
     onActive {
         nameState.observe { update() }
         loopState.observe { update() }
@@ -85,17 +90,26 @@ fun EditClickTrackScreenView(
         cuesState.forEach { it.observe { update() } }
     }
 
+    val coroutineScope = rememberCoroutineScope()
+    val lazyListState = rememberLazyListState()
+
     Scaffold(
         topBar = { EditClickTrackScreenTopBar(dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(onClick = { cuesState += observableMutableStateOf(state.defaultCue).observe { update() } }) {
+            FloatingActionButton(onClick = {
+                cuesState += observableMutableStateOf(state.defaultCue).observe { update() }
+                coroutineScope.launch {
+                    // FIXME: Wait for upcoming `scrollTo` API
+                    lazyListState.snapToItemIndex(cuesState.lastIndex)
+                }
+            }) {
                 Icon(Icons.Default.Add)
             }
         },
         modifier = modifier,
     ) {
-        EditClickTrackScreenContent(nameState, state.isErrorInName, loopState, cuesState)
+        EditClickTrackScreenContent(nameState, state.isErrorInName, loopState, cuesState, lazyListState)
     }
 }
 
@@ -105,8 +119,12 @@ private fun EditClickTrackScreenContent(
     isErrorInName: Boolean,
     loopState: MutableState<Boolean>,
     cuesState: MutableList<out MutableState<CueWithDuration>>,
+    lazyListState: LazyListState,
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        state = lazyListState,
+        modifier = Modifier.fillMaxSize()
+    ) {
         item {
             TextField(
                 modifier = Modifier.fillMaxWidth(),
