@@ -77,7 +77,8 @@ private fun ClickTrackScreenContent(
                 drawTextMarks = true,
                 playbackTimestamp = state.playbackStamp,
             ),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            viewportPanEnabled = true
         )
     }
 }
