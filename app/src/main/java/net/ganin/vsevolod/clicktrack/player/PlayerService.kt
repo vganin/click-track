@@ -88,6 +88,8 @@ class PlayerService : Service() {
     private fun startPlayer(clickTrack: ClickTrackWithId) {
         GlobalScope.launch(Dispatchers.Unconfined) {
             player.play(clickTrack)
+            stopForeground()
+            stopSelf()
         }
     }
 

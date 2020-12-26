@@ -54,6 +54,7 @@ class PlayerImpl @Inject constructor(
 
         playerJob = launch(playerDispatcher) {
             playImpl(clickTrack)
+            stop()
         }
     }
 
