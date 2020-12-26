@@ -83,7 +83,7 @@ class PlayerService : Service() {
         super.onDestroy()
     }
 
-    override fun onBind(intent: Intent?): IBinder? = PlayerServiceBinder(player.playbackState())
+    override fun onBind(intent: Intent?): IBinder = PlayerServiceBinder(player.playbackState())
 
     private fun startPlayer(clickTrack: ClickTrackWithId) {
         GlobalScope.launch(Dispatchers.Unconfined) {

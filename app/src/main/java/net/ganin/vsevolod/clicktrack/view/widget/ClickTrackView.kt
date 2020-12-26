@@ -16,6 +16,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -54,25 +55,10 @@ fun ClickTrackView(
         val heightPx = with(AmbientDensity.current) { height.toPx() }
         val marks = clickTrack.asMarks(widthPx)
 
-        val playbackStampX = playbackTimestamp?.run {
-            val animationData = remember(this) {
-                fun Duration.toX() = toX(clickTrack.durationInTime, widthPx)
-                val timestamp = timestamp.value
-                val animationDuration = duration.value
-                object {
-                    val initial = timestamp.toX()
-                    val target = (timestamp + animationDuration).toX()
-                    val duration = animationDuration
-                }
-            }
-            animatedFloat(animationData.initial).apply {
-                val animationDurationMillis = animationData.duration.toLongMilliseconds().toInt()
-                animateTo(
-                    targetValue = animationData.target,
-                    anim = tween(animationDurationMillis, easing = LinearEasing)
-                )
-            }.value
-        }
+        val playbackStampX = playbackTimestamp?.toAnimatedX(
+            totalTrackDuration = clickTrack.durationInTime,
+            totalWidthPx = widthPx,
+        )
 
         val markColor = MaterialTheme.colors.onSurface
 
@@ -158,6 +144,29 @@ fun ClickTrackView(
             }
         }
     }
+}
+
+@Composable
+private fun PlaybackStamp.toAnimatedX(totalTrackDuration: Duration, totalWidthPx: Float): Float {
+    val playbackStampX = animatedFloat(0f)
+
+    onCommit(this) {
+        fun Duration.toX() = toX(totalTrackDuration, totalWidthPx)
+
+        val timestamp = timestamp.value
+        val animationDuration = duration.value
+
+        playbackStampX.snapTo(timestamp.toX())
+        playbackStampX.animateTo(
+            targetValue = (timestamp + animationDuration).toX(),
+            anim = tween(
+                durationMillis = animationDuration.toLongMilliseconds().toInt(),
+                easing = LinearEasing
+            )
+        )
+    }
+
+    return playbackStampX.value
 }
 
 private class Mark(

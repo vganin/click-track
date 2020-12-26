@@ -27,7 +27,6 @@ import net.ganin.vsevolod.clicktrack.utils.coroutine.delay
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.minutes
-import kotlin.time.seconds
 
 interface Player {
     suspend fun play(clickTrack: ClickTrackWithId)
@@ -88,7 +87,7 @@ class PlayerImpl @Inject constructor(
                                 clickTrack = clickTrack,
                                 playbackStamp = PlaybackStamp(
                                     timestamp = SerializableDuration(playedFor + beatTimestamp),
-                                    duration = SerializableDuration(9999.seconds /* FIXME: Why this works well? */)
+                                    duration = SerializableDuration(cue.cue.bpm.interval)
                                 )
                             )
                         )
