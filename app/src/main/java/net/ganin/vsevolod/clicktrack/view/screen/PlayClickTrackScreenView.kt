@@ -33,6 +33,7 @@ import net.ganin.vsevolod.clicktrack.state.actions.NavigateToEditClickTrackScree
 import net.ganin.vsevolod.clicktrack.state.actions.StartPlay
 import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
 import net.ganin.vsevolod.clicktrack.state.actions.StoreRemoveClickTrack
+import net.ganin.vsevolod.clicktrack.utils.compose.toUpperCase
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackView
 import net.ganin.vsevolod.clicktrack.view.widget.PlayStopButton
@@ -133,7 +134,7 @@ private fun ClickTrackScreenTopBar(
                             onClick = confirm,
                             shape = RectangleShape
                         ) {
-                            Text(text = stringResource(id = android.R.string.ok))
+                            Text(text = stringResource(id = android.R.string.ok).toUpperCase())
                         }
                     },
                     dismissButton = {
@@ -141,7 +142,7 @@ private fun ClickTrackScreenTopBar(
                             onClick = dismiss,
                             shape = RectangleShape
                         ) {
-                            Text(text = stringResource(id = android.R.string.no))
+                            Text(text = stringResource(id = android.R.string.no).toUpperCase())
                         }
                     }
                 )
