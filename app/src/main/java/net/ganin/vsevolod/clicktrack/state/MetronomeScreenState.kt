@@ -2,11 +2,11 @@ package net.ganin.vsevolod.clicktrack.state
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
+import net.ganin.vsevolod.clicktrack.lib.BeatsPerMinute
 
 @Parcelize
-data class PlayClickTrackScreenState(
-    val clickTrack: ClickTrackWithId,
+data class MetronomeScreenState(
+    val bpm: BeatsPerMinute,
     val playbackStamp: PlaybackStamp?,
     val isPlaying: Boolean,
 ) : Parcelable

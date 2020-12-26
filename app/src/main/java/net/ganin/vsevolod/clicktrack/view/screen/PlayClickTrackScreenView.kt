@@ -35,7 +35,6 @@ import net.ganin.vsevolod.clicktrack.state.actions.StopPlay
 import net.ganin.vsevolod.clicktrack.state.actions.StoreRemoveClickTrack
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackView
-import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackViewState
 import net.ganin.vsevolod.clicktrack.view.widget.PlayStopButton
 
 @Composable
@@ -72,13 +71,11 @@ private fun ClickTrackScreenContent(
             .background(MaterialTheme.colors.surface)
     ) {
         ClickTrackView(
-            state = ClickTrackViewState(
-                clickTrack = state.clickTrack.value,
-                drawTextMarks = true,
-                playbackTimestamp = state.playbackStamp,
-            ),
-            modifier = Modifier.fillMaxSize(),
-            viewportPanEnabled = true
+            clickTrack = state.clickTrack.value,
+            drawTextMarks = true,
+            playbackTimestamp = state.playbackStamp,
+            viewportPanEnabled = true,
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -86,7 +83,7 @@ private fun ClickTrackScreenContent(
 @Composable
 private fun ClickTrackScreenTopBar(
     state: PlayClickTrackScreenState,
-    dispatch: Dispatch = Dispatch {},
+    dispatch: Dispatch,
 ) {
     TopAppBar(
         navigationIcon = {

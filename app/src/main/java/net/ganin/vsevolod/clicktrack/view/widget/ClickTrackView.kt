@@ -39,16 +39,12 @@ import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlin.time.Duration
 import kotlin.time.seconds
 
-data class ClickTrackViewState(
-    val clickTrack: ClickTrack,
-    val drawTextMarks: Boolean,
-    val playbackTimestamp: PlaybackStamp?,
-)
-
 @Composable
 fun ClickTrackView(
-    state: ClickTrackViewState,
+    clickTrack: ClickTrack,
     modifier: Modifier = Modifier,
+    drawTextMarks: Boolean = true,
+    playbackTimestamp: PlaybackStamp? = null,
     viewportPanEnabled: Boolean = false,
 ) {
     WithConstraints(modifier = modifier) {
@@ -56,11 +52,11 @@ fun ClickTrackView(
         val height = minHeight
         val widthPx = with(AmbientDensity.current) { width.toPx() }
         val heightPx = with(AmbientDensity.current) { height.toPx() }
-        val marks = state.clickTrack.asMarks(widthPx)
+        val marks = clickTrack.asMarks(widthPx)
 
-        val playbackStampX = state.playbackTimestamp?.run {
+        val playbackStampX = playbackTimestamp?.run {
             val animationData = remember(this) {
-                fun Duration.toX() = toX(state.clickTrack.durationInTime, widthPx)
+                fun Duration.toX() = toX(clickTrack.durationInTime, widthPx)
                 val timestamp = timestamp.value
                 val animationDuration = duration.value
                 object {
@@ -125,7 +121,7 @@ fun ClickTrackView(
                 )
             }
 
-            if (state.drawTextMarks) {
+            if (drawTextMarks) {
                 Layout(
                     modifier = Modifier.wrapContentSize(),
                     content = {
@@ -249,13 +245,11 @@ private fun Modifier.viewportPanGestureFilter(
 @Composable
 fun PreviewClickTrackView() {
     ClickTrackView(
-        ClickTrackViewState(
-            clickTrack = PREVIEW_CLICK_TRACK_1.value,
-            drawTextMarks = true,
-            playbackTimestamp = PlaybackStamp(
-                timestamp = SerializableDuration(1.seconds),
-                duration = SerializableDuration(Duration.ZERO)
-            )
+        clickTrack = PREVIEW_CLICK_TRACK_1.value,
+        drawTextMarks = true,
+        playbackTimestamp = PlaybackStamp(
+            timestamp = SerializableDuration(1.seconds),
+            duration = SerializableDuration(Duration.ZERO)
         ),
         modifier = Modifier.fillMaxSize()
     )

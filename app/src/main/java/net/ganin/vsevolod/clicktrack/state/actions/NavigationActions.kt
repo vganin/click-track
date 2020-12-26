@@ -15,3 +15,5 @@ class NavigateToClickTrackListScreen(val clickTrack: List<ClickTrackWithId>) : N
 class NavigateToClickTrackScreen(val clickTrack: ClickTrackWithId) : NavigationAction()
 
 class NavigateToEditClickTrackScreen(val clickTrack: ClickTrackWithId) : NavigationAction()
+
+object NavigateToMetronomeScreen : NavigationAction()

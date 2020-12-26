@@ -13,4 +13,5 @@
     <string name="notification_channel_default">Default</string>
     <string name="notification_stop">Stop</string>
     <string name="notification_playing_now">Playing now…</string>
+    <string name="metronome">Metronome</string>
 </resources>

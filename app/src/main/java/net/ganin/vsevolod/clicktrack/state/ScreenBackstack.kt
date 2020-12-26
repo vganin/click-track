@@ -22,6 +22,10 @@ fun ScreenBackstack.push(screen: Screen): ScreenBackstack {
     return ScreenBackstack(screens + screen)
 }
 
+fun ScreenBackstack.push(screenFactory: () -> Screen): ScreenBackstack {
+    return ScreenBackstack(screens + screenFactory())
+}
+
 fun ScreenBackstack.replaceCurrentScreen(mapper: (Screen) -> Screen): ScreenBackstack {
     if (screens.isEmpty()) return this
     val mutableScreens = screens.toMutableList()

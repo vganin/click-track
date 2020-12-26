@@ -104,7 +104,7 @@ class PlayerImpl @Inject constructor(
 
     private suspend fun MediaPlayer.playImpl(
         cueWithDuration: CueWithDuration,
-        onBeatPlayed: suspend (beatTimestamp: Duration) -> Unit
+        onBeatPlayed: suspend (beatTimestamp: Duration) -> Unit,
     ) {
         val cue = cueWithDuration.cue
         val delay = cue.bpm.interval

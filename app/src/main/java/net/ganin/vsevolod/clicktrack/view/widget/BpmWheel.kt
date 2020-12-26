@@ -1,14 +1,12 @@
 package net.ganin.vsevolod.clicktrack.view.widget
 
 import androidx.compose.foundation.Canvas
-
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.AmbientTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -28,7 +26,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.WithConstraints
 import androidx.compose.ui.platform.AmbientDensity
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.ganin.vsevolod.clicktrack.lib.BeatsPerMinute
@@ -43,9 +40,11 @@ import kotlin.math.sin
 fun BpmWheel(
     state: MutableState<BeatsPerMinute>,
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = AmbientTextStyle.current,
     bpmRange: IntRange = 1..999,
     sensitivity: Float = 0.08f,
+    content: @Composable () -> Unit = {
+        Text(text = state.value.value.toString())
+    },
 ) {
     val bpmRangeInFloat = remember(bpmRange) { bpmRange.first.toFloat()..bpmRange.last.toFloat() }
     var internalFloatState by remember { mutableStateOf(state.value.value.toFloat()) }
@@ -60,11 +59,9 @@ fun BpmWheel(
                 .align(Alignment.Center)
                 .aspectRatio(1f)
         )
-        Text(
-            text = state.value.value.toString(),
-            modifier = Modifier.align(Alignment.Center),
-            style = textStyle
-        )
+        Box(modifier = Modifier.align(Alignment.Center)) {
+            content()
+        }
     }
 }
 

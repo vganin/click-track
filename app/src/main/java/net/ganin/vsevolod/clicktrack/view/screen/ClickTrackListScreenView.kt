@@ -13,6 +13,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -30,14 +31,16 @@ import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.ClickTrackListScreenState
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateToClickTrackScreen
+import net.ganin.vsevolod.clicktrack.state.actions.NavigateToMetronomeScreen
 import net.ganin.vsevolod.clicktrack.state.actions.StoreAddNewClickTrack
 import net.ganin.vsevolod.clicktrack.state.actions.StoreRemoveClickTrack
 import net.ganin.vsevolod.clicktrack.utils.compose.swipeToRemove
 import net.ganin.vsevolod.clicktrack.view.common.Constants
+import net.ganin.vsevolod.clicktrack.view.icon.ClickTrackIcons
+import net.ganin.vsevolod.clicktrack.view.icon.Metronome
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_2
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackView
-import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackViewState
 
 @Composable
 fun ClickTrackListScreenView(
@@ -46,7 +49,7 @@ fun ClickTrackListScreenView(
     dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
-        topBar = { ClickTrackListScreenTopBar() },
+        topBar = { ClickTrackListScreenTopBar(dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(onClick = { dispatch(StoreAddNewClickTrack) }) {
@@ -62,7 +65,7 @@ fun ClickTrackListScreenView(
 @Composable
 private fun ClickTrackListScreenContent(
     state: ClickTrackListScreenState,
-    dispatch: Dispatch = Dispatch {},
+    dispatch: Dispatch,
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(state.items) { clickTrack ->
@@ -78,10 +81,17 @@ private fun ClickTrackListScreenContent(
 }
 
 @Composable
-private fun ClickTrackListScreenTopBar() {
-    TopAppBar(title = {
-        Text(text = stringResource(id = R.string.click_track_list))
-    })
+private fun ClickTrackListScreenTopBar(dispatch: Dispatch) {
+    TopAppBar(
+        title = {
+            Text(text = stringResource(id = R.string.click_track_list))
+        },
+        actions = {
+            IconButton(onClick = { dispatch(NavigateToMetronomeScreen) }) {
+                Icon(ClickTrackIcons.Metronome)
+            }
+        }
+    )
 }
 
 @Composable
@@ -95,11 +105,9 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 ClickTrackView(
-                    state = ClickTrackViewState(
-                        clickTrack.value,
-                        drawTextMarks = false,
-                        playbackTimestamp = null
-                    ),
+                    clickTrack = clickTrack.value,
+                    drawTextMarks = false,
+                    playbackTimestamp = null,
                     modifier = Modifier
                         .fillParentMaxWidth()
                         .height(100.dp)

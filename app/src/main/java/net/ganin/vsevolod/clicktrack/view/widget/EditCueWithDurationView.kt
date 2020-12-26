@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +27,7 @@ import kotlin.time.minutes
 @Composable
 fun EditCueWithDurationView(
     state: MutableState<CueWithDuration>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val bpmState = remember { observableMutableStateOf(state.value.cue.bpm) }
     val timeSignatureState = remember { observableMutableStateOf(state.value.cue.timeSignature) }
@@ -58,8 +59,12 @@ fun EditCueWithDurationView(
         BpmWheel(
             state = bpmState,
             modifier = viewModifier,
-            textStyle = MaterialTheme.typography.h6
-        )
+        ) {
+            Text(
+                text = bpmState.value.value.toString(),
+                style = MaterialTheme.typography.h6,
+            )
+        }
     }
 }
 

@@ -19,6 +19,7 @@ import net.ganin.vsevolod.clicktrack.utils.compose.ComposableSwitcher
 import net.ganin.vsevolod.clicktrack.utils.compose.ComposableTransitionState
 import net.ganin.vsevolod.clicktrack.view.screen.ClickTrackListScreenView
 import net.ganin.vsevolod.clicktrack.view.screen.EditClickTrackScreenView
+import net.ganin.vsevolod.clicktrack.view.screen.MetronomeScreenView
 import net.ganin.vsevolod.clicktrack.view.screen.PlayClickTrackScreenView
 
 @Composable
@@ -49,6 +50,7 @@ fun ContentView(screen: Screen, positionInBackstack: Int, dispatch: Dispatch) {
                     is Screen.ClickTrackList -> ClickTrackListScreenView(screen.state, modifierUnderTransition, dispatch)
                     is Screen.PlayClickTrack -> PlayClickTrackScreenView(screen.state, modifierUnderTransition, dispatch)
                     is Screen.EditClickTrack -> EditClickTrackScreenView(screen.state, modifierUnderTransition, dispatch)
+                    is Screen.Metronome -> MetronomeScreenView(screen.state, modifierUnderTransition, dispatch)
                 }
             }
         }
