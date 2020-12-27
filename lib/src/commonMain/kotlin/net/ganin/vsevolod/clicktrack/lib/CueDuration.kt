@@ -18,6 +18,14 @@ public sealed class CueDuration : AndroidParcelable {
 
     @Serializable
     @AndroidParcelize
+    public data class Measures(public val value: Int) : CueDuration() {
+        init {
+            require(value >= 0) { "Measures count should be non-negative but was: $value" }
+        }
+    }
+
+    @Serializable
+    @AndroidParcelize
     public data class Time(public val value: SerializableDuration) : CueDuration() {
         init {
             require(value.value >= Duration.ZERO) { "Time should be non-negative but was: $value" }

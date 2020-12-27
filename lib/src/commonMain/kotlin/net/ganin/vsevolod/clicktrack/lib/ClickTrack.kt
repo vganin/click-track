@@ -17,6 +17,6 @@ public data class ClickTrack(
 
     @AndroidIgnoredOnParcel
     public val durationInTime: Duration by lazy {
-        cues.map(CueWithDuration::durationInTime).reduceOrNull { acc, duration -> acc + duration } ?: Duration.ZERO
+        cues.map(CueWithDuration::durationAsTime).reduceOrNull { acc, duration -> acc + duration } ?: Duration.ZERO
     }
 }

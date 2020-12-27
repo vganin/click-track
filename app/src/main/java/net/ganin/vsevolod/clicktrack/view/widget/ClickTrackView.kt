@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
+import net.ganin.vsevolod.clicktrack.lib.durationAsTime
 import net.ganin.vsevolod.clicktrack.lib.interval
 import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
@@ -201,7 +202,7 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
                 )
             }
         }
-        val nextTimestamp = currentTimestamp + cue.durationInTime
+        val nextTimestamp = currentTimestamp + cue.durationAsTime
         currentX = nextTimestamp.toX(duration, width)
         currentTimestamp = nextTimestamp
     }

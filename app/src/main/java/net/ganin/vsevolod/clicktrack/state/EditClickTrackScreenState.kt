@@ -14,7 +14,7 @@ data class EditClickTrackScreenState(
     val clickTrack: ClickTrackWithId,
     val isErrorInName: Boolean,
     val defaultCue: CueWithDuration = CueWithDuration(
-        duration = CueDuration.Beats(4),
-        cue = Cue(60.bpm, TimeSignature(4, 4))
-    )
+        duration = CueDuration.Measures(1),
+        cue = Cue(120.bpm, TimeSignature(4, 4))
+    ),
 ) : Parcelable

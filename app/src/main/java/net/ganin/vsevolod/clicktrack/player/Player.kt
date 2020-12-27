@@ -21,6 +21,7 @@ import net.ganin.vsevolod.clicktrack.di.module.PlayerDispatcher
 import net.ganin.vsevolod.clicktrack.lib.ClickSoundSource
 import net.ganin.vsevolod.clicktrack.lib.CueWithDuration
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
+import net.ganin.vsevolod.clicktrack.lib.durationAsTime
 import net.ganin.vsevolod.clicktrack.lib.interval
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.player.PlayerImpl.Const.CLICK_MINIMAL_INTERVAL
@@ -107,7 +108,7 @@ class PlayerImpl @Inject constructor(
                             )
                         }
                     )
-                    playedFor += cue.durationInTime
+                    playedFor += cue.durationAsTime
                 }
             } while (clickTrack.value.loop && coroutineContext.isActive)
         } finally {
@@ -126,7 +127,7 @@ class PlayerImpl @Inject constructor(
         val cue = cueWithDuration.cue
         val timeSignature = cue.timeSignature
         val delay = cue.bpm.interval
-        val duration = cueWithDuration.durationInTime
+        val duration = cueWithDuration.durationAsTime
 
         var playedFor = Duration.ZERO
         var beatIndex = 0

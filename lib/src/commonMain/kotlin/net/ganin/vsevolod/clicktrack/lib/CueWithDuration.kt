@@ -9,14 +9,14 @@ import kotlin.time.Duration
 @AndroidParcelize
 public data class CueWithDuration(
     public val duration: CueDuration,
-    public val cue: Cue
-) : AndroidParcelable {
+    public val cue: Cue,
+) : AndroidParcelable
 
-    public val durationInTime: Duration
-        get() {
-            return when (duration) {
-                is CueDuration.Time -> duration.value.value
-                is CueDuration.Beats -> cue.bpm.interval * duration.value
-            }
+public val CueWithDuration.durationAsTime: Duration
+    get() {
+        return when (duration) {
+            is CueDuration.Time -> duration.value.value
+            is CueDuration.Beats -> cue.bpm.interval * duration.value
+            is CueDuration.Measures -> cue.bpm.interval * cue.timeSignature.noteCount * duration.value
         }
-}
+    }
