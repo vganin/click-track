@@ -1,26 +1,48 @@
 package net.ganin.vsevolod.clicktrack.storage
 
 import android.content.Context
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.runtime.coroutines.asFlow
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.ganin.vsevolod.clicktrack.Database
 import net.ganin.vsevolod.clicktrack.di.component.ViewModelScoped
 import net.ganin.vsevolod.clicktrack.di.module.ApplicationContext
+import net.ganin.vsevolod.clicktrack.di.module.MainDispatcher
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
+import net.ganin.vsevolod.clicktrack.lib.premade.PreMadeClickTracks
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import javax.inject.Inject
 import net.ganin.vsevolod.clicktrack.storage.ClickTrack as StorageClickTrack
 
 @ViewModelScoped
 class ClickTrackRepository @Inject constructor(
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
+    @MainDispatcher mainDispatcher: CoroutineDispatcher,
 ) {
-    private val database: Database = Database(AndroidSqliteDriver(Database.Schema, context, "click_track.db"))
+    private val database: Database = Database(AndroidSqliteDriver(
+        schema = Database.Schema,
+        context = context,
+        name = "click_track.db",
+        callback = object : AndroidSqliteDriver.Callback(Database.Schema) {
+            override fun onCreate(db: SupportSQLiteDatabase) {
+                super.onCreate(db)
+
+                GlobalScope.launch(mainDispatcher) {
+                    for (clickTrack in PreMadeClickTracks.DATA) {
+                        insert(clickTrack)
+                    }
+                }
+            }
+        }
+    ))
     private val json: Json = Json
 
     fun getAll(): Flow<List<ClickTrackWithId>> {
