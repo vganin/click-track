@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
+import net.ganin.vsevolod.clicktrack.lib.interval
 import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlin.time.Duration
@@ -44,6 +46,7 @@ import kotlin.time.seconds
 fun ClickTrackView(
     clickTrack: ClickTrack,
     modifier: Modifier = Modifier,
+    drawAllBeatsMarks: Boolean = false,
     drawTextMarks: Boolean = true,
     playbackTimestamp: PlaybackStamp? = null,
     viewportPanEnabled: Boolean = false,
@@ -53,14 +56,13 @@ fun ClickTrackView(
         val height = minHeight
         val widthPx = with(AmbientDensity.current) { width.toPx() }
         val heightPx = with(AmbientDensity.current) { height.toPx() }
-        val marks = clickTrack.asMarks(widthPx)
+        val marks = clickTrack.asMarks(widthPx, drawAllBeatsMarks)
 
         val playbackStampX = playbackTimestamp?.toAnimatedX(
             totalTrackDuration = clickTrack.durationInTime,
             totalWidthPx = widthPx,
         )
-
-        val markColor = MaterialTheme.colors.onSurface
+        val playbackStampColor = MaterialTheme.colors.primary
 
         val bounds = remember { Rect(0f, 0f, widthPx, heightPx) }
         val viewportState = remember { mutableStateOf(bounds) }
@@ -90,7 +92,7 @@ fun ClickTrackView(
                     drawBlock = {
                         for (mark in marks) {
                             drawLine(
-                                color = markColor,
+                                color = mark.color,
                                 start = Offset(mark.x, 0f),
                                 end = Offset(mark.x, size.height),
                             )
@@ -98,7 +100,7 @@ fun ClickTrackView(
 
                         if (playbackStampX != null) {
                             drawLine(
-                                color = Color.LightGray,
+                                color = playbackStampColor,
                                 start = Offset(playbackStampX, 0f),
                                 end = Offset(playbackStampX, size.height),
                             )
@@ -112,7 +114,9 @@ fun ClickTrackView(
                     modifier = Modifier.wrapContentSize(),
                     content = {
                         for (mark in marks) {
-                            Text(text = mark.text, modifier = Modifier.wrapContentSize())
+                            if (mark.text != null) {
+                                Text(text = mark.text, modifier = Modifier.wrapContentSize())
+                            }
                         }
                     },
                     measureBlock = { measurables, constraints ->
@@ -171,17 +175,32 @@ private fun PlaybackStamp.toAnimatedX(totalTrackDuration: Duration, totalWidthPx
 
 private class Mark(
     val x: Float,
-    val text: String,
+    val text: String?,
+    val color: Color,
 )
 
-private fun ClickTrack.asMarks(width: Float): List<Mark> {
+@Composable
+private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<Mark> {
     val result = mutableListOf<Mark>()
     val duration = durationInTime
 
     var currentTimestamp = Duration.ZERO
     var currentX = 0f
     for (cue in cues) {
-        result += Mark(currentX, cue.cue.toText())
+        result += Mark(
+            x = currentX,
+            text = cue.cue.toText(),
+            color = MaterialTheme.colors.onSurface
+        )
+        if (drawAllBeatsMarks) {
+            for (i in 1 until cue.cue.timeSignature.noteCount) {
+                result += Mark(
+                    x = (currentTimestamp + cue.cue.bpm.interval * i).toX(duration, width),
+                    text = null,
+                    color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium),
+                )
+            }
+        }
         val nextTimestamp = currentTimestamp + cue.durationInTime
         currentX = nextTimestamp.toX(duration, width)
         currentTimestamp = nextTimestamp

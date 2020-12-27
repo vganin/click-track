@@ -11,7 +11,8 @@ import kotlin.time.Duration
 public data class ClickTrack(
     public val name: String,
     public val cues: List<CueWithDuration>,
-    public val loop: Boolean
+    public val loop: Boolean,
+    public val sounds: ClickSounds,
 ) : AndroidParcelable {
 
     @AndroidIgnoredOnParcel

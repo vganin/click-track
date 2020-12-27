@@ -1,5 +1,6 @@
 package net.ganin.vsevolod.clicktrack.view.preview
 
+import net.ganin.vsevolod.clicktrack.lib.BuiltinClickSounds
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
@@ -42,7 +43,8 @@ val PREVIEW_CLICK_TRACK_1 = ClickTrackWithId(
                 )
             ),
         ),
-        loop = false
+        loop = false,
+        sounds = BuiltinClickSounds,
     ),
 )
 
@@ -73,6 +75,7 @@ val PREVIEW_CLICK_TRACK_2 = ClickTrackWithId(
                 )
             ),
         ),
-        loop = false
+        loop = false,
+        sounds = BuiltinClickSounds,
     ),
 )

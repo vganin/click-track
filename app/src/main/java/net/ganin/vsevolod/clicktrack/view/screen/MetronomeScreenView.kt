@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import net.ganin.vsevolod.clicktrack.R
 import net.ganin.vsevolod.clicktrack.lib.BeatsPerMinute
+import net.ganin.vsevolod.clicktrack.lib.BuiltinClickSounds
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
@@ -95,6 +96,7 @@ private fun MetronomeScreenViewContent(
         ) {
             ClickTrackView(
                 clickTrack = metronomeClickTrack.value,
+                drawAllBeatsMarks = true,
                 drawTextMarks = false,
                 playbackTimestamp = state.playbackStamp,
             )
@@ -135,20 +137,17 @@ private fun metronomeClickTrack(bpm: BeatsPerMinute): ClickTrackWithId {
         id = MetronomeId,
         value = ClickTrack(
             name = stringResource(R.string.metronome),
-            cues = sequence {
-                repeat(4) {
-                    yield(
-                        CueWithDuration(
-                            duration = CueDuration.Beats(1),
-                            cue = Cue(
-                                bpm = bpm,
-                                timeSignature = TimeSignature(4, 4)
-                            ),
-                        )
-                    )
-                }
-            }.toList(),
+            cues = listOf(
+                CueWithDuration(
+                    duration = CueDuration.Beats(4),
+                    cue = Cue(
+                        bpm = bpm,
+                        timeSignature = TimeSignature(4, 4)
+                    ),
+                )
+            ),
             loop = true,
+            sounds = BuiltinClickSounds
         )
     )
 }

@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.transform
 import net.ganin.vsevolod.clicktrack.di.component.ViewModelScoped
+import net.ganin.vsevolod.clicktrack.lib.BuiltinClickSounds
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
@@ -24,7 +25,7 @@ import javax.inject.Inject
 @ViewModelScoped
 class SaveClickTrackEpic @Inject constructor(
     private val storage: ClickTrackRepository,
-    private val newClickTrackNameSuggester: NewClickTrackNameSuggester
+    private val newClickTrackNameSuggester: NewClickTrackNameSuggester,
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {
@@ -53,7 +54,8 @@ class SaveClickTrackEpic @Inject constructor(
         cues = listOf(
             CueWithDuration(CueDuration.Beats(4), Cue(60.bpm, TimeSignature(4, 4)))
         ),
-        loop = true
+        loop = true,
+        sounds = BuiltinClickSounds,
     )
 
     private fun validate(clickTrack: ClickTrack): ClickTrackValidationResult {
@@ -67,6 +69,6 @@ class SaveClickTrackEpic @Inject constructor(
 
     private data class ClickTrackValidationResult(
         val validatedClickTrack: ClickTrack,
-        val isErrorInName: Boolean
+        val isErrorInName: Boolean,
     )
 }

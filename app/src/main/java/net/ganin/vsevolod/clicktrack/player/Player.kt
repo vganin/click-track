@@ -1,8 +1,11 @@
 package net.ganin.vsevolod.clicktrack.player
 
 import android.content.Context
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.audiofx.AutomaticGainControl
+import android.net.Uri
+import androidx.core.content.getSystemService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -15,6 +18,7 @@ import net.ganin.vsevolod.clicktrack.di.component.PlayerServiceScoped
 import net.ganin.vsevolod.clicktrack.di.module.ApplicationContext
 import net.ganin.vsevolod.clicktrack.di.module.MainDispatcher
 import net.ganin.vsevolod.clicktrack.di.module.PlayerDispatcher
+import net.ganin.vsevolod.clicktrack.lib.ClickSoundSource
 import net.ganin.vsevolod.clicktrack.lib.CueWithDuration
 import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
 import net.ganin.vsevolod.clicktrack.lib.interval
@@ -42,6 +46,10 @@ class PlayerImpl @Inject constructor(
     @PlayerDispatcher private val playerDispatcher: CoroutineDispatcher,
 ) : Player {
 
+    private val audioManager = context.getSystemService<AudioManager>()
+        ?: throw RuntimeException("Failed to obtain audio service")
+    private val audioSessionId = audioManager.generateAudioSessionId()
+
     private var playerJob: Job? = null
     private var playbackState = MutableNonConflatedStateFlow<PlaybackState?>(null)
 
@@ -67,8 +75,9 @@ class PlayerImpl @Inject constructor(
     override fun playbackState(): Flow<PlaybackState?> = playbackState
 
     private suspend fun playImpl(clickTrack: ClickTrackWithId) = coroutineScope {
-        val mediaPlayer = MediaPlayer.create(context, R.raw.click)
-        val agc = mediaPlayer.tryAttachAgc()
+        val strongBeatMediaPlayer = clickTrack.value.sounds.strongBeat.createMediaPlayer(context, R.raw.strong)
+        val weakBeatMediaPlayer = clickTrack.value.sounds.weakBeat.createMediaPlayer(context, R.raw.weak)
+        val agc = AutomaticGainControl.create(audioSessionId)
         try {
             do {
                 playbackState.setValue(
@@ -82,45 +91,66 @@ class PlayerImpl @Inject constructor(
                 )
                 var playedFor = Duration.ZERO
                 for (cue in clickTrack.value.cues) {
-                    mediaPlayer.playImpl(cue, onBeatPlayed = { beatTimestamp ->
-                        playbackState.setValue(
-                            PlaybackState(
-                                clickTrack = clickTrack,
-                                playbackStamp = PlaybackStamp(
-                                    timestamp = SerializableDuration(playedFor + beatTimestamp),
-                                    duration = SerializableDuration(cue.cue.bpm.interval)
+                    playImpl(
+                        strongBeatMediaPlayer,
+                        weakBeatMediaPlayer,
+                        cue,
+                        onBeatPlayed = { beatTimestamp ->
+                            playbackState.setValue(
+                                PlaybackState(
+                                    clickTrack = clickTrack,
+                                    playbackStamp = PlaybackStamp(
+                                        timestamp = SerializableDuration(playedFor + beatTimestamp),
+                                        duration = SerializableDuration(cue.cue.bpm.interval)
+                                    )
                                 )
                             )
-                        )
-                    })
+                        }
+                    )
                     playedFor += cue.durationInTime
                 }
             } while (clickTrack.value.loop && coroutineContext.isActive)
         } finally {
             agc?.release()
-            mediaPlayer.release()
+            strongBeatMediaPlayer.release()
+            weakBeatMediaPlayer.release()
         }
     }
 
-    private suspend fun MediaPlayer.playImpl(
+    private suspend fun playImpl(
+        strongBeatMediaPlayer: MediaPlayer,
+        weakBeatMediaPlayer: MediaPlayer,
         cueWithDuration: CueWithDuration,
         onBeatPlayed: suspend (beatTimestamp: Duration) -> Unit,
     ) {
         val cue = cueWithDuration.cue
+        val timeSignature = cue.timeSignature
         val delay = cue.bpm.interval
         val duration = cueWithDuration.durationInTime
 
         var playedFor = Duration.ZERO
+        var beatIndex = 0
         while ((duration - playedFor) > CLICK_MINIMAL_INTERVAL) {
-            start()
+            if (beatIndex == 0) {
+                strongBeatMediaPlayer.start()
+            } else {
+                weakBeatMediaPlayer.start()
+            }
+
             onBeatPlayed(playedFor)
+
             playedFor += delay
+            beatIndex = if (beatIndex + 1 >= timeSignature.noteCount) 0 else beatIndex + 1
+
             delay(delay)
         }
     }
 
-    private fun MediaPlayer.tryAttachAgc(): AutomaticGainControl? {
-        return AutomaticGainControl.create(audioSessionId)
+    private fun ClickSoundSource.createMediaPlayer(context: Context, builtinSoundResId: Int): MediaPlayer {
+        return when (this) {
+            ClickSoundSource.Builtin -> MediaPlayer.create(context, builtinSoundResId, null, audioSessionId)
+            is ClickSoundSource.Uri -> MediaPlayer.create(context, Uri.parse(value), null, null, audioSessionId)
+        }
     }
 
     private object Const {

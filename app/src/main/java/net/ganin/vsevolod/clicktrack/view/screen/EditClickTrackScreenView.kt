@@ -39,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import net.ganin.vsevolod.clicktrack.R
+import net.ganin.vsevolod.clicktrack.lib.BuiltinClickSounds
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
@@ -73,7 +74,7 @@ fun EditClickTrackScreenView(
         dispatch(
             StoreUpdateClickTrack(
                 clickTrack = state.clickTrack.copy(
-                    value = ClickTrack(
+                    value = state.clickTrack.value.copy(
                         name = nameState.value,
                         loop = loopState.value,
                         cues = cuesState.map(ObservableMutableState<CueWithDuration>::value),
@@ -216,6 +217,7 @@ fun PreviewEditClickTrackScreenView() {
                         ),
                     ),
                     loop = true,
+                    sounds = BuiltinClickSounds,
                 )
             ),
             isErrorInName = false,
