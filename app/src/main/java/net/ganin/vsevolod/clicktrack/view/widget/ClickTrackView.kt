@@ -35,13 +35,10 @@ import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.tooling.preview.Preview
 import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
-import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
 import net.ganin.vsevolod.clicktrack.lib.durationAsTime
 import net.ganin.vsevolod.clicktrack.lib.interval
-import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlin.time.Duration
-import kotlin.time.seconds
 
 @Composable
 fun ClickTrackView(
@@ -49,8 +46,10 @@ fun ClickTrackView(
     modifier: Modifier = Modifier,
     drawAllBeatsMarks: Boolean = false,
     drawTextMarks: Boolean = true,
-    playbackTimestamp: PlaybackStamp? = null,
+    progress: Float? = null,
+    animateProgress: Boolean = progress != null,
     viewportPanEnabled: Boolean = false,
+    onProgressChanged: (Float) -> Unit = {},
 ) {
     WithConstraints(modifier = modifier) {
         val width = minWidth
@@ -59,10 +58,21 @@ fun ClickTrackView(
         val heightPx = with(AmbientDensity.current) { height.toPx() }
         val marks = clickTrack.asMarks(widthPx, drawAllBeatsMarks)
 
-        val playbackStampX = playbackTimestamp?.toAnimatedX(
-            totalTrackDuration = clickTrack.durationInTime,
-            totalWidthPx = widthPx,
-        )
+        val progressX = progress?.let {
+            animatedProgressX(
+                clickTrack = clickTrack,
+                progress = progress,
+                isPlaying = animateProgress,
+                totalWidthPx = widthPx,
+            )
+        }
+
+        if (progressX != null) {
+            onCommit(progressX) {
+                onProgressChanged(progressX / widthPx)
+            }
+        }
+
         val playbackStampColor = MaterialTheme.colors.primary
 
         val bounds = remember { Rect(0f, 0f, widthPx, heightPx) }
@@ -99,11 +109,11 @@ fun ClickTrackView(
                             )
                         }
 
-                        if (playbackStampX != null) {
+                        if (progressX != null) {
                             drawLine(
                                 color = playbackStampColor,
-                                start = Offset(playbackStampX, 0f),
-                                end = Offset(playbackStampX, size.height),
+                                start = Offset(progressX, 0f),
+                                end = Offset(progressX, size.height),
                             )
                         }
                     }
@@ -152,23 +162,28 @@ fun ClickTrackView(
 }
 
 @Composable
-private fun PlaybackStamp.toAnimatedX(totalTrackDuration: Duration, totalWidthPx: Float): Float {
+private fun animatedProgressX(clickTrack: ClickTrack, progress: Float, isPlaying: Boolean, totalWidthPx: Float): Float {
     val playbackStampX = animatedFloat(0f)
 
-    onCommit(this) {
+    onCommit(clickTrack.durationInTime, progress, totalWidthPx) {
+        val totalTrackDuration = clickTrack.durationInTime
+        val startingPosition = totalTrackDuration * progress.toDouble()
+
         fun Duration.toX() = toX(totalTrackDuration, totalWidthPx)
 
-        val timestamp = timestamp.value
-        val animationDuration = duration.value
+        playbackStampX.snapTo(startingPosition.toX())
 
-        playbackStampX.snapTo(timestamp.toX())
-        playbackStampX.animateTo(
-            targetValue = (timestamp + animationDuration).toX(),
-            anim = tween(
-                durationMillis = animationDuration.toLongMilliseconds().toInt(),
-                easing = LinearEasing
+        if (isPlaying) {
+            val animationDuration = totalTrackDuration - startingPosition
+
+            playbackStampX.animateTo(
+                targetValue = totalTrackDuration.toX(),
+                anim = tween(
+                    durationMillis = animationDuration.toLongMilliseconds().toInt(),
+                    easing = LinearEasing
+                )
             )
-        )
+        }
     }
 
     return playbackStampX.value
@@ -276,10 +291,7 @@ fun PreviewClickTrackView() {
     ClickTrackView(
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,
-        playbackTimestamp = PlaybackStamp(
-            timestamp = SerializableDuration(1.seconds),
-            duration = SerializableDuration(Duration.ZERO)
-        ),
+        progress = 0.13f,
         modifier = Modifier.fillMaxSize()
     )
 }

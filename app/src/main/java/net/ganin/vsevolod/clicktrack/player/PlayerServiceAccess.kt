@@ -21,7 +21,7 @@ import javax.inject.Inject
 @ViewModelScoped
 class PlayerServiceAccess @Inject constructor(
     @ApplicationContext private val context: Context,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher
+    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
 ) : Player {
 
     private val binderState = MutableStateFlow<PlayerServiceBinder?>(null)
@@ -46,8 +46,8 @@ class PlayerServiceAccess @Inject constructor(
         context.unbindService(serviceConnection)
     }
 
-    override suspend fun play(clickTrack: ClickTrackWithId) = withContext(mainDispatcher) {
-        PlayerService.start(context, clickTrack)
+    override suspend fun play(clickTrack: ClickTrackWithId, startAtProgress: Float) = withContext(mainDispatcher) {
+        PlayerService.start(context, PlayerService.StartArguments(clickTrack, startAtProgress))
     }
 
     override suspend fun stop(): Unit = withContext(mainDispatcher) {

@@ -46,14 +46,17 @@ fun BpmWheel(
         Text(text = state.value.value.toString())
     },
 ) {
-    val bpmRangeInFloat = remember(bpmRange) { bpmRange.first.toFloat()..bpmRange.last.toFloat() }
+    val bpmRangeAsFloat = remember(bpmRange) { bpmRange.first.toFloat()..bpmRange.last.toFloat() }
     var internalFloatState by remember { mutableStateOf(state.value.value.toFloat()) }
 
     Box(modifier) {
         Wheel(
             onAngleChange = {
-                internalFloatState = (internalFloatState + it * sensitivity).coerceIn(bpmRangeInFloat)
-                state.value = internalFloatState.roundToInt().bpm
+                internalFloatState = (internalFloatState + it * sensitivity).coerceIn(bpmRangeAsFloat)
+                val newStateValue = internalFloatState.roundToInt().bpm
+                if (state.value != newStateValue) {
+                    state.value = newStateValue
+                }
             },
             modifier = Modifier
                 .align(Alignment.Center)

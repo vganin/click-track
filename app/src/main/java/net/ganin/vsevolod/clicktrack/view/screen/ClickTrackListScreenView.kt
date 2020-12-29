@@ -107,7 +107,6 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
                 ClickTrackView(
                     clickTrack = clickTrack.value,
                     drawTextMarks = false,
-                    playbackTimestamp = null,
                     modifier = Modifier
                         .fillParentMaxWidth()
                         .height(100.dp)

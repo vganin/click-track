@@ -26,9 +26,9 @@ private fun MetronomeScreenState?.reduce(action: Action): MetronomeScreenState? 
         }
         StopPlay -> this?.copy(isPlaying = false)
         is UpdateCurrentlyPlaying -> if (action.playbackState?.clickTrack?.id == MetronomeId) {
-            this?.copy(playbackStamp = action.playbackState.playbackStamp, isPlaying = true)
+            this?.copy(progress = action.playbackState.progress, isPlaying = true)
         } else {
-            this?.copy(playbackStamp = null, isPlaying = false)
+            this?.copy(progress = null, isPlaying = false)
         }
         else -> this
     }

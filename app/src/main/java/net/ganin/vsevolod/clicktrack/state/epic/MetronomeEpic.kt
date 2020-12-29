@@ -1,7 +1,6 @@
 package net.ganin.vsevolod.clicktrack.state.epic
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -22,7 +21,6 @@ import net.ganin.vsevolod.clicktrack.state.frontScreen
 import net.ganin.vsevolod.clicktrack.storage.UserPreferencesRepository
 import net.ganin.vsevolod.clicktrack.utils.flow.consumeEach
 import javax.inject.Inject
-import kotlin.time.milliseconds
 
 @ViewModelScoped
 class MetronomeEpic @Inject constructor(
@@ -38,12 +36,10 @@ class MetronomeEpic @Inject constructor(
                 .mapNotNull { screen ->
                     if (screen is Screen.Metronome) {
                         val currentlyPlayingMetronome = currentlyPlayingMetronome()
-                        val isPlaying = currentlyPlayingMetronome != null
-                        val bpm = userPreferencesRepository.metronomeBpm
                         MetronomeScreenState(
-                            bpm = bpm,
-                            playbackStamp = currentlyPlayingMetronome?.playbackStamp,
-                            isPlaying = isPlaying
+                            bpm = userPreferencesRepository.metronomeBpm,
+                            progress = currentlyPlayingMetronome?.progress,
+                            isPlaying = currentlyPlayingMetronome != null
                         )
                     } else {
                         null
@@ -52,7 +48,6 @@ class MetronomeEpic @Inject constructor(
                 .map(MetronomeActions::UpdateMetronomeState),
 
             actions.filterIsInstance<MetronomeActions.ChangeBpm>()
-                .debounce(250.milliseconds)
                 .mapNotNull { action ->
                     currentlyPlayingMetronome()?.clickTrack?.run {
                         copy(
@@ -62,7 +57,12 @@ class MetronomeEpic @Inject constructor(
                                 }
                             )
                         )
-                    }?.let(::StartPlay)
+                    }?.let { updatedClickTrack ->
+                        StartPlay(
+                            clickTrack = updatedClickTrack,
+                            progress = action.progress,
+                        )
+                    }
                 },
 
             actions

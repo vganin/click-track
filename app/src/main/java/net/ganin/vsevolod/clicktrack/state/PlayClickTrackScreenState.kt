@@ -7,6 +7,6 @@ import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 @Parcelize
 data class PlayClickTrackScreenState(
     val clickTrack: ClickTrackWithId,
-    val playbackStamp: PlaybackStamp?,
+    val progress: Float?,
     val isPlaying: Boolean,
 ) : Parcelable

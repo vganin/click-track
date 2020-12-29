@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @ViewModelScoped
 class PlayerEpic @Inject constructor(
-    private val player: Player
+    private val player: Player,
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {
@@ -23,7 +23,7 @@ class PlayerEpic @Inject constructor(
             actions
                 .consumeEach { action ->
                     when (action) {
-                        is StartPlay -> player.play(action.clickTrack)
+                        is StartPlay -> player.play(action.clickTrack, action.progress)
                         StopPlay -> player.stop()
                     }
                 },

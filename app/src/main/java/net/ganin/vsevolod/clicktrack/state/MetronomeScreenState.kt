@@ -7,6 +7,6 @@ import net.ganin.vsevolod.clicktrack.lib.BeatsPerMinute
 @Parcelize
 data class MetronomeScreenState(
     val bpm: BeatsPerMinute,
-    val playbackStamp: PlaybackStamp?,
+    val progress: Float?,
     val isPlaying: Boolean,
 ) : Parcelable

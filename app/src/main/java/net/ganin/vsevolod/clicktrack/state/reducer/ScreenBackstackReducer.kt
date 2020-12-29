@@ -36,13 +36,12 @@ private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: P
         )
         is NavigateToClickTrackScreen -> push {
             val clickTrack = action.clickTrack
-            val playbackStamp = currentlyPlaying?.takeIf { it.clickTrack.id == clickTrack.id }?.playbackStamp
-            val isPlaying = playbackStamp != null
+            val progress = currentlyPlaying?.takeIf { it.clickTrack.id == clickTrack.id }?.progress
             Screen.PlayClickTrack(
                 state = PlayClickTrackScreenState(
                     clickTrack = clickTrack,
-                    playbackStamp = playbackStamp,
-                    isPlaying = isPlaying
+                    progress = progress,
+                    isPlaying = progress != null
                 )
             )
         }

@@ -16,6 +16,10 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,14 +31,12 @@ import net.ganin.vsevolod.clicktrack.lib.ClickTrack
 import net.ganin.vsevolod.clicktrack.lib.Cue
 import net.ganin.vsevolod.clicktrack.lib.CueDuration
 import net.ganin.vsevolod.clicktrack.lib.CueWithDuration
-import net.ganin.vsevolod.clicktrack.lib.SerializableDuration
 import net.ganin.vsevolod.clicktrack.lib.TimeSignature
 import net.ganin.vsevolod.clicktrack.lib.bpm
 import net.ganin.vsevolod.clicktrack.model.ClickTrackWithId
 import net.ganin.vsevolod.clicktrack.model.MetronomeId
 import net.ganin.vsevolod.clicktrack.redux.Dispatch
 import net.ganin.vsevolod.clicktrack.state.MetronomeScreenState
-import net.ganin.vsevolod.clicktrack.state.PlaybackStamp
 import net.ganin.vsevolod.clicktrack.state.actions.MetronomeActions
 import net.ganin.vsevolod.clicktrack.state.actions.NavigateBack
 import net.ganin.vsevolod.clicktrack.state.actions.StartPlay
@@ -43,8 +45,6 @@ import net.ganin.vsevolod.clicktrack.utils.compose.observableMutableStateOf
 import net.ganin.vsevolod.clicktrack.view.widget.BpmWheel
 import net.ganin.vsevolod.clicktrack.view.widget.ClickTrackView
 import net.ganin.vsevolod.clicktrack.view.widget.PlayStopButton
-import kotlin.time.milliseconds
-import kotlin.time.seconds
 
 @Composable
 fun MetronomeScreenView(
@@ -79,8 +79,9 @@ private fun MetronomeScreenViewContent(
     state: MetronomeScreenState,
     dispatch: Dispatch,
 ) {
-    val bpmState = observableMutableStateOf(state.bpm).observe {
-        dispatch(MetronomeActions.ChangeBpm(it))
+    var progress by remember { mutableStateOf(state.progress ?: 0f) }
+    val bpmState = observableMutableStateOf(state.bpm).observe { bpm ->
+        dispatch(MetronomeActions.ChangeBpm(bpm, progress))
     }
     val metronomeClickTrack = metronomeClickTrack(bpmState.value)
 
@@ -98,7 +99,8 @@ private fun MetronomeScreenViewContent(
                 clickTrack = metronomeClickTrack.value,
                 drawAllBeatsMarks = true,
                 drawTextMarks = false,
-                playbackTimestamp = state.playbackStamp,
+                progress = state.progress,
+                onProgressChanged = { progress = it }
             )
         }
 
@@ -124,7 +126,7 @@ private fun MetronomeScreenViewContent(
                 }
         ) {
             PlayStopButton(state.isPlaying, onToggle = {
-                val action = if (state.isPlaying) StopPlay else StartPlay(metronomeClickTrack)
+                val action = if (state.isPlaying) StopPlay else StartPlay(metronomeClickTrack, progress = 0f)
                 dispatch(action)
             })
         }
@@ -158,10 +160,7 @@ fun PreviewMetronomeScreenView() {
     MetronomeScreenView(
         MetronomeScreenState(
             bpm = 90.bpm,
-            playbackStamp = PlaybackStamp(
-                timestamp = SerializableDuration(500.milliseconds),
-                duration = SerializableDuration(4.seconds)
-            ),
+            progress = 0.13f,
             isPlaying = false,
         )
     )

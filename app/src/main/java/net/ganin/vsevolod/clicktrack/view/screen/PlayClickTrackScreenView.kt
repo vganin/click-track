@@ -51,7 +51,7 @@ fun PlayClickTrackScreenView(
             PlayStopButton(
                 isPlaying = state.isPlaying,
                 onToggle = {
-                    val action = if (state.isPlaying) StopPlay else StartPlay(state.clickTrack)
+                    val action = if (state.isPlaying) StopPlay else StartPlay(state.clickTrack, progress = 0f)
                     dispatch(action)
                 }
             )
@@ -74,7 +74,7 @@ private fun ClickTrackScreenContent(
         ClickTrackView(
             clickTrack = state.clickTrack.value,
             drawTextMarks = true,
-            playbackTimestamp = state.playbackStamp,
+            progress = state.progress,
             viewportPanEnabled = true,
             modifier = Modifier.fillMaxSize()
         )
@@ -157,8 +157,8 @@ fun PreviewClickTrackScreenView() {
     PlayClickTrackScreenView(
         PlayClickTrackScreenState(
             clickTrack = PREVIEW_CLICK_TRACK_1,
+            progress = null,
             isPlaying = false,
-            playbackStamp = null
         )
     )
 }

@@ -16,9 +16,9 @@ fun Screen.PlayClickTrack.reducePlayClickTrackScreen(action: Action): Screen {
 private fun PlayClickTrackScreenState.reduce(action: Action): PlayClickTrackScreenState {
     return when (action) {
         is UpdateCurrentlyPlaying -> if (action.playbackState?.clickTrack?.id == clickTrack.id) {
-            copy(playbackStamp = action.playbackState.playbackStamp, isPlaying = true)
+            copy(progress = action.playbackState.progress, isPlaying = true)
         } else {
-            copy(playbackStamp = null, isPlaying = false)
+            copy(progress = null, isPlaying = false)
         }
         else -> copy(clickTrack = clickTrack.reduce(action))
     }

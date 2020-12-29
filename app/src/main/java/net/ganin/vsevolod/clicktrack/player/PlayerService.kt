@@ -10,10 +10,12 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Build
 import android.os.IBinder
+import android.os.Parcelable
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import net.ganin.vsevolod.clicktrack.Application
 import net.ganin.vsevolod.clicktrack.MainActivity
 import net.ganin.vsevolod.clicktrack.R
@@ -26,10 +28,16 @@ import kotlin.random.Random
 
 class PlayerService : Service() {
 
+    @Parcelize
+    data class StartArguments(
+        val clickTrack: ClickTrackWithId,
+        val startAtProgress: Float,
+    ) : Parcelable
+
     companion object {
-        fun start(context: Context, clickTrack: ClickTrackWithId) {
+        fun start(context: Context, arguments: StartArguments) {
             val intent = serviceIntent(context).apply {
-                putExtra(EXTRA_KEY_CLICK_TRACK, clickTrack)
+                putExtra(EXTRA_KEY_ARGUMENTS, arguments)
             }
             context.startService(intent)
         }
@@ -49,7 +57,7 @@ class PlayerService : Service() {
 
         private fun serviceIntent(context: Context): Intent = Intent(context, PlayerService::class.java)
 
-        private const val EXTRA_KEY_CLICK_TRACK = "click_track"
+        private const val EXTRA_KEY_ARGUMENTS = "arguments"
         private const val ACTION_STOP = "stop"
     }
 
@@ -62,20 +70,21 @@ class PlayerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        if (intent.action == ACTION_STOP) {
+        return if (intent.action == ACTION_STOP) {
             stopPlayer()
             stopForeground()
             stopSelf()
-            return START_NOT_STICKY
+
+            START_NOT_STICKY
+        } else {
+            val args: StartArguments = intent.getParcelableExtra(EXTRA_KEY_ARGUMENTS)
+                ?: throw RuntimeException("No start arguments were supplied")
+
+            startPlayer(args)
+            startForeground(args.clickTrack)
+
+            START_STICKY
         }
-
-        val clickTrack: ClickTrackWithId = intent.getParcelableExtra(EXTRA_KEY_CLICK_TRACK)
-            ?: throw RuntimeException("No click track to play")
-
-        startPlayer(clickTrack)
-        startForeground(clickTrack)
-
-        return START_STICKY
     }
 
     override fun onDestroy() {
@@ -85,9 +94,9 @@ class PlayerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder = PlayerServiceBinder(player.playbackState())
 
-    private fun startPlayer(clickTrack: ClickTrackWithId) {
+    private fun startPlayer(args: StartArguments) {
         GlobalScope.launch(Dispatchers.Unconfined) {
-            player.play(clickTrack)
+            player.play(args.clickTrack, args.startAtProgress)
             stopForeground()
             stopSelf()
         }
