@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.isFocused
-import androidx.compose.ui.focusObserver
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 fun NumberInputField(
     state: MutableState<Int>,
     modifier: Modifier = Modifier,
-    maxDigitsCount: Int = 6
+    maxDigitsCount: Int = 6,
 ) {
     var text by remember { mutableStateOf(state.value.toString()) }
     var selection by remember { mutableStateOf(TextRange.Zero) }
@@ -72,9 +72,9 @@ fun NumberInputField(
             ),
         modifier = modifier
             .focusableBorder()
-            .focusObserver {
+            .onFocusChanged {
                 if (isFocused == it.isFocused) {
-                    return@focusObserver
+                    return@onFocusChanged
                 }
 
                 isFocused = it.isFocused

@@ -32,14 +32,16 @@ import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.vsevolodganin.clicktrack.utils.compose.offset
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
 @Composable
 fun NumberPicker(
     state: MutableState<Int>,
     modifier: Modifier = Modifier,
     range: IntRange? = null,
-    textStyle: TextStyle = AmbientTextStyle.current
+    textStyle: TextStyle = AmbientTextStyle.current,
 ) {
     val numbersColumnHeight = 36.dp
     val halvedNumbersColumnHeight = numbersColumnHeight / 2
@@ -101,7 +103,7 @@ fun NumberPicker(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .offset(y = { coercedAnimatedOffset })
+                .offset(y = { coercedAnimatedOffset.roundToInt() })
         ) {
             val baseLabelModifier = Modifier.align(Alignment.Center)
             ProvideTextStyle(textStyle) {

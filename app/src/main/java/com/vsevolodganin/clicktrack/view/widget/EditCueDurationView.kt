@@ -17,7 +17,7 @@ import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.ripple.rememberRippleIndication
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -122,7 +122,7 @@ private fun DurationTypeDropdown(
         toggleModifier = modifier
             .clickable(
                 onClick = onToggleClick,
-                indication = rememberRippleIndication()
+                indication = rememberRipple()
             )
             .width(DROPDOWN_TOGGLE_WIDTH),
         toggle = {
@@ -146,7 +146,7 @@ private fun DurationTypeDropdown(
                         .size(16.dp, 16.dp)
                         .clickable(
                             onClick = onToggleClick,
-                            indication = rememberRippleIndication(bounded = false)
+                            indication = rememberRipple(bounded = false)
                         )
                 ) {
                     Icon(Icons.Default.ArrowDropDown)

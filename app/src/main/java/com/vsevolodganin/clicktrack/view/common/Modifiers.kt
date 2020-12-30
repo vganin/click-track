@@ -11,7 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.isFocused
-import androidx.compose.ui.focusObserver
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.unit.dp
 
 fun Modifier.focusableBorder(): Modifier = composed {
@@ -23,9 +23,9 @@ fun Modifier.focusableBorder(): Modifier = composed {
     val borderWidth = if (isFocused) 2.dp else 1.dp
 
     this
-        .focusObserver { focusState ->
+        .onFocusChanged { focusState ->
             if (isFocused == focusState.isFocused) {
-                return@focusObserver
+                return@onFocusChanged
             }
 
             isFocused = focusState.isFocused

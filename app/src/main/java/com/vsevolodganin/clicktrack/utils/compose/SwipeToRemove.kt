@@ -5,7 +5,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.animation.FlingConfig
 import androidx.compose.foundation.animation.fling
 import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -51,7 +50,7 @@ fun Modifier.swipeToRemove(
                 }
             }
         )
-        .offset(x = { positionOffset.value })
+        .offset(x = { positionOffset.value.roundToInt() })
         .layout { measurable, constraints ->
             val placeable = measurable.measure(constraints)
             val height = (placeable.height * heightExpandRatio.value).roundToInt()

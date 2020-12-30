@@ -13,7 +13,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.ripple.rememberRippleIndication
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.isFocused
-import androidx.compose.ui.focusObserver
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.focusRequester
 import androidx.compose.ui.gesture.tapGestureFilter
 import androidx.compose.ui.platform.AmbientTextInputService
@@ -137,9 +137,9 @@ fun DurationPicker(
         modifier = modifier
             .focusableBorder()
             .focusRequester(focusRequester)
-            .focusObserver { focusState ->
+            .onFocusChanged { focusState ->
                 if (isFocused == focusState.isFocused) {
-                    return@focusObserver
+                    return@onFocusChanged
                 }
 
                 isFocused = focusState.isFocused
@@ -189,7 +189,7 @@ fun DurationPicker(
                 .size(16.dp, 16.dp)
                 .clickable(
                     onClick = { state.value = Duration.ZERO },
-                    indication = rememberRippleIndication(bounded = false)
+                    indication = rememberRipple(bounded = false)
                 )
         ) {
             Icon(imageVector = Icons.Default.Close)
