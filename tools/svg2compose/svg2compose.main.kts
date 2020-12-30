@@ -17,7 +17,7 @@ val inputDir = File("input")
 val outputDir = File("output")
 
 Svg2Compose.parse(
-    applicationIconPackage = "net.ganin.vsevolod.clicktrack",
+    applicationIconPackage = "com.vsevolodganin.clicktrack",
     accessorName = "ClickTrackIcons",
     vectorsDirectory = inputDir,
     outputSourceDirectory = outputDir,

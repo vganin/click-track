@@ -1,0 +1,226 @@
+package com.vsevolodganin.clicktrack.view.screen
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Card
+import androidx.compose.material.FabPosition
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Switch
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.key
+import androidx.compose.runtime.onActive
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.WithConstraints
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.lib.BuiltinClickSounds
+import com.vsevolodganin.clicktrack.lib.ClickTrack
+import com.vsevolodganin.clicktrack.lib.Cue
+import com.vsevolodganin.clicktrack.lib.CueDuration
+import com.vsevolodganin.clicktrack.lib.CueWithDuration
+import com.vsevolodganin.clicktrack.lib.SerializableDuration
+import com.vsevolodganin.clicktrack.lib.TimeSignature
+import com.vsevolodganin.clicktrack.lib.bpm
+import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.redux.Dispatch
+import com.vsevolodganin.clicktrack.state.EditClickTrackScreenState
+import com.vsevolodganin.clicktrack.state.actions.NavigateBack
+import com.vsevolodganin.clicktrack.state.actions.StoreUpdateClickTrack
+import com.vsevolodganin.clicktrack.utils.compose.ObservableMutableState
+import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
+import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
+import com.vsevolodganin.clicktrack.utils.compose.toObservableMutableStateList
+import com.vsevolodganin.clicktrack.view.common.Constants.FAB_SIZE_WITH_PADDINGS
+import com.vsevolodganin.clicktrack.view.widget.EditCueWithDurationView
+import kotlinx.coroutines.launch
+import kotlin.time.minutes
+
+@Composable
+fun EditClickTrackScreenView(
+    state: EditClickTrackScreenState,
+    modifier: Modifier = Modifier,
+    dispatch: Dispatch = Dispatch {},
+) {
+    val nameState = remember { observableMutableStateOf(state.clickTrack.value.name) }
+    val loopState = remember { observableMutableStateOf(state.clickTrack.value.loop) }
+    val cuesState = remember { state.clickTrack.value.cues.map(::observableMutableStateOf).toObservableMutableStateList() }
+
+    fun update() {
+        dispatch(
+            StoreUpdateClickTrack(
+                clickTrack = state.clickTrack.copy(
+                    value = state.clickTrack.value.copy(
+                        name = nameState.value,
+                        loop = loopState.value,
+                        cues = cuesState.map(ObservableMutableState<CueWithDuration>::value),
+                    )
+                )
+            )
+        )
+    }
+
+    onActive {
+        nameState.observe { update() }
+        loopState.observe { update() }
+        cuesState.observe { update() }
+        cuesState.forEach { it.observe { update() } }
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+    val lazyListState = rememberLazyListState()
+
+    Scaffold(
+        topBar = { EditClickTrackScreenTopBar(dispatch) },
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                cuesState += observableMutableStateOf(state.defaultCue).observe { update() }
+                coroutineScope.launch {
+                    // FIXME: Wait for upcoming `scrollTo` API
+                    lazyListState.snapToItemIndex(cuesState.lastIndex)
+                }
+            }) {
+                Icon(Icons.Default.Add)
+            }
+        },
+        modifier = modifier,
+    ) {
+        EditClickTrackScreenContent(nameState, state.isErrorInName, loopState, cuesState, lazyListState)
+    }
+}
+
+@Composable
+private fun EditClickTrackScreenContent(
+    nameState: MutableState<String>,
+    isErrorInName: Boolean,
+    loopState: MutableState<Boolean>,
+    cuesState: MutableList<out MutableState<CueWithDuration>>,
+    lazyListState: LazyListState,
+) {
+    LazyColumn(
+        state = lazyListState,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        item {
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = nameState.value,
+                onValueChange = { nameState.value = it },
+                placeholder = { Text(text = stringResource(R.string.click_track_name_hint)) },
+                textStyle = MaterialTheme.typography.h6,
+                isErrorValue = isErrorInName
+            )
+
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Row(modifier = Modifier.padding(16.dp).align(Alignment.Center)) {
+                    Text(text = stringResource(R.string.repeat))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Switch(checked = loopState.value, onCheckedChange = {
+                        loopState.value = !loopState.value
+                    })
+                }
+            }
+        }
+
+        itemsIndexed(items = cuesState) { index, cueState ->
+            key(index, cueState) {
+                WithConstraints {
+                    CueListItem(
+                        state = cueState,
+                        modifier = Modifier.swipeToRemove(constraints = constraints, onDelete = {
+                            cuesState.removeAt(index)
+                        })
+                    )
+                }
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.size(FAB_SIZE_WITH_PADDINGS))
+        }
+    }
+}
+
+@Composable
+private fun CueListItem(
+    state: MutableState<CueWithDuration>,
+    modifier: Modifier,
+) {
+    Card(
+        modifier = modifier.padding(8.dp),
+        elevation = 2.dp
+    ) {
+        EditCueWithDurationView(state)
+    }
+}
+
+@Composable
+private fun EditClickTrackScreenTopBar(dispatch: Dispatch) {
+    TopAppBar(
+        navigationIcon = {
+            IconButton(onClick = { dispatch(NavigateBack) }) {
+                Icon(imageVector = Icons.Default.ArrowBack)
+            }
+        },
+        title = { Text(text = stringResource(id = R.string.edit_click_track)) }
+    )
+}
+
+@Preview
+@Composable
+fun PreviewEditClickTrackScreenView() {
+    EditClickTrackScreenView(
+        state = EditClickTrackScreenState(
+            clickTrack = ClickTrackWithId(
+                id = 0,
+                value = ClickTrack(
+                    name = "Good click track",
+                    cues = listOf(
+                        CueWithDuration(
+                            cue = Cue(
+                                bpm = 60.bpm,
+                                timeSignature = TimeSignature(3, 4)
+                            ),
+                            duration = CueDuration.Beats(4),
+                        ),
+                        CueWithDuration(
+                            cue = Cue(
+                                bpm = 120.bpm,
+                                timeSignature = TimeSignature(5, 4)
+                            ),
+                            duration = CueDuration.Time(SerializableDuration(1.minutes)),
+                        ),
+                    ),
+                    loop = true,
+                    sounds = BuiltinClickSounds,
+                )
+            ),
+            isErrorInName = false,
+        ),
+    )
+}

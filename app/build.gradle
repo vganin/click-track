@@ -17,7 +17,7 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        applicationId "net.ganin.vsevolod.clicktrack"
+        applicationId "com.vsevolodganin.clicktrack"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode rootProject.ext.buildNumber ?: 1
