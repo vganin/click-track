@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
 import androidx.core.app.NotificationCompat
+import androidx.core.content.res.ResourcesCompat
 import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.R
@@ -123,7 +124,8 @@ class PlayerService : Service() {
         val stopServiceIntent = PendingIntent.getService(this, 0, serviceIntent(this).apply { action = ACTION_STOP }, 0)
 
         val notification: Notification = NotificationCompat.Builder(this, DEFAULT_CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setColor(ResourcesCompat.getColor(resources, R.color.secondary_dark, null))
             .setContentTitle(getString(R.string.notification_playing_now))
             .setContentText(clickTrack.value.name)
             .setContentIntent(launchAppIntent)
