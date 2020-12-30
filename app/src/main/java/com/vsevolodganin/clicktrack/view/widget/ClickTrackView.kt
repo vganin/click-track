@@ -13,10 +13,8 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -37,6 +35,7 @@ import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.durationAsTime
 import com.vsevolodganin.clicktrack.lib.interval
+import com.vsevolodganin.clicktrack.utils.compose.AnimatedRect
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlin.time.Duration
 
@@ -76,14 +75,14 @@ fun ClickTrackView(
         val playbackStampColor = MaterialTheme.colors.primary
 
         val bounds = remember { Rect(0f, 0f, widthPx, heightPx) }
-        val viewportState = remember { mutableStateOf(bounds) }
+        val viewportState = AnimatedRect(bounds)
         val viewport by derivedStateOf { viewportState.value }
 
         Box(
             modifier = Modifier
                 .let {
                     if (viewportPanEnabled) {
-                        it.viewportPanGestureFilter(viewportState, bounds)
+                        it.viewportPanGestureFilter(viewportState)
                     } else {
                         it
                     }
@@ -231,53 +230,39 @@ private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
 
 private fun Cue.toText() = "${bpm.value} bpm ${timeSignature.noteCount}/${timeSignature.noteDuration}"
 
-private fun Modifier.viewportPanGestureFilter(
-    viewportState: MutableState<Rect>,
-    bounds: Rect,
-) = composed {
-    fun Rect.coerceToBounds(): Rect {
-        var translateX = 0f
-        var translateY = 0f
-        if (left < bounds.left) {
-            translateX += bounds.left - left
-        }
-        if (top < bounds.top) {
-            translateY += bounds.top - top
-        }
-        if (right > bounds.right) {
-            translateX += bounds.right - right
-        }
-        if (bottom > bounds.bottom) {
-            translateY += bounds.bottom - bottom
-        }
-        return translate(translateX, translateY).intersect(bounds)
-    }
-
+private fun Modifier.viewportPanGestureFilter(viewportState: AnimatedRect) = composed {
     val context = AmbientContext.current
     val scaleDetector = remember {
         ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector): Boolean {
                 val viewport = viewportState.value
+                val bounds = viewportState.bounds
 
                 val newWidth = viewport.width / detector.scaleFactor
                 val newLeft = viewport.left - (newWidth - viewport.width) * (detector.focusX - bounds.left) / bounds.width
 
-                viewportState.value = Rect(
-                    left = newLeft,
-                    top = viewport.top,
-                    right = newLeft + newWidth,
-                    bottom = viewport.bottom
-                ).coerceToBounds()
+                viewportState.snapTo(
+                    newLeft = newLeft,
+                    newTop = viewport.top,
+                    newRight = newLeft + newWidth,
+                    newBottom = viewport.bottom
+                )
 
                 return true
             }
         })
     }
 
-    val dragObserver = object : DragObserver {
-        override fun onDrag(dragDistance: Offset): Offset {
-            viewportState.value = viewportState.value.translate(-dragDistance.copy(y = 0f)).coerceToBounds()
-            return dragDistance
+    val dragObserver = remember {
+        object : DragObserver {
+            override fun onDrag(dragDistance: Offset): Offset {
+                viewportState.translate(-dragDistance.copy(y = 0f))
+                return dragDistance
+            }
+
+            override fun onStop(velocity: Offset) {
+                viewportState.fling(-velocity.copy(y = 0f))
+            }
         }
     }
 
