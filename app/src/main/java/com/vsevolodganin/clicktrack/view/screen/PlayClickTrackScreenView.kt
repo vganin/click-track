@@ -30,6 +30,7 @@ import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.PlayClickTrackScreenState
 import com.vsevolodganin.clicktrack.state.actions.NavigateBack
 import com.vsevolodganin.clicktrack.state.actions.NavigateToEditClickTrackScreen
+import com.vsevolodganin.clicktrack.state.actions.PausePlay
 import com.vsevolodganin.clicktrack.state.actions.StartPlay
 import com.vsevolodganin.clicktrack.state.actions.StopPlay
 import com.vsevolodganin.clicktrack.state.actions.StoreRemoveClickTrack
@@ -58,13 +59,14 @@ fun PlayClickTrackScreenView(
         },
         modifier = modifier,
     ) {
-        ClickTrackScreenContent(state)
+        ClickTrackScreenContent(state, dispatch)
     }
 }
 
 @Composable
 private fun ClickTrackScreenContent(
     state: PlayClickTrackScreenState,
+    dispatch: Dispatch,
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -75,6 +77,13 @@ private fun ClickTrackScreenContent(
             clickTrack = state.clickTrack.value,
             drawTextMarks = true,
             progress = state.progress,
+            progressDragndropEnabled = true,
+            onProgressDragStart = {
+                dispatch(PausePlay)
+            },
+            onProgressDrop = { progress ->
+                dispatch(StartPlay(state.clickTrack, progress))
+            },
             viewportPanEnabled = true,
             modifier = Modifier.fillMaxSize()
         )

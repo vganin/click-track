@@ -4,6 +4,7 @@ import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.player.Player
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
+import com.vsevolodganin.clicktrack.state.actions.PausePlay
 import com.vsevolodganin.clicktrack.state.actions.StartPlay
 import com.vsevolodganin.clicktrack.state.actions.StopPlay
 import com.vsevolodganin.clicktrack.state.actions.UpdateCurrentlyPlaying
@@ -25,6 +26,7 @@ class PlayerEpic @Inject constructor(
                     when (action) {
                         is StartPlay -> player.play(action.clickTrack, action.progress)
                         StopPlay -> player.stop()
+                        PausePlay -> player.pause()
                     }
                 },
 

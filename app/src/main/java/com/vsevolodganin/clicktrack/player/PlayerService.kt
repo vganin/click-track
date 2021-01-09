@@ -38,16 +38,22 @@ class PlayerService : Service() {
     companion object {
         fun start(context: Context, arguments: StartArguments) {
             val intent = serviceIntent(context).apply {
+                action = ACTION_START
                 putExtra(EXTRA_KEY_ARGUMENTS, arguments)
             }
             context.startService(intent)
+        }
+
+        fun pause(context: Context) {
+            context.startService(serviceIntent(context).apply {
+                action = ACTION_PAUSE
+            })
         }
 
         fun stop(context: Context) {
             context.startService(serviceIntent(context).apply {
                 action = ACTION_STOP
             })
-            context.stopService(serviceIntent(context))
         }
 
         fun bind(context: Context, serviceConnection: ServiceConnection) {
@@ -59,7 +65,9 @@ class PlayerService : Service() {
         private fun serviceIntent(context: Context): Intent = Intent(context, PlayerService::class.java)
 
         private const val EXTRA_KEY_ARGUMENTS = "arguments"
+        private const val ACTION_START = "start"
         private const val ACTION_STOP = "stop"
+        private const val ACTION_PAUSE = "pause"
     }
 
     @Inject
@@ -71,20 +79,29 @@ class PlayerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        return if (intent.action == ACTION_STOP) {
-            stopPlayer()
-            stopForeground()
-            stopSelf()
+        return when (intent.action) {
+            ACTION_START -> {
+                val args: StartArguments = intent.getParcelableExtra(EXTRA_KEY_ARGUMENTS)
+                    ?: throw RuntimeException("No start arguments were supplied")
 
-            START_NOT_STICKY
-        } else {
-            val args: StartArguments = intent.getParcelableExtra(EXTRA_KEY_ARGUMENTS)
-                ?: throw RuntimeException("No start arguments were supplied")
+                startPlayer(args)
+                startForeground(args.clickTrack)
 
-            startPlayer(args)
-            startForeground(args.clickTrack)
+                START_STICKY
+            }
+            ACTION_STOP -> {
+                stopPlayer()
+                stopForeground()
+                stopSelf()
 
-            START_STICKY
+                START_NOT_STICKY
+            }
+            ACTION_PAUSE -> {
+                pausePlayer()
+
+                START_STICKY
+            }
+            else -> throw IllegalArgumentException("Illegal action: ${intent.action}")
         }
     }
 
@@ -100,6 +117,12 @@ class PlayerService : Service() {
             player.play(args.clickTrack, args.startAtProgress)
             stopForeground()
             stopSelf()
+        }
+    }
+
+    private fun pausePlayer() {
+        GlobalScope.launch(Dispatchers.Unconfined) {
+            player.pause()
         }
     }
 

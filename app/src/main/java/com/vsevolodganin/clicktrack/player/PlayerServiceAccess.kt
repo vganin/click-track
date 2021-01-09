@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @ViewModelScoped
@@ -46,11 +45,15 @@ class PlayerServiceAccess @Inject constructor(
         context.unbindService(serviceConnection)
     }
 
-    override suspend fun play(clickTrack: ClickTrackWithId, startAtProgress: Float) = withContext(mainDispatcher) {
+    override suspend fun play(clickTrack: ClickTrackWithId, startAtProgress: Float) {
         PlayerService.start(context, PlayerService.StartArguments(clickTrack, startAtProgress))
     }
 
-    override suspend fun stop(): Unit = withContext(mainDispatcher) {
+    override suspend fun pause() {
+        PlayerService.pause(context)
+    }
+
+    override suspend fun stop() {
         PlayerService.stop(context)
     }
 

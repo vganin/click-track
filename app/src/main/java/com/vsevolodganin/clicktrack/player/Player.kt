@@ -25,6 +25,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,6 +37,7 @@ import kotlin.time.minutes
 
 interface Player {
     suspend fun play(clickTrack: ClickTrackWithId, startAtProgress: Float = 0f)
+    suspend fun pause()
     suspend fun stop()
 
     fun playbackState(): Flow<PlaybackState?>
@@ -52,6 +56,7 @@ class PlayerImpl @Inject constructor(
 
     private var playerJob: Job? = null
     private var playbackState = MutableNonConflatedStateFlow<PlaybackState?>(null)
+    private var pausedState = MutableNonConflatedStateFlow(false)
 
     override suspend fun play(clickTrack: ClickTrackWithId, startAtProgress: Float) = withContext(mainDispatcher) {
         val playback = playbackState.value
@@ -65,9 +70,14 @@ class PlayerImpl @Inject constructor(
         }
 
         playerJob = launch(playerDispatcher) {
+            pausedState.setValue(false)
             playImpl(clickTrack, startAtTime)
             stop()
         }
+    }
+
+    override suspend fun pause() {
+        pausedState.setValue(true)
     }
 
     override suspend fun stop(): Unit = withContext(mainDispatcher) {
@@ -159,6 +169,10 @@ class PlayerImpl @Inject constructor(
 
         // Handle all full beats
         while ((totalDuration - playedFor) > CLICK_TIME_EPSILON) {
+            if (pausedState.value) {
+                pausedState.filter { false }.take(1).collect()
+            }
+
             if (beatIndex % timeSignature.noteCount == 0) {
                 strongBeatMediaPlayer.start()
             } else {
