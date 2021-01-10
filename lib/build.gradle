@@ -39,4 +39,14 @@ android {
             setRoot 'src/androidMain'
         }
     }
+
+    // FIXME(https://youtrack.jetbrains.com/issue/KT-43944)
+    configurations {
+        androidTestApi {}
+        androidTestDebugApi {}
+        androidTestReleaseApi {}
+        testApi {}
+        testDebugApi {}
+        testReleaseApi {}
+    }
 }
