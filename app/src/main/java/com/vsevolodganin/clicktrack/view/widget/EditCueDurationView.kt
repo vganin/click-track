@@ -26,7 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Position
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vsevolodganin.clicktrack.R
@@ -155,7 +155,7 @@ private fun DurationTypeDropdown(
         },
         expanded = toggleState.value,
         onDismissRequest = { toggleState.value = false },
-        dropdownOffset = Position(-DROPDOWN_TOGGLE_WIDTH, 0.dp),
+        dropdownOffset = DpOffset(-DROPDOWN_TOGGLE_WIDTH, 0.dp),
         dropdownContent = {
             CueDurationType.values().forEach { durationType ->
                 DropdownMenuItem(onClick = {

@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.view.widget
 
-
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,17 +21,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.isFocused
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.focusRequester
 import androidx.compose.ui.gesture.tapGestureFilter
 import androidx.compose.ui.platform.AmbientTextInputService
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.BackspaceKeyEditOp
-import androidx.compose.ui.text.input.CommitTextEditOp
+import androidx.compose.ui.text.input.BackspaceCommand
+import androidx.compose.ui.text.input.CommitTextCommand
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.ImeOptions
 import androidx.compose.ui.text.input.InputSessionToken
@@ -154,8 +153,8 @@ fun DurationPicker(
                         onEditCommand = { operations ->
                             operations.forEach { operation ->
                                 when (operation) {
-                                    is BackspaceKeyEditOp -> removeDigit()
-                                    is CommitTextEditOp -> operation.text.forEach(::enterDigit)
+                                    is BackspaceCommand -> removeDigit()
+                                    is CommitTextCommand -> operation.text.forEach(::enterDigit)
                                 }
                             }
                         },
@@ -170,7 +169,7 @@ fun DurationPicker(
                     inputSessionToken = null
                 }
             }
-            .focus()
+            .focusModifier()
             .tapGestureFilter { focusRequester.requestFocus() }
             .padding(8.dp)
     ) {

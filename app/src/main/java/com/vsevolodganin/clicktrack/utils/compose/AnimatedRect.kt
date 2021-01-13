@@ -3,8 +3,8 @@ package com.vsevolodganin.clicktrack.utils.compose
 import android.annotation.SuppressLint
 import androidx.compose.animation.animatedFloat
 import androidx.compose.animation.core.AnimatedFloat
-import androidx.compose.animation.core.ExponentialDecay
 import androidx.compose.animation.core.FloatDecayAnimationSpec
+import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.OnAnimationEnd
 import androidx.compose.animation.core.fling
 import androidx.compose.runtime.Composable
@@ -48,7 +48,7 @@ class AnimatedRect(
 
     fun fling(
         startingVelocity: Offset,
-        decay: FloatDecayAnimationSpec = ExponentialDecay(),
+        decay: FloatDecayAnimationSpec = FloatExponentialDecaySpec(),
         onEnd: OnAnimationEnd? = null,
     ) {
         forbidToDeform()

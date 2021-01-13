@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.view.widget
 
 import androidx.compose.animation.animatedFloat
-import androidx.compose.animation.core.ExponentialDecay
+import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.TargetAnimation
 import androidx.compose.foundation.animation.FlingConfig
@@ -73,7 +73,7 @@ fun NumberPicker(
                 },
                 onDragStopped = { velocity ->
                     val config = FlingConfig(
-                        decayAnimation = ExponentialDecay(
+                        decayAnimation = FloatExponentialDecaySpec(
                             frictionMultiplier = 20f
                         ),
                         adjustTarget = { target ->
