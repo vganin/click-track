@@ -1,5 +1,12 @@
 package com.vsevolodganin.clicktrack.view.screen
 
+import androidx.compose.animation.animatedFloat
+import androidx.compose.animation.animatedValue
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,18 +32,21 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.key
-import androidx.compose.runtime.onActive
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.gesture.LongPressDragObserver
+import androidx.compose.ui.gesture.longPressDragGestureFilter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.WithConstraints
+import androidx.compose.ui.platform.AmbientHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.lib.ClickTrack
@@ -53,11 +63,14 @@ import com.vsevolodganin.clicktrack.state.actions.NavigateBack
 import com.vsevolodganin.clicktrack.state.actions.StoreUpdateClickTrack
 import com.vsevolodganin.clicktrack.utils.compose.ObservableMutableState
 import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
+import com.vsevolodganin.clicktrack.utils.compose.offset
+import com.vsevolodganin.clicktrack.utils.compose.onSizeChangedPaddingIncluded
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.utils.compose.toObservableMutableStateList
 import com.vsevolodganin.clicktrack.view.common.Constants.FAB_SIZE_WITH_PADDINGS
 import com.vsevolodganin.clicktrack.view.widget.EditCueWithDurationView
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 import kotlin.time.minutes
 
 @Composable
@@ -119,9 +132,13 @@ private fun EditClickTrackScreenContent(
     nameState: MutableState<String>,
     isErrorInName: Boolean,
     loopState: MutableState<Boolean>,
-    cuesState: MutableList<out MutableState<CueWithDuration>>,
+    cuesState: MutableList<ObservableMutableState<CueWithDuration>>,
     lazyListState: LazyListState,
 ) {
+    var moveReorderSourceIndex by remember { mutableStateOf<Int?>(null) }
+    var moveReorderTargetIndex by remember { mutableStateOf<Int?>(null) }
+    var reorderHeight by remember { mutableStateOf(0f) }
+
     LazyColumn(
         state = lazyListState,
         modifier = Modifier.fillMaxSize()
@@ -137,7 +154,9 @@ private fun EditClickTrackScreenContent(
             )
 
             Box(modifier = Modifier.fillMaxWidth()) {
-                Row(modifier = Modifier.padding(16.dp).align(Alignment.Center)) {
+                Row(modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.Center)) {
                     Text(text = stringResource(R.string.repeat))
                     Spacer(modifier = Modifier.width(8.dp))
                     Switch(checked = loopState.value, onCheckedChange = {
@@ -149,12 +168,74 @@ private fun EditClickTrackScreenContent(
 
         itemsIndexed(items = cuesState) { index, cueState ->
             key(index, cueState) {
-                WithConstraints {
+                var zIndex by remember { mutableStateOf(0f) }
+
+                WithConstraints(modifier = Modifier.zIndex(zIndex)) {
+                    val offset = animatedFloat(0f)
+                    val elevation = animatedValue(0.dp, Dp.VectorConverter)
+
+                    onCommit(moveReorderSourceIndex, moveReorderTargetIndex) {
+                        val localMoveReorderSourceIndex = moveReorderSourceIndex
+                        val localMoveReorderTargetIndex = moveReorderTargetIndex
+                        val snap = localMoveReorderSourceIndex == null || localMoveReorderTargetIndex == null
+                        val itemIsMoving = localMoveReorderSourceIndex == index
+
+                        val offsetTargetValue = when {
+                            localMoveReorderSourceIndex == null || localMoveReorderTargetIndex == null -> 0f
+                            index in (localMoveReorderSourceIndex + 1)..localMoveReorderTargetIndex -> -reorderHeight
+                            index in localMoveReorderTargetIndex until localMoveReorderSourceIndex -> reorderHeight
+                            else -> 0f
+                        }
+                        val elevationTargetValue = if (itemIsMoving) 12.dp else 2.dp
+
+                        if (snap) {
+                            offset.snapTo(targetValue = offsetTargetValue)
+                            elevation.snapTo(targetValue = elevationTargetValue)
+                        } else {
+                            offset.animateTo(
+                                targetValue = offsetTargetValue,
+                                anim = spring()
+                            )
+                            elevation.animateTo(
+                                targetValue = elevationTargetValue,
+                                anim = tween(
+                                    durationMillis = 300,
+                                    easing = LinearEasing
+                                )
+                            )
+                        }
+
+                        zIndex = if (itemIsMoving) 1f else 0f
+                    }
+
                     CueListItem(
                         state = cueState,
-                        modifier = Modifier.swipeToRemove(constraints = constraints, onDelete = {
-                            cuesState.removeAt(index)
-                        })
+                        elevation = elevation.value,
+                        modifier = Modifier
+                            .swipeToRemove(
+                                constraints = constraints,
+                                onDelete = {
+                                    cuesState.removeAt(index)
+                                }
+                            )
+                            .moveReorder(
+                                position = index,
+                                elementsCount = cuesState.size,
+                                padding = 8.dp,
+                                onBegin = {
+                                    moveReorderSourceIndex = index
+                                },
+                                onMove = { targetPosition, height ->
+                                    moveReorderTargetIndex = targetPosition
+                                    reorderHeight = height
+                                },
+                                onDrop = { targetPosition ->
+                                    cuesState.add(targetPosition, cuesState[index].also { cuesState.removeAt(index) })
+                                    moveReorderSourceIndex = null
+                                    moveReorderTargetIndex = null
+                                }
+                            )
+                            .offset(y = { offset.value.roundToInt() })
                     )
                 }
             }
@@ -166,14 +247,79 @@ private fun EditClickTrackScreenContent(
     }
 }
 
+private fun Modifier.moveReorder(
+    position: Int,
+    elementsCount: Int,
+    padding: Dp, // FIXME: Here because of ordering issues with onSizeChangedPaddingIncluded
+    onBegin: () -> Unit,
+    onMove: (targetPosition: Int, height: Float) -> Unit,
+    onDrop: (targetPosition: Int) -> Unit,
+): Modifier = composed {
+    val hapticFeedback = AmbientHapticFeedback.current
+
+    var height by remember { mutableStateOf(0f) }
+    var targetPosition by remember { mutableStateOf(position) }
+    val positionOffset = animatedFloat(0f)
+
+    val longPressDragObserver = remember {
+        object : LongPressDragObserver {
+            override fun onLongPress(pxPosition: Offset) {
+                // FIXME(https://issuetracker.google.com/issues/171394805): Not working if global settings disables haptic feedback
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+
+                onBegin()
+            }
+
+            override fun onDrag(dragDistance: Offset): Offset {
+                positionOffset.snapTo(positionOffset.value + dragDistance.y)
+
+                val newTargetPosition = (position + (positionOffset.value / height).roundToInt())
+                    .coerceIn(0 until elementsCount)
+                if (targetPosition != newTargetPosition) {
+                    targetPosition = newTargetPosition
+                    onMove(newTargetPosition, height)
+                }
+
+                return dragDistance
+            }
+
+            override fun onStop(velocity: Offset) {
+                positionOffset.animateTo(
+                    targetValue = (targetPosition - position) * height,
+                    anim = spring()
+                ) { _, _ ->
+                    onDrop(targetPosition)
+                }
+            }
+
+            override fun onCancel() {
+                positionOffset.animateTo(
+                    targetValue = 0f,
+                    anim = spring()
+                ) { _, _ ->
+                    onDrop(position)
+                }
+            }
+        }
+    }
+
+    this
+        .onSizeChangedPaddingIncluded { height = it.height.toFloat() }
+        .padding(padding)
+        .clickable(onClick = {})
+        .longPressDragGestureFilter(longPressDragObserver)
+        .offset(y = { positionOffset.value.roundToInt() })
+}
+
 @Composable
 private fun CueListItem(
     state: MutableState<CueWithDuration>,
+    elevation: Dp,
     modifier: Modifier,
 ) {
     Card(
-        modifier = modifier.padding(8.dp),
-        elevation = 2.dp
+        modifier = modifier,
+        elevation = elevation
     ) {
         EditCueWithDurationView(state)
     }
