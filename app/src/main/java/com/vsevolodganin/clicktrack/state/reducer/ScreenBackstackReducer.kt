@@ -14,7 +14,7 @@ import com.vsevolodganin.clicktrack.state.actions.NavigateToEditClickTrackScreen
 import com.vsevolodganin.clicktrack.state.actions.NavigateToMetronomeScreen
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.pop
-import com.vsevolodganin.clicktrack.state.push
+import com.vsevolodganin.clicktrack.state.pushOrReplace
 import com.vsevolodganin.clicktrack.state.replaceCurrentScreen
 
 fun ScreenBackstack.reduce(action: Action, currentlyPlaying: PlaybackState?): ScreenBackstack {
@@ -27,14 +27,14 @@ fun ScreenBackstack.reduce(action: Action, currentlyPlaying: PlaybackState?): Sc
 private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: PlaybackState?): ScreenBackstack {
     return when (action) {
         NavigateBack -> pop()
-        is NavigateToClickTrackListScreen -> push(
+        is NavigateToClickTrackListScreen -> pushOrReplace(
             Screen.ClickTrackList(
                 state = ClickTrackListScreenState(
                     items = action.clickTrack
                 )
             )
         )
-        is NavigateToClickTrackScreen -> push {
+        is NavigateToClickTrackScreen -> pushOrReplace {
             val clickTrack = action.clickTrack
             val progress = currentlyPlaying?.takeIf { it.clickTrack.id == clickTrack.id }?.progress
             Screen.PlayClickTrack(
@@ -45,7 +45,7 @@ private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: P
                 )
             )
         }
-        is NavigateToEditClickTrackScreen -> push(
+        is NavigateToEditClickTrackScreen -> pushOrReplace(
             Screen.EditClickTrack(
                 state = EditClickTrackScreenState(
                     clickTrack = action.clickTrack,
@@ -53,7 +53,7 @@ private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: P
                 )
             )
         )
-        NavigateToMetronomeScreen -> push(
+        NavigateToMetronomeScreen -> pushOrReplace(
             Screen.Metronome(
                 state = null
             )

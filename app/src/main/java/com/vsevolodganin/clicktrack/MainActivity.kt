@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -45,6 +46,9 @@ class MainActivity : AppCompatActivity() {
     @ActivityScopedAppStateEpic
     lateinit var epics: Set<@JvmSuppressWildcards Epic>
 
+    @Inject
+    lateinit var intentProcessor: IntentProcessor
+
     private val renderScope = MainScope()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +64,13 @@ class MainActivity : AppCompatActivity() {
                 render(it)
             }
         }
+
+        intentProcessor.process(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        intentProcessor.process(intent)
     }
 
     override fun onDestroy() {

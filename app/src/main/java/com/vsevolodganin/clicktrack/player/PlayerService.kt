@@ -14,8 +14,8 @@ import android.os.Parcelable
 import androidx.core.app.NotificationCompat
 import androidx.core.content.res.ResourcesCompat
 import com.vsevolodganin.clicktrack.Application
-import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.intentForLaunchAppWithClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.DEFAULT_CHANNEL_ID
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.DEFAULT_NOTIFICATION_ID
@@ -143,8 +143,8 @@ class PlayerService : Service() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        val launchAppIntent = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
-        val stopServiceIntent = PendingIntent.getService(this, 0, serviceIntent(this).apply { action = ACTION_STOP }, 0)
+        val launchAppIntent = PendingIntent.getActivity(this, 0, intentForLaunchAppWithClickTrack(this, clickTrack), PendingIntent.FLAG_UPDATE_CURRENT)
+        val stopServiceIntent = PendingIntent.getService(this, 0, serviceIntent(this).apply { action = ACTION_STOP }, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val notification: Notification = NotificationCompat.Builder(this, DEFAULT_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
