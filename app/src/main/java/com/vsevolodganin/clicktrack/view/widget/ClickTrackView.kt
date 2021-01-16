@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -47,7 +46,6 @@ import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.platform.AmbientHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import com.vsevolodganin.clicktrack.lib.ClickTrack
-import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.durationAsTime
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.utils.compose.AnimatedRect
@@ -177,9 +175,7 @@ fun ClickTrackView(
                     modifier = Modifier.wrapContentSize(),
                     content = {
                         for (mark in marks) {
-                            if (mark.text != null) {
-                                Text(text = mark.text, modifier = Modifier.wrapContentSize())
-                            }
+                            mark.summary?.invoke()
                         }
                     },
                     measureBlock = { measurables, constraints ->
@@ -253,8 +249,8 @@ private fun animatedProgressX(
 
 private class Mark(
     val x: Float,
-    val text: String?,
     val color: Color,
+    val summary: (@Composable () -> Unit)?,
 )
 
 @Composable
@@ -267,15 +263,15 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
     for (cue in cues) {
         result += Mark(
             x = currentX,
-            text = cue.cue.toText(),
-            color = MaterialTheme.colors.onSurface
+            color = MaterialTheme.colors.onSurface,
+            summary = { CueSummary(cue.cue) }
         )
         if (drawAllBeatsMarks) {
             for (i in 1 until cue.cue.timeSignature.noteCount) {
                 result += Mark(
                     x = (currentTimestamp + cue.cue.bpm.interval * i).toX(duration, width),
-                    text = null,
                     color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium),
+                    summary = null,
                 )
             }
         }
@@ -290,8 +286,6 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
 private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
     return (this / totalDuration * viewWidth).toFloat()
 }
-
-private fun Cue.toText() = "${bpm.value} bpm ${timeSignature.noteCount}/${timeSignature.noteDuration}"
 
 @Suppress("NAME_SHADOWING",
     "UnnecessaryVariable") // FIXME(https://issuetracker.google.com/issues/177060212): Need to preserve names for easy revert of FIXME below
