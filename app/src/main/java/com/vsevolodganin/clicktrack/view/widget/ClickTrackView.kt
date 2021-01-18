@@ -104,7 +104,6 @@ fun ClickTrackView(
                 progress = progress,
                 isPlaying = animateProgress,
                 totalWidthPx = widthPx,
-                isProgressCaptured = isProgressCaptured
             )
         }
 
@@ -215,32 +214,29 @@ private fun animatedProgressX(
     progress: Float,
     isPlaying: Boolean,
     totalWidthPx: Float,
-    isProgressCaptured: Boolean,
 ): AnimatedFloat {
     val playbackStampX = animatedFloat(0f).apply {
         setBounds(0f, totalWidthPx)
     }
 
-    onCommit(clickTrack.durationInTime, progress, totalWidthPx, isProgressCaptured) {
-        if (!isProgressCaptured) {
-            val totalTrackDuration = clickTrack.durationInTime
-            val startingPosition = totalTrackDuration * progress.toDouble()
+    onCommit(clickTrack.durationInTime, progress, totalWidthPx) {
+        val totalTrackDuration = clickTrack.durationInTime
+        val startingPosition = totalTrackDuration * progress.toDouble()
 
-            fun Duration.toX() = toX(totalTrackDuration, totalWidthPx)
+        fun Duration.toX() = toX(totalTrackDuration, totalWidthPx)
 
-            playbackStampX.snapTo(startingPosition.toX())
+        playbackStampX.snapTo(startingPosition.toX())
 
-            if (isPlaying) {
-                val animationDuration = totalTrackDuration - startingPosition
+        if (isPlaying) {
+            val animationDuration = totalTrackDuration - startingPosition
 
-                playbackStampX.animateTo(
-                    targetValue = totalTrackDuration.toX(),
-                    anim = tween(
-                        durationMillis = animationDuration.toLongMilliseconds().toInt(),
-                        easing = LinearEasing
-                    )
+            playbackStampX.animateTo(
+                targetValue = totalTrackDuration.toX(),
+                anim = tween(
+                    durationMillis = animationDuration.toLongMilliseconds().toInt(),
+                    easing = LinearEasing
                 )
-            }
+            )
         }
     }
 
