@@ -27,7 +27,7 @@ fun CueSummary(
 ) {
     Row(modifier = modifier) {
         Text(
-            text = "${cue.bpm.value},",
+            text = cue.bpm.value.toString(),
             modifier = Modifier.align(Alignment.CenterVertically),
         )
         Spacer(modifier = Modifier.width(2.dp))
