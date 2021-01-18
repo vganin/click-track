@@ -18,8 +18,8 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.intentForLaunchAppWithClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.DEFAULT_CHANNEL_ID
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.DEFAULT_NOTIFICATION_ID
+import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_CHANNEL_ID
 import com.vsevolodganin.clicktrack.utils.cast
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -153,8 +153,8 @@ class PlayerService : Service() {
     private fun startForeground(clickTrack: ClickTrackWithId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                DEFAULT_CHANNEL_ID,
-                getString(R.string.notification_channel_default),
+                PLAYING_NOW_CHANNEL_ID,
+                getString(R.string.notification_channel_playing_now),
                 NotificationManager.IMPORTANCE_LOW
             )
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -164,7 +164,7 @@ class PlayerService : Service() {
         val launchAppIntent = PendingIntent.getActivity(this, 0, intentForLaunchAppWithClickTrack(this, clickTrack), PendingIntent.FLAG_UPDATE_CURRENT)
         val stopServiceIntent = PendingIntent.getService(this, 0, serviceIntent(this).apply { action = ACTION_STOP }, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val notification: Notification = NotificationCompat.Builder(this, DEFAULT_CHANNEL_ID)
+        val notification: Notification = NotificationCompat.Builder(this, PLAYING_NOW_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ResourcesCompat.getColor(resources, R.color.secondary_dark, null))
             .setContentTitle(getString(R.string.notification_playing_now))
@@ -197,7 +197,7 @@ class PlayerService : Service() {
     }
 
     private object NotificationConst {
-        const val DEFAULT_CHANNEL_ID = "default"
+        const val PLAYING_NOW_CHANNEL_ID = "playing_now"
         val DEFAULT_NOTIFICATION_ID = Random.nextInt(Int.MAX_VALUE) + 1
     }
 }
