@@ -12,94 +12,92 @@ public val PreMadeClickTracks.RadioheadParanoidAndroid: ClickTrack
     get() = ClickTrack(
         name = "Radiohead – Paranoid Android",
         cues = listOf(
-            // First part
-            // 1-45
             Cue(
+                name = "First part: 1-45",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(45),
             ),
-            // 45-48
             Cue(
+                name = "45-48",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
             ),
-            // 49-53
             Cue(
+                name = "49-53",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(5),
             ),
-            // 54-56
             Cue(
+                name = "54-56",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
             ),
-            // 57-61
             Cue(
+                name = "57-61",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(5),
             ),
-            // 62-64
             Cue(
+                name = "62-64",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
             ),
-            // 65-69
             Cue(
+                name = "65-69",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(5),
             ),
-            // 70-72
             Cue(
+                name = "70-72",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
             ),
-            // 73-74
             Cue(
+                name = "73-74",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(2),
             ),
-            // Second part
-            // 75-107
             Cue(
+                name = "Second part: 75-107",
                 bpm = SECOND_PART_TEMPO,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(33),
             ),
-            // 108-111
             Cue(
+                name = "108-111",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(4),
             ),
-            // 112-114
             Cue(
+                name = "112-114",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
             ),
-            // 115-119
             Cue(
+                name = "115-119",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(5),
             ),
-            // 120-122
             Cue(
+                name = "120-122",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
             ),
-            // 123
             Cue(
+                name = "123",
                 bpm = FIRST_PART_TEMPO,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(1),

@@ -8,6 +8,7 @@ import kotlin.time.Duration
 @Serializable
 @AndroidParcelize
 public data class Cue(
+    public val name: String? = null,
     public val bpm: BeatsPerMinute,
     public val timeSignature: TimeSignature,
     public val duration: CueDuration,
