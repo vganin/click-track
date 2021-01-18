@@ -24,7 +24,7 @@ class PlayerEpic @Inject constructor(
             actions
                 .consumeEach { action ->
                     when (action) {
-                        is StartPlay -> player.play(action.clickTrack, action.progress)
+                        is StartPlay -> player.start(action.clickTrack, action.progress)
                         StopPlay -> player.stop()
                         PausePlay -> player.pause()
                     }

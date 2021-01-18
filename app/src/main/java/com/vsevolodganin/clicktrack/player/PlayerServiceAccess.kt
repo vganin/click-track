@@ -45,8 +45,8 @@ class PlayerServiceAccess @Inject constructor(
         context.unbindService(serviceConnection)
     }
 
-    override suspend fun play(clickTrack: ClickTrackWithId, startAtProgress: Float) {
-        PlayerService.start(context, PlayerService.StartArguments(clickTrack, startAtProgress))
+    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Float) {
+        PlayerService.start(context, PlayerService.StartArguments(clickTrack, atProgress))
     }
 
     override suspend fun pause() {

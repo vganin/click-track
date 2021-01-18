@@ -15,13 +15,19 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.res.ResourcesCompat
 import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.intentForLaunchAppWithClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.DEFAULT_CHANNEL_ID
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.DEFAULT_NOTIFICATION_ID
 import com.vsevolodganin.clicktrack.utils.cast
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
@@ -73,9 +79,23 @@ class PlayerService : Service() {
     @Inject
     lateinit var player: Player
 
+    @Inject
+    @MainDispatcher
+    lateinit var mainDispatcher: CoroutineDispatcher
+
     override fun onCreate() {
         super.onCreate()
+
         inject()
+
+        launchUndispatched {
+            player.playbackState().drop(1).collect {
+                if (it == null) {
+                    stopForeground()
+                    stopSelf()
+                }
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -113,21 +133,19 @@ class PlayerService : Service() {
     override fun onBind(intent: Intent?): IBinder = PlayerServiceBinder(player.playbackState())
 
     private fun startPlayer(args: StartArguments) {
-        GlobalScope.launch(Dispatchers.Unconfined) {
-            player.play(args.clickTrack, args.startAtProgress)
-            stopForeground()
-            stopSelf()
+        launchUndispatched {
+            player.start(args.clickTrack, args.startAtProgress)
         }
     }
 
     private fun pausePlayer() {
-        GlobalScope.launch(Dispatchers.Unconfined) {
+        launchUndispatched {
             player.pause()
         }
     }
 
     private fun stopPlayer() {
-        GlobalScope.launch(Dispatchers.Unconfined) {
+        launchUndispatched {
             player.stop()
         }
     }
@@ -168,6 +186,14 @@ class PlayerService : Service() {
         application.cast<Application>().daggerComponent.playerServiceComponentBuilder()
             .build()
             .inject(this)
+    }
+
+    private fun launchUndispatched(block: suspend CoroutineScope.() -> Unit) {
+        GlobalScope.launch(
+            context = Dispatchers.Unconfined,
+            start = CoroutineStart.UNDISPATCHED,
+            block = block
+        )
     }
 
     private object NotificationConst {

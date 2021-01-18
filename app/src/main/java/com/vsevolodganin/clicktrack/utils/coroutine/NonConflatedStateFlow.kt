@@ -2,11 +2,13 @@ package com.vsevolodganin.clicktrack.utils.coroutine
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharedFlow
 
-interface NonConflatedStateFlow<T> : StateFlow<T>
+interface NonConflatedStateFlow<T> : SharedFlow<T> {
+    val value: T
+}
 
-interface MutableNonConflatedStateFlow<T> : NonConflatedStateFlow<T> {
+interface MutableNonConflatedStateFlow<T> : NonConflatedStateFlow<T>, MutableSharedFlow<T> {
     suspend fun setValue(value: T)
 }
 
@@ -15,6 +17,7 @@ fun <T> MutableNonConflatedStateFlow(initialValue: T): MutableNonConflatedStateF
         replay = 1,
         onBufferOverflow = BufferOverflow.SUSPEND
     ).apply { tryEmit(initialValue) }
+
     return object : MutableNonConflatedStateFlow<T>, MutableSharedFlow<T> by sharedFlow {
 
         override val value: T

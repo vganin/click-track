@@ -26,6 +26,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.isActive
@@ -36,7 +37,7 @@ import kotlin.time.Duration
 import kotlin.time.minutes
 
 interface Player {
-    suspend fun play(clickTrack: ClickTrackWithId, startAtProgress: Float = 0f)
+    suspend fun start(clickTrack: ClickTrackWithId, atProgress: Float = 0f)
     suspend fun pause()
     suspend fun stop()
 
@@ -58,20 +59,18 @@ class PlayerImpl @Inject constructor(
     private var playbackState = MutableNonConflatedStateFlow<PlaybackState?>(null)
     private var pausedState = MutableNonConflatedStateFlow(false)
 
-    override suspend fun play(clickTrack: ClickTrackWithId, startAtProgress: Float) = withContext(mainDispatcher) {
+    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Float): Unit = withContext(mainDispatcher) {
         val playback = playbackState.value
-
         val startAtTime = if (playback?.clickTrack?.id == clickTrack.id) {
-            playerJob?.cancel()
-            clickTrack.value.durationInTime * startAtProgress.toDouble()
+            clickTrack.value.durationInTime * atProgress.toDouble()
         } else {
-            stop()
             Duration.ZERO
         }
 
+        playerJob?.cancel()
         playerJob = launch(playerDispatcher) {
             pausedState.setValue(false)
-            playImpl(clickTrack, startAtTime)
+            startImpl(clickTrack, startAtTime)
             stop()
         }
     }
@@ -86,9 +85,9 @@ class PlayerImpl @Inject constructor(
         playbackState.setValue(null)
     }
 
-    override fun playbackState(): Flow<PlaybackState?> = playbackState
+    override fun playbackState(): Flow<PlaybackState?> = playbackState.distinctUntilChanged()
 
-    private suspend fun playImpl(clickTrack: ClickTrackWithId, startAt: Duration) = coroutineScope {
+    private suspend fun startImpl(clickTrack: ClickTrackWithId, startAt: Duration) = coroutineScope {
         val strongBeatMediaPlayer = clickTrack.value.sounds.strongBeat.createMediaPlayer(context, R.raw.strong)
         val weakBeatMediaPlayer = clickTrack.value.sounds.weakBeat.createMediaPlayer(context, R.raw.weak)
         val agc = AutomaticGainControl.create(audioSessionId)
@@ -104,7 +103,7 @@ class PlayerImpl @Inject constructor(
                 for (cue in clickTrack.value.cues) {
                     val cueLocalStart = (iterationStartsWith - cueGlobalStart).coerceAtLeast(Duration.ZERO)
 
-                    playImpl(
+                    startImpl(
                         strongBeatMediaPlayer = strongBeatMediaPlayer,
                         weakBeatMediaPlayer = weakBeatMediaPlayer,
                         cueWithDuration = cue,
@@ -131,7 +130,7 @@ class PlayerImpl @Inject constructor(
         }
     }
 
-    private suspend fun playImpl(
+    private suspend fun startImpl(
         strongBeatMediaPlayer: MediaPlayer,
         weakBeatMediaPlayer: MediaPlayer,
         cueWithDuration: CueWithDuration,
