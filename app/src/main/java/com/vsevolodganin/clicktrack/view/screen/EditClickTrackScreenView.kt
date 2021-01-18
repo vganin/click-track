@@ -142,20 +142,24 @@ private fun EditClickTrackScreenContent(
         state = lazyListState,
         modifier = Modifier.fillMaxSize()
     ) {
-        item {
+        stickyHeader {
             TextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = nameState.value,
                 onValueChange = { nameState.value = it },
                 placeholder = { Text(text = stringResource(R.string.click_track_name_hint)) },
                 textStyle = MaterialTheme.typography.h6,
-                isErrorValue = isErrorInName
+                isErrorValue = isErrorInName,
+                backgroundColor = MaterialTheme.colors.surface
             )
+        }
 
+        item {
             Box(modifier = Modifier.fillMaxWidth()) {
                 Row(modifier = Modifier
                     .padding(16.dp)
-                    .align(Alignment.Center)) {
+                    .align(Alignment.Center)
+                ) {
                     Text(text = stringResource(R.string.repeat))
                     Spacer(modifier = Modifier.width(8.dp))
                     Switch(checked = loopState.value, onCheckedChange = {
