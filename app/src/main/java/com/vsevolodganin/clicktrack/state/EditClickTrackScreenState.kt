@@ -13,7 +13,7 @@ data class EditClickTrackScreenState(
     val clickTrack: ClickTrackWithId,
     val isErrorInName: Boolean,
     val defaultCue: Cue = Cue(
-        bpm = 120.bpm,
+        bpm = 60.bpm,
         timeSignature = TimeSignature(4, 4),
         duration = CueDuration.Measures(1),
     ),
