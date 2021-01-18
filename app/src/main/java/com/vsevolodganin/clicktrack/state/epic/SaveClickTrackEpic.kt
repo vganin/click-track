@@ -5,7 +5,6 @@ import com.vsevolodganin.clicktrack.lib.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.lib.CueWithDuration
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.redux.Action
@@ -52,9 +51,10 @@ class SaveClickTrackEpic @Inject constructor(
     private fun defaultNewClickTrack(suggestedNewClickTrackName: String) = ClickTrack(
         name = suggestedNewClickTrackName,
         cues = listOf(
-            CueWithDuration(
+            Cue(
+                bpm = 60.bpm,
+                timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(1),
-                cue = Cue(60.bpm, TimeSignature(4, 4))
             )
         ),
         loop = true,

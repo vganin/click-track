@@ -10,13 +10,13 @@ import kotlin.time.Duration
 @AndroidParcelize
 public data class ClickTrack(
     public val name: String,
-    public val cues: List<CueWithDuration>,
+    public val cues: List<Cue>,
     public val loop: Boolean,
     public val sounds: ClickSounds,
 ) : AndroidParcelable {
 
     @AndroidIgnoredOnParcel
     public val durationInTime: Duration by lazy {
-        cues.map(CueWithDuration::durationAsTime).reduceOrNull { acc, duration -> acc + duration } ?: Duration.ZERO
+        cues.map(Cue::durationAsTime).reduceOrNull { acc, duration -> acc + duration } ?: Duration.ZERO
     }
 }

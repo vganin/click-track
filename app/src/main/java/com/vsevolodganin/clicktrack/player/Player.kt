@@ -12,8 +12,7 @@ import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
 import com.vsevolodganin.clicktrack.lib.ClickSoundSource
-import com.vsevolodganin.clicktrack.lib.CueWithDuration
-import com.vsevolodganin.clicktrack.lib.durationAsTime
+import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.player.PlayerImpl.Const.CLICK_TIME_EPSILON
@@ -106,7 +105,7 @@ class PlayerImpl @Inject constructor(
                     startImpl(
                         strongBeatMediaPlayer = strongBeatMediaPlayer,
                         weakBeatMediaPlayer = weakBeatMediaPlayer,
-                        cueWithDuration = cue,
+                        cue = cue,
                         startAt = cueLocalStart,
                         onBeatPlayed = { beatTimestamp ->
                             playbackState.setValue(
@@ -133,17 +132,16 @@ class PlayerImpl @Inject constructor(
     private suspend fun startImpl(
         strongBeatMediaPlayer: MediaPlayer,
         weakBeatMediaPlayer: MediaPlayer,
-        cueWithDuration: CueWithDuration,
+        cue: Cue,
         startAt: Duration,
         onBeatPlayed: suspend (beatTimestamp: Duration) -> Unit,
     ) {
-        val totalDuration = cueWithDuration.durationAsTime
+        val totalDuration = cue.durationAsTime
 
         if (startAt >= totalDuration) {
             return
         }
 
-        val cue = cueWithDuration.cue
         val timeSignature = cue.timeSignature
         val beatInterval = cue.bpm.interval
 

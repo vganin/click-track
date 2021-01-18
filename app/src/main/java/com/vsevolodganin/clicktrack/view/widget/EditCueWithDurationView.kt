@@ -17,7 +17,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.lib.CueWithDuration
 import com.vsevolodganin.clicktrack.lib.SerializableDuration
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
@@ -26,20 +25,18 @@ import kotlin.time.minutes
 
 @Composable
 fun EditCueWithDurationView(
-    state: MutableState<CueWithDuration>,
+    state: MutableState<Cue>,
     modifier: Modifier = Modifier,
 ) {
-    val bpmState = remember { observableMutableStateOf(state.value.cue.bpm) }
-    val timeSignatureState = remember { observableMutableStateOf(state.value.cue.timeSignature) }
+    val bpmState = remember { observableMutableStateOf(state.value.bpm) }
+    val timeSignatureState = remember { observableMutableStateOf(state.value.timeSignature) }
     val durationState = remember { observableMutableStateOf(state.value.duration) }
 
     onActive {
         fun update() {
-            state.value = CueWithDuration(
-                cue = Cue(
-                    bpm = bpmState.value,
-                    timeSignature = timeSignatureState.value
-                ),
+            state.value = Cue(
+                bpm = bpmState.value,
+                timeSignature = timeSignatureState.value,
                 duration = durationState.value
             )
         }
@@ -73,11 +70,9 @@ fun EditCueWithDurationView(
 fun PreviewEditCueWithDurationView() {
     EditCueWithDurationView(
         state = mutableStateOf(
-            CueWithDuration(
-                cue = Cue(
-                    bpm = 999.bpm,
-                    timeSignature = TimeSignature(3, 4)
-                ),
+            Cue(
+                bpm = 999.bpm,
+                timeSignature = TimeSignature(3, 4),
                 duration = CueDuration.Time(SerializableDuration(1.minutes))
             )
         ),

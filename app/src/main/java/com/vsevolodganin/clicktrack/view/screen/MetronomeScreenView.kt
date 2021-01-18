@@ -30,7 +30,6 @@ import com.vsevolodganin.clicktrack.lib.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.lib.CueWithDuration
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
@@ -140,12 +139,10 @@ private fun metronomeClickTrack(bpm: BeatsPerMinute): ClickTrackWithId {
         value = ClickTrack(
             name = stringResource(R.string.metronome),
             cues = listOf(
-                CueWithDuration(
+                Cue(
+                    bpm = bpm,
+                    timeSignature = TimeSignature(4, 4),
                     duration = CueDuration.Beats(4),
-                    cue = Cue(
-                        bpm = bpm,
-                        timeSignature = TimeSignature(4, 4)
-                    ),
                 )
             ),
             loop = true,

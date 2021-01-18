@@ -51,5 +51,5 @@ fun CueSummary(
 @Preview
 @Composable
 fun PreviewCueSummary() {
-    CueSummary(PREVIEW_CLICK_TRACK_1.value.cues[0].cue)
+    CueSummary(PREVIEW_CLICK_TRACK_1.value.cues[0])
 }

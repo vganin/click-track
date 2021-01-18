@@ -46,7 +46,6 @@ import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.platform.AmbientHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import com.vsevolodganin.clicktrack.lib.ClickTrack
-import com.vsevolodganin.clicktrack.lib.durationAsTime
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.utils.compose.AnimatedRect
 import com.vsevolodganin.clicktrack.utils.compose.awaitLongTapOrCancellation
@@ -260,12 +259,12 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
         result += Mark(
             x = currentX,
             color = MaterialTheme.colors.onSurface,
-            summary = { CueSummary(cue.cue) }
+            summary = { CueSummary(cue) }
         )
         if (drawAllBeatsMarks) {
-            for (i in 1 until cue.cue.timeSignature.noteCount) {
+            for (i in 1 until cue.timeSignature.noteCount) {
                 result += Mark(
-                    x = (currentTimestamp + cue.cue.bpm.interval * i).toX(duration, width),
+                    x = (currentTimestamp + cue.bpm.interval * i).toX(duration, width),
                     color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium),
                     summary = null,
                 )
@@ -283,8 +282,8 @@ private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
     return (this / totalDuration * viewWidth).toFloat()
 }
 
-@Suppress("NAME_SHADOWING",
-    "UnnecessaryVariable") // FIXME(https://issuetracker.google.com/issues/177060212): Need to preserve names for easy revert of FIXME below
+// FIXME(https://issuetracker.google.com/issues/177060212): Need to preserve names for easy revert of FIXME below
+@Suppress("NAME_SHADOWING", "UnnecessaryVariable")
 private fun Modifier.clickTrackGestures(
     viewportScaleAndPanEnabled: Boolean,
     progressDragndropEnabled: Boolean,

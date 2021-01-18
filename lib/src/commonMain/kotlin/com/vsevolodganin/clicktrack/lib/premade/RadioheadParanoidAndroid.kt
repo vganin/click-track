@@ -4,7 +4,6 @@ import com.vsevolodganin.clicktrack.lib.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.lib.CueWithDuration
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
 
@@ -15,125 +14,95 @@ public val PreMadeClickTracks.RadioheadParanoidAndroid: ClickTrack
         cues = listOf(
             // First part
             // 1-45
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(45),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(4, 4)
-                )
             ),
             // 45-48
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(7, 8)
-                )
             ),
             // 49-53
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(5),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(4, 4)
-                )
             ),
             // 54-56
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(7, 8)
-                )
             ),
             // 57-61
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(5),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(4, 4)
-                )
             ),
             // 62-64
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(7, 8)
-                )
             ),
             // 65-69
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(5),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(4, 4)
-                )
             ),
             // 70-72
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(7, 8)
-                )
             ),
             // 73-74
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(2),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(4, 4)
-                )
             ),
             // Second part
             // 75-107
-            CueWithDuration(
+            Cue(
+                bpm = SECOND_PART_TEMPO,
+                timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(33),
-                cue = Cue(
-                    bpm = SECOND_PART_TEMPO,
-                    timeSignature = TimeSignature(4, 4)
-                )
             ),
             // 108-111
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(4),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(4, 4)
-                )
             ),
             // 112-114
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(7, 8)
-                )
             ),
             // 115-119
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(5),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(4, 4)
-                )
             ),
             // 120-122
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(3),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(7, 8)
-                )
             ),
             // 123
-            CueWithDuration(
+            Cue(
+                bpm = FIRST_PART_TEMPO,
+                timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(1),
-                cue = Cue(
-                    bpm = FIRST_PART_TEMPO,
-                    timeSignature = TimeSignature(4, 4)
-                )
             ),
         ),
         loop = false,

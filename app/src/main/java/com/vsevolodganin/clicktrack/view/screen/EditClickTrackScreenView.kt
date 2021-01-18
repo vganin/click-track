@@ -52,7 +52,6 @@ import com.vsevolodganin.clicktrack.lib.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.lib.CueWithDuration
 import com.vsevolodganin.clicktrack.lib.SerializableDuration
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
@@ -90,7 +89,7 @@ fun EditClickTrackScreenView(
                     value = state.clickTrack.value.copy(
                         name = nameState.value,
                         loop = loopState.value,
-                        cues = cuesState.map(ObservableMutableState<CueWithDuration>::value),
+                        cues = cuesState.map(ObservableMutableState<Cue>::value),
                     )
                 )
             )
@@ -132,7 +131,7 @@ private fun EditClickTrackScreenContent(
     nameState: MutableState<String>,
     isErrorInName: Boolean,
     loopState: MutableState<Boolean>,
-    cuesState: MutableList<ObservableMutableState<CueWithDuration>>,
+    cuesState: MutableList<ObservableMutableState<Cue>>,
     lazyListState: LazyListState,
 ) {
     var moveReorderSourceIndex by remember { mutableStateOf<Int?>(null) }
@@ -313,7 +312,7 @@ private fun Modifier.moveReorder(
 
 @Composable
 private fun CueListItem(
-    state: MutableState<CueWithDuration>,
+    state: MutableState<Cue>,
     elevation: Dp,
     modifier: Modifier,
 ) {
@@ -347,18 +346,14 @@ fun PreviewEditClickTrackScreenView() {
                 value = ClickTrack(
                     name = "Good click track",
                     cues = listOf(
-                        CueWithDuration(
-                            cue = Cue(
-                                bpm = 60.bpm,
-                                timeSignature = TimeSignature(3, 4)
-                            ),
+                        Cue(
+                            bpm = 60.bpm,
+                            timeSignature = TimeSignature(3, 4),
                             duration = CueDuration.Beats(4),
                         ),
-                        CueWithDuration(
-                            cue = Cue(
-                                bpm = 120.bpm,
-                                timeSignature = TimeSignature(5, 4)
-                            ),
+                        Cue(
+                            bpm = 120.bpm,
+                            timeSignature = TimeSignature(5, 4),
                             duration = CueDuration.Time(SerializableDuration(1.minutes)),
                         ),
                     ),

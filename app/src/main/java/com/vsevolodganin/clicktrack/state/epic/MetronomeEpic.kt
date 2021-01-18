@@ -53,7 +53,7 @@ class MetronomeEpic @Inject constructor(
                         copy(
                             value = value.copy(
                                 cues = value.cues.map {
-                                    it.copy(cue = it.cue.copy(bpm = action.bpm))
+                                    it.copy(bpm = action.bpm)
                                 }
                             )
                         )
