@@ -52,7 +52,10 @@ class SaveClickTrackEpic @Inject constructor(
     private fun defaultNewClickTrack(suggestedNewClickTrackName: String) = ClickTrack(
         name = suggestedNewClickTrackName,
         cues = listOf(
-            CueWithDuration(CueDuration.Beats(4), Cue(60.bpm, TimeSignature(4, 4)))
+            CueWithDuration(
+                duration = CueDuration.Measures(1),
+                cue = Cue(60.bpm, TimeSignature(4, 4))
+            )
         ),
         loop = true,
         sounds = BuiltinClickSounds,
