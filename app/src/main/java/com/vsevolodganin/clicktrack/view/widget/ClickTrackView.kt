@@ -162,7 +162,7 @@ fun ClickTrackView(
                                 color = playbackStampColor,
                                 start = Offset(progressX.value, 0f),
                                 end = Offset(progressX.value, size.height),
-                                strokeWidth = progressLineWidth.value
+                                strokeWidth = progressLineWidth.value / scaleX
                             )
                         }
                     }
