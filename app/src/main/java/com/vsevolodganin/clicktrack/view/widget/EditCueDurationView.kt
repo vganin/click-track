@@ -45,15 +45,6 @@ fun EditCueDurationView(
     defaultTimeDuration: () -> CueDuration.Time = { CueDuration.Time(SerializableDuration(1.minutes)) },
 ) {
     Row(modifier = modifier) {
-        val durationTypeState = remember { mutableStateOf(state.value.type) }
-
-        DurationTypeDropdown(
-            state = durationTypeState,
-            modifier = Modifier.align(Alignment.CenterVertically)
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
         val onDurationChange: (CueDuration) -> Unit = { state.value = it }
         val beatsDurationState = remember(CueDurationType.BEATS) {
             state.value.let {
@@ -82,6 +73,23 @@ fun EditCueDurationView(
                 }
             }.observe(onDurationChange)
         }
+
+        val durationTypeState = remember {
+            observableMutableStateOf(state.value.type).observe {
+                state.value = when (it) {
+                    CueDurationType.BEATS -> beatsDurationState.value
+                    CueDurationType.MEASURES -> measuresDurationState.value
+                    CueDurationType.TIME -> timeDurationState.value
+                }
+            }
+        }
+
+        DurationTypeDropdown(
+            state = durationTypeState,
+            modifier = Modifier.align(Alignment.CenterVertically)
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
 
         val commonCueDurationModifier = Modifier
             .align(Alignment.CenterVertically)
