@@ -7,6 +7,8 @@ rootProject.ext {
 
     fusedProperties = System.getenv() + properties + localProperties
 
+    minSdkVersion = 21
+    targetSdkVersion = 29
     isCiBuild = booleanProperty('isCiBuild')
     buildNumber = fusedProperties['buildNumber'] as Integer
 }
