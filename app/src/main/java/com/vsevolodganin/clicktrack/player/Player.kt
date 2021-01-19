@@ -190,7 +190,7 @@ class PlayerImpl @Inject constructor(
 
     private fun ClickSoundSource.createMediaPlayer(context: Context, builtinSoundResId: Int): MediaPlayer {
         val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_ALARM)
+            .setUsage(AudioAttributes.USAGE_UNKNOWN)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
             .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
             .build()
