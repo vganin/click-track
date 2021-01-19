@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import javax.inject.Qualifier
 
@@ -57,6 +58,11 @@ class PlayerServiceScopedCoroutineModule {
             Thread(runnable, "ClickTrackPlayer").apply {
                 priority = Thread.MAX_PRIORITY
             }
-        }.asCoroutineDispatcher()
+        }.also { it.bootstrap() }.asCoroutineDispatcher()
+    }
+
+    private fun ExecutorService.bootstrap() {
+        // Execute empty lambda to bootstrap the thread
+        execute {  }
     }
 }
