@@ -41,9 +41,9 @@ fun CueSummary(
                 )
             }
 
-            Text(text = cue.timeSignature.noteDuration.toString())
-            Divider(color = AmbientContentColor.current, modifier = Modifier.fillMaxWidth().height(1.dp))
             Text(text = cue.timeSignature.noteCount.toString())
+            Divider(color = AmbientContentColor.current, modifier = Modifier.fillMaxWidth().height(1.dp))
+            Text(text = cue.timeSignature.noteDuration.toString())
         }
     }
 }
