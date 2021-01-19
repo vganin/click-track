@@ -17,3 +17,8 @@
     kotlinx.serialization.KSerializer serializer(...);
 }
 ### }
+
+### { FIXME: Try to workaround `Verifier rejected class com.google.android.gms.measurement.internal.AppMeasurementDynamiteService`
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+###
