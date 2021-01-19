@@ -1,9 +1,9 @@
 package com.vsevolodganin.clicktrack.player
 
 import android.content.Context
+import android.media.AudioAttributes
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.media.audiofx.AutomaticGainControl
 import android.net.Uri
 import androidx.core.content.getSystemService
 import com.vsevolodganin.clicktrack.R
@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.time.Duration
+import kotlin.time.measureTime
 import kotlin.time.minutes
 
 interface Player {
@@ -89,7 +90,6 @@ class PlayerImpl @Inject constructor(
     private suspend fun startImpl(clickTrack: ClickTrackWithId, startAt: Duration) = coroutineScope {
         val strongBeatMediaPlayer = clickTrack.value.sounds.strongBeat.createMediaPlayer(context, R.raw.strong)
         val weakBeatMediaPlayer = clickTrack.value.sounds.weakBeat.createMediaPlayer(context, R.raw.weak)
-        val agc = AutomaticGainControl.create(audioSessionId)
 
         try {
             var iterationStartsWith = if (startAt < clickTrack.value.durationInTime) startAt else Duration.ZERO
@@ -123,7 +123,6 @@ class PlayerImpl @Inject constructor(
                 iterationStartsWith = Duration.ZERO
             } while (clickTrack.value.loop && coroutineContext.isActive)
         } finally {
-            agc?.release()
             strongBeatMediaPlayer.release()
             weakBeatMediaPlayer.release()
         }
@@ -170,26 +169,35 @@ class PlayerImpl @Inject constructor(
                 pausedState.filter { false }.take(1).collect()
             }
 
-            if (beatIndex % timeSignature.noteCount == 0) {
-                strongBeatMediaPlayer.start()
-            } else {
-                weakBeatMediaPlayer.start()
-            }
-
             val beatDuration = beatInterval.coerceAtMost(totalDuration - playedFor)
 
-            onBeatPlayed(playedFor)
-            delay(beatDuration)
+            val timeCorrection = measureTime {
+                if (beatIndex % timeSignature.noteCount == 0) {
+                    strongBeatMediaPlayer.start()
+                } else {
+                    weakBeatMediaPlayer.start()
+                }
 
-            ++beatIndex
-            playedFor += beatDuration
+                onBeatPlayed(playedFor)
+
+                ++beatIndex
+                playedFor += beatDuration
+            }
+
+            delay(beatDuration - timeCorrection)
         }
     }
 
     private fun ClickSoundSource.createMediaPlayer(context: Context, builtinSoundResId: Int): MediaPlayer {
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_ALARM)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+            .build()
+
         return when (this) {
-            ClickSoundSource.Builtin -> MediaPlayer.create(context, builtinSoundResId, null, audioSessionId)
-            is ClickSoundSource.Uri -> MediaPlayer.create(context, Uri.parse(value), null, null, audioSessionId)
+            ClickSoundSource.Builtin -> MediaPlayer.create(context, builtinSoundResId, audioAttributes, audioSessionId)
+            is ClickSoundSource.Uri -> MediaPlayer.create(context, Uri.parse(value), null, audioAttributes, audioSessionId)
         }
     }
 
