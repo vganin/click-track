@@ -14,11 +14,13 @@ import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -39,10 +41,15 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.WithConstraints
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.platform.AmbientHapticFeedback
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.utils.compose.AnimatedRect
@@ -162,32 +169,47 @@ fun ClickTrackView(
                     modifier = Modifier.wrapContentSize(),
                     content = {
                         for (mark in marks) {
-                            mark.summary?.invoke()
+                            val layoutIdModifier = Modifier.layoutId(mark)
+                            mark.briefSummary?.invoke(layoutIdModifier)
+                            mark.detailedSummary?.invoke(layoutIdModifier)
                         }
                     },
                     measureBlock = { measurables, constraints ->
-                        val placeables = measurables.map { measurable ->
+                        val placeables = measurables.groupBy({ it.layoutId as Mark }) { measurable ->
                             measurable.measure(constraints)
-                        }
+                        }.toSortedMap { lhs, rhs -> lhs.x.compareTo(rhs.x) }.toList()
 
                         layout(constraints.maxWidth, constraints.maxHeight) {
                             var currentEndX = (translateX * scaleX).toInt()
                             var currentEndY = 0
 
-                            placeables.forEachIndexed { index, placeable ->
-                                val mark = marks[index]
-                                val markX = ((mark.x + translateX) * scaleX).toInt()
+                            fun Mark.transformedX() = ((x + translateX) * scaleX).toInt()
 
-                                if (markX < currentEndX) {
-                                    currentEndY += placeable.height
-                                } else {
-                                    currentEndY = 0
+                            placeables
+                                .forEachIndexed { index, (mark, summaries) ->
+                                    val markX = mark.transformedX()
+
+                                    val firstSummary = summaries.firstOrNull() ?: return@forEachIndexed
+
+                                    if (markX < currentEndX) {
+                                        currentEndY += firstSummary.height
+                                    } else {
+                                        currentEndY = 0
+                                    }
+
+                                    val nextMarkX = marks.getOrNull(index + 1)?.transformedX() ?: Int.MAX_VALUE
+
+                                    val summariesSortedByDescendingWidth = summaries.sortedByDescending(Placeable::width)
+                                    val placeable = summariesSortedByDescendingWidth
+                                        .firstOrNull { placeableCandidate ->
+                                            markX + placeableCandidate.width < nextMarkX
+                                        }
+                                        ?: summariesSortedByDescendingWidth.last()
+
+                                    placeable.placeRelative(x = markX, y = currentEndY)
+
+                                    currentEndX = markX + placeable.width
                                 }
-
-                                placeable.placeRelative(x = markX, y = currentEndY)
-
-                                currentEndX = markX + placeable.width
-                            }
                         }
                     }
                 )
@@ -219,7 +241,8 @@ private fun animatedProgressX(
 private class Mark(
     val x: Float,
     val color: Color,
-    val summary: (@Composable () -> Unit)?,
+    val briefSummary: (@Composable (modifier: Modifier) -> Unit)?,
+    val detailedSummary: (@Composable (modifier: Modifier) -> Unit)?,
 )
 
 @Composable
@@ -233,14 +256,29 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
         result += Mark(
             x = currentX,
             color = MaterialTheme.colors.onSurface,
-            summary = { CueSummary(cue) }
+            briefSummary = { modifier ->
+                CueSummary(cue, modifier)
+            },
+            detailedSummary = cue.name?.let { name ->
+                { modifier ->
+                    Column(modifier) {
+                        Text(
+                            text = "\"$name\"",
+                            style = TextStyle(fontWeight = FontWeight.Bold),
+                            fontSize = 14.sp,
+                        )
+                        CueSummary(cue)
+                    }
+                }
+            }
         )
         if (drawAllBeatsMarks) {
             for (i in 1 until cue.timeSignature.noteCount) {
                 result += Mark(
                     x = (currentTimestamp + cue.bpm.interval * i).toX(duration, width),
                     color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium),
-                    summary = null,
+                    briefSummary = null,
+                    detailedSummary = null,
                 )
             }
         }

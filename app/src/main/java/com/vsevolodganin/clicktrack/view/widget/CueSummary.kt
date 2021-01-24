@@ -4,12 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.AmbientContentColor
-import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,21 +25,23 @@ fun CueSummary(
         Text(
             text = cue.bpm.value.toString(),
             modifier = Modifier.align(Alignment.CenterVertically),
+            fontSize = 12.sp
         )
         Spacer(modifier = Modifier.width(2.dp))
         Column(Modifier.preferredWidth(IntrinsicSize.Min)) {
             @Composable
-            fun Text(text: String) {
+            fun Text(text: String, modifier: Modifier) {
                 Text(
                     text = text,
-                    lineHeight = 2.sp,
-                    fontSize = 10.sp
+                    modifier = modifier,
+                    fontSize = 9.sp
                 )
             }
 
-            Text(text = cue.timeSignature.noteCount.toString())
-            Divider(color = AmbientContentColor.current, modifier = Modifier.fillMaxWidth().height(1.dp))
-            Text(text = cue.timeSignature.noteDuration.toString())
+            val textModifier = Modifier.align(Alignment.CenterHorizontally)
+
+            Text(text = cue.timeSignature.noteCount.toString(), textModifier)
+            Text(text = cue.timeSignature.noteDuration.toString(), textModifier)
         }
     }
 }
