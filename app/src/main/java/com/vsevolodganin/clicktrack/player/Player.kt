@@ -18,7 +18,7 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.player.PlayerImpl.Const.CLICK_TIME_EPSILON
 import com.vsevolodganin.clicktrack.state.PlaybackState
 import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
-import com.vsevolodganin.clicktrack.utils.coroutine.delay
+import com.vsevolodganin.clicktrack.utils.coroutine.tick
 import com.vsevolodganin.clicktrack.utils.time.rem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -34,10 +34,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.measureTime
+import kotlin.time.milliseconds
 import kotlin.time.minutes
 
 interface Player {
-    suspend fun start(clickTrack: ClickTrackWithId, atProgress: Float = 0f)
+    suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null)
     suspend fun pause()
     suspend fun stop()
 
@@ -59,13 +60,10 @@ class PlayerImpl @Inject constructor(
     private var playbackState = MutableNonConflatedStateFlow<PlaybackState?>(null)
     private var pausedState = MutableNonConflatedStateFlow(false)
 
-    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Float): Unit = withContext(mainDispatcher) {
+    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?): Unit = withContext(mainDispatcher) {
         val playback = playbackState.value
-        val startAtTime = if (playback?.clickTrack?.id == clickTrack.id) {
-            clickTrack.value.durationInTime * atProgress.toDouble()
-        } else {
-            Duration.ZERO
-        }
+        val atProgressCoerced = atProgress ?: playback?.progress ?: 0f
+        val startAtTime = clickTrack.value.durationInTime * atProgressCoerced.toDouble()
 
         playerJob?.cancel()
         playerJob = launch(playerDispatcher) {
@@ -107,7 +105,7 @@ class PlayerImpl @Inject constructor(
                         weakBeatMediaPlayer = weakBeatMediaPlayer,
                         cue = cue,
                         startAt = cueLocalStart,
-                        onBeatPlayed = { beatTimestamp ->
+                        reportProgress = { beatTimestamp ->
                             playbackState.setValue(
                                 PlaybackState(
                                     clickTrack = clickTrack,
@@ -133,7 +131,7 @@ class PlayerImpl @Inject constructor(
         weakBeatMediaPlayer: MediaPlayer,
         cue: Cue,
         startAt: Duration,
-        onBeatPlayed: suspend (beatTimestamp: Duration) -> Unit,
+        reportProgress: suspend (beatTimestamp: Duration) -> Unit,
     ) {
         val totalDuration = cue.durationAsTime
 
@@ -153,8 +151,9 @@ class PlayerImpl @Inject constructor(
             val nextBeatTimestamp = (beatInterval * nextBeatIndex).coerceAtMost(totalDuration)
             val beatRemainingDuration = nextBeatTimestamp - startAt
 
-            onBeatPlayed(startAt)
-            delay(beatRemainingDuration)
+            delayNotifyingProgress(beatRemainingDuration, 16.milliseconds) { passed ->
+                reportProgress(startAt + passed)
+            }
 
             beatIndex = nextBeatIndex
             playedFor = nextBeatTimestamp
@@ -177,15 +176,28 @@ class PlayerImpl @Inject constructor(
                 } else {
                     weakBeatMediaPlayer.start()
                 }
-
-                onBeatPlayed(playedFor)
-
-                ++beatIndex
-                playedFor += beatDuration
             }
 
-            delay(beatDuration - timeCorrection)
+            delayNotifyingProgress(beatDuration - timeCorrection, 16.milliseconds) { passed ->
+                reportProgress(playedFor + passed)
+            }
+
+            ++beatIndex
+            playedFor += beatDuration
         }
+    }
+
+    private suspend fun delayNotifyingProgress(
+        durationOfDelay: Duration,
+        interval: Duration,
+        reportProgress: suspend (passed: Duration) -> Unit,
+    ) {
+        tick(
+            duration = durationOfDelay,
+            interval = interval,
+            initialDelay = Duration.ZERO,
+            onTick = reportProgress
+        )
     }
 
     private fun ClickSoundSource.createMediaPlayer(context: Context, builtinSoundResId: Int): MediaPlayer {

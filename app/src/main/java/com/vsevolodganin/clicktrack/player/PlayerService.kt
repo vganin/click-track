@@ -38,7 +38,7 @@ class PlayerService : Service() {
     @Parcelize
     data class StartArguments(
         val clickTrack: ClickTrackWithId,
-        val startAtProgress: Float,
+        val startAtProgress: Double?,
     ) : Parcelable
 
     companion object {

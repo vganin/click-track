@@ -12,7 +12,7 @@ class StoreRemoveClickTrack(val id: Long) : Action
 
 class UpdateCurrentlyPlaying(val playbackState: PlaybackState?) : Action
 
-class StartPlay(val clickTrack: ClickTrackWithId, val progress: Float) : Action
+class StartPlay(val clickTrack: ClickTrackWithId, val progress: Double?) : Action
 object StopPlay : Action
 object PausePlay : Action
 

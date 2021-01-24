@@ -52,7 +52,7 @@ fun PlayClickTrackScreenView(
             PlayStopButton(
                 isPlaying = state.isPlaying,
                 onToggle = {
-                    val action = if (state.isPlaying) StopPlay else StartPlay(state.clickTrack, progress = 0f)
+                    val action = if (state.isPlaying) StopPlay else StartPlay(state.clickTrack, progress = 0.0)
                     dispatch(action)
                 }
             )
@@ -82,7 +82,7 @@ private fun ClickTrackScreenContent(
                 dispatch(PausePlay)
             },
             onProgressDrop = { progress ->
-                dispatch(StartPlay(state.clickTrack, progress))
+                dispatch(StartPlay(state.clickTrack, progress.toDouble()))
             },
             viewportPanEnabled = true,
             modifier = Modifier.fillMaxSize()

@@ -58,10 +58,7 @@ class MetronomeEpic @Inject constructor(
                             )
                         )
                     }?.let { updatedClickTrack ->
-                        StartPlay(
-                            clickTrack = updatedClickTrack,
-                            progress = action.progress,
-                        )
+                        StartPlay(clickTrack = updatedClickTrack, progress = null)
                     }
                 },
 

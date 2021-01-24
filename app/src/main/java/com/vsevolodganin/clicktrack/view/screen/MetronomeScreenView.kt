@@ -16,10 +16,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -78,9 +74,8 @@ private fun MetronomeScreenViewContent(
     state: MetronomeScreenState,
     dispatch: Dispatch,
 ) {
-    var progress by remember { mutableStateOf(state.progress ?: 0f) }
     val bpmState = observableMutableStateOf(state.bpm).observe { bpm ->
-        dispatch(MetronomeActions.ChangeBpm(bpm, progress))
+        dispatch(MetronomeActions.ChangeBpm(bpm))
     }
     val metronomeClickTrack = metronomeClickTrack(bpmState.value)
 
@@ -99,7 +94,6 @@ private fun MetronomeScreenViewContent(
                 drawAllBeatsMarks = true,
                 drawTextMarks = false,
                 progress = state.progress,
-                onProgressChanged = { progress = it }
             )
         }
 
@@ -125,7 +119,7 @@ private fun MetronomeScreenViewContent(
                 }
         ) {
             PlayStopButton(state.isPlaying, onToggle = {
-                val action = if (state.isPlaying) StopPlay else StartPlay(metronomeClickTrack, progress = 0f)
+                val action = if (state.isPlaying) StopPlay else StartPlay(metronomeClickTrack, progress = 0.0)
                 dispatch(action)
             })
         }

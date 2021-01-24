@@ -64,6 +64,7 @@ android {
 
         freeCompilerArgs += '-Xopt-in=kotlin.time.ExperimentalTime'
         freeCompilerArgs += '-Xopt-in=kotlin.contracts.ExperimentalContracts'
+        freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.ObsoleteCoroutinesApi'
         freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi'
         freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.InternalCoroutinesApi'
         freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.FlowPreview'

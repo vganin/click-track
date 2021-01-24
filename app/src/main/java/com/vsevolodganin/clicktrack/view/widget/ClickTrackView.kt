@@ -3,10 +3,8 @@ package com.vsevolodganin.clicktrack.view.widget
 import androidx.compose.animation.animatedFloat
 import androidx.compose.animation.core.AnimatedFloat
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateCentroid
@@ -66,8 +64,6 @@ fun ClickTrackView(
     progressDragndropEnabled: Boolean = false,
     onProgressDragStart: () -> Unit = {},
     onProgressDrop: (Float) -> Unit = {},
-    onProgressChanged: (Float) -> Unit = {},
-    animateProgress: Boolean = progress != null,
     viewportPanEnabled: Boolean = false,
 ) {
     WithConstraints(modifier = modifier) {
@@ -101,18 +97,11 @@ fun ClickTrackView(
             animatedProgressX(
                 clickTrack = clickTrack,
                 progress = progress,
-                isPlaying = animateProgress,
                 totalWidthPx = widthPx,
             )
         }
 
-        if (progressX != null) {
-            onCommit(progressX.value) {
-                onProgressChanged(progressX.value / widthPx)
-            }
-        }
-
-        val playbackStampColor = MaterialTheme.colors.primary
+        val playbackStampColor = MaterialTheme.colors.secondaryVariant
 
         val bounds = remember { Rect(0f, 0f, widthPx, heightPx) }
         val viewportState = AnimatedRect(bounds)
@@ -211,32 +200,17 @@ fun ClickTrackView(
 private fun animatedProgressX(
     clickTrack: ClickTrack,
     progress: Float,
-    isPlaying: Boolean,
     totalWidthPx: Float,
 ): AnimatedFloat {
     val playbackStampX = animatedFloat(0f).apply {
         setBounds(0f, totalWidthPx)
     }
 
-    onCommit(clickTrack.durationInTime, progress, totalWidthPx) {
+    onCommit(progress) {
         val totalTrackDuration = clickTrack.durationInTime
-        val startingPosition = totalTrackDuration * progress.toDouble()
-
+        val targetPosition = totalTrackDuration * progress.toDouble()
         fun Duration.toX() = toX(totalTrackDuration, totalWidthPx)
-
-        playbackStampX.snapTo(startingPosition.toX())
-
-        if (isPlaying) {
-            val animationDuration = totalTrackDuration - startingPosition
-
-            playbackStampX.animateTo(
-                targetValue = totalTrackDuration.toX(),
-                anim = tween(
-                    durationMillis = animationDuration.toLongMilliseconds().toInt(),
-                    easing = LinearEasing
-                )
-            )
-        }
+        playbackStampX.snapTo(targetPosition.toX())
     }
 
     return playbackStampX
