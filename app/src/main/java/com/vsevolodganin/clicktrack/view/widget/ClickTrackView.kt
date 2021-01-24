@@ -391,7 +391,7 @@ private fun Modifier.clickTrackGestures(
     }
 }
 
-private const val PROGRESS_LINE_WIDTH_DEFAULT = 1f
+private const val PROGRESS_LINE_WIDTH_DEFAULT = 0f
 private const val PROGRESS_LINE_WIDTH_CAPTURED = 10f
 
 @Preview
