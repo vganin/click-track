@@ -41,7 +41,7 @@ class PlayerEpic @Inject constructor(
                 .transformLatest { result ->
                     val playbackState = player.playbackState().firstOrNull()
                     if (!result.isErrorInName && playbackState?.clickTrack?.id == result.clickTrack.id) {
-                        emit(StartPlay(result.clickTrack, progress = 0.0))
+                        emit(StartPlay(result.clickTrack, progress = null))
                     }
                 },
         )
