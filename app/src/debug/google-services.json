@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "745791094563",
+    "project_id": "click-track-a6453",
+    "storage_bucket": "click-track-a6453.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:745791094563:android:7c6da125f535a5e2b61696",
+        "android_client_info": {
+          "package_name": "com.vsevolodganin.clicktrack.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "745791094563-dsnkmlrdvafpq2tq4i9cvfipq8ghqb2f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoNT754oOC5ZgDvmyNx--dfkZmJDcwfkw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "745791094563-dsnkmlrdvafpq2tq4i9cvfipq8ghqb2f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
