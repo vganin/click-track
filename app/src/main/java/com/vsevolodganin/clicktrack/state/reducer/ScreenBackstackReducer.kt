@@ -14,6 +14,7 @@ import com.vsevolodganin.clicktrack.state.actions.NavigateToEditClickTrackScreen
 import com.vsevolodganin.clicktrack.state.actions.NavigateToMetronomeScreen
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.pop
+import com.vsevolodganin.clicktrack.state.pushOrIgnore
 import com.vsevolodganin.clicktrack.state.pushOrReplace
 import com.vsevolodganin.clicktrack.state.replaceCurrentScreen
 
@@ -53,7 +54,7 @@ private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: P
                 )
             )
         )
-        NavigateToMetronomeScreen -> pushOrReplace(
+        NavigateToMetronomeScreen -> pushOrIgnore(
             Screen.Metronome(
                 state = null
             )

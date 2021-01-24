@@ -18,6 +18,20 @@ fun ScreenBackstack.pop(): ScreenBackstack {
     return ScreenBackstack(screens.dropLast(1))
 }
 
+fun ScreenBackstack.pushOrIgnore(screen: Screen): ScreenBackstack {
+    return pushOrIgnore { screen }
+}
+
+fun ScreenBackstack.pushOrIgnore(screenFactory: () -> Screen): ScreenBackstack {
+    val current = frontScreen()
+    val next = screenFactory()
+    return if (current?.javaClass == next.javaClass) {
+        this
+    } else {
+        ScreenBackstack(screens + screenFactory())
+    }
+}
+
 fun ScreenBackstack.pushOrReplace(screen: Screen): ScreenBackstack {
     return pushOrReplace { screen }
 }
