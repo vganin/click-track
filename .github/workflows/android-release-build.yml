@@ -13,7 +13,7 @@ jobs:
         with:
           java-version: 11
       - name: Assemble
-        run: ./gradlew -s :app:bundleRelease -PisCiBuild -PbuildNumber=$GITHUB_RUN_NUMBER
+        run: ./gradlew -s :app:bundleRelease -PisCiBuild
       - name: Sign
         uses: r0adkll/sign-android-release@v1
         id: sign_app
@@ -23,7 +23,3 @@ jobs:
           alias: ${{ secrets.GPC_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.GPC_KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.GPC_KEY_PASSWORD }}
-      - name: Upload
-        uses: actions/upload-artifact@v2
-        with:
-          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
