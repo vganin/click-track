@@ -1,14 +1,6 @@
 package com.vsevolodganin.clicktrack.player
 
-import android.content.Context
-import android.media.AudioAttributes
-import android.media.AudioManager
-import android.media.MediaPlayer
-import android.net.Uri
-import androidx.core.content.getSystemService
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
-import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
 import com.vsevolodganin.clicktrack.lib.ClickSoundSource
@@ -47,14 +39,10 @@ interface Player {
 
 @PlayerServiceScoped
 class PlayerImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val soundPool: PlayerSoundPool,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
     @PlayerDispatcher private val playerDispatcher: CoroutineDispatcher,
 ) : Player {
-
-    private val audioManager = context.getSystemService<AudioManager>()
-        ?: throw RuntimeException("Failed to obtain audio service")
-    private val audioSessionId = audioManager.generateAudioSessionId()
 
     private var playerJob: Job? = null
     private var playbackState = MutableNonConflatedStateFlow<PlaybackState?>(null)
@@ -86,49 +74,41 @@ class PlayerImpl @Inject constructor(
     override fun playbackState(): Flow<PlaybackState?> = playbackState.distinctUntilChanged()
 
     private suspend fun startImpl(clickTrack: ClickTrackWithId, startAt: Duration) = coroutineScope {
-        val strongBeatMediaPlayer = clickTrack.value.sounds.strongBeat.createMediaPlayer(context, R.raw.strong)
-        val weakBeatMediaPlayer = clickTrack.value.sounds.weakBeat.createMediaPlayer(context, R.raw.weak)
+        var iterationStartsWith = if (startAt < clickTrack.value.durationInTime) startAt else Duration.ZERO
 
-        try {
-            var iterationStartsWith = if (startAt < clickTrack.value.durationInTime) startAt else Duration.ZERO
+        do {
+            fun Duration.toProgress(): Float = (this / clickTrack.value.durationInTime).toFloat()
 
-            do {
-                fun Duration.toProgress(): Float = (this / clickTrack.value.durationInTime).toFloat()
+            var cueGlobalStart = Duration.ZERO
 
-                var cueGlobalStart = Duration.ZERO
+            for (cue in clickTrack.value.cues) {
+                val cueLocalStart = (iterationStartsWith - cueGlobalStart).coerceAtLeast(Duration.ZERO)
 
-                for (cue in clickTrack.value.cues) {
-                    val cueLocalStart = (iterationStartsWith - cueGlobalStart).coerceAtLeast(Duration.ZERO)
-
-                    startImpl(
-                        strongBeatMediaPlayer = strongBeatMediaPlayer,
-                        weakBeatMediaPlayer = weakBeatMediaPlayer,
-                        cue = cue,
-                        startAt = cueLocalStart,
-                        reportProgress = { beatTimestamp ->
-                            playbackState.setValue(
-                                PlaybackState(
-                                    clickTrack = clickTrack,
-                                    progress = (cueGlobalStart + beatTimestamp).toProgress(),
-                                )
+                startImpl(
+                    strongBeatSound = clickTrack.value.sounds.strongBeat,
+                    weakBeatSound = clickTrack.value.sounds.weakBeat,
+                    cue = cue,
+                    startAt = cueLocalStart,
+                    reportProgress = { beatTimestamp ->
+                        playbackState.setValue(
+                            PlaybackState(
+                                clickTrack = clickTrack,
+                                progress = (cueGlobalStart + beatTimestamp).toProgress(),
                             )
-                        }
-                    )
+                        )
+                    }
+                )
 
-                    cueGlobalStart += cue.durationAsTime
-                }
+                cueGlobalStart += cue.durationAsTime
+            }
 
-                iterationStartsWith = Duration.ZERO
-            } while (clickTrack.value.loop && coroutineContext.isActive)
-        } finally {
-            strongBeatMediaPlayer.release()
-            weakBeatMediaPlayer.release()
-        }
+            iterationStartsWith = Duration.ZERO
+        } while (clickTrack.value.loop && coroutineContext.isActive)
     }
 
     private suspend fun startImpl(
-        strongBeatMediaPlayer: MediaPlayer,
-        weakBeatMediaPlayer: MediaPlayer,
+        strongBeatSound: ClickSoundSource,
+        weakBeatSound: ClickSoundSource,
         cue: Cue,
         startAt: Duration,
         reportProgress: suspend (beatTimestamp: Duration) -> Unit,
@@ -171,11 +151,11 @@ class PlayerImpl @Inject constructor(
             val beatDuration = beatInterval.coerceAtMost(totalDuration - playedFor)
 
             val timeCorrection = measureTime {
-                if (beatIndex % timeSignature.noteCount == 0) {
-                    strongBeatMediaPlayer.start()
+                soundPool.play(if (beatIndex % timeSignature.noteCount == 0) {
+                    strongBeatSound
                 } else {
-                    weakBeatMediaPlayer.start()
-                }
+                    weakBeatSound
+                })
             }
 
             delayNotifyingProgress(beatDuration - timeCorrection, 16.milliseconds) { passed ->
@@ -198,19 +178,6 @@ class PlayerImpl @Inject constructor(
             initialDelay = Duration.ZERO,
             onTick = reportProgress
         )
-    }
-
-    private fun ClickSoundSource.createMediaPlayer(context: Context, builtinSoundResId: Int): MediaPlayer {
-        val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_UNKNOWN)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-            .build()
-
-        return when (this) {
-            ClickSoundSource.Builtin -> MediaPlayer.create(context, builtinSoundResId, audioAttributes, audioSessionId)
-            is ClickSoundSource.Uri -> MediaPlayer.create(context, Uri.parse(value), null, audioAttributes, audioSessionId)
-        }
     }
 
     private object Const {

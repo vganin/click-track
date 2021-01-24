@@ -9,9 +9,13 @@ public sealed class ClickSoundSource : AndroidParcelable {
 
     @Serializable
     @AndroidParcelize
-    public object Builtin : ClickSoundSource()
+    public object BuiltinStrong : ClickSoundSource()
 
     @Serializable
     @AndroidParcelize
-    public data class Uri(val value: String) : ClickSoundSource()
+    public object BuiltinWeak : ClickSoundSource()
+
+    @Serializable
+    @AndroidParcelize
+    public data class File(val path: String) : ClickSoundSource()
 }

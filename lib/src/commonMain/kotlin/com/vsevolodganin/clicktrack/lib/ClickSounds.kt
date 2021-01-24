@@ -12,6 +12,6 @@ public data class ClickSounds(
 ) : AndroidParcelable
 
 public val BuiltinClickSounds: ClickSounds = ClickSounds(
-    strongBeat = ClickSoundSource.Builtin,
-    weakBeat = ClickSoundSource.Builtin,
+    strongBeat = ClickSoundSource.BuiltinStrong,
+    weakBeat = ClickSoundSource.BuiltinWeak,
 )
