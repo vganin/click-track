@@ -34,7 +34,7 @@ class PlayerSoundPool @Inject constructor(
             /* rightVolume = */ 1f,
             /* priority = */ Const.DEFAULT_PRIORITY,
             /* loop = */ 0,
-            /* rate = */ 0f
+            /* rate = */ 1f
         )
     }
 
