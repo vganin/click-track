@@ -42,6 +42,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.gesture.LongPressDragObserver
 import androidx.compose.ui.gesture.longPressDragGestureFilter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.AmbientHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -64,7 +65,6 @@ import com.vsevolodganin.clicktrack.state.actions.StoreUpdateClickTrack
 import com.vsevolodganin.clicktrack.utils.compose.ObservableMutableState
 import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import com.vsevolodganin.clicktrack.utils.compose.offset
-import com.vsevolodganin.clicktrack.utils.compose.onSizeChangedPaddingIncluded
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.utils.compose.toObservableMutableStateList
 import com.vsevolodganin.clicktrack.view.common.Constants.FAB_SIZE_WITH_PADDINGS
@@ -311,7 +311,7 @@ private fun Modifier.moveReorder(
     }
 
     this
-        .onSizeChangedPaddingIncluded { height = it.height.toFloat() }
+        .onSizeChanged { height = it.height.toFloat() }
         .padding(padding)
         .clickable(onClick = {})
         .longPressDragGestureFilter(longPressDragObserver)
