@@ -8,6 +8,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
@@ -40,7 +42,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.gesture.LongPressDragObserver
 import androidx.compose.ui.gesture.longPressDragGestureFilter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.layout.WithConstraints
 import androidx.compose.ui.platform.AmbientHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -96,11 +97,12 @@ fun EditClickTrackScreenView(
         )
     }
 
-    onActive {
+    DisposableEffect(Unit) {
         nameState.observe { update() }
         loopState.observe { update() }
         cuesState.observe { update() }
         cuesState.forEach { it.observe { update() } }
+        onDispose { }
     }
 
     val coroutineScope = rememberCoroutineScope()
@@ -117,7 +119,7 @@ fun EditClickTrackScreenView(
                     lazyListState.snapToItemIndex(cuesState.lastIndex)
                 }
             }) {
-                Icon(Icons.Default.Add)
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
         modifier = modifier,
@@ -173,11 +175,11 @@ private fun EditClickTrackScreenContent(
             key(index, cueState) {
                 var zIndex by remember { mutableStateOf(0f) }
 
-                WithConstraints(modifier = Modifier.zIndex(zIndex)) {
+                BoxWithConstraints(modifier = Modifier.zIndex(zIndex)) {
                     val offset = animatedFloat(0f)
                     val elevation = animatedValue(0.dp, Dp.VectorConverter)
 
-                    onCommit(moveReorderSourceIndex, moveReorderTargetIndex) {
+                    DisposableEffect(moveReorderSourceIndex, moveReorderTargetIndex) {
                         val localMoveReorderSourceIndex = moveReorderSourceIndex
                         val localMoveReorderTargetIndex = moveReorderTargetIndex
                         val snap = localMoveReorderSourceIndex == null || localMoveReorderTargetIndex == null
@@ -209,6 +211,8 @@ private fun EditClickTrackScreenContent(
                         }
 
                         zIndex = if (itemIsMoving) 1f else 0f
+
+                        onDispose {}
                     }
 
                     CueListItem(
@@ -333,7 +337,7 @@ private fun EditClickTrackScreenTopBar(dispatch: Dispatch) {
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = { dispatch(NavigateBack) }) {
-                Icon(imageVector = Icons.Default.ArrowBack)
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },
         title = { Text(text = stringResource(id = R.string.edit_click_track)) }

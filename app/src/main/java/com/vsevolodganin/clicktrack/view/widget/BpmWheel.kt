@@ -2,6 +2,7 @@ package com.vsevolodganin.clicktrack.view.widget
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,7 +25,6 @@ import androidx.compose.ui.gesture.dragGestureFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.layout.WithConstraints
 import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -72,7 +72,7 @@ fun BpmWheel(
 private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Modifier) {
     var buttonAngle: Float by remember { mutableStateOf(90f) }
 
-    WithConstraints(modifier) {
+    BoxWithConstraints(modifier) {
         val density = AmbientDensity.current
         val width = minWidth
         val height = minHeight
@@ -101,7 +101,9 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
             val controllerButtonColor = MaterialTheme.colors.onPrimary
 
             Canvas(
-                modifier = Modifier.fillMaxSize().padding(wheelWidth / 2)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(wheelWidth / 2)
             ) {
                 if (size.maxDimension <= 0) return@Canvas
 

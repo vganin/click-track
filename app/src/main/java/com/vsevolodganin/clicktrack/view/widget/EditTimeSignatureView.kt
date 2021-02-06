@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.onActive
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +24,7 @@ fun TimeSignatureView(
     val noteCountState = remember { observableMutableStateOf(state.value.noteCount) }
     val noteDurationState = remember { observableMutableStateOf(state.value.noteDuration) }
 
-    onActive {
+    DisposableEffect(Unit) {
         fun update() {
             state.value = TimeSignature(
                 noteCount = noteCountState.value,
@@ -33,6 +33,7 @@ fun TimeSignatureView(
         }
         noteCountState.observe { update() }
         noteDurationState.observe { update() }
+        onDispose { }
     }
 
     Row(modifier = modifier) {

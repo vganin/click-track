@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.view.widget
 
+import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -188,10 +189,11 @@ fun DurationPicker(
                 .size(16.dp, 16.dp)
                 .clickable(
                     onClick = { state.value = Duration.ZERO },
+                    interactionState = remember { InteractionState() },
                     indication = rememberRipple(bounded = false)
                 )
         ) {
-            Icon(imageVector = Icons.Default.Close)
+            Icon(imageVector = Icons.Default.Close, contentDescription = null)
         }
     }
 }

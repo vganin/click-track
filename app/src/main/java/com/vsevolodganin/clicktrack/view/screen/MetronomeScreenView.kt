@@ -62,7 +62,7 @@ private fun MetronomeScreenViewTopBar(dispatch: Dispatch) {
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = { dispatch(NavigateBack) }) {
-                Icon(imageVector = Icons.Default.ArrowBack)
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },
         title = { Text(text = stringResource(id = R.string.metronome)) }

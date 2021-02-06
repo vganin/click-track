@@ -1,14 +1,15 @@
 package com.vsevolodganin.clicktrack.view.widget
 
-import androidx.compose.animation.OffsetPropKey
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.Transition
+import androidx.compose.animation.core.animateOffset
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.transitionDefinition
-import androidx.compose.animation.transition
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -40,46 +41,56 @@ private enum class PlayStopIconState {
 
 @Composable
 private fun PlayStopIcon(isPlaying: Boolean) {
-    val pointA = remember { OffsetPropKey() }
-    val pointB = remember { OffsetPropKey() }
-    val pointC = remember { OffsetPropKey() }
-    val pointD = remember { OffsetPropKey() }
+    val transition = updateTransition(targetState = if (isPlaying) STOP else PLAY)
 
-    val transition = transition(
-        definition = remember {
-            transitionDefinition {
-                state(STOP) {
-                    this[pointA] = Offset(6f, 6f)
-                    this[pointB] = Offset(18f, 6f)
-                    this[pointC] = Offset(18f, 18f)
-                    this[pointD] = Offset(6f, 18f)
-                }
-                state(PLAY) {
-                    this[pointA] = Offset(8f, 5f)
-                    this[pointB] = Offset(19f, 12f)
-                    this[pointC] = Offset(19f, 12f)
-                    this[pointD] = Offset(8f, 19f)
-                }
-                transition {
-                    arrayOf(pointA, pointB).forEach {
-                        it using spring(
-                            dampingRatio = Spring.DampingRatioLowBouncy,
-                            stiffness = Spring.StiffnessMedium
-                        )
-                    }
-                }
-            }
-        },
-        toState = if (isPlaying) STOP else PLAY,
-    )
+    @Composable
+    fun Transition<PlayStopIconState>.animatePoint(
+        targetValueByState: @Composable (state: PlayStopIconState) -> Offset,
+    ): State<Offset> {
+        return animateOffset(
+            transitionSpec = {
+                spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy,
+                    stiffness = Spring.StiffnessMedium
+                )
+            },
+            targetValueByState = targetValueByState
+        )
+    }
+
+    val pointA by transition.animatePoint { state ->
+        when (state) {
+            PLAY -> Offset(8f, 5f)
+            STOP -> Offset(6f, 6f)
+        }
+    }
+    val pointB by transition.animatePoint { state ->
+        when (state) {
+            PLAY -> Offset(19f, 12f)
+            STOP -> Offset(18f, 6f)
+        }
+    }
+    val pointC by transition.animatePoint { state ->
+        when (state) {
+            PLAY -> Offset(19f, 12f)
+            STOP -> Offset(18f, 18f)
+        }
+    }
+    val pointD by transition.animatePoint { state ->
+        when (state) {
+            PLAY -> Offset(8f, 19f)
+            STOP -> Offset(6f, 18f)
+        }
+    }
 
     Icon(
-        iconAsset(
-            transition[pointA],
-            transition[pointB],
-            transition[pointC],
-            transition[pointD],
-        )
+        imageVector = iconAsset(
+            pointA,
+            pointB,
+            pointC,
+            pointD,
+        ),
+        contentDescription = null
     )
 }
 

@@ -1,16 +1,33 @@
 package com.vsevolodganin.clicktrack.utils.compose
 
-import androidx.compose.animation.asDisposableClock
-import androidx.compose.animation.core.TransitionDefinition
-import androidx.compose.animation.core.TransitionState
-import androidx.compose.animation.core.createAnimation
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.Transition
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.invalidate
+import androidx.compose.runtime.currentRecomposeScope
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.onCommit
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.AmbientAnimationClock
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.vsevolodganin.clicktrack.utils.compose.ComposableTransitionState.ENTERING
+import com.vsevolodganin.clicktrack.utils.compose.ComposableTransitionState.EXITING
+import com.vsevolodganin.clicktrack.utils.compose.ComposableTransitionState.VISIBLE
 
 enum class ComposableTransitionState {
     VISIBLE, ENTERING, EXITING,
@@ -20,30 +37,31 @@ enum class ComposableTransitionState {
 fun <Key, State> ComposableSwitcher(
     currentKey: Key,
     currentState: State,
-    transitionDefinition: TransitionDefinition<ComposableTransitionState>,
     snapOnInitialComposition: Boolean = true,
-    content: @Composable (Key, State, TransitionState) -> Unit,
+    content: @Composable (Key, State, Transition<ComposableTransitionState>) -> Unit,
 ) {
     val state = remember {
         if (snapOnInitialComposition) {
-            ItemTransitionInnerState(
+            ComposableSwitcherState(
                 currentKey = currentKey,
-                items = mutableListOf(ItemTransitionItem(
+                items = mutableListOf(TransitionItem(
                     key = currentKey,
                     state = currentState,
                     content = { children ->
-                        val targetState = transitionDefinition.getStateFor(ComposableTransitionState.VISIBLE)
-                        children(targetState)
+                        val transition = updateTransition(VISIBLE)
+                        children(transition)
                     }
                 )),
             )
         } else {
-            ItemTransitionInnerState(
+            ComposableSwitcherState<Key, State>(
                 // we use Any here as something which will not be equals to the real initial value
                 currentKey = Any(),
             )
         }
     }
+
+    val switcherRecomposeScope = currentRecomposeScope
 
     if (currentKey != state.currentKey) {
         state.currentKey = currentKey
@@ -56,68 +74,111 @@ fun <Key, State> ComposableSwitcher(
         state.items.clear()
 
         keysAndStates.mapTo(state.items) { (itemKey, itemState) ->
-            ItemTransitionItem(itemKey, itemState) { children ->
-                val clock = AmbientAnimationClock.current.asDisposableClock()
-                val visible = itemKey == currentKey
+            TransitionItem(key = itemKey, state = itemState, content = { children ->
+                val isVisible = itemKey == currentKey
+                val transitionState = remember {
+                    MutableTransitionState(when (isVisible) {
+                        true -> ENTERING
+                        false -> VISIBLE
+                    })
+                }
+                transitionState.targetState = when (isVisible) {
+                    true -> VISIBLE
+                    false -> EXITING
+                }
+                val transition = updateTransition(transitionState)
 
-                val anim = remember(clock, transitionDefinition) {
-                    transitionDefinition.createAnimation(
-                        clock = clock,
-                        initState = when {
-                            visible -> ComposableTransitionState.ENTERING
-                            else -> ComposableTransitionState.VISIBLE
-                        }
-                    )
+                if (!isVisible && transitionState.currentState == transitionState.targetState) {
+                    state.items.removeAll { it.key == itemKey }
+                    switcherRecomposeScope.invalidate()
                 }
 
-                onCommit(visible) {
-                    anim.onStateChangeFinished = { _ ->
-                        if (itemKey == state.currentKey) {
-                            // leave only the current in the list
-                            state.items.removeAll { it.key != state.currentKey }
-                            state.invalidate()
-                        }
-                    }
-                    anim.onUpdate = { state.invalidate() }
-
-                    val targetState = when {
-                        visible -> ComposableTransitionState.VISIBLE
-                        else -> ComposableTransitionState.EXITING
-                    }
-
-                    anim.toState(targetState)
-                }
-
-                children(anim)
-            }
+                children(transition)
+            })
         }
     } else {
         state.items.find { it.key == currentKey }?.state = currentState
     }
 
     Box {
-        state.invalidate = invalidate
-        state.items.forEach { (itemKey, itemState, itemTransition) ->
+        state.items.forEach { (itemKey, itemState, content) ->
             key(itemKey) {
-                itemTransition { transitionState ->
-                    content(itemKey, itemState, transitionState)
+                content { transition ->
+                    content(itemKey, itemState, transition)
                 }
             }
         }
     }
 }
 
-private class ItemTransitionInnerState<Key, State>(
+private class ComposableSwitcherState<Key, State>(
     var currentKey: Any?,
-    val items: MutableList<ItemTransitionItem<Key, State>> = mutableListOf(),
-) {
-    var invalidate: () -> Unit = {}
-}
-
-private data class ItemTransitionItem<Key, State>(
-    val key: Key,
-    var state: State,
-    val content: ItemTransitionContent,
+    val items: MutableList<TransitionItem<Key, State>> = mutableListOf(),
 )
 
-private typealias ItemTransitionContent = @Composable (children: @Composable (TransitionState) -> Unit) -> Unit
+private data class TransitionItem<Key, State>(
+    val key: Key,
+    var state: State,
+    val content: @Composable (children: @Composable (Transition<ComposableTransitionState>) -> Unit) -> Unit,
+)
+
+@Preview
+@Composable
+fun ComposableSwitcherPreview() {
+    val screens = remember {
+        listOf(
+            "Screen A",
+            "Screen B",
+            "Screen C",
+        )
+    }
+
+    var screenIndex by remember { mutableStateOf(0) }
+    var slideLeft by remember { mutableStateOf(true) }
+
+    fun navigateNextScreen() {
+        screenIndex = (screenIndex + 1).coerceIn(0, screens.lastIndex)
+        slideLeft = true
+    }
+
+    fun navigatePreviousScreen() {
+        screenIndex = (screenIndex - 1).coerceIn(0, screens.lastIndex)
+        slideLeft = false
+    }
+
+    ComposableSwitcher(
+        currentKey = screenIndex,
+        currentState = screens[screenIndex],
+    ) { _, screenData, transition ->
+        println("$screenData : $slideLeft")
+        val offset by transition.animateFloat(transitionSpec = { tween(durationMillis = 2000) }) { state ->
+            when (state) {
+                VISIBLE -> 0.0f
+                ENTERING -> if (slideLeft) 1.0f else -1.0f
+                EXITING -> if (slideLeft) -1.0f else 1.0f
+            }
+        }
+
+        BoxWithConstraints {
+            val width = maxWidth
+
+            Box {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .offset(x = width * offset)
+                ) {
+                    Text(text = screenData, modifier = Modifier.align(Alignment.Center))
+                }
+
+                IconButton(modifier = Modifier.align(Alignment.CenterStart), onClick = ::navigatePreviousScreen) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+                }
+
+                IconButton(modifier = Modifier.align(Alignment.CenterEnd), onClick = ::navigateNextScreen) {
+                    Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
+                }
+            }
+        }
+    }
+}

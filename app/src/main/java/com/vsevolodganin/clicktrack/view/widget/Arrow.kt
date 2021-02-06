@@ -27,7 +27,12 @@ fun Arrow(
     modifier: Modifier = Modifier,
     tint: Color = AmbientContentColor.current
 ) {
-    Icon(imageVector = arrowVectorResource(direction), modifier = modifier, tint = tint)
+    Icon(
+        imageVector = arrowVectorResource(direction),
+        contentDescription = null,
+        modifier = modifier,
+        tint = tint
+    )
 }
 
 @Composable

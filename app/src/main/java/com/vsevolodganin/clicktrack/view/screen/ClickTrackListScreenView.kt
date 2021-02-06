@@ -2,6 +2,7 @@ package com.vsevolodganin.clicktrack.view.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
@@ -22,7 +24,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.WithConstraints
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,7 +54,7 @@ fun ClickTrackListScreenView(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(onClick = { dispatch(StoreAddNewClickTrack) }) {
-                Icon(Icons.Default.Add)
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
         modifier = modifier,
@@ -88,7 +89,7 @@ private fun ClickTrackListScreenTopBar(dispatch: Dispatch) {
         },
         actions = {
             IconButton(onClick = { dispatch(NavigateToMetronomeScreen) }) {
-                Icon(ClickTrackIcons.Metronome)
+                Icon(imageVector = ClickTrackIcons.Metronome, contentDescription = null)
             }
         }
     )
@@ -96,7 +97,7 @@ private fun ClickTrackListScreenTopBar(dispatch: Dispatch) {
 
 @Composable
 private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispatch: Dispatch) {
-    WithConstraints {
+    BoxWithConstraints {
         Card(
             modifier = Modifier
                 .swipeToRemove(constraints = constraints, onDelete = { dispatch(StoreRemoveClickTrack(clickTrack.id)) })

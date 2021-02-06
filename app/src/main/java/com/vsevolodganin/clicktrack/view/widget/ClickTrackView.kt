@@ -14,6 +14,7 @@ import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.drag
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -22,10 +23,10 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.onCommit
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -42,7 +43,6 @@ import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.layout.WithConstraints
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.AmbientDensity
 import androidx.compose.ui.platform.AmbientHapticFeedback
@@ -73,7 +73,7 @@ fun ClickTrackView(
     onProgressDrop: (Float) -> Unit = {},
     viewportPanEnabled: Boolean = false,
 ) {
-    WithConstraints(modifier = modifier) {
+    BoxWithConstraints(modifier = modifier) {
         val width = minWidth
         val height = minHeight
         val widthPx = with(AmbientDensity.current) { width.toPx() }
@@ -82,7 +82,7 @@ fun ClickTrackView(
 
         var isProgressCaptured by remember { mutableStateOf(false) }
         val progressLineWidth = animatedFloat(0f)
-        onCommit(isProgressCaptured) {
+        DisposableEffect(isProgressCaptured) {
             val newProgressLineWidth = when (isProgressCaptured) {
                 true -> PROGRESS_LINE_WIDTH_CAPTURED
                 false -> PROGRESS_LINE_WIDTH_DEFAULT
@@ -98,6 +98,7 @@ fun ClickTrackView(
                 targetValue = newProgressLineWidth,
                 anim = animSpec
             )
+            onDispose { }
         }
 
         val progressX = progress?.let {
@@ -228,11 +229,12 @@ private fun animatedProgressX(
         setBounds(0f, totalWidthPx)
     }
 
-    onCommit(progress) {
+    DisposableEffect(progress) {
         val totalTrackDuration = clickTrack.durationInTime
         val targetPosition = totalTrackDuration * progress.toDouble()
         fun Duration.toX() = toX(totalTrackDuration, totalWidthPx)
         playbackStampX.snapTo(targetPosition.toX())
+        onDispose { }
     }
 
     return playbackStampX
@@ -420,7 +422,7 @@ private fun Modifier.clickTrackGestures(
                                         }
                                     }
                                 }
-                            } while (!canceled && event.changes.any { it.current.down })
+                            } while (!canceled && event.changes.any { it.pressed })
                         }
                     }
                 }

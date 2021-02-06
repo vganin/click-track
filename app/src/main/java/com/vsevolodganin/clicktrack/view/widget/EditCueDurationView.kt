@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.view.widget
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -130,7 +131,8 @@ private fun DurationTypeDropdown(
         toggleModifier = modifier
             .clickable(
                 onClick = onToggleClick,
-                indication = rememberRipple()
+                interactionState = remember { InteractionState() },
+                indication = rememberRipple(),
             )
             .width(DROPDOWN_TOGGLE_WIDTH),
         toggle = {
@@ -154,10 +156,11 @@ private fun DurationTypeDropdown(
                         .size(16.dp, 16.dp)
                         .clickable(
                             onClick = onToggleClick,
-                            indication = rememberRipple(bounded = false)
+                            interactionState = remember { InteractionState() },
+                            indication = rememberRipple(bounded = false),
                         )
                 ) {
-                    Icon(Icons.Default.ArrowDropDown)
+                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
                 }
             }
         },

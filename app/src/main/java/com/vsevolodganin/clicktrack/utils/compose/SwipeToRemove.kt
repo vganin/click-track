@@ -1,9 +1,9 @@
 package com.vsevolodganin.clicktrack.utils.compose
 
 import androidx.compose.animation.animatedFloat
+import androidx.compose.animation.core.fling
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.animation.FlingConfig
-import androidx.compose.foundation.animation.fling
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +38,7 @@ fun Modifier.swipeToRemove(
             },
             onDragStopped = { velocity ->
                 val config = FlingConfig(anchors = listOf(-width, 0f))
-                positionOffset.fling(velocity, config) { _, endValue, _ ->
+                positionOffset.fling(velocity, config.decayAnimation, config.adjustTarget) { _, endValue, _ ->
                     if (endValue.absoluteValue > 0) {
                         draggable.value = false
                         heightExpandRatio.animateTo(0f, spring()) { _, _ ->

@@ -4,8 +4,7 @@ import androidx.compose.animation.animatedFloat
 import androidx.compose.animation.core.FloatExponentialDecaySpec
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.TargetAnimation
-import androidx.compose.foundation.animation.FlingConfig
-import androidx.compose.foundation.animation.fling
+import androidx.compose.animation.core.fling
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -72,8 +71,9 @@ fun NumberPicker(
                     animatedOffset.snapTo(animatedOffset.value + deltaY)
                 },
                 onDragStopped = { velocity ->
-                    val config = FlingConfig(
-                        decayAnimation = FloatExponentialDecaySpec(
+                    animatedOffset.fling(
+                        startVelocity = velocity,
+                        decay = FloatExponentialDecaySpec(
                             frictionMultiplier = 20f
                         ),
                         adjustTarget = { target ->
@@ -84,8 +84,7 @@ fun NumberPicker(
                             val adjusted = coercedPoint + base
                             TargetAnimation(adjusted, SpringSpec())
                         }
-                    )
-                    animatedOffset.fling(velocity, config) { _, endValue, _ ->
+                    ) { _, endValue, _ ->
                         state.value = animatedStateValue(endValue)
                         animatedOffset.snapTo(0f)
                     }

@@ -1,22 +1,22 @@
 package com.vsevolodganin.clicktrack.view
 
-import androidx.compose.animation.core.FloatPropKey
-import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.transitionDefinition
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.layout.WithConstraints
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.utils.compose.ComposableSwitcher
-import com.vsevolodganin.clicktrack.utils.compose.ComposableTransitionState
+import com.vsevolodganin.clicktrack.utils.compose.ComposableTransitionState.ENTERING
+import com.vsevolodganin.clicktrack.utils.compose.ComposableTransitionState.EXITING
+import com.vsevolodganin.clicktrack.utils.compose.ComposableTransitionState.VISIBLE
 import com.vsevolodganin.clicktrack.view.screen.ClickTrackListScreenView
 import com.vsevolodganin.clicktrack.view.screen.EditClickTrackScreenView
 import com.vsevolodganin.clicktrack.view.screen.MetronomeScreenView
@@ -27,24 +27,30 @@ fun ContentView(screen: Screen, positionInBackstack: Int, dispatch: Dispatch) {
     ClickTrackTheme {
         val modifier = Modifier.fillMaxSize()
 
-        val previousPosition = remember { mutableStateOf(positionInBackstack) }
-        val isPush = positionInBackstack > previousPosition.value
-        previousPosition.value = positionInBackstack
+        var previousPosition by remember { mutableStateOf(positionInBackstack) }
+        val isPush = positionInBackstack > previousPosition
 
         ComposableSwitcher(
             currentKey = positionInBackstack,
             currentState = screen,
-            transitionDefinition = screenTransitionDefinition(isPush),
-        ) { _, screen, transitionState ->
-            val alpha = transitionState[AlphaProp]
-            val offset = transitionState[OffsetProp]
+        ) { _, screen, transition ->
+            if (transition.currentState == VISIBLE) {
+                previousPosition = positionInBackstack
+            }
 
-            WithConstraints {
+            val offset by transition.animateFloat(transitionSpec = { spring() }) { state ->
+                when (state) {
+                    VISIBLE -> 0.0f
+                    ENTERING -> if (isPush) 1.0f else -1.0f
+                    EXITING -> if (isPush) -1.0f else 1.0f
+                }
+            }
+
+            BoxWithConstraints {
                 val width = maxWidth
 
                 val modifierUnderTransition = modifier
-                    .alpha(alpha)
-                    .offset(width * offset)
+                    .offset(x = width * offset)
 
                 when (screen) {
                     is Screen.ClickTrackList -> ClickTrackListScreenView(screen.state, modifierUnderTransition, dispatch)
@@ -54,47 +60,5 @@ fun ContentView(screen: Screen, positionInBackstack: Int, dispatch: Dispatch) {
                 }
             }
         }
-    }
-}
-
-private const val ScreenTransitionAnimationDuration = 250
-
-private val AlphaProp = FloatPropKey("alpha")
-private val OffsetProp = FloatPropKey("offset")
-
-private fun screenTransitionDefinition(isPush: Boolean) = transitionDefinition<ComposableTransitionState> {
-    state(ComposableTransitionState.VISIBLE) {
-        this[AlphaProp] = 1.0f
-        this[OffsetProp] = 0.0f
-    }
-    state(ComposableTransitionState.ENTERING) {
-        this[AlphaProp] = 0.7f
-        this[OffsetProp] = if (isPush) 1.0f else -1.0f
-    }
-    state(ComposableTransitionState.EXITING) {
-        this[AlphaProp] = 0.5f
-        this[OffsetProp] = if (isPush) -1.0f else 1.0f
-    }
-
-    transition(
-        fromState = ComposableTransitionState.ENTERING,
-        toState = ComposableTransitionState.VISIBLE
-    ) {
-        AlphaProp using tween(
-            durationMillis = ScreenTransitionAnimationDuration,
-            easing = LinearEasing
-        )
-        OffsetProp using spring()
-    }
-
-    transition(
-        fromState = ComposableTransitionState.VISIBLE,
-        toState = ComposableTransitionState.EXITING
-    ) {
-        AlphaProp using tween(
-            durationMillis = ScreenTransitionAnimationDuration,
-            easing = LinearEasing
-        )
-        OffsetProp using spring()
     }
 }

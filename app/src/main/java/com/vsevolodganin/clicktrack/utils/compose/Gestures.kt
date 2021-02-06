@@ -5,7 +5,6 @@ import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.consumeDownChange
-import androidx.compose.ui.unit.inMilliseconds
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
 
@@ -17,7 +16,7 @@ suspend fun PointerInputScope.awaitLongTapOrCancellation(): PointerInputChange? 
     }
 
     return try {
-        withTimeout(viewConfiguration.longPressTimeout.inMilliseconds()) {
+        withTimeout(viewConfiguration.longPressTimeoutMillis) {
             awaitPointerEventScope {
                 waitForUpOrCancellation()?.also { it.consumeDownChange() }
             }

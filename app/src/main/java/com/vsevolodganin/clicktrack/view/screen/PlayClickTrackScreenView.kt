@@ -98,7 +98,7 @@ private fun ClickTrackScreenTopBar(
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = { dispatch(NavigateBack) }) {
-                Icon(imageVector = Icons.Default.ArrowBack)
+                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },
         title = { Text(text = state.clickTrack.value.name) },
@@ -111,7 +111,7 @@ private fun ClickTrackScreenTopBar(
                 },
                 enabled = editEnabled
             ) {
-                Icon(Icons.Default.Edit)
+                Icon(imageVector = Icons.Default.Edit, contentDescription = null)
             }
 
             var showDeleteConfirmation by remember { mutableStateOf(false) }
@@ -120,7 +120,7 @@ private fun ClickTrackScreenTopBar(
                     showDeleteConfirmation = true
                 },
             ) {
-                Icon(Icons.Default.Delete)
+                Icon(imageVector = Icons.Default.Delete, contentDescription = null)
             }
 
             if (showDeleteConfirmation) {
