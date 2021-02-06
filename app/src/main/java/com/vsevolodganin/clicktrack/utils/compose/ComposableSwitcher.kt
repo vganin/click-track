@@ -54,7 +54,7 @@ fun <Key, State> ComposableSwitcher(
                 )),
             )
         } else {
-            ComposableSwitcherState<Key, State>(
+            ComposableSwitcherState(
                 // we use Any here as something which will not be equals to the real initial value
                 currentKey = Any(),
             )
