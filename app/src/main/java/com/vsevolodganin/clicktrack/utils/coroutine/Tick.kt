@@ -1,28 +1,63 @@
 package com.vsevolodganin.clicktrack.utils.coroutine
 
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.withTimeout
+import android.os.SystemClock
+import kotlinx.coroutines.runInterruptible
 import kotlin.time.Duration
 import kotlin.time.TimeSource
+import kotlin.time.nanoseconds
 
 suspend fun tick(
     duration: Duration,
     interval: Duration,
-    initialDelay: Duration,
     onTick: suspend (passed: Duration) -> Unit,
+    delayNanos: suspend (Long) -> Unit = { delayNanosThreadSleep(it) },
 ) {
+    require(!duration.isNegative())
+    require(!interval.isNegative())
     val startTime = TimeSource.Monotonic.markNow()
-    try {
-        withTimeout(duration) {
-            kotlinx.coroutines.channels.ticker(
-                delayMillis = interval.toLongMilliseconds(),
-                initialDelayMillis = initialDelay.toLongMilliseconds(),
-            ).consumeEach {
-                onTick(startTime.elapsedNow())
-            }
+    tick(
+        durationNanos = duration.toLongNanoseconds(),
+        intervalNanos = interval.toLongNanoseconds(),
+        delayNanos = delayNanos,
+        onTick = { onTick(startTime.elapsedNow()) }
+    )
+}
+
+private suspend fun tick(
+    durationNanos: Long,
+    intervalNanos: Long,
+    onTick: suspend () -> Unit,
+    delayNanos: suspend (Long) -> Unit,
+) {
+    val startTime = nanoTime()
+    val maxDeadline = startTime + durationNanos
+    var deadline = startTime
+    var now: Long
+    while (deadline < maxDeadline) {
+        onTick()
+        deadline = (deadline + intervalNanos).coerceAtMost(maxDeadline)
+        now = nanoTime()
+        if (now >= deadline) {
+            val previousDeadline = ((now - startTime) / intervalNanos) * intervalNanos + startTime
+            deadline = (previousDeadline + intervalNanos).coerceAtMost(maxDeadline)
         }
-    } catch (e: TimeoutCancellationException) {
-        // Ignore
+        delayNanos(deadline - now)
     }
 }
+
+@Suppress("unused")
+private suspend fun delayNanosCoroutines(timeNanos: Long) {
+    delay(timeNanos.nanoseconds)
+}
+
+@Suppress("unused")
+private suspend fun delayNanosThreadSleep(timeNanos: Long) {
+    if (timeNanos <= 0) return
+    runInterruptible {
+        Thread.sleep(timeNanos / NANOS_IN_SECOND, (timeNanos % NANOS_IN_SECOND).toInt())
+    }
+}
+
+private fun nanoTime() = SystemClock.elapsedRealtimeNanos()
+
+private const val NANOS_IN_SECOND = 1_000_000L

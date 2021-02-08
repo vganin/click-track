@@ -7,7 +7,6 @@ import com.vsevolodganin.clicktrack.lib.ClickSoundSource
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.player.PlayerImpl.Const.CLICK_TIME_EPSILON
 import com.vsevolodganin.clicktrack.state.PlaybackState
 import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
 import com.vsevolodganin.clicktrack.utils.coroutine.tick
@@ -25,9 +24,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.time.Duration
-import kotlin.time.measureTime
 import kotlin.time.milliseconds
-import kotlin.time.minutes
+import kotlin.time.nanoseconds
 
 interface Player {
     suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null)
@@ -113,74 +111,64 @@ class PlayerImpl @Inject constructor(
         startAt: Duration,
         reportProgress: suspend (beatTimestamp: Duration) -> Unit,
     ) {
-        val totalDuration = cue.durationAsTime
-
-        if (startAt >= totalDuration) {
-            return
-        }
-
+        val totalDuration = cue.durationAsTime.takeIf { startAt < it } ?: return
         val timeSignature = cue.timeSignature
         val beatInterval = cue.bpm.interval
 
         var beatIndex: Int
-        var playedFor: Duration
+        val initialDelay: Duration
 
-        // Handle case when we start somewhere between beats
         if (startAt % beatInterval > Duration.ZERO) {
             val nextBeatIndex = (startAt / beatInterval).toInt() + 1
             val nextBeatTimestamp = (beatInterval * nextBeatIndex).coerceAtMost(totalDuration)
             val beatRemainingDuration = nextBeatTimestamp - startAt
 
-            delayNotifyingProgress(beatRemainingDuration, 16.milliseconds) { passed ->
-                reportProgress(startAt + passed)
-            }
+            tick(
+                duration = beatRemainingDuration,
+                interval = 16.milliseconds,
+                onTick = { passed ->
+                    reportProgress(startAt + passed)
+                }
+            )
 
             beatIndex = nextBeatIndex
-            playedFor = nextBeatTimestamp
+            initialDelay = nextBeatTimestamp
         } else {
             beatIndex = (startAt / beatInterval).toInt()
-            playedFor = startAt
+            initialDelay = Duration.ZERO
         }
 
-        // Handle all full beats
-        while ((totalDuration - playedFor) > CLICK_TIME_EPSILON) {
-            if (pausedState.value) {
-                pausedState.filter { false }.take(1).collect()
-            }
+        var passed1: Duration = Duration.ZERO
 
-            val beatDuration = beatInterval.coerceAtMost(totalDuration - playedFor)
-
-            val timeCorrection = measureTime {
-                soundPool.play(if (beatIndex % timeSignature.noteCount == 0) {
-                    strongBeatSound
-                } else {
-                    weakBeatSound
-                })
-            }
-
-            delayNotifyingProgress(beatDuration - timeCorrection, 16.milliseconds) { passed ->
-                reportProgress(playedFor + passed)
-            }
-
-            ++beatIndex
-            playedFor += beatDuration
-        }
-    }
-
-    private suspend fun delayNotifyingProgress(
-        durationOfDelay: Duration,
-        interval: Duration,
-        reportProgress: suspend (passed: Duration) -> Unit,
-    ) {
         tick(
-            duration = durationOfDelay,
-            interval = interval,
-            initialDelay = Duration.ZERO,
-            onTick = reportProgress
+            duration = totalDuration - initialDelay,
+            interval = beatInterval,
+            onTick = { passed ->
+                passed1 = passed
+
+                if (pausedState.value) {
+                    pausedState.filter { false }.take(1).collect()
+                }
+
+                if (beatIndex % timeSignature.noteCount == 0) {
+                    soundPool.play(strongBeatSound, PlayerSoundPool.SoundPriority.STRONG)
+                } else {
+                    soundPool.play(weakBeatSound, PlayerSoundPool.SoundPriority.WEAK)
+                }
+
+                ++beatIndex
+            },
+            delayNanos = { duration ->
+                if (duration <= 0) return@tick
+                tick(
+                    duration = duration.nanoseconds,
+                    interval = 16.milliseconds,
+                    onTick = { passed2 ->
+                        reportProgress(initialDelay + passed1 + passed2)
+                    },
+                )
+            },
         )
     }
 
-    private object Const {
-        val CLICK_TIME_EPSILON = 1.minutes / 1000 // Max. 1000 bpm
-    }
 }

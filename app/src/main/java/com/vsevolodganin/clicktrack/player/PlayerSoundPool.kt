@@ -11,6 +11,9 @@ import javax.inject.Inject
 class PlayerSoundPool @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
+    enum class SoundPriority {
+        STRONG, WEAK
+    }
 
     private val soundPool = SoundPool.Builder()
         .setMaxStreams(1)
@@ -26,16 +29,21 @@ class PlayerSoundPool @Inject constructor(
         ClickSoundSource.BuiltinWeak to soundPool.load(ClickSoundSource.BuiltinWeak),
     )
 
-    fun play(sound: ClickSoundSource) {
+    fun play(sound: ClickSoundSource, priority: SoundPriority) {
         val soundId = loadedSounds.getOrPut(sound) { soundPool.load(sound) }
         soundPool.play(
             soundId,
             /* leftVolume = */ 1f,
             /* rightVolume = */ 1f,
-            /* priority = */ Const.DEFAULT_PRIORITY,
+            /* priority = */ priority.asInt(),
             /* loop = */ 0,
             /* rate = */ 1f
         )
+    }
+
+    private fun SoundPriority.asInt(): Int = when (this) {
+        SoundPriority.STRONG -> 2
+        SoundPriority.WEAK -> 1
     }
 
     fun release() {
@@ -44,13 +52,9 @@ class PlayerSoundPool @Inject constructor(
 
     private fun SoundPool.load(sound: ClickSoundSource): Int {
         return when (sound) {
-            ClickSoundSource.BuiltinStrong -> load(context, R.raw.strong, Const.DEFAULT_PRIORITY)
-            ClickSoundSource.BuiltinWeak -> load(context, R.raw.weak, Const.DEFAULT_PRIORITY)
-            is ClickSoundSource.File -> load(sound.path, Const.DEFAULT_PRIORITY)
+            ClickSoundSource.BuiltinStrong -> load(context, R.raw.strong, 1)
+            ClickSoundSource.BuiltinWeak -> load(context, R.raw.weak, 1)
+            is ClickSoundSource.File -> load(sound.path, 1)
         }
-    }
-
-    private object Const {
-        const val DEFAULT_PRIORITY = 1
     }
 }
