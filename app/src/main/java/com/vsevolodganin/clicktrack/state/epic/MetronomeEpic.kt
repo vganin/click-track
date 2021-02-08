@@ -15,12 +15,14 @@ import com.vsevolodganin.clicktrack.state.frontScreen
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.merge
 import javax.inject.Inject
+import kotlin.time.milliseconds
 
 @ViewModelScoped
 class MetronomeEpic @Inject constructor(
@@ -48,6 +50,7 @@ class MetronomeEpic @Inject constructor(
                 .map(MetronomeActions::UpdateMetronomeState),
 
             actions.filterIsInstance<MetronomeActions.ChangeBpm>()
+                .debounce(100.milliseconds)
                 .mapNotNull { action ->
                     currentlyPlayingMetronome()?.clickTrack?.run {
                         copy(
@@ -64,6 +67,7 @@ class MetronomeEpic @Inject constructor(
 
             actions
                 .filterIsInstance<MetronomeActions.ChangeBpm>()
+                .debounce(100.milliseconds)
                 .consumeEach { action ->
                     userPreferencesRepository.metronomeBpm = action.bpm
                 }
