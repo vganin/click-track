@@ -28,7 +28,8 @@ fun ContentView(screen: Screen, positionInBackstack: Int, dispatch: Dispatch) {
         val modifier = Modifier.fillMaxSize()
 
         var previousPosition by remember { mutableStateOf(positionInBackstack) }
-        val isPush = positionInBackstack > previousPosition
+        val isPush = remember(positionInBackstack) { positionInBackstack > previousPosition }
+        previousPosition = positionInBackstack
 
         ComposableSwitcher(
             currentKey = positionInBackstack,
