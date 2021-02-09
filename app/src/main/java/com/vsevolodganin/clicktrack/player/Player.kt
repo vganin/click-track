@@ -165,7 +165,7 @@ class PlayerImpl @Inject constructor(
         }
 
         tick(
-            duration = totalDuration - initialDelay - Const.TIME_EPSILON_TO_AVOID_SPURIOUS_CLICKS,
+            duration = (totalDuration - initialDelay - Const.TIME_EPSILON_TO_AVOID_SPURIOUS_CLICKS).coerceAtLeast(Duration.ZERO),
             interval = beatInterval,
             onTick = { passed ->
                 if (pausedState.value) {
