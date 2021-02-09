@@ -10,16 +10,15 @@ suspend fun tick(
     duration: Duration,
     interval: Duration,
     onTick: suspend (passed: Duration) -> Unit,
-    delayNanos: suspend (Long) -> Unit = { delayNanosThreadSleep(it) },
 ) {
     require(!duration.isNegative())
     require(!interval.isNegative())
     val startTime = TimeSource.Monotonic.markNow()
     tick(
         durationNanos = duration.toLongNanoseconds(),
-        intervalNanos = interval.toLongNanoseconds(),
-        delayNanos = delayNanos,
-        onTick = { onTick(startTime.elapsedNow()) }
+        intervalNanos = interval.coerceAtMost(duration).toLongNanoseconds(),
+        onTick = { onTick(startTime.elapsedNow()) },
+        delayNanos = { delayNanosThreadSleep(it) },
     )
 }
 
@@ -38,7 +37,7 @@ private suspend fun tick(
         deadline = (deadline + intervalNanos).coerceAtMost(maxDeadline)
         now = nanoTime()
         if (now >= deadline) {
-            val previousDeadline = ((now - startTime) / intervalNanos) * intervalNanos + startTime
+            val previousDeadline = (now - startTime) / intervalNanos * intervalNanos + startTime
             deadline = (previousDeadline + intervalNanos).coerceAtMost(maxDeadline)
         }
         delayNanos(deadline - now)

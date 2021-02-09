@@ -16,7 +16,7 @@ class PlayerSoundPool @Inject constructor(
     }
 
     private val soundPool = SoundPool.Builder()
-        .setMaxStreams(1)
+        .setMaxStreams(Int.MAX_VALUE)
         .setAudioAttributes(AudioAttributes.Builder()
             .setUsage(AudioAttributes.USAGE_UNKNOWN)
             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)

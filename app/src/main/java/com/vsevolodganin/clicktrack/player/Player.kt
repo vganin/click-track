@@ -9,6 +9,7 @@ import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.state.PlaybackState
 import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
+import com.vsevolodganin.clicktrack.utils.coroutine.delay
 import com.vsevolodganin.clicktrack.utils.coroutine.tick
 import com.vsevolodganin.clicktrack.utils.time.rem
 import kotlinx.coroutines.CoroutineDispatcher
@@ -18,14 +19,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.time.Duration
-import kotlin.time.milliseconds
-import kotlin.time.nanoseconds
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
 
 interface Player {
     suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null)
@@ -43,13 +47,22 @@ class PlayerImpl @Inject constructor(
 ) : Player {
 
     private var playerJob: Job? = null
-    private var playbackState = MutableNonConflatedStateFlow<PlaybackState?>(null)
+    private val playbackStateMutex = Mutex()
+    private var playbackState = MutableNonConflatedStateFlow<InternalPlaybackState?>(null)
     private var pausedState = MutableNonConflatedStateFlow(false)
 
     override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?): Unit = withContext(mainDispatcher) {
-        val playback = playbackState.value
-        val atProgressCoerced = atProgress ?: playback?.progress ?: 0f
-        val startAtTime = clickTrack.value.durationInTime * atProgressCoerced.toDouble()
+        val currentProgress = currentProgress()
+        val atProgressCoerced = atProgress ?: currentProgress ?: 0.0
+        val startAtTime = clickTrack.value.durationInTime * atProgressCoerced
+
+        updatePlaybackState {
+            InternalPlaybackState(
+                clickTrack = clickTrack,
+                progress = atProgressCoerced,
+                startMark = TimeSource.Monotonic.markNow(),
+            )
+        }
 
         playerJob?.cancel()
         playerJob = launch(playerDispatcher) {
@@ -66,16 +79,33 @@ class PlayerImpl @Inject constructor(
     override suspend fun stop(): Unit = withContext(mainDispatcher) {
         playerJob?.cancel()
         playerJob = null
-        playbackState.setValue(null)
+        updatePlaybackState { null }
     }
 
-    override fun playbackState(): Flow<PlaybackState?> = playbackState.distinctUntilChanged()
+    override fun playbackState(): Flow<PlaybackState?> {
+        return playbackState
+            .map { internalPlaybackState ->
+                internalPlaybackState ?: return@map null
+                PlaybackState(
+                    clickTrack = internalPlaybackState.clickTrack,
+                    progress = internalPlaybackState.progress,
+                )
+            }
+            .distinctUntilChanged()
+    }
+
+    private fun currentProgress(): Double? {
+        return playbackState.value?.run {
+            val elapsedSinceStart = startMark.elapsedNow()
+            elapsedSinceStart / clickTrack.value.durationInTime
+        }
+    }
 
     private suspend fun startImpl(clickTrack: ClickTrackWithId, startAt: Duration) = coroutineScope {
         var iterationStartsWith = if (startAt < clickTrack.value.durationInTime) startAt else Duration.ZERO
 
         do {
-            fun Duration.toProgress(): Float = (this / clickTrack.value.durationInTime).toFloat()
+            fun Duration.toProgress(): Double = this / clickTrack.value.durationInTime
 
             var cueGlobalStart = Duration.ZERO
 
@@ -88,12 +118,12 @@ class PlayerImpl @Inject constructor(
                     cue = cue,
                     startAt = cueLocalStart,
                     reportProgress = { beatTimestamp ->
-                        playbackState.setValue(
-                            PlaybackState(
+                        updatePlaybackState {
+                            this?.copy(
                                 clickTrack = clickTrack,
                                 progress = (cueGlobalStart + beatTimestamp).toProgress(),
                             )
-                        )
+                        }
                     }
                 )
 
@@ -123,13 +153,8 @@ class PlayerImpl @Inject constructor(
             val nextBeatTimestamp = (beatInterval * nextBeatIndex).coerceAtMost(totalDuration)
             val beatRemainingDuration = nextBeatTimestamp - startAt
 
-            tick(
-                duration = beatRemainingDuration,
-                interval = 16.milliseconds,
-                onTick = { passed ->
-                    reportProgress(startAt + passed)
-                }
-            )
+            reportProgress(startAt)
+            delay(beatRemainingDuration)
 
             beatIndex = nextBeatIndex
             initialDelay = nextBeatTimestamp
@@ -138,17 +163,15 @@ class PlayerImpl @Inject constructor(
             initialDelay = Duration.ZERO
         }
 
-        var passed1: Duration = Duration.ZERO
-
         tick(
             duration = totalDuration - initialDelay,
             interval = beatInterval,
             onTick = { passed ->
-                passed1 = passed
-
                 if (pausedState.value) {
                     pausedState.filter { false }.take(1).collect()
                 }
+
+                reportProgress(initialDelay + passed)
 
                 if (beatIndex % timeSignature.noteCount == 0) {
                     soundPool.play(strongBeatSound, PlayerSoundPool.SoundPriority.STRONG)
@@ -158,17 +181,19 @@ class PlayerImpl @Inject constructor(
 
                 ++beatIndex
             },
-            delayNanos = { duration ->
-                if (duration <= 0) return@tick
-                tick(
-                    duration = duration.nanoseconds,
-                    interval = 16.milliseconds,
-                    onTick = { passed2 ->
-                        reportProgress(initialDelay + passed1 + passed2)
-                    },
-                )
-            },
         )
     }
 
+    private suspend fun updatePlaybackState(
+        update: InternalPlaybackState?.() -> InternalPlaybackState?,
+    ) = playbackStateMutex.withLock {
+        val previous = playbackState.value
+        playbackState.setValue(previous.update())
+    }
+
+    private data class InternalPlaybackState(
+        val clickTrack: ClickTrackWithId,
+        val progress: Double,
+        val startMark: TimeMark,
+    )
 }

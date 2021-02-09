@@ -7,6 +7,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class PlayClickTrackScreenState(
     val clickTrack: ClickTrackWithId,
-    val progress: Float?,
+    val progress: Double?,
     val isPlaying: Boolean,
 ) : Parcelable

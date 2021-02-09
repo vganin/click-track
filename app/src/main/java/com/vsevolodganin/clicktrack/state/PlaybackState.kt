@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class PlaybackState(
     val clickTrack: ClickTrackWithId,
-    val progress: Float,
+    val progress: Double,
 ) : Parcelable

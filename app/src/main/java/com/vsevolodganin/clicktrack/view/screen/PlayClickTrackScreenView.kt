@@ -77,7 +77,7 @@ private fun ClickTrackScreenContent(
             clickTrack = state.clickTrack.value,
             drawTextMarks = true,
             progress = state.progress,
-            progressDragndropEnabled = true,
+            progressDragAndDropEnabled = true,
             onProgressDragStart = {
                 dispatch(PausePlay)
             },

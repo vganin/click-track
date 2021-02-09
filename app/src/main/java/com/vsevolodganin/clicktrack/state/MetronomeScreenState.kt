@@ -7,6 +7,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class MetronomeScreenState(
     val bpm: BeatsPerMinute,
-    val progress: Float?,
+    val progress: Double?,
     val isPlaying: Boolean,
 ) : Parcelable

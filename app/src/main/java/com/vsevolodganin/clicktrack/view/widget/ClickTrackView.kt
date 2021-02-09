@@ -3,8 +3,10 @@ package com.vsevolodganin.clicktrack.view.widget
 import androidx.compose.animation.animatedFloat
 import androidx.compose.animation.core.AnimatedFloat
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculateCentroid
@@ -67,8 +69,9 @@ fun ClickTrackView(
     modifier: Modifier = Modifier,
     drawAllBeatsMarks: Boolean = false,
     drawTextMarks: Boolean = true,
-    progress: Float? = null,
-    progressDragndropEnabled: Boolean = false,
+    progress: Double? = null,
+    onAnimatedProgressUpdate: (Double) -> Unit = {},
+    progressDragAndDropEnabled: Boolean = false,
     onProgressDragStart: () -> Unit = {},
     onProgressDrop: (Float) -> Unit = {},
     viewportPanEnabled: Boolean = false,
@@ -101,12 +104,14 @@ fun ClickTrackView(
             onDispose { }
         }
 
-        val progressX = progress?.let {
-            animatedProgressX(
+        val progressPosition = progress?.let {
+            animatedProgressPosition(
                 clickTrack = clickTrack,
                 progress = progress,
                 totalWidthPx = widthPx,
-            )
+            ).also { progressPosition ->
+                onAnimatedProgressUpdate((progressPosition.value / widthPx).toDouble())
+            }
         }
 
         val playbackStampColor = MaterialTheme.colors.secondaryVariant
@@ -118,10 +123,10 @@ fun ClickTrackView(
         Box(
             modifier = Modifier
                 .clickTrackGestures(
-                    viewportScaleAndPanEnabled = viewportPanEnabled,
-                    progressDragndropEnabled = progressDragndropEnabled,
+                    viewportZoomAndPanEnabled = viewportPanEnabled,
+                    progressDragAndDropEnabled = progressDragAndDropEnabled,
                     viewportState = viewportState,
-                    progress = progressX,
+                    progressPosition = progressPosition,
                     onProgressDragStart = { progress ->
                         isProgressCaptured = true
                         progress.stop()
@@ -153,11 +158,11 @@ fun ClickTrackView(
                             )
                         }
 
-                        if (progressX != null) {
+                        if (progressPosition != null) {
                             drawLine(
                                 color = playbackStampColor,
-                                start = Offset(progressX.value, 0f),
-                                end = Offset(progressX.value, size.height),
+                                start = Offset(progressPosition.value, 0f),
+                                end = Offset(progressPosition.value, size.height),
                                 strokeWidth = progressLineWidth.value / scaleX
                             )
                         }
@@ -220,20 +225,37 @@ fun ClickTrackView(
 }
 
 @Composable
-private fun animatedProgressX(
+private fun animatedProgressPosition(
     clickTrack: ClickTrack,
-    progress: Float,
+    progress: Double,
     totalWidthPx: Float,
 ): AnimatedFloat {
     val playbackStampX = animatedFloat(0f).apply {
         setBounds(0f, totalWidthPx)
     }
 
+    val totalTrackDuration = clickTrack.durationInTime
+    val targetPosition = totalTrackDuration * progress
+
     DisposableEffect(progress) {
-        val totalTrackDuration = clickTrack.durationInTime
-        val targetPosition = totalTrackDuration * progress.toDouble()
-        fun Duration.toX() = toX(totalTrackDuration, totalWidthPx)
-        playbackStampX.snapTo(targetPosition.toX())
+        val targetPositionX = targetPosition.toX(totalTrackDuration, totalWidthPx)
+
+        playbackStampX.snapTo(targetPositionX)
+
+        onDispose { }
+    }
+
+    DisposableEffect(progress, totalTrackDuration) {
+        val animationDuration = totalTrackDuration - targetPosition
+
+        playbackStampX.animateTo(
+            targetValue = totalWidthPx,
+            anim = tween(
+                durationMillis = animationDuration.coerceAtLeast(Duration.ZERO).toLongMilliseconds().toInt(),
+                easing = LinearEasing
+            )
+        )
+
         onDispose { }
     }
 
@@ -299,33 +321,33 @@ private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
 // FIXME(https://issuetracker.google.com/issues/177060212): Need to preserve names for easy revert of FIXME below
 @Suppress("NAME_SHADOWING", "UnnecessaryVariable")
 private fun Modifier.clickTrackGestures(
-    viewportScaleAndPanEnabled: Boolean,
-    progressDragndropEnabled: Boolean,
+    viewportZoomAndPanEnabled: Boolean,
+    progressDragAndDropEnabled: Boolean,
     viewportState: AnimatedRect,
-    progress: AnimatedFloat?,
+    progressPosition: AnimatedFloat?,
     onProgressDragStart: (progress: AnimatedFloat) -> Unit,
     onProgressDrop: (progress: AnimatedFloat) -> Unit,
 ): Modifier = composed {
     val hapticFeedback = AmbientHapticFeedback.current
 
     // FIXME(https://issuetracker.google.com/issues/177060212): Can't reinstall pointerInput, so need to store and update all argument states locally
-    val viewportScaleAndPanEnabledInternal by remember { mutableStateOf(viewportScaleAndPanEnabled) }.apply {
-        value = viewportScaleAndPanEnabled
+    val viewportZoomAndPanEnabledInternal by remember { mutableStateOf(viewportZoomAndPanEnabled) }.apply {
+        value = viewportZoomAndPanEnabled
     }
-    val progressDragndropEnabledInternal by remember { mutableStateOf(progressDragndropEnabled) }.apply {
-        value = progressDragndropEnabled
+    val progressDragAndDropEnabledInternal by remember { mutableStateOf(progressDragAndDropEnabled) }.apply {
+        value = progressDragAndDropEnabled
     }
     val viewportStateInternal by remember { mutableStateOf(viewportState) }.apply { value = viewportState }
-    val progressInternal by remember { mutableStateOf(progress) }.apply { value = progress }
+    val progressPositionInternal by remember { mutableStateOf(progressPosition) }.apply { value = progressPosition }
     val onProgressDragStartInternal by remember { mutableStateOf(onProgressDragStart) }.apply { value = onProgressDragStart }
     val onProgressDropInternal by remember { mutableStateOf(onProgressDrop) }.apply { value = onProgressDrop }
 
     pointerInput {
         forEachGesture {
-            val viewportScaleAndPanEnabled = viewportScaleAndPanEnabledInternal
-            val progressDragndropEnabled = progressDragndropEnabledInternal
+            val viewportZoomAndPanEnabled = viewportZoomAndPanEnabledInternal
+            val progressDragAndDropEnabled = progressDragAndDropEnabledInternal
             val viewportState = viewportStateInternal
-            val progress = progressInternal
+            val progressPosition = progressPositionInternal
             val onProgressDragStart = onProgressDragStartInternal
             val onProgressDrop = onProgressDropInternal
 
@@ -337,31 +359,31 @@ private fun Modifier.clickTrackGestures(
                     }
                 }
 
-                var dragndropGesture: Job? = null
-                var zoomnpanGesture: Job? = null
+                var dragAndDropGesture: Job? = null
+                var zoomAndPanGesture: Job? = null
 
-                if (progressDragndropEnabled && progress != null) {
-                    dragndropGesture = launch {
+                if (progressDragAndDropEnabled && progressPosition != null) {
+                    dragAndDropGesture = launch {
                         val down = awaitLongTapOrCancellation() ?: return@launch
 
-                        zoomnpanGesture?.cancel()
+                        zoomAndPanGesture?.cancel()
 
                         // FIXME(https://issuetracker.google.com/issues/171394805): Not working if global settings disables haptic feedback
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
 
-                        onProgressDragStart(progress)
+                        onProgressDragStart(progressPosition)
 
                         awaitPointerEventScope {
                             drag(down.id) {
-                                progress.snapTo(progress.value + it.positionChange().x)
+                                progressPosition.snapTo(progressPosition.value + it.positionChange().x)
                             }
-                            onProgressDrop(progress)
+                            onProgressDrop(progressPosition)
                         }
                     }
                 }
 
-                if (viewportScaleAndPanEnabled) {
-                    zoomnpanGesture = launch {
+                if (viewportZoomAndPanEnabled) {
+                    zoomAndPanGesture = launch {
                         awaitPointerEventScope {
                             var zoom = 1f
                             var pan = Offset.Zero
@@ -392,7 +414,7 @@ private fun Modifier.clickTrackGestures(
                                     }
 
                                     if (pastTouchSlop) {
-                                        dragndropGesture?.cancel()
+                                        dragAndDropGesture?.cancel()
 
                                         val centroid = event.calculateCentroid(useCurrent = false)
                                         if (zoomChange != 1f ||
@@ -440,7 +462,7 @@ fun PreviewClickTrackView() {
     ClickTrackView(
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,
-        progress = 0.13f,
+        progress = 0.13,
         modifier = Modifier.fillMaxSize()
     )
 }

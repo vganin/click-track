@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName") // Constructor functions should be named as class
+
 package com.vsevolodganin.clicktrack.state.actions
 
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
@@ -13,6 +15,7 @@ class StoreRemoveClickTrack(val id: Long) : Action
 class UpdateCurrentlyPlaying(val playbackState: PlaybackState?) : Action
 
 class StartPlay(val clickTrack: ClickTrackWithId, val progress: Double?) : Action
+fun StartOrContinuePlay(clickTrack: ClickTrackWithId) = StartPlay(clickTrack, progress = null)
 object StopPlay : Action
 object PausePlay : Action
 

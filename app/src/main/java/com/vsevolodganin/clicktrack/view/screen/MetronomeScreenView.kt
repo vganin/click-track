@@ -16,6 +16,10 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,8 +78,11 @@ private fun MetronomeScreenViewContent(
     state: MetronomeScreenState,
     dispatch: Dispatch,
 ) {
-    val bpmState = observableMutableStateOf(state.bpm).observe { bpm ->
-        dispatch(MetronomeActions.ChangeBpm(bpm))
+    var progress by remember { mutableStateOf(state.progress) }
+    val bpmState = remember {
+        observableMutableStateOf(state.bpm).observe { bpm ->
+            dispatch(MetronomeActions.ChangeBpm(bpm, progress ?: 0.0))
+        }
     }
     val metronomeClickTrack = metronomeClickTrack(bpmState.value)
 
@@ -94,6 +101,7 @@ private fun MetronomeScreenViewContent(
                 drawAllBeatsMarks = true,
                 drawTextMarks = false,
                 progress = state.progress,
+                onAnimatedProgressUpdate = { progress = it }
             )
         }
 
@@ -151,7 +159,7 @@ fun PreviewMetronomeScreenView() {
     MetronomeScreenView(
         MetronomeScreenState(
             bpm = 90.bpm,
-            progress = 0.13f,
+            progress = 0.13,
             isPlaying = false,
         )
     )

@@ -150,7 +150,6 @@ fun ComposableSwitcherPreview() {
         currentKey = screenIndex,
         currentState = screens[screenIndex],
     ) { _, screenData, transition ->
-        println("$screenData : $slideLeft")
         val offset by transition.animateFloat(transitionSpec = { tween(durationMillis = 2000) }) { state ->
             when (state) {
                 VISIBLE -> 0.0f
