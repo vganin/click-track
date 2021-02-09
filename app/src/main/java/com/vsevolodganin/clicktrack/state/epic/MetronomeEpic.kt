@@ -50,7 +50,7 @@ class MetronomeEpic @Inject constructor(
                 .map(MetronomeActions::UpdateMetronomeState),
 
             actions.filterIsInstance<MetronomeActions.ChangeBpm>()
-                .debounce(1000.milliseconds)
+                .debounce(100.milliseconds)
                 .mapNotNull { action ->
                     currentlyPlayingMetronome()?.clickTrack?.run {
                         copy(
