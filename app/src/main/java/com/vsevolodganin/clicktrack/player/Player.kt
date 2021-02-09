@@ -30,6 +30,7 @@ import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
+import kotlin.time.milliseconds
 
 interface Player {
     suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null)
@@ -164,7 +165,7 @@ class PlayerImpl @Inject constructor(
         }
 
         tick(
-            duration = totalDuration - initialDelay,
+            duration = totalDuration - initialDelay - Const.TIME_EPSILON_TO_AVOID_SPURIOUS_CLICKS,
             interval = beatInterval,
             onTick = { passed ->
                 if (pausedState.value) {
@@ -196,4 +197,8 @@ class PlayerImpl @Inject constructor(
         val progress: Double,
         val startMark: TimeMark,
     )
+
+    private object Const {
+        val TIME_EPSILON_TO_AVOID_SPURIOUS_CLICKS = 1.milliseconds
+    }
 }
