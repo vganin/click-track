@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.gesture.util.VelocityTracker
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -389,10 +390,13 @@ private fun Modifier.clickTrackGestures(
                 if (viewportZoomAndPanEnabled) {
                     zoomAndPanGesture = launch {
                         awaitPointerEventScope {
+                            val zoomChangeEpsilon = 0.01f
                             var zoom = 1f
                             var pan = Offset.Zero
                             var pastTouchSlop = false
                             val touchSlop = viewConfiguration.touchSlop
+
+                            val velocityTracker = VelocityTracker()
 
                             awaitFirstDown()
                             do {
@@ -439,6 +443,11 @@ private fun Modifier.clickTrackGestures(
                                                     newBottom = viewport.bottom
                                                 )
                                                 translate(-panChange.copy(y = 0f) / currentViewportTransformations.scaleX)
+
+                                                velocityTracker.addPosition(
+                                                    timeMillis = event.changes.firstOrNull { it.pressed }?.uptimeMillis ?: 0L,
+                                                    position = centroid
+                                                )
                                             }
                                         }
                                         event.changes.forEach {
@@ -449,6 +458,11 @@ private fun Modifier.clickTrackGestures(
                                     }
                                 }
                             } while (!canceled && event.changes.any { it.pressed })
+
+                            if (abs(zoom - 1f) < zoomChangeEpsilon) {
+                                viewportState.fling(-velocityTracker.calculateVelocity().run { Offset(x, y) } /
+                                        currentViewportTransformations.scaleX)
+                            }
                         }
                     }
                 }
