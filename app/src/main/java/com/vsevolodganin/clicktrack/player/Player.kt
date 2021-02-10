@@ -172,13 +172,13 @@ class PlayerImpl @Inject constructor(
                     pausedState.filter { false }.take(1).collect()
                 }
 
-                reportProgress(initialDelay + passed)
-
                 if (beatIndex % timeSignature.noteCount == 0) {
                     soundPool.play(strongBeatSound, PlayerSoundPool.SoundPriority.STRONG)
                 } else {
                     soundPool.play(weakBeatSound, PlayerSoundPool.SoundPriority.WEAK)
                 }
+
+                reportProgress(initialDelay + passed)
 
                 ++beatIndex
             },
