@@ -5,7 +5,6 @@ import com.vsevolodganin.clicktrack.player.Player
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
 import com.vsevolodganin.clicktrack.state.actions.PausePlay
-import com.vsevolodganin.clicktrack.state.actions.StartOrContinuePlay
 import com.vsevolodganin.clicktrack.state.actions.StartPlay
 import com.vsevolodganin.clicktrack.state.actions.StopPlay
 import com.vsevolodganin.clicktrack.state.actions.StoreUpdateClickTrack
@@ -42,7 +41,7 @@ class PlayerEpic @Inject constructor(
                 .transformLatest { result ->
                     val playbackState = player.playbackState().firstOrNull()
                     if (!result.isErrorInName && playbackState?.clickTrack?.id == result.clickTrack.id) {
-                        emit(StartOrContinuePlay(result.clickTrack))
+                        emit(StartPlay(result.clickTrack))
                     }
                 },
         )

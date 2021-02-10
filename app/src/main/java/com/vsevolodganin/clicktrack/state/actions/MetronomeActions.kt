@@ -6,5 +6,6 @@ import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 
 sealed class MetronomeActions : Action {
     class UpdateMetronomeState(val state: MetronomeScreenState) : MetronomeActions()
-    class ChangeBpm(val bpm: BeatsPerMinute, val startProgress: Double) : MetronomeActions()
+    class ChangeBpm(val bpm: BeatsPerMinute) : MetronomeActions()
+    object BpmMeterTap : MetronomeActions()
 }

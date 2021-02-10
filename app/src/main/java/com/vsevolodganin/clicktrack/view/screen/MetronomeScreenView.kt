@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -16,10 +18,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -78,16 +77,15 @@ private fun MetronomeScreenViewContent(
     state: MetronomeScreenState,
     dispatch: Dispatch,
 ) {
-    var progress by remember { mutableStateOf(state.progress) }
-    val bpmState = remember {
+    val bpmState = remember(state.bpm) {
         observableMutableStateOf(state.bpm).observe { bpm ->
-            dispatch(MetronomeActions.ChangeBpm(bpm, progress ?: 0.0))
+            dispatch(MetronomeActions.ChangeBpm(bpm))
         }
     }
     val metronomeClickTrack = metronomeClickTrack(bpmState.value)
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (clickTrackRef, bpmText, bpmWheel) = createRefs()
+        val (clickTrackRef, bpmText, bpmWheel, bpmMeter) = createRefs()
 
         Card(
             modifier = Modifier
@@ -101,7 +99,6 @@ private fun MetronomeScreenViewContent(
                 drawAllBeatsMarks = true,
                 drawTextMarks = false,
                 progress = state.progress,
-                onAnimatedProgressUpdate = { progress = it }
             )
         }
 
@@ -120,16 +117,28 @@ private fun MetronomeScreenViewContent(
             state = bpmState,
             modifier = Modifier
                 .preferredSize(200.dp)
-                .padding(32.dp)
                 .constrainAs(bpmWheel) {
                     centerHorizontallyTo(parent)
-                    bottom.linkTo(parent.bottom)
+                    bottom.linkTo(parent.bottom, margin = 32.dp)
                 }
         ) {
             PlayStopButton(state.isPlaying, onToggle = {
-                val action = if (state.isPlaying) StopPlay else StartPlay(metronomeClickTrack, progress = 0.0)
+                val action = if (state.isPlaying) StopPlay else StartPlay(metronomeClickTrack)
                 dispatch(action)
             })
+        }
+
+        FloatingActionButton(
+            onClick = { dispatch(MetronomeActions.BpmMeterTap) },
+            modifier = Modifier
+                .size(64.dp)
+                .constrainAs(bpmMeter) {
+                    centerVerticallyTo(bpmWheel)
+                    start.linkTo(bpmWheel.end)
+                    end.linkTo(parent.end)
+                }
+        ) {
+            Text(text = stringResource(id = R.string.bpm_meter_tap))
         }
     }
 }

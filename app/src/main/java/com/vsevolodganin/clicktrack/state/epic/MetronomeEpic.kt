@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.state.epic
 
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
+import com.vsevolodganin.clicktrack.meter.BpmMeter
 import com.vsevolodganin.clicktrack.model.MetronomeId
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
@@ -28,6 +29,7 @@ import kotlin.time.milliseconds
 class MetronomeEpic @Inject constructor(
     private val store: Store<AppState>,
     private val userPreferencesRepository: UserPreferencesRepository,
+    private val bpmMeter: BpmMeter,
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {
@@ -49,6 +51,12 @@ class MetronomeEpic @Inject constructor(
                 }
                 .map(MetronomeActions::UpdateMetronomeState),
 
+            actions.filterIsInstance<MetronomeActions.BpmMeterTap>()
+                .mapNotNull {
+                    bpmMeter.addTap()
+                    bpmMeter.calculateBpm()?.let(MetronomeActions::ChangeBpm)
+                },
+
             actions.filterIsInstance<MetronomeActions.ChangeBpm>()
                 .debounce(100.milliseconds)
                 .mapNotNull { action ->
@@ -61,7 +69,7 @@ class MetronomeEpic @Inject constructor(
                             )
                         )
                     }?.let { updatedClickTrack ->
-                        StartPlay(clickTrack = updatedClickTrack, progress = action.startProgress)
+                        StartPlay(clickTrack = updatedClickTrack)
                     }
                 },
 

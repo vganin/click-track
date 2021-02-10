@@ -71,10 +71,9 @@ fun ClickTrackView(
     drawAllBeatsMarks: Boolean = false,
     drawTextMarks: Boolean = true,
     progress: Double? = null,
-    onAnimatedProgressUpdate: (Double) -> Unit = {},
     progressDragAndDropEnabled: Boolean = false,
     onProgressDragStart: () -> Unit = {},
-    onProgressDrop: (Float) -> Unit = {},
+    onProgressDrop: (Double) -> Unit = {},
     viewportPanEnabled: Boolean = false,
 ) {
     BoxWithConstraints(modifier = modifier) {
@@ -110,9 +109,7 @@ fun ClickTrackView(
                 clickTrack = clickTrack,
                 progress = progress,
                 totalWidthPx = widthPx,
-            ).also { progressPosition ->
-                onAnimatedProgressUpdate((progressPosition.value / widthPx).toDouble())
-            }
+            )
         }
 
         val playbackStampColor = MaterialTheme.colors.secondaryVariant
@@ -135,7 +132,7 @@ fun ClickTrackView(
                     },
                     onProgressDrop = { progress ->
                         isProgressCaptured = false
-                        onProgressDrop(progress.value / widthPx)
+                        onProgressDrop(progress.value.toDouble() / widthPx)
                     }
                 )
         ) {

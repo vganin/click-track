@@ -3,6 +3,7 @@ package com.vsevolodganin.clicktrack.lib
 import com.vsevolodganin.clicktrack.lib.android.AndroidParcelable
 import com.vsevolodganin.clicktrack.lib.android.AndroidParcelize
 import kotlinx.serialization.Serializable
+import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.minutes
 
@@ -11,6 +12,9 @@ import kotlin.time.minutes
 public data class BeatsPerMinute(
     public val value: Int
 ) : AndroidParcelable {
+
+    public constructor(beatCount: Int, timelapse: Duration) : this((1.minutes / timelapse * beatCount).roundToInt())
+
     init {
         require(value >= 0) { "Bpm should be greater than 0 but was: $value" }
     }

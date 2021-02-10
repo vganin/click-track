@@ -11,13 +11,9 @@ class StoreUpdateClickTrack(val clickTrack: ClickTrackWithId) : Action {
     class Result(val clickTrack: ClickTrackWithId, val isErrorInName: Boolean) : Action
 }
 class StoreRemoveClickTrack(val id: Long) : Action
-
 class UpdateCurrentlyPlaying(val playbackState: PlaybackState?) : Action
-
-class StartPlay(val clickTrack: ClickTrackWithId, val progress: Double?) : Action
-fun StartOrContinuePlay(clickTrack: ClickTrackWithId) = StartPlay(clickTrack, progress = null)
+class StartPlay(val clickTrack: ClickTrackWithId, val progress: Double? = null) : Action
 object StopPlay : Action
 object PausePlay : Action
-
 class UpdateClickTrackList(val data: List<ClickTrackWithId>) : Action
 class UpdateClickTrack(val data: ClickTrackWithId) : Action
