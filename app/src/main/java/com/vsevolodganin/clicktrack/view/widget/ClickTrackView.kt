@@ -118,7 +118,7 @@ fun ClickTrackView(
 
         val bounds = remember { Rect(0f, 0f, widthPx, heightPx) }
         val viewportState = AnimatedRect(bounds)
-        val viewport by derivedStateOf { viewportState.value }
+        val viewportTransformations by derivedStateOf { viewportState.transformations }
 
         Box(
             modifier = Modifier
@@ -138,10 +138,10 @@ fun ClickTrackView(
                     }
                 )
         ) {
-            val scaleX = bounds.width / viewport.width
-            val scaleY = bounds.height / viewport.height
-            val translateX = -viewport.left
-            val translateY = -viewport.top
+            val scaleX = viewportTransformations.scaleX
+            val scaleY = viewportTransformations.scaleY
+            val translateX = viewportTransformations.translateX
+            val translateY = viewportTransformations.translateY
 
             Canvas(modifier = Modifier.size(width, height)) {
                 withTransform(
@@ -351,6 +351,8 @@ private fun Modifier.clickTrackGestures(
             val onProgressDragStart = onProgressDragStartInternal
             val onProgressDrop = onProgressDropInternal
 
+            val currentViewportTransformations = viewportState.transformations
+
             coroutineScope {
                 // FIXME: The app crashes without any await
                 launch {
@@ -375,7 +377,9 @@ private fun Modifier.clickTrackGestures(
 
                         awaitPointerEventScope {
                             drag(down.id) {
-                                progressPosition.snapTo(progressPosition.value + it.positionChange().x)
+                                val snapTo = progressPosition.value +
+                                        it.positionChange().x / currentViewportTransformations.scaleX
+                                progressPosition.snapTo(snapTo)
                             }
                             onProgressDrop(progressPosition)
                         }
@@ -424,8 +428,8 @@ private fun Modifier.clickTrackGestures(
                                             val bounds = viewportState.bounds
 
                                             val newWidth = viewport.width / zoomChange
-                                            val newLeft =
-                                                viewport.left - (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width
+                                            val newLeft = viewport.left -
+                                                    (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width
 
                                             viewportState.apply {
                                                 snapTo(
@@ -434,7 +438,7 @@ private fun Modifier.clickTrackGestures(
                                                     newRight = newLeft + newWidth,
                                                     newBottom = viewport.bottom
                                                 )
-                                                translate(-panChange.copy(y = 0f))
+                                                translate(-panChange.copy(y = 0f) / currentViewportTransformations.scaleX)
                                             }
                                         }
                                         event.changes.forEach {
@@ -452,6 +456,22 @@ private fun Modifier.clickTrackGestures(
         }
     }
 }
+
+private val AnimatedRect.transformations
+    get() = object {
+        val scaleX: Float
+        val scaleY: Float
+        val translateX: Float
+        val translateY: Float
+
+        init {
+            val rect = value
+            scaleX = bounds.width / rect.width
+            scaleY = bounds.height / rect.height
+            translateX = -rect.left
+            translateY = -rect.top
+        }
+    }
 
 private const val PROGRESS_LINE_WIDTH_DEFAULT = 0f
 private const val PROGRESS_LINE_WIDTH_CAPTURED = 10f
