@@ -59,10 +59,7 @@ class MainActivity : AppCompatActivity() {
         epicMiddleware.register(*epics.toTypedArray())
 
         renderScope.launch {
-            // FIXME: Don't use method reference here because of compiler crash for now
-            appStateStore.state.collect {
-                render(it)
-            }
+            appStateStore.state.collect(::render)
         }
 
         intentProcessor.process(intent)
