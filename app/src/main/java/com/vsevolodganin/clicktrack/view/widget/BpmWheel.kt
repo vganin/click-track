@@ -16,6 +16,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,7 +48,7 @@ fun BpmWheel(
     },
 ) {
     val bpmRangeAsFloat = remember(bpmRange) { bpmRange.first.toFloat()..bpmRange.last.toFloat() }
-    var internalFloatState by remember { mutableStateOf(state.value.value.toFloat()) }
+    var internalFloatState by remember(state) { mutableStateOf(state.value.value.toFloat()) }
 
     Box(modifier) {
         Wheel(
@@ -70,7 +71,7 @@ fun BpmWheel(
 
 @Composable
 private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Modifier) {
-    var buttonAngle: Float by remember { mutableStateOf(90f) }
+    var buttonAngle by remember { mutableStateOf(90f) }
 
     BoxWithConstraints(modifier) {
         val density = LocalDensity.current
@@ -78,6 +79,7 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
         val height = minHeight
         val widthPx = with(density) { width.toPx() }
         val heightPx = with(density) { height.toPx() }
+        val localOnAngleChange by rememberUpdatedState(onAngleChange)
 
         Surface(
             modifier = Modifier
@@ -86,7 +88,7 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
                     val center = Offset(x = widthPx / 2, y = heightPx / 2)
                     detectRadialDragGesture(center) { angleDiff ->
                         buttonAngle -= angleDiff
-                        onAngleChange(angleDiff)
+                        localOnAngleChange(angleDiff)
                     }
                 },
             elevation = 4.dp,
