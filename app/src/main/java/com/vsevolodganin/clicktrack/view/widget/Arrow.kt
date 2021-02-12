@@ -1,8 +1,8 @@
 package com.vsevolodganin.clicktrack.view.widget
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -25,7 +25,7 @@ enum class ArrowDirection {
 fun Arrow(
     direction: ArrowDirection,
     modifier: Modifier = Modifier,
-    tint: Color = AmbientContentColor.current
+    tint: Color = LocalContentColor.current
 ) {
     Icon(
         imageVector = arrowVectorResource(direction),

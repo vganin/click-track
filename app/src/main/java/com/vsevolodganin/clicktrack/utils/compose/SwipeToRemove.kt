@@ -1,17 +1,18 @@
 package com.vsevolodganin.clicktrack.utils.compose
 
-import androidx.compose.animation.animatedFloat
-import androidx.compose.animation.core.fling
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.animation.FlingConfig
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -20,30 +21,32 @@ fun Modifier.swipeToRemove(
     onDelete: () -> Unit,
 ): Modifier = composed {
     val width = constraints.maxWidth.toFloat()
-
     val draggable = remember { mutableStateOf(true) }
-
-    val positionOffset = animatedFloat(0f).apply {
-        setBounds(-width, 0f)
+    val positionOffset = remember {
+        Animatable(0f).apply {
+            updateBounds(-width, 0f)
+        }
     }
-
-    val heightExpandRatio = animatedFloat(initVal = 1f)
+    val heightExpandRatio = remember { Animatable(1f) }
+    val coroutineScope = rememberCoroutineScope()
 
     this
         .draggable(
             enabled = draggable.value,
             orientation = Orientation.Horizontal,
             onDrag = { delta ->
-                positionOffset.snapTo((positionOffset.value + delta).coerceAtMost(0f))
+                coroutineScope.launch {
+                    positionOffset.snapTo((positionOffset.value + delta).coerceAtMost(0f))
+                }
             },
             onDragStopped = { velocity ->
-                val config = FlingConfig(anchors = listOf(-width, 0f))
-                positionOffset.fling(velocity, config.decayAnimation, config.adjustTarget) { _, endValue, _ ->
+                coroutineScope.launch {
+                    val config = FlingConfig(anchors = listOf(-width, 0f))
+                    val endValue = positionOffset.fling(velocity, config).endState.value
                     if (endValue.absoluteValue > 0) {
                         draggable.value = false
-                        heightExpandRatio.animateTo(0f, spring()) { _, _ ->
-                            onDelete()
-                        }
+                        heightExpandRatio.animateTo(0f, spring())
+                        onDelete()
                     } else {
                         draggable.value = true
                     }

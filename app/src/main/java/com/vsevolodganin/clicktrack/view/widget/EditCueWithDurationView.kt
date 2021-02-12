@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,7 +32,7 @@ fun EditCueWithDurationView(
     val timeSignatureState = remember { observableMutableStateOf(state.value.timeSignature) }
     val durationState = remember { observableMutableStateOf(state.value.duration) }
 
-    DisposableEffect(Unit) {
+    LaunchedEffect(Unit) {
         fun update() {
             state.value = Cue(
                 bpm = bpmState.value,
@@ -43,7 +43,6 @@ fun EditCueWithDurationView(
         bpmState.observe { update() }
         timeSignatureState.observe { update() }
         durationState.observe { update() }
-        onDispose { }
     }
 
     Row(modifier = modifier.padding(8.dp)) {

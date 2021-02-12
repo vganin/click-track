@@ -2,6 +2,7 @@ package com.vsevolodganin.clicktrack.view.widget
 
 import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,8 +28,8 @@ import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.isFocused
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.gesture.tapGestureFilter
-import androidx.compose.ui.platform.AmbientTextInputService
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.BackspaceCommand
@@ -40,8 +41,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.MinutesPerHour
-import androidx.compose.ui.unit.SecondsPerMinute
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.view.common.focusableBorder
@@ -63,8 +62,8 @@ fun DurationPicker(
         val minutesSequence = subSequence(2, 4)
         val secondsSequence = subSequence(4, 6)
         val sequenceToTimeMultiplier = listOf(
-            hoursSequence to SecondsPerMinute * MinutesPerHour,
-            minutesSequence to SecondsPerMinute,
+            hoursSequence to SECONDS_PER_MINUTE * MINUTES_PER_HOUR,
+            minutesSequence to SECONDS_PER_MINUTE,
             secondsSequence to 1L,
         )
 
@@ -110,7 +109,7 @@ fun DurationPicker(
         updateInternalStringState('0' + internalStringState.value.dropLast(1))
     }
 
-    val inputService = AmbientTextInputService.current!!
+    val inputService = LocalTextInputService.current!!
     var inputSessionToken: InputSessionToken? by remember { mutableStateOf(null) }
     var isFocused by remember { mutableStateOf(false) }
     val focusRequester = FocusRequester()
@@ -171,7 +170,11 @@ fun DurationPicker(
                 }
             }
             .focusModifier()
-            .tapGestureFilter { focusRequester.requestFocus() }
+            .pointerInput(Unit) {
+                detectTapGestures {
+                    focusRequester.requestFocus()
+                }
+            }
             .padding(8.dp)
     ) {
         val baseModifier = Modifier.align(Alignment.CenterVertically)
@@ -213,3 +216,6 @@ fun PreviewDurationPicker() {
         DurationPicker(mutableStateOf(1.milliseconds))
     }
 }
+
+private const val SECONDS_PER_MINUTE = 60L
+private const val MINUTES_PER_HOUR = 60L

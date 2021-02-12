@@ -3,8 +3,8 @@ package com.vsevolodganin.clicktrack.view.widget
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.AmbientContentColor
-import androidx.compose.material.AmbientTextStyle
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -64,10 +64,10 @@ fun NumberInputField(
             selection = newValue.selection
             state.value = newInt
         },
-        cursorColor = AmbientContentColor.current,
-        textStyle = AmbientTextStyle.current
+        cursorColor = LocalContentColor.current,
+        textStyle = LocalTextStyle.current
             .copy(
-                color = AmbientContentColor.current,
+                color = LocalContentColor.current,
                 textAlign = TextAlign.Center
             ),
         modifier = modifier

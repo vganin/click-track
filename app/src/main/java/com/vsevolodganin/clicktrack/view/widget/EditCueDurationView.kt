@@ -127,57 +127,59 @@ private fun DurationTypeDropdown(
     val toggleState = remember { mutableStateOf(false) }
     val onToggleClick = { toggleState.value = !toggleState.value }
 
-    DropdownMenu(
-        toggleModifier = modifier
-            .clickable(
-                onClick = onToggleClick,
-                interactionState = remember { InteractionState() },
-                indication = rememberRipple(),
-            )
-            .width(DROPDOWN_TOGGLE_WIDTH),
-        toggle = {
-            Row {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .weight(1f)
-                ) {
-                    val textStyle = MaterialTheme.typography.subtitle1
-                    val fontSize = if (state.value == CueDurationType.MEASURES) 11.sp else textStyle.fontSize
-                    Text(
-                        text = stringResource(id = state.value.displayStringResId),
-                        style = textStyle,
-                        fontSize = fontSize
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .size(16.dp, 16.dp)
-                        .clickable(
-                            onClick = onToggleClick,
-                            interactionState = remember { InteractionState() },
-                            indication = rememberRipple(bounded = false),
-                        )
-                ) {
-                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
-                }
+    Box {
+        Row(
+            modifier = modifier
+                .clickable(
+                    onClick = onToggleClick,
+                    interactionState = remember { InteractionState() },
+                    indication = rememberRipple(),
+                )
+                .width(DROPDOWN_TOGGLE_WIDTH)
+        ) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .weight(1f)
+            ) {
+                val textStyle = MaterialTheme.typography.subtitle1
+                val fontSize = if (state.value == CueDurationType.MEASURES) 11.sp else textStyle.fontSize
+                Text(
+                    text = stringResource(id = state.value.displayStringResId),
+                    style = textStyle,
+                    fontSize = fontSize
+                )
             }
-        },
-        expanded = toggleState.value,
-        onDismissRequest = { toggleState.value = false },
-        dropdownOffset = DpOffset(-DROPDOWN_TOGGLE_WIDTH, 0.dp),
-        dropdownContent = {
-            CueDurationType.values().forEach { durationType ->
-                DropdownMenuItem(onClick = {
-                    state.value = durationType
-                    toggleState.value = false
-                }) {
-                    Text(text = stringResource(id = durationType.displayStringResId))
-                }
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .size(16.dp, 16.dp)
+                    .clickable(
+                        onClick = onToggleClick,
+                        interactionState = remember { InteractionState() },
+                        indication = rememberRipple(bounded = false),
+                    )
+            ) {
+                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
             }
         }
-    )
+
+        DropdownMenu(
+            expanded = toggleState.value,
+            onDismissRequest = { toggleState.value = false },
+            offset = DpOffset(-DROPDOWN_TOGGLE_WIDTH, 0.dp),
+            content = {
+                CueDurationType.values().forEach { durationType ->
+                    DropdownMenuItem(onClick = {
+                        state.value = durationType
+                        toggleState.value = false
+                    }) {
+                        Text(text = stringResource(id = durationType.displayStringResId))
+                    }
+                }
+            }
+        )
+    }
 }
 
 @Composable

@@ -1,7 +1,6 @@
 package com.vsevolodganin.clicktrack.view.widget
 
-import androidx.compose.animation.animatedFloat
-import androidx.compose.animation.core.AnimatedFloat
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
@@ -25,7 +24,7 @@ import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,20 +46,23 @@ import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.AmbientDensity
-import androidx.compose.ui.platform.AmbientHapticFeedback
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.interval
-import com.vsevolodganin.clicktrack.utils.compose.AnimatedRect
+import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
+import com.vsevolodganin.clicktrack.utils.compose.AnimatableViewport
 import com.vsevolodganin.clicktrack.utils.compose.awaitLongTapOrCancellation
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.abs
 import kotlin.time.Duration
 
@@ -79,13 +81,13 @@ fun ClickTrackView(
     BoxWithConstraints(modifier = modifier) {
         val width = minWidth
         val height = minHeight
-        val widthPx = with(AmbientDensity.current) { width.toPx() }
-        val heightPx = with(AmbientDensity.current) { height.toPx() }
+        val widthPx = with(LocalDensity.current) { width.toPx() }
+        val heightPx = with(LocalDensity.current) { height.toPx() }
         val marks = clickTrack.asMarks(widthPx, drawAllBeatsMarks)
 
         var isProgressCaptured by remember { mutableStateOf(false) }
-        val progressLineWidth = animatedFloat(0f)
-        DisposableEffect(isProgressCaptured) {
+        val progressLineWidth = remember { Animatable(0f) }
+        LaunchedEffect(isProgressCaptured) {
             val newProgressLineWidth = when (isProgressCaptured) {
                 true -> PROGRESS_LINE_WIDTH_CAPTURED
                 false -> PROGRESS_LINE_WIDTH_DEFAULT
@@ -97,11 +99,11 @@ fun ClickTrackView(
                 )
                 false -> spring()
             }
+
             progressLineWidth.animateTo(
                 targetValue = newProgressLineWidth,
-                anim = animSpec
+                animationSpec = animSpec
             )
-            onDispose { }
         }
 
         val progressPosition = progress?.let {
@@ -115,7 +117,7 @@ fun ClickTrackView(
         val playbackStampColor = MaterialTheme.colors.secondaryVariant
 
         val bounds = remember { Rect(0f, 0f, widthPx, heightPx) }
-        val viewportState = AnimatedRect(bounds)
+        val viewportState = remember { AnimatableViewport(bounds) }
         val viewportTransformations by derivedStateOf { viewportState.transformations }
 
         Box(
@@ -227,34 +229,30 @@ private fun animatedProgressPosition(
     clickTrack: ClickTrack,
     progress: Double,
     totalWidthPx: Float,
-): AnimatedFloat {
-    val playbackStampX = animatedFloat(0f).apply {
-        setBounds(0f, totalWidthPx)
+): AnimatableFloat {
+    val playbackStampX = remember {
+        Animatable(0f).apply {
+            updateBounds(0f, totalWidthPx)
+        }
     }
 
     val totalTrackDuration = clickTrack.durationInTime
     val targetPosition = totalTrackDuration * progress
 
-    DisposableEffect(progress) {
+    LaunchedEffect(progress) {
         val targetPositionX = targetPosition.toX(totalTrackDuration, totalWidthPx)
-
         playbackStampX.snapTo(targetPositionX)
-
-        onDispose { }
     }
 
-    DisposableEffect(progress, totalTrackDuration) {
+    LaunchedEffect(progress, totalTrackDuration) {
         val animationDuration = totalTrackDuration - targetPosition
-
         playbackStampX.animateTo(
             targetValue = totalWidthPx,
-            anim = tween(
+            animationSpec = tween(
                 durationMillis = animationDuration.coerceAtLeast(Duration.ZERO).toLongMilliseconds().toInt(),
                 easing = LinearEasing
             )
         )
-
-        onDispose { }
     }
 
     return playbackStampX
@@ -316,48 +314,26 @@ private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
     return (this / totalDuration * viewWidth).toFloat()
 }
 
-// FIXME(https://issuetracker.google.com/issues/177060212): Need to preserve names for easy revert of FIXME below
-@Suppress("NAME_SHADOWING", "UnnecessaryVariable")
 private fun Modifier.clickTrackGestures(
     viewportZoomAndPanEnabled: Boolean,
     progressDragAndDropEnabled: Boolean,
-    viewportState: AnimatedRect,
-    progressPosition: AnimatedFloat?,
-    onProgressDragStart: (progress: AnimatedFloat) -> Unit,
-    onProgressDrop: (progress: AnimatedFloat) -> Unit,
+    viewportState: AnimatableViewport,
+    progressPosition: AnimatableFloat?,
+    onProgressDragStart: suspend (progress: AnimatableFloat) -> Unit,
+    onProgressDrop: suspend (progress: AnimatableFloat) -> Unit,
 ): Modifier = composed {
-    val hapticFeedback = AmbientHapticFeedback.current
+    val hapticFeedback = LocalHapticFeedback.current
 
-    // FIXME(https://issuetracker.google.com/issues/177060212): Can't reinstall pointerInput, so need to store and update all argument states locally
-    val viewportZoomAndPanEnabledInternal by remember { mutableStateOf(viewportZoomAndPanEnabled) }.apply {
-        value = viewportZoomAndPanEnabled
-    }
-    val progressDragAndDropEnabledInternal by remember { mutableStateOf(progressDragAndDropEnabled) }.apply {
-        value = progressDragAndDropEnabled
-    }
-    val viewportStateInternal by remember { mutableStateOf(viewportState) }.apply { value = viewportState }
-    val progressPositionInternal by remember { mutableStateOf(progressPosition) }.apply { value = progressPosition }
-    val onProgressDragStartInternal by remember { mutableStateOf(onProgressDragStart) }.apply { value = onProgressDragStart }
-    val onProgressDropInternal by remember { mutableStateOf(onProgressDrop) }.apply { value = onProgressDrop }
-
-    pointerInput {
-        forEachGesture {
-            val viewportZoomAndPanEnabled = viewportZoomAndPanEnabledInternal
-            val progressDragAndDropEnabled = progressDragAndDropEnabledInternal
-            val viewportState = viewportStateInternal
-            val progressPosition = progressPositionInternal
-            val onProgressDragStart = onProgressDragStartInternal
-            val onProgressDrop = onProgressDropInternal
-
-            val currentViewportTransformations = viewportState.transformations
-
-            coroutineScope {
-                // FIXME: The app crashes without any await
-                launch {
-                    awaitPointerEventScope {
-                        awaitPointerEvent()
-                    }
-                }
+    pointerInput(
+        viewportZoomAndPanEnabled,
+        progressDragAndDropEnabled,
+        viewportState,
+        progressPosition,
+        hapticFeedback,
+    ) {
+        coroutineScope {
+            forEachGesture {
+                val currentViewportTransformations = viewportState.transformations
 
                 var dragAndDropGesture: Job? = null
                 var zoomAndPanGesture: Job? = null
@@ -371,15 +347,20 @@ private fun Modifier.clickTrackGestures(
                         // FIXME(https://issuetracker.google.com/issues/171394805): Not working if global settings disables haptic feedback
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
 
-                        onProgressDragStart(progressPosition)
+                        try {
+                            onProgressDragStart(progressPosition)
 
-                        awaitPointerEventScope {
-                            drag(down.id) {
-                                val snapTo = progressPosition.value +
-                                        it.positionChange().x / currentViewportTransformations.scaleX
-                                progressPosition.snapTo(snapTo)
+                            awaitPointerEventScope {
+                                drag(down.id) {
+                                    val snapTo = progressPosition.value +
+                                            it.positionChange().x / currentViewportTransformations.scaleX
+                                    launch { progressPosition.snapTo(snapTo) }
+                                }
                             }
-                            onProgressDrop(progressPosition)
+                        } finally {
+                            withContext(NonCancellable) {
+                                onProgressDrop(progressPosition)
+                            }
                         }
                     }
                 }
@@ -422,9 +403,7 @@ private fun Modifier.clickTrackGestures(
                                         dragAndDropGesture?.cancel()
 
                                         val centroid = event.calculateCentroid(useCurrent = false)
-                                        if (zoomChange != 1f ||
-                                            panChange != Offset.Zero
-                                        ) {
+                                        if (zoomChange != 1f || panChange != Offset.Zero) {
                                             val viewport = viewportState.value
                                             val bounds = viewportState.bounds
 
@@ -432,19 +411,21 @@ private fun Modifier.clickTrackGestures(
                                             val newLeft = viewport.left -
                                                     (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width
 
-                                            viewportState.apply {
-                                                snapTo(
-                                                    newLeft = newLeft,
-                                                    newTop = viewport.top,
-                                                    newRight = newLeft + newWidth,
-                                                    newBottom = viewport.bottom
-                                                )
-                                                translate(-panChange.copy(y = 0f) / currentViewportTransformations.scaleX)
+                                            velocityTracker.addPosition(
+                                                timeMillis = event.changes.firstOrNull { it.pressed }?.uptimeMillis ?: 0L,
+                                                position = centroid
+                                            )
 
-                                                velocityTracker.addPosition(
-                                                    timeMillis = event.changes.firstOrNull { it.pressed }?.uptimeMillis ?: 0L,
-                                                    position = centroid
-                                                )
+                                            launch {
+                                                viewportState.apply {
+                                                    snapTo(
+                                                        newLeft = newLeft,
+                                                        newTop = viewport.top,
+                                                        newRight = newLeft + newWidth,
+                                                        newBottom = viewport.bottom
+                                                    )
+                                                    translate(-panChange.copy(y = 0f) / currentViewportTransformations.scaleX)
+                                                }
                                             }
                                         }
                                         event.changes.forEach {
@@ -456,11 +437,21 @@ private fun Modifier.clickTrackGestures(
                                 }
                             } while (!canceled && event.changes.any { it.pressed })
 
-                            if (abs(zoom - 1f) < zoomChangeEpsilon) {
-                                viewportState.fling(-velocityTracker.calculateVelocity().run { Offset(x, y) } /
-                                        currentViewportTransformations.scaleX)
+                            launch {
+                                if (abs(zoom - 1f) < zoomChangeEpsilon) {
+                                    val velocity = -velocityTracker.calculateVelocity().run { Offset(x, y) } /
+                                            currentViewportTransformations.scaleX
+                                    viewportState.animateDecay(velocity)
+                                }
                             }
                         }
+                    }
+                }
+
+                // FIXME(https://issuetracker.google.com/issues/180032122): The app crashes without any await
+                if (dragAndDropGesture?.isCancelled != false || zoomAndPanGesture?.isCancelled != false) {
+                    awaitPointerEventScope {
+                        awaitPointerEvent()
                     }
                 }
             }
@@ -468,7 +459,7 @@ private fun Modifier.clickTrackGestures(
     }
 }
 
-private val AnimatedRect.transformations
+private val AnimatableViewport.transformations
     get() = object {
         val scaleX: Float
         val scaleY: Float

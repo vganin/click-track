@@ -21,16 +21,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.gesture.dragGestureFilter
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.AmbientDensity
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
 import com.vsevolodganin.clicktrack.lib.bpm
-import com.vsevolodganin.clicktrack.utils.compose.RadialDragObserver
+import com.vsevolodganin.clicktrack.utils.compose.detectRadialDragGesture
 import com.vsevolodganin.clicktrack.utils.compose.toRadians
 import kotlin.math.cos
 import kotlin.math.roundToInt
@@ -73,23 +73,22 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
     var buttonAngle: Float by remember { mutableStateOf(90f) }
 
     BoxWithConstraints(modifier) {
-        val density = AmbientDensity.current
+        val density = LocalDensity.current
         val width = minWidth
         val height = minHeight
         val widthPx = with(density) { width.toPx() }
         val heightPx = with(density) { height.toPx() }
 
-        val dragObserver = remember(widthPx, heightPx) {
-            RadialDragObserver(Offset(x = widthPx / 2, y = heightPx / 2)) { angleDiff ->
-                buttonAngle -= angleDiff
-                onAngleChange(angleDiff)
-            }
-        }
-
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .dragGestureFilter(dragObserver),
+                .pointerInput(widthPx, heightPx) {
+                    val center = Offset(x = widthPx / 2, y = heightPx / 2)
+                    detectRadialDragGesture(center) { angleDiff ->
+                        buttonAngle -= angleDiff
+                        onAngleChange(angleDiff)
+                    }
+                },
             elevation = 4.dp,
             shape = CircleShape,
             color = Color.Transparent
