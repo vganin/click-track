@@ -12,6 +12,7 @@ import com.vsevolodganin.clicktrack.state.actions.NavigateToClickTrackListScreen
 import com.vsevolodganin.clicktrack.state.actions.NavigateToClickTrackScreen
 import com.vsevolodganin.clicktrack.state.actions.NavigateToEditClickTrackScreen
 import com.vsevolodganin.clicktrack.state.actions.NavigateToMetronomeScreen
+import com.vsevolodganin.clicktrack.state.actions.NavigateToSettingsScreen
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.pop
 import com.vsevolodganin.clicktrack.state.pushOrIgnore
@@ -59,5 +60,6 @@ private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: P
                 state = null
             )
         )
+        NavigateToSettingsScreen -> { /*TODO*/ this }
     }
 }

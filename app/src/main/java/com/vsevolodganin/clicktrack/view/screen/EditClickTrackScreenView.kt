@@ -65,7 +65,7 @@ import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import com.vsevolodganin.clicktrack.utils.compose.offset
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.utils.compose.toObservableMutableStateList
-import com.vsevolodganin.clicktrack.view.common.Constants.FAB_SIZE_WITH_PADDINGS
+import com.vsevolodganin.clicktrack.view.utils.Constants.FAB_SIZE_WITH_PADDINGS
 import com.vsevolodganin.clicktrack.view.widget.EditCueWithDurationView
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch

@@ -6,7 +6,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class AppState(
     val backstack: ScreenBackstack,
-    val currentlyPlaying: PlaybackState?
+    val drawerState: DrawerScreenState?,
+    val currentlyPlaying: PlaybackState?,
 ) : Parcelable {
 
     companion object {
@@ -20,7 +21,8 @@ data class AppState(
                     )
                 )
             ),
-            currentlyPlaying = null
+            drawerState = null,
+            currentlyPlaying = null,
         )
     }
 }

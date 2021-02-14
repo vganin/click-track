@@ -43,7 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.view.common.focusableBorder
+import com.vsevolodganin.clicktrack.view.utils.focusableBorder
 import java.text.DecimalFormat
 import kotlin.time.Duration
 import kotlin.time.hours

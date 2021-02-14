@@ -16,4 +16,6 @@
     <string name="notification_playing_now">Playing now…</string>
     <string name="metronome">Metronome</string>
     <string name="bpm_meter_tap">TAP</string>
+    <string name="drawer_item_metronome">Metronome</string>
+    <string name="drawer_item_settings">Settings</string>
 </resources>

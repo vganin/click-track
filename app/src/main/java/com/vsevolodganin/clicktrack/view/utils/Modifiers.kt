@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.view.common
+package com.vsevolodganin.clicktrack.view.utils
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border

@@ -91,7 +91,12 @@ class MainActivity : AppCompatActivity() {
         val frontScreen = appState.backstack.frontScreen() ?: return
         val frontScreenPosition = appState.backstack.frontScreenPosition()
         setContent {
-            ContentView(frontScreen, frontScreenPosition, ::dispatch)
+            ContentView(
+                screen = frontScreen,
+                positionInBackstack = frontScreenPosition,
+                drawerScreenState = appState.drawerState,
+                dispatch = ::dispatch
+            )
         }
     }
 

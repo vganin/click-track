@@ -21,6 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
@@ -32,15 +33,13 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.ClickTrackListScreenState
 import com.vsevolodganin.clicktrack.state.actions.NavigateToClickTrackScreen
-import com.vsevolodganin.clicktrack.state.actions.NavigateToMetronomeScreen
+import com.vsevolodganin.clicktrack.state.actions.OpenDrawer
 import com.vsevolodganin.clicktrack.state.actions.StoreAddNewClickTrack
 import com.vsevolodganin.clicktrack.state.actions.StoreRemoveClickTrack
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
-import com.vsevolodganin.clicktrack.view.common.Constants
-import com.vsevolodganin.clicktrack.view.icon.ClickTrackIcons
-import com.vsevolodganin.clicktrack.view.icon.Metronome
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_2
+import com.vsevolodganin.clicktrack.view.utils.Constants
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackView
 
 @Composable
@@ -84,14 +83,14 @@ private fun ClickTrackListScreenContent(
 @Composable
 private fun ClickTrackListScreenTopBar(dispatch: Dispatch) {
     TopAppBar(
+        navigationIcon = {
+            IconButton(onClick = { dispatch(OpenDrawer) }) {
+                Icon(imageVector = Icons.Default.Menu, contentDescription = null)
+            }
+        },
         title = {
             Text(text = stringResource(id = R.string.click_track_list))
         },
-        actions = {
-            IconButton(onClick = { dispatch(NavigateToMetronomeScreen) }) {
-                Icon(imageVector = ClickTrackIcons.Metronome, contentDescription = null)
-            }
-        }
     )
 }
 

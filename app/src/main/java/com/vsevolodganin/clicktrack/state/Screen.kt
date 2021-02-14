@@ -39,4 +39,11 @@ sealed class Screen : Parcelable {
             return reduceMetronome(action)
         }
     }
+
+    @Parcelize
+    object Settings : Screen() {
+        override fun reduce(action: Action): Screen {
+            return this
+        }
+    }
 }
