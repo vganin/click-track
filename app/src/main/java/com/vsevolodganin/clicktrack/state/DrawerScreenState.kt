@@ -5,5 +5,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class DrawerScreenState(
-    val currentScreen: Screen,
+    val isOpened: Boolean,
+    val currentScreen: Screen?,
 ) : Parcelable

@@ -20,13 +20,14 @@ fun AppState.reduce(action: Action): AppState {
     )
 }
 
-private fun DrawerScreenState?.reduce(action: Action, backstack: ScreenBackstack): DrawerScreenState? {
+private fun DrawerScreenState.reduce(action: Action, backstack: ScreenBackstack): DrawerScreenState {
     val currentScreen = backstack.frontScreen()
-    return when {
-        currentScreen != null && action is OpenDrawer -> DrawerScreenState(currentScreen)
-        action is CloseDrawer -> null
-        else -> this
+    val isOpened = when (action) {
+        is OpenDrawer -> true
+        is CloseDrawer -> false
+        else -> isOpened
     }
+    return DrawerScreenState(isOpened = isOpened, currentScreen = currentScreen)
 }
 
 private fun PlaybackState?.reduce(action: Action): PlaybackState? {

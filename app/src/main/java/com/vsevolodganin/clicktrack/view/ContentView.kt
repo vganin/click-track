@@ -36,7 +36,7 @@ import com.vsevolodganin.clicktrack.view.screen.PlayClickTrackScreenView
 fun ContentView(
     screen: Screen,
     positionInBackstack: Int,
-    drawerScreenState: DrawerScreenState?,
+    drawerScreenState: DrawerScreenState,
     dispatch: Dispatch,
 ) {
     ClickTrackTheme {
@@ -48,7 +48,7 @@ fun ContentView(
 
         Scaffold(
             scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerScreenState, dispatch)),
-            drawerContent = { if (drawerScreenState != null) DrawerScreenView(drawerScreenState, dispatch) },
+            drawerContent = { DrawerScreenView(drawerScreenState, dispatch) },
         ) {
             ComposableSwitcher(
                 currentKey = positionInBackstack,
@@ -86,8 +86,8 @@ fun ContentView(
 }
 
 @Composable
-private fun drawerState(drawerScreenState: DrawerScreenState?, dispatch: Dispatch): DrawerState {
-    val showDrawer = drawerScreenState != null
+private fun drawerState(drawerScreenState: DrawerScreenState, dispatch: Dispatch): DrawerState {
+    val showDrawer = drawerScreenState.isOpened
     return rememberDrawerState(DrawerValue.Closed).apply {
         LaunchedEffect(showDrawer) {
             if (showDrawer) open() else close()
