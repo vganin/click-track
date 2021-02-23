@@ -14,6 +14,7 @@ import com.vsevolodganin.clicktrack.state.epic.MetronomeEpic
 import com.vsevolodganin.clicktrack.state.epic.PlayerEpic
 import com.vsevolodganin.clicktrack.state.epic.RemoveClickTrackEpic
 import com.vsevolodganin.clicktrack.state.epic.SaveClickTrackEpic
+import com.vsevolodganin.clicktrack.state.epic.SettingsEpic
 import com.vsevolodganin.clicktrack.state.reducer.reduce
 import dagger.Binds
 import dagger.Module
@@ -101,6 +102,12 @@ abstract class ViewModelScopedAppStateEpicModule {
     @IntoSet
     @ViewModelScopedAppStateEpic
     abstract fun bindMetronomeEpic(epic: MetronomeEpic): Epic
+
+    @ViewModelScoped
+    @Binds
+    @IntoSet
+    @ViewModelScopedAppStateEpic
+    abstract fun bindSettingsEpic(epic: SettingsEpic): Epic
 }
 
 @Qualifier

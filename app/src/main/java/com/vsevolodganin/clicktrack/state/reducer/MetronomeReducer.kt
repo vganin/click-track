@@ -9,14 +9,14 @@ import com.vsevolodganin.clicktrack.state.actions.StartPlay
 import com.vsevolodganin.clicktrack.state.actions.UpdateCurrentlyPlaying
 
 fun Screen.Metronome.reduceMetronome(action: Action): Screen {
-    return copy(
+    return Screen.Metronome(
         state = state.reduce(action)
     )
 }
 
 private fun MetronomeScreenState?.reduce(action: Action): MetronomeScreenState? {
     return when (action) {
-        is MetronomeActions.UpdateMetronomeState -> action.state
+        is MetronomeActions.SetScreenState -> action.state
         is MetronomeActions.ChangeBpm -> this?.copy(bpm = action.bpm)
         is StartPlay -> if (action.clickTrack.id == MetronomeId) {
             this?.copy(isPlaying = true)

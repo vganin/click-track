@@ -8,7 +8,7 @@ import com.vsevolodganin.clicktrack.state.actions.UpdateClickTrack
 import com.vsevolodganin.clicktrack.state.actions.UpdateCurrentlyPlaying
 
 fun Screen.PlayClickTrack.reducePlayClickTrackScreen(action: Action): Screen {
-    return copy(
+    return Screen.PlayClickTrack(
         state = state.reduce(action)
     )
 }

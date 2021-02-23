@@ -13,7 +13,7 @@ import com.vsevolodganin.clicktrack.state.frontScreen
 fun AppState.reduce(action: Action): AppState {
     val currentlyPlaying = currentlyPlaying.reduce(action)
     val backstack = backstack.reduce(action, currentlyPlaying)
-    return copy(
+    return AppState(
         backstack = backstack,
         drawerState = drawerState.reduce(action, backstack),
         currentlyPlaying = currentlyPlaying,

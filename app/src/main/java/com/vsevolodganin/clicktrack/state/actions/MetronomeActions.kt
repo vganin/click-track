@@ -5,7 +5,10 @@ import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 
 sealed class MetronomeActions : Action {
-    class UpdateMetronomeState(val state: MetronomeScreenState) : MetronomeActions()
+
+    class SetScreenState(val state: MetronomeScreenState) : MetronomeActions()
+
     class ChangeBpm(val bpm: BeatsPerMinute) : MetronomeActions()
+
     object BpmMeterTap : MetronomeActions()
 }

@@ -6,7 +6,7 @@ import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.UpdateClickTrackList
 
 fun Screen.ClickTrackList.reduceClickTrackListScreen(action: Action): Screen {
-    return copy(
+    return Screen.ClickTrackList(
         state = state.reduce(action)
     )
 }

@@ -60,6 +60,10 @@ private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: P
                 state = null
             )
         )
-        NavigateToSettingsScreen -> { /*TODO*/ this }
+        NavigateToSettingsScreen -> pushOrReplace {
+            Screen.Settings(
+                state = null
+            )
+        }
     }
 }

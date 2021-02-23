@@ -49,7 +49,7 @@ class MetronomeEpic @Inject constructor(
                         null
                     }
                 }
-                .map(MetronomeActions::UpdateMetronomeState),
+                .map(MetronomeActions::SetScreenState),
 
             actions.filterIsInstance<MetronomeActions.BpmMeterTap>()
                 .mapNotNull {

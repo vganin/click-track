@@ -7,7 +7,7 @@ import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.StoreUpdateClickTrack
 
 fun Screen.EditClickTrack.reduceEditClickTrackScreen(action: Action): Screen {
-    return copy(
+    return Screen.EditClickTrack(
         state = state.reduce(action)
     )
 }

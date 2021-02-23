@@ -17,6 +17,8 @@ typealias ApplicationScoped = Singleton
     ]
 )
 interface ApplicationComponent {
+    fun inject(application: Application)
+
     fun viewModelComponentBuilder(): ViewModelComponent.Builder
     fun playerServiceComponentBuilder(): PlayerServiceComponent.Builder
 

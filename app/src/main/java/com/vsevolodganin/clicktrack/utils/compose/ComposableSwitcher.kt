@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -89,8 +90,10 @@ fun <Key, State> ComposableSwitcher(
                 val transition = updateTransition(transitionState)
 
                 if (!isVisible && transitionState.currentState == transitionState.targetState) {
-                    state.items.removeAll { it.key == itemKey }
-                    switcherRecomposeScope.invalidate()
+                    SideEffect {
+                        state.items.removeAll { it.key == itemKey }
+                        switcherRecomposeScope.invalidate()
+                    }
                 }
 
                 children(transition)
