@@ -1,12 +1,11 @@
 package com.vsevolodganin.clicktrack.view.widget
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FloatExponentialDecaySpec
-import androidx.compose.animation.core.SpringSpec
-import androidx.compose.animation.core.TargetAnimation
-import androidx.compose.foundation.animation.FlingConfig
+import androidx.compose.animation.core.exponentialDecay
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,7 +26,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
@@ -72,29 +70,23 @@ fun NumberPicker(
             .wrapContentSize()
             .draggable(
                 orientation = Orientation.Vertical,
-                onDrag = { deltaY ->
+                state = rememberDraggableState { deltaY ->
                     coroutineScope.launch {
                         animatedOffset.snapTo(animatedOffset.value + deltaY)
                     }
                 },
                 onDragStopped = { velocity ->
                     coroutineScope.launch {
-                        val flingConfig = FlingConfig(
-                            decayAnimation = FloatExponentialDecaySpec(
-                                frictionMultiplier = 20f
-                            ),
+                        val endValue = animatedOffset.fling(
+                            initialVelocity = velocity,
+                            animationSpec = exponentialDecay(frictionMultiplier = 20f),
                             adjustTarget = { target ->
                                 val coercedTarget = target % halvedNumbersColumnHeightPx
                                 val coercedAnchors = listOf(-halvedNumbersColumnHeightPx, 0f, halvedNumbersColumnHeightPx)
                                 val coercedPoint = coercedAnchors.minByOrNull { abs(it - coercedTarget) }!!
                                 val base = halvedNumbersColumnHeightPx * (target / halvedNumbersColumnHeightPx).toInt()
-                                val adjusted = coercedPoint + base
-                                TargetAnimation(adjusted, SpringSpec())
+                                coercedPoint + base
                             }
-                        )
-                        val endValue = animatedOffset.fling(
-                            initialVelocity = velocity,
-                            flingConfig = flingConfig,
                         ).endState.value
 
                         state.value = animatedStateValue(endValue)

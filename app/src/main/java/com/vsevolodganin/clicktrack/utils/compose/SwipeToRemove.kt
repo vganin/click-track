@@ -1,15 +1,16 @@
 package com.vsevolodganin.clicktrack.utils.compose
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.animation.FlingConfig
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.gesture.scrollorientationlocking.Orientation
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
 import kotlinx.coroutines.launch
@@ -34,15 +35,19 @@ fun Modifier.swipeToRemove(
         .draggable(
             enabled = draggable.value,
             orientation = Orientation.Horizontal,
-            onDrag = { delta ->
+            state = rememberDraggableState { delta ->
                 coroutineScope.launch {
                     positionOffset.snapTo((positionOffset.value + delta).coerceAtMost(0f))
                 }
             },
             onDragStopped = { velocity ->
                 coroutineScope.launch {
-                    val config = FlingConfig(anchors = listOf(-width, 0f))
-                    val endValue = positionOffset.fling(velocity, config).endState.value
+                    val endValue = positionOffset.fling(
+                        initialVelocity = velocity,
+                        animationSpec = exponentialDecay(),
+                        anchors = listOf(-width, 0f),
+                    ).endState.value
+                    
                     if (endValue.absoluteValue > 0) {
                         draggable.value = false
                         heightExpandRatio.animateTo(0f, spring())

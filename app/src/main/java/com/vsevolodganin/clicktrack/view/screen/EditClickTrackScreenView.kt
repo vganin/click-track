@@ -30,6 +30,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -67,6 +68,7 @@ import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.utils.compose.toObservableMutableStateList
 import com.vsevolodganin.clicktrack.view.utils.Constants.FAB_SIZE_WITH_PADDINGS
 import com.vsevolodganin.clicktrack.view.widget.EditCueWithDurationView
+import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -113,8 +115,8 @@ fun EditClickTrackScreenView(
             FloatingActionButton(onClick = {
                 cuesState += observableMutableStateOf(state.defaultCue).observe { update() }
                 coroutineScope.launch {
-                    // FIXME: Wait for upcoming `scrollTo` API
-                    lazyListState.snapToItemIndex(cuesState.lastIndex)
+                    awaitFrame()
+                    lazyListState.scrollToItem(lazyListState.layoutInfo.totalItemsCount - 1)
                 }
             }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
@@ -144,13 +146,13 @@ private fun EditClickTrackScreenContent(
     ) {
         stickyHeader {
             TextField(
-                modifier = Modifier.fillMaxWidth(),
                 value = nameState.value,
                 onValueChange = { nameState.value = it },
+                modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(text = stringResource(R.string.click_track_name_hint)) },
                 textStyle = MaterialTheme.typography.h6,
-                isErrorValue = isErrorInName,
-                backgroundColor = MaterialTheme.colors.surface
+                isError = isErrorInName,
+                colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
             )
         }
 

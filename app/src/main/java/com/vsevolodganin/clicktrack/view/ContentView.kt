@@ -93,8 +93,8 @@ private fun drawerState(drawerScreenState: DrawerScreenState, dispatch: Dispatch
         LaunchedEffect(showDrawer) {
             if (showDrawer) open() else close()
         }
-        LaunchedEffect(value) {
-            when (value) {
+        LaunchedEffect(currentValue) {
+            when (currentValue) {
                 DrawerValue.Closed -> dispatch(CloseDrawer)
                 DrawerValue.Open -> dispatch(OpenDrawer)
             }

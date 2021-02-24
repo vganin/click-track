@@ -3,7 +3,7 @@ buildscript {
 
     ext {
         kotlinVersion = '1.4.30'
-        composeVersion = '1.0.0-alpha12'
+        composeVersion = '1.0.0-beta01'
         kotlinXSerializationVersion = '1.0.1'
         sqlDelightVersion = '1.4.4'
     }

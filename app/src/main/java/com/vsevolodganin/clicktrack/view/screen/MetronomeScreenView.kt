@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
@@ -116,7 +115,7 @@ private fun MetronomeScreenViewContent(
         BpmWheel(
             state = bpmState,
             modifier = Modifier
-                .preferredSize(200.dp)
+                .size(200.dp)
                 .constrainAs(bpmWheel) {
                     centerHorizontallyTo(parent)
                     bottom.linkTo(parent.bottom, margin = 32.dp)

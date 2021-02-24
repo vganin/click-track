@@ -34,15 +34,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.gesture.util.VelocityTracker
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.anyPositionChangeConsumed
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.input.pointer.positionChangeConsumed
 import androidx.compose.ui.input.pointer.positionChanged
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
@@ -52,6 +52,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.fastAny
+import androidx.compose.ui.util.fastForEach
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
@@ -180,7 +182,7 @@ fun ClickTrackView(
                             mark.detailedSummary?.invoke(layoutIdModifier)
                         }
                     },
-                    measureBlock = { measurables, constraints ->
+                    measurePolicy = { measurables, constraints ->
                         val placeables = measurables.groupBy({ it.layoutId as Mark }) { measurable ->
                             measurable.measure(constraints)
                         }.toSortedMap { lhs, rhs -> lhs.x.compareTo(rhs.x) }.toList()
@@ -373,13 +375,12 @@ private fun Modifier.clickTrackGestures(
                             var pan = Offset.Zero
                             var pastTouchSlop = false
                             val touchSlop = viewConfiguration.touchSlop
-
                             val velocityTracker = VelocityTracker()
 
-                            awaitFirstDown()
+                            awaitFirstDown(requireUnconsumed = false)
                             do {
                                 val event = awaitPointerEvent()
-                                val canceled = event.changes.any { it.anyPositionChangeConsumed() }
+                                val canceled = event.changes.fastAny { it.positionChangeConsumed() }
                                 if (!canceled) {
                                     val zoomChange = event.calculateZoom()
                                     val panChange = event.calculatePan()
@@ -428,14 +429,14 @@ private fun Modifier.clickTrackGestures(
                                                 }
                                             }
                                         }
-                                        event.changes.forEach {
+                                        event.changes.fastForEach {
                                             if (it.positionChanged()) {
                                                 it.consumeAllChanges()
                                             }
                                         }
                                     }
                                 }
-                            } while (!canceled && event.changes.any { it.pressed })
+                            } while (!canceled && event.changes.fastAny { it.pressed })
 
                             launch {
                                 if (abs(zoom - 1f) < zoomChangeEpsilon) {

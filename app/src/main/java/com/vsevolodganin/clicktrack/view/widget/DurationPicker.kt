@@ -1,8 +1,8 @@
 package com.vsevolodganin.clicktrack.view.widget
 
-import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,9 +36,9 @@ import androidx.compose.ui.text.input.BackspaceCommand
 import androidx.compose.ui.text.input.CommitTextCommand
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.ImeOptions
-import androidx.compose.ui.text.input.InputSessionToken
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.TextInputSession
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -110,7 +110,7 @@ fun DurationPicker(
     }
 
     val inputService = LocalTextInputService.current!!
-    var inputSessionToken: InputSessionToken? by remember { mutableStateOf(null) }
+    var textInputSession: TextInputSession? by remember { mutableStateOf(null) }
     var isFocused by remember { mutableStateOf(false) }
     val focusRequester = FocusRequester()
 
@@ -143,8 +143,8 @@ fun DurationPicker(
 
                 isFocused = focusState.isFocused
 
-                if (isFocused && inputSessionToken == null) {
-                    inputSessionToken = inputService.startInput(
+                if (isFocused && textInputSession == null) {
+                    textInputSession = inputService.startInput(
                         value = TextFieldValue(),
                         imeOptions = ImeOptions(
                             keyboardType = KeyboardType.Number,
@@ -164,9 +164,9 @@ fun DurationPicker(
                             }
                         }
                     )
-                } else if (!isFocused && inputSessionToken != null) {
-                    inputSessionToken?.let(inputService::stopInput)
-                    inputSessionToken = null
+                } else if (!isFocused && textInputSession != null) {
+                    textInputSession?.let(inputService::stopInput)
+                    textInputSession = null
                 }
             }
             .focusModifier()
@@ -192,7 +192,7 @@ fun DurationPicker(
                 .size(16.dp, 16.dp)
                 .clickable(
                     onClick = { state.value = Duration.ZERO },
-                    interactionState = remember { InteractionState() },
+                    interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = false)
                 )
         ) {

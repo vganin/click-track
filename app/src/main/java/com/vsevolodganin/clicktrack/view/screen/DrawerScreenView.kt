@@ -4,10 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -87,7 +87,7 @@ private fun DrawerButton(
         modifier = modifier
             .padding(start = 8.dp, top = 4.dp, end = 8.dp)
             .fillMaxWidth()
-            .preferredHeight(48.dp),
+            .height(48.dp),
         color = backgroundColor,
         shape = MaterialTheme.shapes.small
     ) {
@@ -104,9 +104,11 @@ private fun DrawerButton(
                     imageVector = icon,
                     contentDescription = null, // decorative
                     tint = textIconColor,
-                    modifier = Modifier.preferredSize(24.dp).alpha(imageAlpha)
+                    modifier = Modifier
+                        .size(24.dp)
+                        .alpha(imageAlpha)
                 )
-                Spacer(Modifier.preferredWidth(16.dp))
+                Spacer(Modifier.width(16.dp))
                 Text(
                     text = label,
                     style = MaterialTheme.typography.body2,

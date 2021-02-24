@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +27,7 @@ fun CueSummary(
             fontSize = 12.sp
         )
         Spacer(modifier = Modifier.width(2.dp))
-        Column(Modifier.preferredWidth(IntrinsicSize.Min)) {
+        Column(Modifier.width(IntrinsicSize.Min)) {
             @Composable
             fun Text(text: String, modifier: Modifier) {
                 Text(
