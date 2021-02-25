@@ -13,7 +13,6 @@ import androidx.compose.foundation.gestures.calculateCentroidSize
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.drag
-import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -333,8 +332,8 @@ private fun Modifier.clickTrackGestures(
         progressPosition,
         hapticFeedback,
     ) {
-        coroutineScope {
-            forEachGesture {
+        while (true) {
+            coroutineScope {
                 val currentViewportTransformations = viewportState.transformations
 
                 var dragAndDropGesture: Job? = null
