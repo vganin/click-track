@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -285,7 +286,9 @@ private fun Modifier.moveReorder(
 
                         onBegin()
                     },
-                    onDrag = { _, dragDistance ->
+                    onDrag = { change, dragDistance ->
+                        change.consumeAllChanges()
+
                         launch {
                             positionOffset.snapTo(positionOffset.value + dragDistance.y)
                         }

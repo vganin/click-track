@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.input.pointer.positionChangeConsumed
@@ -57,7 +58,7 @@ import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableViewport
-import com.vsevolodganin.clicktrack.utils.compose.awaitLongTapOrCancellation
+import com.vsevolodganin.clicktrack.utils.compose.awaitLongPressOrCancellation
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -341,26 +342,35 @@ private fun Modifier.clickTrackGestures(
 
                 if (progressDragAndDropEnabled && progressPosition != null) {
                     dragAndDropGesture = launch {
-                        val down = awaitLongTapOrCancellation() ?: return@launch
+                        val down = awaitPointerEventScope {
+                            awaitFirstDown(requireUnconsumed = false)
+                        }
 
-                        zoomAndPanGesture?.cancel()
+                        val drag = awaitLongPressOrCancellation(down)
 
-                        // FIXME(https://issuetracker.google.com/issues/171394805): Not working if global settings disables haptic feedback
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                        if (drag != null) {
+                            try {
+                                zoomAndPanGesture?.cancel()
 
-                        try {
-                            onProgressDragStart(progressPosition)
+                                // FIXME(https://issuetracker.google.com/issues/171394805): Not working if global settings disables haptic feedback
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
 
-                            awaitPointerEventScope {
-                                drag(down.id) {
-                                    val snapTo = progressPosition.value +
-                                            it.positionChange().x / currentViewportTransformations.scaleX
-                                    launch { progressPosition.snapTo(snapTo) }
+                                onProgressDragStart(progressPosition)
+
+                                awaitPointerEventScope {
+                                    drag(down.id) {
+                                        val snapTo = progressPosition.value +
+                                                it.positionChange().x / currentViewportTransformations.scaleX
+                                        it.consumePositionChange()
+                                        launch { progressPosition.snapTo(snapTo) }
+                                    }
                                 }
-                            }
-                        } finally {
-                            withContext(NonCancellable) {
-                                onProgressDrop(progressPosition)
+
+
+                            } finally {
+                                withContext(NonCancellable) {
+                                    onProgressDrop(progressPosition)
+                                }
                             }
                         }
                     }
