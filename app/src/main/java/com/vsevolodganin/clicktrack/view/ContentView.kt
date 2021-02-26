@@ -11,10 +11,10 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.vsevolodganin.clicktrack.redux.Dispatch
@@ -32,7 +32,6 @@ import com.vsevolodganin.clicktrack.view.screen.EditClickTrackScreenView
 import com.vsevolodganin.clicktrack.view.screen.MetronomeScreenView
 import com.vsevolodganin.clicktrack.view.screen.PlayClickTrackScreenView
 import com.vsevolodganin.clicktrack.view.screen.SettingsScreenView
-import kotlinx.coroutines.launch
 
 @Composable
 fun ContentView(
@@ -97,7 +96,7 @@ private fun drawerState(drawerScreenState: DrawerScreenState, dispatch: Dispatch
         }
         true
     }.apply {
-        rememberCoroutineScope().launch {
+        LaunchedEffect(drawerValue) {
             when (drawerValue) {
                 DrawerValue.Closed -> close()
                 DrawerValue.Open -> open()
