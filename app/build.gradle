@@ -23,7 +23,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode rootProject.ext.buildNumber ?: 1
-        versionName "1.0"
+        versionName "alpha"
 
         setProperty("archivesBaseName", "click-track-b$versionCode")
 
