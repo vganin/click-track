@@ -97,9 +97,13 @@ private fun drawerState(drawerScreenState: DrawerScreenState, dispatch: Dispatch
         true
     }.apply {
         LaunchedEffect(drawerValue) {
-            when (drawerValue) {
-                DrawerValue.Closed -> close()
-                DrawerValue.Open -> open()
+            try {
+                when (drawerValue) {
+                    DrawerValue.Closed -> close()
+                    DrawerValue.Open -> open()
+                }
+            } catch (e: IllegalArgumentException) {
+                // FIXME: Ignoring spurious exception `java.lang.IllegalArgumentException: State androidx.compose.material.DrawerState@6294caf is not attached to a component. Have you passed state object to a component?`
             }
         }
     }
