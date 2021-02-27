@@ -25,7 +25,7 @@ android {
         versionCode rootProject.ext.buildNumber ?: 1
         versionName "alpha"
 
-        setProperty("archivesBaseName", "click-track-b$versionCode")
+        setProperty("archivesBaseName", "click-track-$versionName$versionCode")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
