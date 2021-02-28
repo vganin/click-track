@@ -50,6 +50,7 @@ fun ContentView(
         Scaffold(
             scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerScreenState, dispatch)),
             drawerContent = { DrawerScreenView(drawerScreenState, dispatch) },
+            drawerGesturesEnabled = false,
         ) {
             ComposableSwitcher(
                 currentKey = positionInBackstack,

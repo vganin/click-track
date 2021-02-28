@@ -28,6 +28,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -324,14 +326,14 @@ private fun Modifier.clickTrackGestures(
     onProgressDragStart: suspend (progress: AnimatableFloat) -> Unit,
     onProgressDrop: suspend (progress: AnimatableFloat) -> Unit,
 ): Modifier = composed {
-    val hapticFeedback = LocalHapticFeedback.current
+    val hapticFeedback by rememberUpdatedState(LocalHapticFeedback.current)
+    val flingCoroutineScope = rememberCoroutineScope()
 
     pointerInput(
         viewportZoomAndPanEnabled,
         progressDragAndDropEnabled,
         viewportState,
         progressPosition,
-        hapticFeedback,
     ) {
         while (true) {
             coroutineScope {
@@ -365,8 +367,6 @@ private fun Modifier.clickTrackGestures(
                                         launch { progressPosition.snapTo(snapTo) }
                                     }
                                 }
-
-
                             } finally {
                                 withContext(NonCancellable) {
                                     onProgressDrop(progressPosition)
@@ -447,7 +447,7 @@ private fun Modifier.clickTrackGestures(
                                 }
                             } while (!canceled && event.changes.fastAny { it.pressed })
 
-                            launch {
+                            flingCoroutineScope.launch {
                                 if (abs(zoom - 1f) < zoomChangeEpsilon) {
                                     val velocity = -velocityTracker.calculateVelocity().run { Offset(x, y) } /
                                             currentViewportTransformations.scaleX
