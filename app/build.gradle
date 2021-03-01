@@ -45,13 +45,18 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
             if (hasKeystoreProperties) {
                 signingConfig signingConfigs.release
             }
+
+            manifestPlaceholders = [crashlyticsCollectionEnabled: "true"]
         }
 
         debug {
             applicationIdSuffix '.debug'
+
+            manifestPlaceholders = [crashlyticsCollectionEnabled: "false"]
         }
     }
 
