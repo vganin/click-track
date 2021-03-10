@@ -87,6 +87,12 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion composeVersion
     }
+
+    lintOptions {
+        // FIXME(https://issuetracker.google.com/issues/182388985) Turn on
+        abortOnError false
+    }
+
 }
 
 sqldelight {
