@@ -104,8 +104,8 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.core:core-ktx:1.3.2'
-    implementation 'androidx.activity:activity-ktx:1.2.0'
-    implementation "androidx.activity:activity-compose:1.3.0-alpha03"
+    implementation 'androidx.activity:activity-compose:1.3.0-alpha04'
+    implementation 'androidx.fragment:fragment-ktx:1.3.1' // Essential for Activity Result APIs (as per https://developer.android.com/training/basics/intents/result)
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha03"
 
     implementation platform('com.google.firebase:firebase-bom:26.3.0')
@@ -129,8 +129,8 @@ dependencies {
     implementation "com.squareup.sqldelight:android-driver:$sqlDelightVersion"
     implementation "com.squareup.sqldelight:coroutines-extensions-jvm:$sqlDelightVersion"
 
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinXSerializationVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinXSerializationVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
 
     def daggerVersion = '2.29.1'
     implementation "com.google.dagger:dagger:$daggerVersion"

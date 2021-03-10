@@ -2,9 +2,9 @@ buildscript {
     rootProject.apply from: 'properties.gradle'
 
     ext {
-        kotlinVersion = '1.4.30'
-        composeVersion = '1.0.0-beta01'
-        kotlinXSerializationVersion = '1.0.1'
+        kotlinVersion = '1.4.31'
+        composeVersion = '1.0.0-beta02'
+        kotlinxSerializationVersion = '1.1.0'
         sqlDelightVersion = '1.4.4'
     }
 
