@@ -9,20 +9,21 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.vsevolodganin.clicktrack.di.module.ActivityScopedAppStateEpic
+import com.vsevolodganin.clicktrack.migration.MigrationManager
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
 import com.vsevolodganin.clicktrack.redux.EpicMiddleware
 import com.vsevolodganin.clicktrack.redux.Store
 import com.vsevolodganin.clicktrack.state.AppState
-import com.vsevolodganin.clicktrack.state.actions.NavigateBack
+import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.frontScreen
 import com.vsevolodganin.clicktrack.state.frontScreenPosition
 import com.vsevolodganin.clicktrack.view.ContentView
+import javax.inject.Inject
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,12 +50,17 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var intentProcessor: IntentProcessor
 
+    @Inject
+    lateinit var migrationManager: MigrationManager
+
     private val renderScope = MainScope()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         inject()
+
+        migrationManager.tryMigrate()
 
         epicMiddleware.register(*epics.toTypedArray())
 
@@ -77,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        appStateStore.dispatch(NavigateBack)
+        appStateStore.dispatch(NavigationAction.Back)
     }
 
     private fun inject() {

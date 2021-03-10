@@ -5,9 +5,9 @@ import com.vsevolodganin.clicktrack.state.AppState
 import com.vsevolodganin.clicktrack.state.DrawerScreenState
 import com.vsevolodganin.clicktrack.state.PlaybackState
 import com.vsevolodganin.clicktrack.state.ScreenBackstack
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.CloseDrawer
 import com.vsevolodganin.clicktrack.state.actions.OpenDrawer
-import com.vsevolodganin.clicktrack.state.actions.UpdateCurrentlyPlaying
 import com.vsevolodganin.clicktrack.state.frontScreen
 
 fun AppState.reduce(action: Action): AppState {
@@ -32,7 +32,7 @@ private fun DrawerScreenState.reduce(action: Action, backstack: ScreenBackstack)
 
 private fun PlaybackState?.reduce(action: Action): PlaybackState? {
     return when (action) {
-        is UpdateCurrentlyPlaying -> action.playbackState
+        is ClickTrackAction.UpdateCurrentlyPlaying -> action.playbackState
         else -> this
     }
 }

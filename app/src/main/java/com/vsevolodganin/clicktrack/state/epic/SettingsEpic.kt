@@ -8,11 +8,12 @@ import com.vsevolodganin.clicktrack.redux.Store
 import com.vsevolodganin.clicktrack.state.AppState
 import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.SettingsScreenState
-import com.vsevolodganin.clicktrack.state.actions.SettingsActions
+import com.vsevolodganin.clicktrack.state.actions.SettingsAction
 import com.vsevolodganin.clicktrack.state.frontScreen
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.ThemeManager
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @ViewModelScoped
 class SettingsEpic @Inject constructor(
@@ -41,9 +41,9 @@ class SettingsEpic @Inject constructor(
                         theme = userPreferencesRepository.theme
                     )
                 }
-                .map(SettingsActions::SetScreenState),
+                .map(SettingsAction::SetScreenState),
 
-            actions.filterIsInstance<SettingsActions.ChangeTheme>()
+            actions.filterIsInstance<SettingsAction.ChangeTheme>()
                 .consumeEach { action ->
                     userPreferencesRepository.theme = action.value
                     withContext(mainDispatcher) {

@@ -3,15 +3,24 @@ package com.vsevolodganin.clicktrack.player
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
-import com.vsevolodganin.clicktrack.lib.ClickSoundSource
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.sounds.model.ClickSoundPriority
+import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
+import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.state.PlaybackState
+import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
+import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
 import com.vsevolodganin.clicktrack.utils.coroutine.delay
 import com.vsevolodganin.clicktrack.utils.coroutine.tick
 import com.vsevolodganin.clicktrack.utils.time.rem
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.TimeMark
+import kotlin.time.TimeSource
+import kotlin.time.milliseconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -19,6 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.isActive
@@ -26,11 +36,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.TimeMark
-import kotlin.time.TimeSource
-import kotlin.time.milliseconds
 
 interface Player {
     suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null)
@@ -45,6 +50,8 @@ class PlayerImpl @Inject constructor(
     private val soundPool: PlayerSoundPool,
     @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
     @PlayerDispatcher private val playerDispatcher: CoroutineDispatcher,
+    private val clickSoundsRepository: ClickSoundsRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : Player {
 
     private var playerJob: Job? = null
@@ -114,8 +121,6 @@ class PlayerImpl @Inject constructor(
                 val cueLocalStart = (iterationStartsWith - cueGlobalStart).coerceAtLeast(Duration.ZERO)
 
                 startImpl(
-                    strongBeatSound = clickTrack.value.sounds.strongBeat,
-                    weakBeatSound = clickTrack.value.sounds.weakBeat,
                     cue = cue,
                     startAt = cueLocalStart,
                     reportProgress = { beatTimestamp ->
@@ -136,8 +141,6 @@ class PlayerImpl @Inject constructor(
     }
 
     private suspend fun startImpl(
-        strongBeatSound: ClickSoundSource,
-        weakBeatSound: ClickSoundSource,
         cue: Cue,
         startAt: Duration,
         reportProgress: suspend (beatTimestamp: Duration) -> Unit,
@@ -172,10 +175,13 @@ class PlayerImpl @Inject constructor(
                     pausedState.filter { false }.take(1).collect()
                 }
 
-                if (beatIndex % timeSignature.noteCount == 0) {
-                    soundPool.play(strongBeatSound, PlayerSoundPool.SoundPriority.STRONG)
-                } else {
-                    soundPool.play(weakBeatSound, PlayerSoundPool.SoundPriority.WEAK)
+                val sounds = selectedSounds()
+                if (sounds != null) {
+                    if (beatIndex % timeSignature.noteCount == 0) {
+                        sounds.strongBeat?.let { soundPool.play(it, ClickSoundPriority.STRONG) }
+                    } else {
+                        sounds.weakBeat?.let { soundPool.play(it, ClickSoundPriority.WEAK) }
+                    }
                 }
 
                 reportProgress(initialDelay + passed)
@@ -190,6 +196,13 @@ class PlayerImpl @Inject constructor(
     ) = playbackStateMutex.withLock {
         val previous = playbackState.value
         playbackState.setValue(previous.update())
+    }
+
+    private suspend fun selectedSounds(): ClickSounds? {
+        return when (val soundsId = userPreferencesRepository.selectedSoundsId) {
+            is ClickSoundsId.Builtin -> soundsId.value.sounds
+            is ClickSoundsId.Database -> clickSoundsRepository.getById(soundsId).firstOrNull()?.value
+        }
     }
 
     private data class InternalPlaybackState(

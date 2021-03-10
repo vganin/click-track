@@ -1,9 +1,9 @@
 package com.vsevolodganin.clicktrack.di.component
 
-import android.app.Activity
 import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.di.module.ActivityScopedAndroidModule
 import com.vsevolodganin.clicktrack.di.module.ActivityScopedAppStateEpicModule
+import com.vsevolodganin.clicktrack.di.module.MigrationModule
 import dagger.BindsInstance
 import dagger.Subcomponent
 import javax.inject.Scope
@@ -15,7 +15,8 @@ annotation class ActivityScoped
 @Subcomponent(
     modules = [
         ActivityScopedAppStateEpicModule::class,
-        ActivityScopedAndroidModule::class
+        ActivityScopedAndroidModule::class,
+        MigrationModule::class,
     ]
 )
 interface ActivityComponent {
@@ -24,7 +25,7 @@ interface ActivityComponent {
     @Subcomponent.Builder
     interface Builder {
         @BindsInstance
-        fun activity(activity: Activity): Builder
+        fun activity(activity: MainActivity): Builder
 
         fun build(): ActivityComponent
     }

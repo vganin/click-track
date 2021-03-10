@@ -8,15 +8,15 @@ import com.vsevolodganin.clicktrack.redux.Epic
 import com.vsevolodganin.clicktrack.redux.Store
 import com.vsevolodganin.clicktrack.state.AppState
 import com.vsevolodganin.clicktrack.state.actions.FinishApp
-import com.vsevolodganin.clicktrack.state.actions.NavigateBack
+import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.transform
-import javax.inject.Inject
 
 @ActivityScoped
 class FinishAppEpic @Inject constructor(
@@ -31,7 +31,7 @@ class FinishAppEpic @Inject constructor(
                 .consumeEach<FinishApp, Action> { activity.finish() }
                 .flowOn(mainDispatcher),
 
-            actions.filterIsInstance<NavigateBack>()
+            actions.filterIsInstance<NavigationAction.Back>()
                 .transform {
                     if (store.state.value.backstack.screens.isEmpty()) {
                         emit(FinishApp)

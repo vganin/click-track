@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.serialization'
     id 'kotlin-parcelize'
     id 'com.squareup.sqldelight'
     id 'kotlin-kapt'
@@ -85,6 +86,12 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion composeVersion
+    }
+}
+
+sqldelight {
+    Database {
+        schemaOutputDirectory = file("src/test/sqldelight/schema")
     }
 }
 

@@ -4,9 +4,9 @@ import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.SettingsScreenState
 import com.vsevolodganin.clicktrack.theme.Theme
 
-sealed class SettingsActions : Action {
+sealed class SettingsAction : Action {
 
-    class SetScreenState(val state: SettingsScreenState) : SettingsActions()
+    class SetScreenState(val state: SettingsScreenState) : SettingsAction()
 
-    class ChangeTheme(val value: Theme) : SettingsActions()
+    class ChangeTheme(val value: Theme) : SettingsAction()
 }

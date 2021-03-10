@@ -4,7 +4,7 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.EditClickTrackScreenState
 import com.vsevolodganin.clicktrack.state.Screen
-import com.vsevolodganin.clicktrack.state.actions.StoreUpdateClickTrack
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 
 fun Screen.EditClickTrack.reduceEditClickTrackScreen(action: Action): Screen {
     return Screen.EditClickTrack(
@@ -13,22 +13,23 @@ fun Screen.EditClickTrack.reduceEditClickTrackScreen(action: Action): Screen {
 }
 
 private fun EditClickTrackScreenState.reduce(action: Action): EditClickTrackScreenState {
+    val clickTrack = clickTrack.reduce(action)
     return copy(
-        clickTrack = clickTrack.reduce(action),
-        isErrorInName = isErrorInName.reduceIsErrorInName(action),
+        clickTrack = clickTrack,
+        isErrorInName = isErrorInName.reduceIsErrorInName(action, clickTrack.id),
     )
 }
 
 private fun ClickTrackWithId.reduce(action: Action): ClickTrackWithId {
     return when (action) {
-        is StoreUpdateClickTrack.Result -> action.clickTrack
+        is ClickTrackAction.UpdateClickTrack -> action.data
         else -> this
     }
 }
 
-private fun Boolean.reduceIsErrorInName(action: Action): Boolean {
-    return when (action) {
-        is StoreUpdateClickTrack.Result -> action.isErrorInName
+private fun Boolean.reduceIsErrorInName(action: Action, id: Long): Boolean {
+    return when {
+        action is ClickTrackAction.UpdateErrorInName && action.id == id -> action.isPresent
         else -> this
     }
 }

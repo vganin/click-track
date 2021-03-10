@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.view.screen
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,22 +24,24 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.DrawerScreenState
+import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.CloseDrawer
-import com.vsevolodganin.clicktrack.state.actions.NavigateToMetronomeScreen
-import com.vsevolodganin.clicktrack.state.actions.NavigateToSettingsScreen
+import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.view.icon.ClickTrackIcons
 import com.vsevolodganin.clicktrack.view.icon.Metronome
 
 @Composable
 fun DrawerScreenView(
     state: DrawerScreenState,
-    dispatch: Dispatch,
+    dispatch: Dispatch = Dispatch {},
 ) {
     val dispatchClosingDrawer = { action: Action ->
         dispatch(CloseDrawer)
@@ -48,13 +52,21 @@ fun DrawerScreenView(
         icon = ClickTrackIcons.Metronome,
         label = stringResource(R.string.drawer_item_metronome),
         isSelected = state.currentScreen is Screen.Metronome,
-        action = { dispatchClosingDrawer(NavigateToMetronomeScreen) }
+        action = { dispatchClosingDrawer(NavigationAction.ToMetronomeScreen) }
     )
+
     DrawerButton(
         icon = Icons.Filled.Settings,
         label = stringResource(R.string.drawer_item_settings),
         isSelected = state.currentScreen is Screen.Settings,
-        action = { dispatchClosingDrawer(NavigateToSettingsScreen) }
+        action = { dispatchClosingDrawer(NavigationAction.ToSettingsScreen) }
+    )
+
+    DrawerButton(
+        icon = Icons.Filled.LibraryMusic,
+        label = stringResource(R.string.drawer_item_sound_library),
+        isSelected = state.currentScreen is Screen.Settings,
+        action = { dispatchClosingDrawer(NavigationAction.ToSoundLibraryScreen) }
     )
 }
 
@@ -116,5 +128,18 @@ private fun DrawerButton(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    Column {
+        DrawerScreenView(
+            DrawerScreenState(
+                isOpened = true,
+                currentScreen = Screen.Metronome(MetronomeScreenState(120.bpm, 0.0, false)),
+            )
+        )
     }
 }

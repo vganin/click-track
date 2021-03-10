@@ -10,11 +10,13 @@ import com.vsevolodganin.clicktrack.state.AppState
 import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 import com.vsevolodganin.clicktrack.state.PlaybackState
 import com.vsevolodganin.clicktrack.state.Screen
-import com.vsevolodganin.clicktrack.state.actions.MetronomeActions
-import com.vsevolodganin.clicktrack.state.actions.StartPlay
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
+import com.vsevolodganin.clicktrack.state.actions.MetronomeAction
 import com.vsevolodganin.clicktrack.state.frontScreen
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
+import javax.inject.Inject
+import kotlin.time.milliseconds
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -22,8 +24,6 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.merge
-import javax.inject.Inject
-import kotlin.time.milliseconds
 
 @ViewModelScoped
 class MetronomeEpic @Inject constructor(
@@ -49,15 +49,15 @@ class MetronomeEpic @Inject constructor(
                         null
                     }
                 }
-                .map(MetronomeActions::SetScreenState),
+                .map(MetronomeAction::SetScreenState),
 
-            actions.filterIsInstance<MetronomeActions.BpmMeterTap>()
+            actions.filterIsInstance<MetronomeAction.BpmMeterTap>()
                 .mapNotNull {
                     bpmMeter.addTap()
-                    bpmMeter.calculateBpm()?.let(MetronomeActions::ChangeBpm)
+                    bpmMeter.calculateBpm()?.let(MetronomeAction::ChangeBpm)
                 },
 
-            actions.filterIsInstance<MetronomeActions.ChangeBpm>()
+            actions.filterIsInstance<MetronomeAction.ChangeBpm>()
                 .debounce(100.milliseconds)
                 .mapNotNull { action ->
                     currentlyPlayingMetronome()?.clickTrack?.run {
@@ -69,12 +69,12 @@ class MetronomeEpic @Inject constructor(
                             )
                         )
                     }?.let { updatedClickTrack ->
-                        StartPlay(clickTrack = updatedClickTrack)
+                        ClickTrackAction.StartPlay(clickTrack = updatedClickTrack)
                     }
                 },
 
             actions
-                .filterIsInstance<MetronomeActions.ChangeBpm>()
+                .filterIsInstance<MetronomeAction.ChangeBpm>()
                 .debounce(100.milliseconds)
                 .consumeEach { action ->
                     userPreferencesRepository.metronomeBpm = action.bpm

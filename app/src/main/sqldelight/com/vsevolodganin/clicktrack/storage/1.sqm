@@ -1,0 +1,4 @@
+CREATE TABLE ClickSounds (
+    id INTEGER NOT NULL PRIMARY KEY,
+    serializedValue TEXT NOT NULL
+);

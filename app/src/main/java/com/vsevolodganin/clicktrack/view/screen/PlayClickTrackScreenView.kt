@@ -28,12 +28,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.PlayClickTrackScreenState
-import com.vsevolodganin.clicktrack.state.actions.NavigateBack
-import com.vsevolodganin.clicktrack.state.actions.NavigateToEditClickTrackScreen
-import com.vsevolodganin.clicktrack.state.actions.PausePlay
-import com.vsevolodganin.clicktrack.state.actions.StartPlay
-import com.vsevolodganin.clicktrack.state.actions.StopPlay
-import com.vsevolodganin.clicktrack.state.actions.StoreRemoveClickTrack
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
+import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.utils.compose.toUpperCase
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackView
@@ -46,25 +42,29 @@ fun PlayClickTrackScreenView(
     dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
-        topBar = { ClickTrackScreenTopBar(state, dispatch) },
+        topBar = { TopBar(state, dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             PlayStopButton(
                 isPlaying = state.isPlaying,
                 onToggle = {
-                    val action = if (state.isPlaying) StopPlay else StartPlay(state.clickTrack, progress = 0.0)
+                    val action = if (state.isPlaying) {
+                        ClickTrackAction.StopPlay
+                    } else {
+                        ClickTrackAction.StartPlay(state.clickTrack, progress = 0.0)
+                    }
                     dispatch(action)
                 }
             )
         },
         modifier = modifier,
     ) {
-        ClickTrackScreenContent(state, dispatch)
+        Content(state, dispatch)
     }
 }
 
 @Composable
-private fun ClickTrackScreenContent(
+private fun Content(
     state: PlayClickTrackScreenState,
     dispatch: Dispatch,
 ) {
@@ -78,8 +78,8 @@ private fun ClickTrackScreenContent(
             drawTextMarks = true,
             progress = state.progress,
             progressDragAndDropEnabled = true,
-            onProgressDragStart = { dispatch(PausePlay) },
-            onProgressDrop = { progress -> dispatch(StartPlay(state.clickTrack, progress)) },
+            onProgressDragStart = { dispatch(ClickTrackAction.PausePlay) },
+            onProgressDrop = { progress -> dispatch(ClickTrackAction.StartPlay(state.clickTrack, progress)) },
             viewportPanEnabled = true,
             modifier = Modifier.fillMaxSize()
         )
@@ -87,13 +87,13 @@ private fun ClickTrackScreenContent(
 }
 
 @Composable
-private fun ClickTrackScreenTopBar(
+private fun TopBar(
     state: PlayClickTrackScreenState,
     dispatch: Dispatch,
 ) {
     TopAppBar(
         navigationIcon = {
-            IconButton(onClick = { dispatch(NavigateBack) }) {
+            IconButton(onClick = { dispatch(NavigationAction.Back) }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },
@@ -102,7 +102,7 @@ private fun ClickTrackScreenTopBar(
             var editEnabled by remember { mutableStateOf(true) }
             IconButton(
                 onClick = {
-                    dispatch(NavigateToEditClickTrackScreen(state.clickTrack))
+                    dispatch(NavigationAction.ToEditClickTrackScreen(state.clickTrack))
                     editEnabled = false
                 },
                 enabled = editEnabled
@@ -125,8 +125,8 @@ private fun ClickTrackScreenTopBar(
                 }
                 val confirm: () -> Unit = remember {
                     {
-                        dispatch(StoreRemoveClickTrack(state.clickTrack.id))
-                        dispatch(NavigateBack)
+                        dispatch(ClickTrackAction.RemoveClickTrack(state.clickTrack.id, shouldStore = true))
+                        dispatch(NavigationAction.Back)
                     }
                 }
                 AlertDialog(
@@ -158,7 +158,7 @@ private fun ClickTrackScreenTopBar(
 
 @Preview
 @Composable
-fun PreviewClickTrackScreenView() {
+private fun Preview() {
     PlayClickTrackScreenView(
         PlayClickTrackScreenState(
             clickTrack = PREVIEW_CLICK_TRACK_1,

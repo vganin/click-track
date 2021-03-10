@@ -1,9 +1,12 @@
 package com.vsevolodganin.clicktrack.di.module
 
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.appcompat.app.AppCompatActivity
 import com.vsevolodganin.clicktrack.Application
+import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
 import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import dagger.Binds
@@ -25,15 +28,19 @@ abstract class ApplicationScopedAndroidModule {
     @ApplicationScoped
     abstract fun provideContext(application: Application): Context
 
-    @Module
     companion object {
 
-        @JvmStatic
         @Provides
         @UserPreferences
         @ApplicationScoped
         fun provideUserPreferences(@ApplicationContext context: Context): SharedPreferences {
             return context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
+        }
+
+        @Provides
+        @ApplicationScoped
+        fun provideContentResolver(@ApplicationContext context: Context): ContentResolver {
+            return context.contentResolver
         }
     }
 }
@@ -45,7 +52,15 @@ annotation class ActivityContext
 abstract class ActivityScopedAndroidModule {
 
     @Binds
-    @ApplicationContext
+    @ActivityScoped
+    abstract fun provideBaseActivity(activity: MainActivity): Activity
+
+    @Binds
+    @ActivityScoped
+    abstract fun provideAppCompatActivity(activity: MainActivity): AppCompatActivity
+
+    @Binds
+    @ActivityContext
     @ActivityScoped
     abstract fun provideContext(activity: Activity): Context
 }

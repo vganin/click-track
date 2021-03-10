@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.state.reducer
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.ClickTrackListScreenState
 import com.vsevolodganin.clicktrack.state.Screen
-import com.vsevolodganin.clicktrack.state.actions.UpdateClickTrackList
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 
 fun Screen.ClickTrackList.reduceClickTrackListScreen(action: Action): Screen {
     return Screen.ClickTrackList(
@@ -13,9 +13,8 @@ fun Screen.ClickTrackList.reduceClickTrackListScreen(action: Action): Screen {
 
 private fun ClickTrackListScreenState.reduce(action: Action): ClickTrackListScreenState {
     return when (action) {
-        is UpdateClickTrackList -> {
-            ClickTrackListScreenState(action.data)
-        }
+        is ClickTrackAction.UpdateClickTrackList -> ClickTrackListScreenState(action.data)
+        is ClickTrackAction.RemoveClickTrack -> copy(items = items.filterNot { it.id == action.id })
         else -> this
     }
 }

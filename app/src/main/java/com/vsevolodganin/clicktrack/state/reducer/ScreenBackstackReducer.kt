@@ -7,12 +7,6 @@ import com.vsevolodganin.clicktrack.state.PlayClickTrackScreenState
 import com.vsevolodganin.clicktrack.state.PlaybackState
 import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.ScreenBackstack
-import com.vsevolodganin.clicktrack.state.actions.NavigateBack
-import com.vsevolodganin.clicktrack.state.actions.NavigateToClickTrackListScreen
-import com.vsevolodganin.clicktrack.state.actions.NavigateToClickTrackScreen
-import com.vsevolodganin.clicktrack.state.actions.NavigateToEditClickTrackScreen
-import com.vsevolodganin.clicktrack.state.actions.NavigateToMetronomeScreen
-import com.vsevolodganin.clicktrack.state.actions.NavigateToSettingsScreen
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.pop
 import com.vsevolodganin.clicktrack.state.pushOrIgnore
@@ -28,15 +22,15 @@ fun ScreenBackstack.reduce(action: Action, currentlyPlaying: PlaybackState?): Sc
 
 private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: PlaybackState?): ScreenBackstack {
     return when (action) {
-        NavigateBack -> pop()
-        is NavigateToClickTrackListScreen -> pushOrReplace(
+        NavigationAction.Back -> pop()
+        is NavigationAction.ToClickTrackListScreen -> pushOrReplace(
             Screen.ClickTrackList(
                 state = ClickTrackListScreenState(
                     items = action.clickTrack
                 )
             )
         )
-        is NavigateToClickTrackScreen -> pushOrReplace {
+        is NavigationAction.ToClickTrackScreen -> pushOrReplace {
             val clickTrack = action.clickTrack
             val progress = currentlyPlaying?.takeIf { it.clickTrack.id == clickTrack.id }?.progress
             Screen.PlayClickTrack(
@@ -47,7 +41,7 @@ private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: P
                 )
             )
         }
-        is NavigateToEditClickTrackScreen -> pushOrReplace(
+        is NavigationAction.ToEditClickTrackScreen -> pushOrReplace(
             Screen.EditClickTrack(
                 state = EditClickTrackScreenState(
                     clickTrack = action.clickTrack,
@@ -55,15 +49,14 @@ private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: P
                 )
             )
         )
-        NavigateToMetronomeScreen -> pushOrIgnore(
-            Screen.Metronome(
-                state = null
-            )
+        NavigationAction.ToMetronomeScreen -> pushOrIgnore(
+            Screen.Metronome(state = null)
         )
-        NavigateToSettingsScreen -> pushOrReplace {
-            Screen.Settings(
-                state = null
-            )
+        NavigationAction.ToSettingsScreen -> pushOrReplace {
+            Screen.Settings(state = null)
+        }
+        NavigationAction.ToSoundLibraryScreen -> pushOrReplace {
+            Screen.SoundLibrary(state = null)
         }
     }
 }

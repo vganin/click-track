@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.view.preview
 
-import com.vsevolodganin.clicktrack.lib.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
@@ -35,7 +34,6 @@ val PREVIEW_CLICK_TRACK_1 = ClickTrackWithId(
             ),
         ),
         loop = false,
-        sounds = BuiltinClickSounds,
     ),
 )
 
@@ -61,6 +59,5 @@ val PREVIEW_CLICK_TRACK_2 = ClickTrackWithId(
             ),
         ),
         loop = false,
-        sounds = BuiltinClickSounds,
     ),
 )

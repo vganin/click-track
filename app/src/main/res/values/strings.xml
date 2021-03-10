@@ -19,6 +19,7 @@
     <string name="bpm_meter_tap">TAP</string>
     <string name="drawer_item_metronome">Metronome</string>
     <string name="drawer_item_settings">Settings</string>
+    <string name="drawer_item_sound_library">Sound Library</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
@@ -26,4 +27,9 @@
     <string name="settings_theme_system_description">Use the system\'s Dark Theme setting</string>
     <string name="settings_theme_auto">Auto</string>
     <string name="settings_theme_auto_description">Use a Dark Theme when the system\'s \'Battery Saver\' feature is enabled, otherwise use a Light Theme. This mode can help the device to decrease power usage, depending on the display technology in the device.</string>
+    <string name="sound_library">Sound Library</string>
+    <string name="builtin_sounds_beep">Beep</string>
+    <string name="builtin_sounds_claves">Claves</string>
+    <string name="builtin_sounds_cowbell">Cowbell</string>
+    <string name="builtin_sounds_drum_kit">Drum kit</string>
 </resources>

@@ -32,10 +32,9 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.ClickTrackListScreenState
-import com.vsevolodganin.clicktrack.state.actions.NavigateToClickTrackScreen
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
+import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.actions.OpenDrawer
-import com.vsevolodganin.clicktrack.state.actions.StoreAddNewClickTrack
-import com.vsevolodganin.clicktrack.state.actions.StoreRemoveClickTrack
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_2
@@ -49,21 +48,21 @@ fun ClickTrackListScreenView(
     dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
-        topBar = { ClickTrackListScreenTopBar(dispatch) },
+        topBar = { TopBar(dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(onClick = { dispatch(StoreAddNewClickTrack) }) {
+            FloatingActionButton(onClick = { dispatch(ClickTrackAction.NewClickTrack) }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
         modifier = modifier,
     ) {
-        ClickTrackListScreenContent(state, dispatch)
+        Content(state, dispatch)
     }
 }
 
 @Composable
-private fun ClickTrackListScreenContent(
+private fun Content(
     state: ClickTrackListScreenState,
     dispatch: Dispatch,
 ) {
@@ -81,7 +80,7 @@ private fun ClickTrackListScreenContent(
 }
 
 @Composable
-private fun ClickTrackListScreenTopBar(dispatch: Dispatch) {
+private fun TopBar(dispatch: Dispatch) {
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = { dispatch(OpenDrawer) }) {
@@ -99,7 +98,9 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
     BoxWithConstraints {
         Card(
             modifier = Modifier
-                .swipeToRemove(constraints = constraints, onDelete = { dispatch(StoreRemoveClickTrack(clickTrack.id)) })
+                .swipeToRemove(constraints = constraints, onDelete = {
+                    dispatch(ClickTrackAction.RemoveClickTrack(clickTrack.id, shouldStore = true))
+                })
                 .padding(8.dp),
             elevation = 2.dp
         ) {
@@ -111,7 +112,7 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
                         .fillParentMaxWidth()
                         .height(100.dp)
                         .clickable(onClick = {
-                            dispatch(NavigateToClickTrackScreen(clickTrack))
+                            dispatch(NavigationAction.ToClickTrackScreen(clickTrack))
                         }),
                 )
                 Text(
@@ -125,7 +126,7 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
 
 @Preview
 @Composable
-fun PreviewClickTrackListScreenView() {
+private fun Preview() {
     ClickTrackListScreenView(
         ClickTrackListScreenState(
             listOf(

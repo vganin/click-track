@@ -1,60 +1,101 @@
 package com.vsevolodganin.clicktrack.player
 
+import android.content.ContentResolver
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
-import com.vsevolodganin.clicktrack.R
+import android.net.Uri
+import android.util.Log
+import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.di.module.ApplicationContext
-import com.vsevolodganin.clicktrack.lib.ClickSoundSource
+import com.vsevolodganin.clicktrack.sounds.model.ClickSoundPriority
+import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
+import com.vsevolodganin.clicktrack.utils.android.media.SoundPoolSuspendingLoadWait
+import java.io.IOException
 import javax.inject.Inject
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
+@ApplicationScoped
 class PlayerSoundPool @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val contentResolver: ContentResolver,
 ) {
-    enum class SoundPriority {
-        STRONG, WEAK
-    }
 
     private val soundPool = SoundPool.Builder()
         .setMaxStreams(Int.MAX_VALUE)
-        .setAudioAttributes(AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_UNKNOWN)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-            .build())
+        .setAudioAttributes(
+            AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_UNKNOWN)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
+                .build()
+        )
         .build()
 
-    private val loadedSounds = mutableMapOf(
-        ClickSoundSource.BuiltinStrong to soundPool.load(ClickSoundSource.BuiltinStrong),
-        ClickSoundSource.BuiltinWeak to soundPool.load(ClickSoundSource.BuiltinWeak),
-    )
+    private val awaitLoad = SoundPoolSuspendingLoadWait(soundPool)
 
-    fun play(sound: ClickSoundSource, priority: SoundPriority) {
-        val soundId = loadedSounds.getOrPut(sound) { soundPool.load(sound) }
-        soundPool.play(
-            soundId,
-            /* leftVolume = */ 1f,
-            /* rightVolume = */ 1f,
-            /* priority = */ priority.asInt(),
-            /* loop = */ 0,
-            /* rate = */ 1f
-        )
+    private val loadedSounds = mutableMapOf<ClickSoundSource, Int>()
+
+    private val mutex = Mutex()
+
+    suspend fun preload(sounds: Iterable<ClickSoundSource>) = coroutineScope {
+        awaitAll(*sounds.map { async { awaitLoad(it) } }.toTypedArray())
     }
 
-    private fun SoundPriority.asInt(): Int = when (this) {
-        SoundPriority.STRONG -> 2
-        SoundPriority.WEAK -> 1
+    suspend fun play(sound: ClickSoundSource, priority: ClickSoundPriority) {
+        val soundId = awaitLoad(sound) ?: return
+
+        mutex.withLock {
+            soundPool.play(
+                soundId,
+                /* leftVolume = */ 1f,
+                /* rightVolume = */ 1f,
+                /* priority = */ priority.asInt(),
+                /* loop = */ 0,
+                /* rate = */ 1f
+            )
+        }
     }
 
-    fun release() {
-        soundPool.release()
+    private suspend fun awaitLoad(sound: ClickSoundSource): Int? = mutex.withLock {
+        var shouldAwaitLoad = false
+        val soundId = loadedSounds.getOrPut(sound) {
+            shouldAwaitLoad = true
+            soundPool.load(sound) ?: return null
+        }
+
+        if (shouldAwaitLoad) {
+            awaitLoad(soundId)
+        }
+
+        return soundId
     }
 
-    private fun SoundPool.load(sound: ClickSoundSource): Int {
+    private fun ClickSoundPriority.asInt(): Int = when (this) {
+        ClickSoundPriority.STRONG -> 2
+        ClickSoundPriority.WEAK -> 1
+    }
+
+    private fun SoundPool.load(sound: ClickSoundSource): Int? {
         return when (sound) {
-            ClickSoundSource.BuiltinStrong -> load(context, R.raw.strong, 1)
-            ClickSoundSource.BuiltinWeak -> load(context, R.raw.weak, 1)
-            is ClickSoundSource.File -> load(sound.path, 1)
+            is ClickSoundSource.Bundled -> load(context, sound.resId, 1)
+            is ClickSoundSource.Uri -> loadUri(sound.value, 1)
+        }
+    }
+
+    private fun SoundPool.loadUri(uri: String, priority: Int): Int? {
+        return try {
+            contentResolver.openAssetFileDescriptor(Uri.parse(uri), "r")?.use { assetFileDescriptor ->
+                val fileDescriptor = assetFileDescriptor.fileDescriptor
+                load(fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length, priority)
+            }
+        } catch (e: IOException) {
+            Log.e("PlayerSoundPool", "Failed to open uri: $uri")
+            null
         }
     }
 }

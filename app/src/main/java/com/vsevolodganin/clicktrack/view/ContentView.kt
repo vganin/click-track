@@ -32,6 +32,7 @@ import com.vsevolodganin.clicktrack.view.screen.EditClickTrackScreenView
 import com.vsevolodganin.clicktrack.view.screen.MetronomeScreenView
 import com.vsevolodganin.clicktrack.view.screen.PlayClickTrackScreenView
 import com.vsevolodganin.clicktrack.view.screen.SettingsScreenView
+import com.vsevolodganin.clicktrack.view.screen.SoundLibraryScreenView
 
 @Composable
 fun ContentView(
@@ -80,6 +81,7 @@ fun ContentView(
                         is Screen.EditClickTrack -> EditClickTrackScreenView(screen.state, modifierUnderTransition, dispatch)
                         is Screen.Metronome -> MetronomeScreenView(screen.state, modifierUnderTransition, dispatch)
                         is Screen.Settings -> SettingsScreenView(screen.state, modifierUnderTransition, dispatch)
+                        is Screen.SoundLibrary -> SoundLibraryScreenView(screen.state, modifierUnderTransition, dispatch)
                     }
                 }
             }

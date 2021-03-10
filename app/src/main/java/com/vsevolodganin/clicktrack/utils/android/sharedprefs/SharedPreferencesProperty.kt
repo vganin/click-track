@@ -33,6 +33,39 @@ class IntConvertibleProperty<T : Any?>(
     setter = { edit().putInt(key, it.toInt()).apply() },
 )
 
+@Suppress("FunctionName") // Function as constructor
+fun IntProperty(
+    key: String,
+    defaultValue: Int,
+) = IntConvertibleProperty(
+    key = key,
+    defaultValue = defaultValue,
+    toInt = { this },
+    fromInt = { this }
+)
+
+class LongConvertibleProperty<T : Any?>(
+    key: String,
+    defaultValue: T,
+    toLong: T.() -> Long,
+    fromLong: Long.() -> T,
+) : KeyedSharedPreferencesPropertyImpl<T>(
+    key = key,
+    getter = { getLong(key, defaultValue.toLong()).fromLong() },
+    setter = { edit().putLong(key, it.toLong()).apply() },
+)
+
+@Suppress("FunctionName") // Function as constructor
+fun LongProperty(
+    key: String,
+    defaultValue: Long,
+) = LongConvertibleProperty(
+    key = key,
+    defaultValue = defaultValue,
+    toLong = { this },
+    fromLong = { this }
+)
+
 class StringConvertibleProperty<T : Any?>(
     key: String,
     defaultValue: T,
@@ -44,15 +77,22 @@ class StringConvertibleProperty<T : Any?>(
     setter = { edit().putString(key, it.toString()).apply() },
 )
 
+@Suppress("FunctionName") // Function as constructor
+fun StringProperty(
+    key: String,
+    defaultValue: String,
+) = StringConvertibleProperty(
+    key = key,
+    defaultValue = defaultValue,
+    toString = { this },
+    fromString = { this }
+)
+
 private fun <T> SharedPreferences.flowFrom(key: String, getter: SharedPreferences.() -> T): Flow<T> {
     return callbackFlow {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, changed ->
             if (changed == key) {
-                try {
-                    sendBlocking(sp.getter())
-                } catch (t: Throwable) {
-                    // Ignore
-                }
+                sendBlocking(sp.getter())
             }
         }
         registerOnSharedPreferenceChangeListener(listener)

@@ -24,17 +24,14 @@ import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +47,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.lib.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
@@ -60,8 +56,7 @@ import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.EditClickTrackScreenState
-import com.vsevolodganin.clicktrack.state.actions.NavigateBack
-import com.vsevolodganin.clicktrack.state.actions.StoreUpdateClickTrack
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.utils.compose.ObservableMutableState
 import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import com.vsevolodganin.clicktrack.utils.compose.offset
@@ -69,11 +64,12 @@ import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.utils.compose.toObservableMutableStateList
 import com.vsevolodganin.clicktrack.view.utils.Constants.FAB_SIZE_WITH_PADDINGS
 import com.vsevolodganin.clicktrack.view.widget.EditCueWithDurationView
+import com.vsevolodganin.clicktrack.view.widget.GenericTopBarWithBack
+import kotlin.math.roundToInt
+import kotlin.time.minutes
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
-import kotlin.time.minutes
 
 @Composable
 fun EditClickTrackScreenView(
@@ -87,14 +83,15 @@ fun EditClickTrackScreenView(
 
     fun update() {
         dispatch(
-            StoreUpdateClickTrack(
-                clickTrack = state.clickTrack.copy(
+            ClickTrackAction.UpdateClickTrack(
+                data = state.clickTrack.copy(
                     value = state.clickTrack.value.copy(
                         name = nameState.value,
                         loop = loopState.value,
                         cues = cuesState.map(ObservableMutableState<Cue>::value),
                     )
-                )
+                ),
+                shouldStore = true
             )
         )
     }
@@ -110,7 +107,7 @@ fun EditClickTrackScreenView(
     val lazyListState = rememberLazyListState()
 
     Scaffold(
-        topBar = { EditClickTrackScreenTopBar(dispatch) },
+        topBar = { GenericTopBarWithBack(R.string.edit_click_track, dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -125,12 +122,12 @@ fun EditClickTrackScreenView(
         },
         modifier = modifier,
     ) {
-        EditClickTrackScreenContent(nameState, state.isErrorInName, loopState, cuesState, lazyListState)
+        Content(nameState, state.isErrorInName, loopState, cuesState, lazyListState)
     }
 }
 
 @Composable
-private fun EditClickTrackScreenContent(
+private fun Content(
     nameState: MutableState<String>,
     isErrorInName: Boolean,
     loopState: MutableState<Boolean>,
@@ -159,9 +156,10 @@ private fun EditClickTrackScreenContent(
 
         item {
             Box(modifier = Modifier.fillMaxWidth()) {
-                Row(modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.Center)
+                Row(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.Center)
                 ) {
                     Text(text = stringResource(R.string.repeat))
                     Spacer(modifier = Modifier.width(8.dp))
@@ -338,21 +336,9 @@ private fun CueListItem(
     }
 }
 
-@Composable
-private fun EditClickTrackScreenTopBar(dispatch: Dispatch) {
-    TopAppBar(
-        navigationIcon = {
-            IconButton(onClick = { dispatch(NavigateBack) }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
-            }
-        },
-        title = { Text(text = stringResource(id = R.string.edit_click_track)) }
-    )
-}
-
 @Preview
 @Composable
-fun PreviewEditClickTrackScreenView() {
+private fun Preview() {
     EditClickTrackScreenView(
         state = EditClickTrackScreenState(
             clickTrack = ClickTrackWithId(
@@ -372,7 +358,6 @@ fun PreviewEditClickTrackScreenView() {
                         ),
                     ),
                     loop = true,
-                    sounds = BuiltinClickSounds,
                 )
             ),
             isErrorInName = false,

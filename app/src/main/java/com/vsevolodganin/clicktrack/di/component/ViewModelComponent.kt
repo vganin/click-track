@@ -19,7 +19,7 @@ annotation class ViewModelScoped
         AppStateModule::class,
         ViewModelScopedAppStateEpicModule::class,
         ViewModelScopedCoroutineModule::class,
-        ViewModelScopedPlayerModule::class
+        ViewModelScopedPlayerModule::class,
     ]
 )
 interface ViewModelComponent {

@@ -7,6 +7,7 @@ import com.vsevolodganin.clicktrack.state.reducer.reduceEditClickTrackScreen
 import com.vsevolodganin.clicktrack.state.reducer.reduceMetronome
 import com.vsevolodganin.clicktrack.state.reducer.reducePlayClickTrackScreen
 import com.vsevolodganin.clicktrack.state.reducer.reduceSettings
+import com.vsevolodganin.clicktrack.state.reducer.reduceSoundLibraryScreen
 import kotlinx.parcelize.Parcelize
 
 sealed class Screen : Parcelable {
@@ -45,6 +46,13 @@ sealed class Screen : Parcelable {
     data class Settings(val state: SettingsScreenState?) : Screen() {
         override fun reduce(action: Action): Screen {
             return reduceSettings(action)
+        }
+    }
+
+    @Parcelize
+    data class SoundLibrary(val state: SoundLibraryState?) : Screen() {
+        override fun reduce(action: Action): Screen {
+            return reduceSoundLibraryScreen(action)
         }
     }
 }

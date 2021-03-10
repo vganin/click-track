@@ -7,14 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -24,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
-import com.vsevolodganin.clicktrack.lib.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
@@ -34,13 +28,12 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.model.MetronomeId
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.MetronomeScreenState
-import com.vsevolodganin.clicktrack.state.actions.MetronomeActions
-import com.vsevolodganin.clicktrack.state.actions.NavigateBack
-import com.vsevolodganin.clicktrack.state.actions.StartPlay
-import com.vsevolodganin.clicktrack.state.actions.StopPlay
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
+import com.vsevolodganin.clicktrack.state.actions.MetronomeAction
 import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import com.vsevolodganin.clicktrack.view.widget.BpmWheel
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackView
+import com.vsevolodganin.clicktrack.view.widget.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.view.widget.PlayStopButton
 
 @Composable
@@ -50,35 +43,23 @@ fun MetronomeScreenView(
     dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
-        topBar = { MetronomeScreenViewTopBar(dispatch) },
+        topBar = { GenericTopBarWithBack(R.string.metronome, dispatch) },
         modifier = modifier,
     ) {
         if (state != null) {
-            MetronomeScreenViewContent(state, dispatch)
+            Content(state, dispatch)
         }
     }
 }
 
 @Composable
-private fun MetronomeScreenViewTopBar(dispatch: Dispatch) {
-    TopAppBar(
-        navigationIcon = {
-            IconButton(onClick = { dispatch(NavigateBack) }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
-            }
-        },
-        title = { Text(text = stringResource(id = R.string.metronome)) }
-    )
-}
-
-@Composable
-private fun MetronomeScreenViewContent(
+private fun Content(
     state: MetronomeScreenState,
     dispatch: Dispatch,
 ) {
     val bpmState = remember(state.bpm) {
         observableMutableStateOf(state.bpm).observe { bpm ->
-            dispatch(MetronomeActions.ChangeBpm(bpm))
+            dispatch(MetronomeAction.ChangeBpm(bpm))
         }
     }
     val metronomeClickTrack = metronomeClickTrack(bpmState.value)
@@ -122,13 +103,17 @@ private fun MetronomeScreenViewContent(
                 }
         ) {
             PlayStopButton(state.isPlaying, onToggle = {
-                val action = if (state.isPlaying) StopPlay else StartPlay(metronomeClickTrack)
+                val action = if (state.isPlaying) {
+                    ClickTrackAction.StopPlay
+                } else {
+                    ClickTrackAction.StartPlay(metronomeClickTrack)
+                }
                 dispatch(action)
             })
         }
 
         FloatingActionButton(
-            onClick = { dispatch(MetronomeActions.BpmMeterTap) },
+            onClick = { dispatch(MetronomeAction.BpmMeterTap) },
             modifier = Modifier
                 .size(64.dp)
                 .constrainAs(bpmMeter) {
@@ -156,14 +141,13 @@ private fun metronomeClickTrack(bpm: BeatsPerMinute): ClickTrackWithId {
                 )
             ),
             loop = true,
-            sounds = BuiltinClickSounds
         )
     )
 }
 
 @Preview
 @Composable
-fun PreviewMetronomeScreenView() {
+private fun Preview() {
     MetronomeScreenView(
         MetronomeScreenState(
             bpm = 90.bpm,

@@ -1,0 +1,19 @@
+CREATE TABLE ClickSounds (
+    id INTEGER NOT NULL PRIMARY KEY,
+    serializedValue TEXT NOT NULL
+);
+
+getAll:
+SELECT * FROM ClickSounds;
+
+getById:
+SELECT * FROM ClickSounds WHERE id = (?);
+
+insert:
+INSERT INTO ClickSounds (serializedValue) VALUES (?);
+
+update:
+UPDATE ClickSounds SET serializedValue = ? WHERE id = ?;
+
+removeById:
+DELETE FROM ClickSounds WHERE id = ?;

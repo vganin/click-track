@@ -4,8 +4,7 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.PlayClickTrackScreenState
 import com.vsevolodganin.clicktrack.state.Screen
-import com.vsevolodganin.clicktrack.state.actions.UpdateClickTrack
-import com.vsevolodganin.clicktrack.state.actions.UpdateCurrentlyPlaying
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 
 fun Screen.PlayClickTrack.reducePlayClickTrackScreen(action: Action): Screen {
     return Screen.PlayClickTrack(
@@ -15,7 +14,7 @@ fun Screen.PlayClickTrack.reducePlayClickTrackScreen(action: Action): Screen {
 
 private fun PlayClickTrackScreenState.reduce(action: Action): PlayClickTrackScreenState {
     return when (action) {
-        is UpdateCurrentlyPlaying -> if (action.playbackState?.clickTrack?.id == clickTrack.id) {
+        is ClickTrackAction.UpdateCurrentlyPlaying -> if (action.playbackState?.clickTrack?.id == clickTrack.id) {
             copy(progress = action.playbackState.progress, isPlaying = true)
         } else {
             copy(progress = null, isPlaying = false)
@@ -26,7 +25,7 @@ private fun PlayClickTrackScreenState.reduce(action: Action): PlayClickTrackScre
 
 private fun ClickTrackWithId.reduce(action: Action): ClickTrackWithId {
     return when (action) {
-        is UpdateClickTrack -> if (action.data.id == id) action.data else this
+        is ClickTrackAction.UpdateClickTrack -> if (action.data.id == id) action.data else this
         else -> this
     }
 }

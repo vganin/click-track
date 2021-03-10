@@ -1,49 +1,33 @@
 package com.vsevolodganin.clicktrack.storage
 
-import android.content.Context
-import androidx.sqlite.db.SupportSQLiteDatabase
-import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.vsevolodganin.clicktrack.Database
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
-import com.vsevolodganin.clicktrack.di.module.ApplicationContext
-import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.premade.PreMadeClickTracks
+import com.vsevolodganin.clicktrack.migration.CanMigrate
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.GlobalScope
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
 import com.vsevolodganin.clicktrack.storage.ClickTrack as StorageClickTrack
 
 @ViewModelScoped
 class ClickTrackRepository @Inject constructor(
-    @ApplicationContext context: Context,
-    @MainDispatcher mainDispatcher: CoroutineDispatcher,
-) {
-    private val database: Database = Database(AndroidSqliteDriver(
-        schema = Database.Schema,
-        context = context,
-        name = "click_track.db",
-        callback = object : AndroidSqliteDriver.Callback(Database.Schema) {
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
+    private val database: Database,
+    private val json: Json,
+) : CanMigrate {
 
-                GlobalScope.launch(mainDispatcher) {
-                    for (clickTrack in PreMadeClickTracks.DATA) {
-                        insert(clickTrack)
-                    }
-                }
+    override fun migrate(fromVersion: Int, toVersion: Int) {
+        if (fromVersion == UserPreferencesRepository.Const.NO_APP_VERSION_CODE) {
+            for (clickTrack in PreMadeClickTracks.DATA) {
+                insertIfHasNoSuchName(clickTrack)
             }
         }
-    ))
-    private val json: Json = Json
+    }
 
     fun getAll(): Flow<List<ClickTrackWithId>> {
         return database.sqlClickTrackQueries.getAll().asFlow()
@@ -67,6 +51,22 @@ class ClickTrackRepository @Inject constructor(
             )
             database.sqlClickTrackQueries.lastRowId().executeAsOne()
         }
+        return ClickTrackWithId(
+            id = insertedRowId,
+            value = clickTrack
+        )
+    }
+
+    fun insertIfHasNoSuchName(clickTrack: ClickTrack): ClickTrackWithId? {
+        val insertedRowId: Long = database.sqlClickTrackQueries.transactionWithResult {
+            val allNames = database.sqlClickTrackQueries.getAllNames().executeAsList()
+            if (clickTrack.name in allNames) return@transactionWithResult null
+            database.sqlClickTrackQueries.insert(
+                name = clickTrack.name,
+                serializedValue = json.encodeToString(clickTrack)
+            )
+            database.sqlClickTrackQueries.lastRowId().executeAsOne()
+        } ?: return null
         return ClickTrackWithId(
             id = insertedRowId,
             value = clickTrack
