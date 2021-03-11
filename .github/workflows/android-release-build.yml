@@ -13,7 +13,7 @@ jobs:
         with:
           java-version: 11
       - name: Assemble
-        run: ./gradlew -s :app:assembleRelease :app:bundleRelease :app:verifyReleaseDatabaseMigration -PisCiBuild
+        run: ./gradlew -s :app:bundleRelease :app:lintRelease :app:verifyReleaseDatabaseMigration -PisCiBuild
       - name: Sign
         uses: r0adkll/sign-android-release@v1
         id: sign_app
