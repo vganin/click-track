@@ -1,6 +1,10 @@
 package com.vsevolodganin.clicktrack.view.widget
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationResult
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.DecayAnimationSpec
+import androidx.compose.animation.core.calculateTargetValue
 import androidx.compose.animation.core.exponentialDecay
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -30,12 +34,11 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.utils.compose.fling
-import com.vsevolodganin.clicktrack.utils.compose.offset
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 @Composable
 fun NumberPicker(
@@ -106,7 +109,7 @@ fun NumberPicker(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .offset(y = { coercedAnimatedOffset.roundToInt() })
+                .offset { IntOffset(x = 0, y = coercedAnimatedOffset.roundToInt()) }
         ) {
             val baseLabelModifier = Modifier.align(Alignment.Center)
             ProvideTextStyle(textStyle) {
@@ -146,6 +149,30 @@ private fun Label(text: String, modifier: Modifier) {
             })
         }
     )
+}
+
+private suspend fun Animatable<Float, AnimationVector1D>.fling(
+    initialVelocity: Float,
+    animationSpec: DecayAnimationSpec<Float>,
+    adjustTarget: ((Float) -> Float)?,
+    block: (Animatable<Float, AnimationVector1D>.() -> Unit)? = null,
+): AnimationResult<Float, AnimationVector1D> {
+    val targetValue = animationSpec.calculateTargetValue(value, initialVelocity)
+    val adjustedTarget = adjustTarget?.invoke(targetValue)
+
+    return if (adjustedTarget != null) {
+        animateTo(
+            targetValue = adjustedTarget,
+            initialVelocity = initialVelocity,
+            block = block
+        )
+    } else {
+        animateDecay(
+            initialVelocity = initialVelocity,
+            animationSpec = animationSpec,
+            block = block,
+        )
+    }
 }
 
 @Preview
