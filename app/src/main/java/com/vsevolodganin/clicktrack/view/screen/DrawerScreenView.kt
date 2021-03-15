@@ -27,11 +27,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Dispatch
-import com.vsevolodganin.clicktrack.state.MetronomeScreenState
-import com.vsevolodganin.clicktrack.state.Screen
+import com.vsevolodganin.clicktrack.state.DrawerScreenState
 import com.vsevolodganin.clicktrack.state.actions.CloseDrawer
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.view.icon.ClickTrackIcons
@@ -39,7 +37,7 @@ import com.vsevolodganin.clicktrack.view.icon.Metronome
 
 @Composable
 fun DrawerScreenView(
-    currentScreen: Screen,
+    state: DrawerScreenState,
     dispatch: Dispatch = Dispatch {},
 ) {
     val dispatchClosingDrawer = { action: Action ->
@@ -50,21 +48,21 @@ fun DrawerScreenView(
     DrawerButton(
         icon = ClickTrackIcons.Metronome,
         label = stringResource(R.string.drawer_item_metronome),
-        isSelected = currentScreen is Screen.Metronome,
+        isSelected = state.selectedItem == DrawerScreenState.SelectedItem.METRONOME,
         action = { dispatchClosingDrawer(NavigationAction.ToMetronomeScreen) }
     )
 
     DrawerButton(
         icon = Icons.Filled.Settings,
         label = stringResource(R.string.drawer_item_settings),
-        isSelected = currentScreen is Screen.Settings,
+        isSelected = state.selectedItem == DrawerScreenState.SelectedItem.SETTINGS,
         action = { dispatchClosingDrawer(NavigationAction.ToSettingsScreen) }
     )
 
     DrawerButton(
         icon = Icons.Filled.LibraryMusic,
         label = stringResource(R.string.drawer_item_sound_library),
-        isSelected = currentScreen is Screen.Settings,
+        isSelected = state.selectedItem == DrawerScreenState.SelectedItem.SOUND_LIBRARY,
         action = { dispatchClosingDrawer(NavigationAction.ToSoundLibraryScreen) }
     )
 }
@@ -135,7 +133,12 @@ private fun DrawerButton(
 private fun Preview() {
     Column {
         DrawerScreenView(
-            currentScreen = Screen.Metronome(MetronomeScreenState(120.bpm, 0.0, false))
+            state = DrawerScreenState(
+                isOpened = true,
+                gesturesEnabled = true,
+                selectedItem = DrawerScreenState.SelectedItem.METRONOME
+            ),
+            dispatch = {}
         )
     }
 }

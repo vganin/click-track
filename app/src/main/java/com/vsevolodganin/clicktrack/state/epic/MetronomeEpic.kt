@@ -34,8 +34,9 @@ class MetronomeEpic @Inject constructor(
 
     override fun act(actions: Flow<Action>): Flow<Action> {
         return merge(
+            // TODO: Use `onScreen`
             store.state
-                .map { it.backstack.frontScreen() }
+                .map { it.backstack.screens.frontScreen() }
                 .distinctUntilChangedBy { it?.javaClass }
                 .mapNotNull { screen ->
                     if (screen is Screen.Metronome) {

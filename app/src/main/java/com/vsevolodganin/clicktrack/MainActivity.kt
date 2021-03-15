@@ -94,8 +94,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun render(appState: AppState) {
-        val frontScreen = appState.backstack.frontScreen() ?: return
-        val frontScreenPosition = appState.backstack.frontScreenPosition()
+        val frontScreen = appState.backstack.screens.frontScreen() ?: return
+        val frontScreenPosition = appState.backstack.screens.frontScreenPosition()
         val drawerState = appState.backstack.drawerState
 
         setContent {

@@ -6,4 +6,10 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class DrawerScreenState(
     val isOpened: Boolean,
-) : Parcelable
+    val gesturesEnabled: Boolean,
+    val selectedItem: SelectedItem?,
+) : Parcelable {
+    enum class SelectedItem {
+        METRONOME, SETTINGS, SOUND_LIBRARY
+    }
+}

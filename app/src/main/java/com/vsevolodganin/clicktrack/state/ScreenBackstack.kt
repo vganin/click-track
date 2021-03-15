@@ -6,49 +6,49 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ScreenBackstack(val screens: List<Screen>, val drawerState: DrawerScreenState) : Parcelable
 
-fun ScreenBackstack.frontScreenPosition(): Int {
-    return screens.lastIndex
+fun List<Screen>.frontScreenPosition(): Int {
+    return lastIndex
 }
 
-fun ScreenBackstack.frontScreen(): Screen? {
-    return screens.lastOrNull()
+fun List<Screen>.frontScreen(): Screen? {
+    return lastOrNull()
 }
 
-fun ScreenBackstack.pop(): ScreenBackstack {
-    return copy(screens = screens.dropLast(1))
+fun List<Screen>.pop(): List<Screen> {
+    return dropLast(1)
 }
 
-fun ScreenBackstack.pushOrIgnore(screen: Screen): ScreenBackstack {
+fun List<Screen>.pushOrIgnore(screen: Screen): List<Screen> {
     return pushOrIgnore { screen }
 }
 
-fun ScreenBackstack.pushOrIgnore(screenFactory: () -> Screen): ScreenBackstack {
+fun List<Screen>.pushOrIgnore(screenFactory: () -> Screen): List<Screen> {
     val current = frontScreen()
     val next = screenFactory()
     return if (current?.javaClass == next.javaClass) {
         this
     } else {
-        copy(screens = screens + screenFactory())
+        this + screenFactory()
     }
 }
 
-fun ScreenBackstack.pushOrReplace(screen: Screen): ScreenBackstack {
+fun List<Screen>.pushOrReplace(screen: Screen): List<Screen> {
     return pushOrReplace { screen }
 }
 
-fun ScreenBackstack.pushOrReplace(screenFactory: () -> Screen): ScreenBackstack {
+fun List<Screen>.pushOrReplace(screenFactory: () -> Screen): List<Screen> {
     val current = frontScreen()
     val next = screenFactory()
     return if (current?.javaClass == next.javaClass) {
-        copy(screens = screens.dropLast(1) + screenFactory())
+        dropLast(1) + screenFactory()
     } else {
-        copy(screens = screens + screenFactory())
+        this + screenFactory()
     }
 }
 
-fun ScreenBackstack.replaceCurrentScreen(mapper: (Screen) -> Screen): ScreenBackstack {
-    if (screens.isEmpty()) return this
-    val mutableScreens = screens.toMutableList()
-    mutableScreens[screens.lastIndex] = mapper.invoke(mutableScreens.last())
-    return copy(screens = mutableScreens)
+fun List<Screen>.replaceCurrentScreen(mapper: (Screen) -> Screen): List<Screen> {
+    if (isEmpty()) return this
+    val mutableScreens = toMutableList()
+    mutableScreens[lastIndex] = mapper.invoke(mutableScreens.last())
+    return mutableScreens
 }

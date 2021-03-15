@@ -19,7 +19,11 @@ data class AppState(
         val INITIAL = AppState(
             backstack = ScreenBackstack(
                 screens = listOf(INITIAL_SCREEN),
-                drawerState = DrawerScreenState(isOpened = false),
+                drawerState = DrawerScreenState(
+                    isOpened = false,
+                    gesturesEnabled = true,
+                    selectedItem = null,
+                ),
             ),
             currentlyPlaying = null,
         )

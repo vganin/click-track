@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.map
 
 inline fun <reified S : Screen> Store<AppState>.onScreen(crossinline transform: suspend (value: S) -> Flow<Action>): Flow<Action> {
     return state
-        .map { it.backstack.frontScreen() }
+        .map { it.backstack.screens.frontScreen() }
         .distinctUntilChangedBy { it?.javaClass }
         .flatMapLatest { screen ->
             if (screen is S) {
