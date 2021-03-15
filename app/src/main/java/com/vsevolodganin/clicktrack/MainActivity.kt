@@ -96,11 +96,13 @@ class MainActivity : AppCompatActivity() {
     private fun render(appState: AppState) {
         val frontScreen = appState.backstack.frontScreen() ?: return
         val frontScreenPosition = appState.backstack.frontScreenPosition()
+        val drawerState = appState.backstack.drawerState
+
         setContent {
             ContentView(
                 screen = frontScreen,
                 positionInBackstack = frontScreenPosition,
-                drawerScreenState = appState.drawerState,
+                drawerScreenState = drawerState,
                 dispatch = ::dispatch
             )
         }

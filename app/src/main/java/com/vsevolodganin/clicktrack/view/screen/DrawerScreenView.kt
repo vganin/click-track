@@ -30,7 +30,6 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Dispatch
-import com.vsevolodganin.clicktrack.state.DrawerScreenState
 import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.CloseDrawer
@@ -40,7 +39,7 @@ import com.vsevolodganin.clicktrack.view.icon.Metronome
 
 @Composable
 fun DrawerScreenView(
-    state: DrawerScreenState,
+    currentScreen: Screen,
     dispatch: Dispatch = Dispatch {},
 ) {
     val dispatchClosingDrawer = { action: Action ->
@@ -51,21 +50,21 @@ fun DrawerScreenView(
     DrawerButton(
         icon = ClickTrackIcons.Metronome,
         label = stringResource(R.string.drawer_item_metronome),
-        isSelected = state.currentScreen is Screen.Metronome,
+        isSelected = currentScreen is Screen.Metronome,
         action = { dispatchClosingDrawer(NavigationAction.ToMetronomeScreen) }
     )
 
     DrawerButton(
         icon = Icons.Filled.Settings,
         label = stringResource(R.string.drawer_item_settings),
-        isSelected = state.currentScreen is Screen.Settings,
+        isSelected = currentScreen is Screen.Settings,
         action = { dispatchClosingDrawer(NavigationAction.ToSettingsScreen) }
     )
 
     DrawerButton(
         icon = Icons.Filled.LibraryMusic,
         label = stringResource(R.string.drawer_item_sound_library),
-        isSelected = state.currentScreen is Screen.Settings,
+        isSelected = currentScreen is Screen.Settings,
         action = { dispatchClosingDrawer(NavigationAction.ToSoundLibraryScreen) }
     )
 }
@@ -136,10 +135,7 @@ private fun DrawerButton(
 private fun Preview() {
     Column {
         DrawerScreenView(
-            DrawerScreenState(
-                isOpened = true,
-                currentScreen = Screen.Metronome(MetronomeScreenState(120.bpm, 0.0, false)),
-            )
+            currentScreen = Screen.Metronome(MetronomeScreenState(120.bpm, 0.0, false))
         )
     }
 }

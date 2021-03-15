@@ -6,7 +6,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class AppState(
     val backstack: ScreenBackstack,
-    val drawerState: DrawerScreenState,
     val currentlyPlaying: PlaybackState?,
 ) : Parcelable {
 
@@ -19,11 +18,8 @@ data class AppState(
 
         val INITIAL = AppState(
             backstack = ScreenBackstack(
-                screens = listOf(INITIAL_SCREEN)
-            ),
-            drawerState = DrawerScreenState(
-                isOpened = false,
-                currentScreen = INITIAL_SCREEN,
+                screens = listOf(INITIAL_SCREEN),
+                drawerState = DrawerScreenState(isOpened = false),
             ),
             currentlyPlaying = null,
         )
