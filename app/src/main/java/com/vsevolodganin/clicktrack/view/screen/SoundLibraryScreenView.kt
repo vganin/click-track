@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.view.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.CenterFocusStrong
 import androidx.compose.material.icons.filled.CenterFocusWeak
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -81,26 +83,31 @@ private fun ClicksSoundsItem(
     item: SelectableClickSoundsItem,
     dispatch: Dispatch,
 ) {
+    val onSelect = remember {
+        { dispatch(SoundLibraryAction.SelectClickSounds(item.id)) }
+    }
+
     when (item) {
-        is SelectableClickSoundsItem.Builtin -> BuiltinClickSoundsItem(item, dispatch)
-        is SelectableClickSoundsItem.UserDefined -> UserDefinedSoundsItem(item, dispatch)
+        is SelectableClickSoundsItem.Builtin -> BuiltinClickSoundsItem(item, onSelect)
+        is SelectableClickSoundsItem.UserDefined -> UserDefinedSoundsItem(item, onSelect, dispatch)
     }
 }
 
 @Composable
 private fun BuiltinClickSoundsItem(
     item: SelectableClickSoundsItem.Builtin,
-    dispatch: Dispatch,
+    onSelect: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onSelect)
             .padding(16.dp)
     ) {
         RadioButton(
             selected = item.selected,
             modifier = Modifier.align(Alignment.CenterVertically),
-            onClick = { dispatch(SoundLibraryAction.SelectClickSounds(item.id)) },
+            onClick = onSelect,
         )
 
         Text(
@@ -115,6 +122,7 @@ private fun BuiltinClickSoundsItem(
 @Composable
 private fun UserDefinedSoundsItem(
     item: SelectableClickSoundsItem.UserDefined,
+    onSelect: () -> Unit,
     dispatch: Dispatch,
 ) {
     BoxWithConstraints {
@@ -124,7 +132,8 @@ private fun UserDefinedSoundsItem(
                     dispatch(SoundLibraryAction.RemoveClickSounds(item.id))
                 }
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(8.dp)
+                .clickable(onClick = onSelect),
             elevation = 2.dp
         ) {
             ConstraintLayout(modifier = Modifier.padding(8.dp)) {
@@ -138,7 +147,7 @@ private fun UserDefinedSoundsItem(
                         start.linkTo(parent.start)
                         centerVerticallyTo(parent)
                     },
-                    onClick = { dispatch(SoundLibraryAction.SelectClickSounds(item.id)) },
+                    onClick = onSelect,
                 )
 
                 Icon(
