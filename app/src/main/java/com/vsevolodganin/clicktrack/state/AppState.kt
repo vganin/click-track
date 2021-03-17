@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.state
 
 import android.os.Parcelable
+import com.vsevolodganin.clicktrack.BuildConfig
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -23,6 +24,7 @@ data class AppState(
                     isOpened = false,
                     gesturesEnabled = true,
                     selectedItem = null,
+                    displayVersion = BuildConfig.DISPLAY_VERSION
                 ),
             ),
             currentlyPlaying = null,

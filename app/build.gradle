@@ -29,6 +29,8 @@ android {
         setProperty("archivesBaseName", "click-track-$versionName$versionCode")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'DISPLAY_VERSION', "\"$versionName$versionCode\""
     }
 
     signingConfigs {

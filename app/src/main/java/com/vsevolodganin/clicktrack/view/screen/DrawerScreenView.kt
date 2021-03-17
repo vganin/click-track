@@ -1,9 +1,11 @@
 package com.vsevolodganin.clicktrack.view.screen
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,31 +42,44 @@ fun DrawerScreenView(
     state: DrawerScreenState,
     dispatch: Dispatch = Dispatch {},
 ) {
-    val dispatchClosingDrawer = { action: Action ->
-        dispatch(CloseDrawer)
-        dispatch(action)
+    Box(modifier = Modifier.fillMaxHeight()) {
+        Column {
+            val dispatchClosingDrawer = { action: Action ->
+                dispatch(CloseDrawer)
+                dispatch(action)
+            }
+
+            DrawerButton(
+                icon = ClickTrackIcons.Metronome,
+                label = stringResource(R.string.drawer_item_metronome),
+                isSelected = state.selectedItem == DrawerScreenState.SelectedItem.METRONOME,
+                action = { dispatchClosingDrawer(NavigationAction.ToMetronomeScreen) }
+            )
+
+            DrawerButton(
+                icon = Icons.Filled.Settings,
+                label = stringResource(R.string.drawer_item_settings),
+                isSelected = state.selectedItem == DrawerScreenState.SelectedItem.SETTINGS,
+                action = { dispatchClosingDrawer(NavigationAction.ToSettingsScreen) }
+            )
+
+            DrawerButton(
+                icon = Icons.Filled.LibraryMusic,
+                label = stringResource(R.string.drawer_item_sound_library),
+                isSelected = state.selectedItem == DrawerScreenState.SelectedItem.SOUND_LIBRARY,
+                action = { dispatchClosingDrawer(NavigationAction.ToSoundLibraryScreen) }
+            )
+        }
+
+        Text(
+            text = stringResource(R.string.drawer_version, state.displayVersion),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+                .alpha(0.6f),
+            style = MaterialTheme.typography.caption
+        )
     }
-
-    DrawerButton(
-        icon = ClickTrackIcons.Metronome,
-        label = stringResource(R.string.drawer_item_metronome),
-        isSelected = state.selectedItem == DrawerScreenState.SelectedItem.METRONOME,
-        action = { dispatchClosingDrawer(NavigationAction.ToMetronomeScreen) }
-    )
-
-    DrawerButton(
-        icon = Icons.Filled.Settings,
-        label = stringResource(R.string.drawer_item_settings),
-        isSelected = state.selectedItem == DrawerScreenState.SelectedItem.SETTINGS,
-        action = { dispatchClosingDrawer(NavigationAction.ToSettingsScreen) }
-    )
-
-    DrawerButton(
-        icon = Icons.Filled.LibraryMusic,
-        label = stringResource(R.string.drawer_item_sound_library),
-        isSelected = state.selectedItem == DrawerScreenState.SelectedItem.SOUND_LIBRARY,
-        action = { dispatchClosingDrawer(NavigationAction.ToSoundLibraryScreen) }
-    )
 }
 
 @Composable
@@ -136,7 +151,8 @@ private fun Preview() {
             state = DrawerScreenState(
                 isOpened = true,
                 gesturesEnabled = true,
-                selectedItem = DrawerScreenState.SelectedItem.METRONOME
+                selectedItem = DrawerScreenState.SelectedItem.METRONOME,
+                displayVersion = "6.6.6"
             ),
             dispatch = {}
         )

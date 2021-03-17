@@ -10,7 +10,7 @@ import com.vsevolodganin.clicktrack.state.frontScreenPosition
 
 fun DrawerScreenState.reduceDrawerState(action: Action, screens: List<Screen>): DrawerScreenState {
     val isOpened = isOpened.reduceIsOpened(action)
-    return DrawerScreenState(
+    return copy(
         isOpened = isOpened.reduceIsOpened(action),
         gesturesEnabled = isOpened || screens.frontScreenPosition() == 0,
         selectedItem = screens.frontScreen()?.let { screen ->
