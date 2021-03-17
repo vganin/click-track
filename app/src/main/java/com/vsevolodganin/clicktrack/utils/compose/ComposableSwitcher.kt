@@ -16,10 +16,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,51 +35,47 @@ enum class ComposableTransitionState {
 
 @Composable
 fun <Key, State> ComposableSwitcher(
-    currentKey: Key,
-    currentState: State,
+    key: Key,
+    state: State,
     snapOnInitialComposition: Boolean = true,
     content: @Composable (Key, State, Transition<ComposableTransitionState>) -> Unit,
 ) {
-    val state = remember {
-        if (snapOnInitialComposition) {
-            ComposableSwitcherState(
-                currentKey = currentKey,
-                items = mutableListOf(TransitionItem(
-                    key = currentKey,
-                    state = currentState,
+    val items: MutableList<TransitionItem<Key, State>> = remember {
+        mutableStateListOf<TransitionItem<Key, State>>().apply {
+            if (snapOnInitialComposition) {
+                this += TransitionItem(
+                    key = key,
+                    state = state,
                     content = { children ->
                         val transition = updateTransition(VISIBLE)
                         children(transition)
                     }
-                )),
-            )
-        } else {
-            ComposableSwitcherState(
-                // we use Any here as something which will not be equals to the real initial value
-                currentKey = Any(),
-            )
+                )
+            }
         }
     }
 
-    val switcherRecomposeScope = currentRecomposeScope
+    val currentKey = remember {
+        mutableStateOf(if (snapOnInitialComposition) key else Any())
+    }
 
-    if (currentKey != state.currentKey) {
-        state.currentKey = currentKey
+    if (key != currentKey.value) {
+        currentKey.value = key
 
-        val keysAndStates = state.items.map { it.key to it.state }.toMutableList()
+        val keysAndStates = items.map { it.key to it.state }.toMutableList()
 
-        val currentKeyIndex = keysAndStates.indexOfFirst { (key, _) -> key == currentKey }
+        val currentKeyIndex = keysAndStates.indexOfFirst { (key, _) -> key == key }
         if (currentKeyIndex == -1) {
-            keysAndStates += currentKey to currentState
+            keysAndStates += key to state
         } else {
-            keysAndStates[currentKeyIndex] = currentKey to currentState
+            keysAndStates[currentKeyIndex] = key to state
         }
 
-        state.items.clear()
+        items.clear()
 
-        keysAndStates.mapTo(state.items) { (itemKey, itemState) ->
+        keysAndStates.mapTo(items) { (itemKey, itemState) ->
             TransitionItem(key = itemKey, state = itemState, content = { children ->
-                val isVisible = itemKey == currentKey
+                val isVisible = itemKey == key
                 val transitionState = remember {
                     MutableTransitionState(when (isVisible) {
                         true -> ENTERING
@@ -94,21 +89,20 @@ fun <Key, State> ComposableSwitcher(
                 val transition = updateTransition(transitionState)
 
                 if (!isVisible && transitionState.currentState == transitionState.targetState) {
-                    SideEffect {
-                        state.items.removeAll { it.key == itemKey }
-                        switcherRecomposeScope.invalidate()
-                    }
+                    items.removeAll { it.key == itemKey }
                 }
 
                 children(transition)
             })
         }
     } else {
-        state.items.find { it.key == currentKey }?.state = currentState
+        items.indexOfFirst { it.key == key }.takeIf { it >= 0 }?.let { indexOfKey ->
+            items[indexOfKey] = items[indexOfKey].copy(state = state)
+        }
     }
 
     Box {
-        state.items.forEach { (itemKey, itemState, content) ->
+        items.forEach { (itemKey, itemState, content) ->
             key(itemKey) {
                 content { transition ->
                     content(itemKey, itemState, transition)
@@ -118,14 +112,9 @@ fun <Key, State> ComposableSwitcher(
     }
 }
 
-private class ComposableSwitcherState<Key, State>(
-    var currentKey: Any?,
-    val items: MutableList<TransitionItem<Key, State>> = mutableListOf(),
-)
-
 private data class TransitionItem<Key, State>(
     val key: Key,
-    var state: State,
+    val state: State,
     val content: @Composable (children: @Composable (Transition<ComposableTransitionState>) -> Unit) -> Unit,
 )
 
@@ -154,8 +143,8 @@ fun ComposableSwitcherPreview() {
     }
 
     ComposableSwitcher(
-        currentKey = screenIndex,
-        currentState = screens[screenIndex],
+        key = screenIndex,
+        state = screens[screenIndex],
     ) { _, screenData, transition ->
         val offset by transition.animateFloat(transitionSpec = { tween(durationMillis = 2000) }) { state ->
             when (state) {
