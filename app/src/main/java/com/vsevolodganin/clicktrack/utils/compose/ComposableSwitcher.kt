@@ -64,7 +64,7 @@ fun <Key, State> ComposableSwitcher(
 
         val keysAndStates = items.map { it.key to it.state }.toMutableList()
 
-        val currentKeyIndex = keysAndStates.indexOfFirst { (key, _) -> key == key }
+        val currentKeyIndex = keysAndStates.indexOfFirst { (it, _) -> it == key }
         if (currentKeyIndex == -1) {
             keysAndStates += key to state
         } else {
