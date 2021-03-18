@@ -96,8 +96,12 @@ fun <Key, State> ComposableSwitcher(
             })
         }
     } else {
+        // Updating current key's state if it changed. Don't want to update every time since it triggers recomposition
         items.indexOfFirst { it.key == key }.takeIf { it >= 0 }?.let { indexOfKey ->
-            items[indexOfKey] = items[indexOfKey].copy(state = state)
+            val newState = items[indexOfKey].copy(state = state)
+            if (items[indexOfKey] != newState) {
+                items[indexOfKey] = newState
+            }
         }
     }
 

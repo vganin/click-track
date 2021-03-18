@@ -53,13 +53,10 @@ fun ContentView(
             drawerContent = { DrawerScreenView(drawerScreenState, dispatch) },
             drawerGesturesEnabled = drawerScreenState.gesturesEnabled,
         ) {
-
-            // FIXME: Need to specify `key` name because otherwise composable isn't updating sometimes
-            @Suppress("UNUSED_ANONYMOUS_PARAMETER")
             ComposableSwitcher(
                 key = positionInBackstack,
                 state = screen,
-            ) { key, screen, transition ->
+            ) { _, screen, transition ->
                 if (transition.currentState == VISIBLE) {
                     previousPosition = positionInBackstack
                 }
