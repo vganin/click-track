@@ -91,21 +91,8 @@ private fun DrawerButton(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colors
-    val imageAlpha = if (isSelected) {
-        1f
-    } else {
-        0.6f
-    }
-    val textIconColor = if (isSelected) {
-        colors.primary
-    } else {
-        colors.onSurface.copy(alpha = 0.6f)
-    }
-    val backgroundColor = if (isSelected) {
-        colors.primary.copy(alpha = 0.12f)
-    } else {
-        Color.Transparent
-    }
+    val textAndIconColor = if (isSelected) colors.primary else colors.onSurface
+    val backgroundColor = if (isSelected) colors.primary.copy(alpha = 0.12f) else Color.Transparent
 
     Surface(
         modifier = modifier
@@ -127,16 +114,14 @@ private fun DrawerButton(
                 Icon(
                     imageVector = icon,
                     contentDescription = null, // decorative
-                    tint = textIconColor,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .alpha(imageAlpha)
+                    tint = textAndIconColor,
+                    modifier = Modifier.size(24.dp)
                 )
                 Spacer(Modifier.width(16.dp))
                 Text(
                     text = label,
                     style = MaterialTheme.typography.body2,
-                    color = textIconColor
+                    color = textAndIconColor
                 )
             }
         }
