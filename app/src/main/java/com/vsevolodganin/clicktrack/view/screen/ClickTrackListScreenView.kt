@@ -3,11 +3,9 @@ package com.vsevolodganin.clicktrack.view.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
@@ -35,10 +33,10 @@ import com.vsevolodganin.clicktrack.state.ClickTrackListScreenState
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.actions.OpenDrawer
+import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_2
-import com.vsevolodganin.clicktrack.view.utils.Constants
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackView
 
 @Composable
@@ -73,9 +71,7 @@ private fun Content(
             }
         }
 
-        item {
-            Spacer(modifier = Modifier.size(Constants.FAB_SIZE_WITH_PADDINGS))
-        }
+        padWithFabSpace()
     }
 }
 

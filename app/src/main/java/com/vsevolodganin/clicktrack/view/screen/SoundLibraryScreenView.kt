@@ -43,6 +43,7 @@ import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.state.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.state.SoundLibraryState
 import com.vsevolodganin.clicktrack.state.actions.SoundLibraryAction
+import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.view.widget.GenericTopBarWithBack
 
@@ -77,6 +78,8 @@ private fun Content(
         items(items = state.items, key = SelectableClickSoundsItem::id) { item ->
             ClicksSoundsItem(item, dispatch)
         }
+
+        padWithFabSpace()
     }
 }
 
