@@ -125,7 +125,7 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
                 )
 
                 drawArc(
-                    color = controllerButtonColor.copy(alpha = 0.5f),
+                    color = controllerButtonColor.copy(alpha = 0.8f),
                     topLeft = buttonOffset,
                     size = buttonSize,
                     startAngle = 0f,

@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
@@ -37,6 +36,7 @@ import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_2
+import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackView
 
 @Composable
@@ -49,7 +49,7 @@ fun ClickTrackListScreenView(
         topBar = { TopBar(dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(onClick = { dispatch(ClickTrackAction.NewClickTrack) }) {
+            ClickTrackFloatingActionButton(onClick = { dispatch(ClickTrackAction.NewClickTrack) }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },

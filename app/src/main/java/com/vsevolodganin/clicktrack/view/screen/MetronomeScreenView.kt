@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -36,6 +35,7 @@ import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction
 import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import com.vsevolodganin.clicktrack.view.widget.BpmWheel
+import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackView
 import com.vsevolodganin.clicktrack.view.widget.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.view.widget.PlayStopButton
@@ -120,7 +120,7 @@ private fun Content(
             })
         }
 
-        FloatingActionButton(
+        ClickTrackFloatingActionButton(
             onClick = { dispatch(MetronomeAction.BpmMeterTap) },
             modifier = Modifier
                 .size(64.dp)

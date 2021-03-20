@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -62,6 +61,7 @@ import com.vsevolodganin.clicktrack.utils.compose.offset
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.utils.compose.toObservableMutableStateList
+import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.view.widget.EditCueWithDurationView
 import com.vsevolodganin.clicktrack.view.widget.GenericTopBarWithBack
 import kotlin.math.roundToInt
@@ -109,7 +109,7 @@ fun EditClickTrackScreenView(
         topBar = { GenericTopBarWithBack(R.string.edit_click_track, dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(onClick = {
+            ClickTrackFloatingActionButton(onClick = {
                 cuesState += observableMutableStateOf(state.defaultCue).observe { update() }
                 coroutineScope.launch {
                     awaitFrame()

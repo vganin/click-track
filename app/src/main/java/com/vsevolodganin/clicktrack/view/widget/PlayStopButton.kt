@@ -5,7 +5,6 @@ import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.animateOffset
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -27,7 +26,7 @@ fun PlayStopButton(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    FloatingActionButton(
+    ClickTrackFloatingActionButton(
         onClick = onToggle,
         modifier = modifier,
     ) {

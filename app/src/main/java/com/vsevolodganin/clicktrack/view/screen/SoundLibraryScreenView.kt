@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -45,6 +44,7 @@ import com.vsevolodganin.clicktrack.state.SoundLibraryState
 import com.vsevolodganin.clicktrack.state.actions.SoundLibraryAction
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
+import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.view.widget.GenericTopBarWithBack
 
 @Composable
@@ -57,7 +57,7 @@ fun SoundLibraryScreenView(
         topBar = { GenericTopBarWithBack(R.string.sound_library, dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(onClick = { dispatch(SoundLibraryAction.NewClickSounds) }) {
+            ClickTrackFloatingActionButton(onClick = { dispatch(SoundLibraryAction.NewClickSounds) }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
