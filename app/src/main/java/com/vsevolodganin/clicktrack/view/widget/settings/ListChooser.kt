@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
@@ -43,8 +44,19 @@ fun <T> ListChooser(
         .clickable { showChooser = true }
         .padding(16.dp)
     ) {
-        Text(text = title, modifier = Modifier.weight(1f))
-        Text(text = value, style = MaterialTheme.typography.caption)
+        Text(
+            text = title,
+            modifier = Modifier
+                .weight(1f)
+                .align(Alignment.CenterVertically),
+        )
+
+        Text(
+            text = value,
+            modifier = Modifier
+                .align(Alignment.CenterVertically),
+            style = MaterialTheme.typography.caption,
+        )
     }
 
     if (showChooser) {
