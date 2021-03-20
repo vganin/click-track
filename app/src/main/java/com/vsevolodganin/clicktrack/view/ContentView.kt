@@ -57,7 +57,7 @@ fun ContentView(
             drawerGesturesEnabled = drawerScreenState.gesturesEnabled,
         ) {
             ComposableSwitcher(
-                key = positionInBackstack,
+                key = previousPosition.value,
                 state = screen,
             ) { _, screen, transition ->
                 val offset by transition.animateFloat(transitionSpec = { spring() }) { state ->

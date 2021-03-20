@@ -74,7 +74,7 @@ fun <Key, State> ComposableSwitcher(
         items.clear()
 
         keysAndStates.mapTo(items) { (itemKey, itemState) ->
-            TransitionItem(key = itemKey, state = itemState, content = { children ->
+            TransitionItem(key = itemKey, state = itemState, content = @Composable { children ->
                 val isVisible = itemKey == key
                 val transitionState = remember {
                     MutableTransitionState(when (isVisible) {
