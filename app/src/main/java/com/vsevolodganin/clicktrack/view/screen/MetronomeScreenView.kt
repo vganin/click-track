@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -14,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
@@ -84,7 +87,10 @@ private fun Content(
 
         Text(
             text = bpmState.value.value.toString(),
-            style = MaterialTheme.typography.h1,
+            style = MaterialTheme.typography.h1.copy(
+                fontWeight = FontWeight.Medium,
+                letterSpacing = 8.sp,
+            ),
             modifier = Modifier
                 .constrainAs(bpmText) {
                     centerHorizontallyTo(parent)
@@ -122,7 +128,13 @@ private fun Content(
                     end.linkTo(parent.end)
                 }
         ) {
-            Text(text = stringResource(id = R.string.bpm_meter_tap))
+            Text(
+                text = stringResource(id = R.string.bpm_meter_tap),
+                style = LocalTextStyle.current.copy(
+                    fontWeight = FontWeight.Black,
+                    letterSpacing = 4.sp,
+                )
+            )
         }
     }
 }
