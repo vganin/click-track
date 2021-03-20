@@ -49,6 +49,8 @@ fun DrawerScreenView(
                 dispatch(action)
             }
 
+            Spacer(modifier = Modifier.height(12.dp))
+
             DrawerButton(
                 icon = ClickTrackIcons.Metronome,
                 label = stringResource(R.string.drawer_item_metronome),
@@ -76,7 +78,7 @@ fun DrawerScreenView(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
-                .alpha(0.6f),
+                .alpha(0.7f),
             style = MaterialTheme.typography.caption
         )
     }
@@ -91,7 +93,7 @@ private fun DrawerButton(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colors
-    val textAndIconColor = if (isSelected) colors.primary else colors.onSurface
+    val textAndIconColor = if (isSelected) colors.primary else colors.onSurface.copy(alpha = 0.9f)
     val backgroundColor = if (isSelected) colors.primary.copy(alpha = 0.12f) else Color.Transparent
 
     Surface(
