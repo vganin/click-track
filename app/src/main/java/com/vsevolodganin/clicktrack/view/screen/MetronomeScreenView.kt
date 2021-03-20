@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -82,6 +83,7 @@ private fun Content(
                 drawAllBeatsMarks = true,
                 drawTextMarks = false,
                 progress = state.progress,
+                defaultLineWidth = with(LocalDensity.current) { 1f.dp.toPx() }
             )
         }
 

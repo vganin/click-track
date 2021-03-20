@@ -53,6 +53,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
@@ -62,13 +63,13 @@ import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableViewport
 import com.vsevolodganin.clicktrack.utils.compose.awaitLongPressOrCancellation
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
+import kotlin.math.abs
+import kotlin.time.Duration
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.abs
-import kotlin.time.Duration
 
 @Composable
 fun ClickTrackView(
@@ -81,6 +82,7 @@ fun ClickTrackView(
     onProgressDragStart: () -> Unit = {},
     onProgressDrop: (Double) -> Unit = {},
     viewportPanEnabled: Boolean = false,
+    defaultLineWidth: Float = with(LocalDensity.current) { 0.5f.dp.toPx() },
 ) {
     BoxWithConstraints(modifier = modifier) {
         val width = minWidth
@@ -90,11 +92,11 @@ fun ClickTrackView(
         val marks = clickTrack.asMarks(widthPx, drawAllBeatsMarks)
 
         var isProgressCaptured by remember { mutableStateOf(false) }
-        val progressLineWidth = remember { Animatable(0f) }
+        val progressLineWidth = remember { Animatable(defaultLineWidth) }
         LaunchedEffect(isProgressCaptured) {
             val newProgressLineWidth = when (isProgressCaptured) {
                 true -> PROGRESS_LINE_WIDTH_CAPTURED
-                false -> PROGRESS_LINE_WIDTH_DEFAULT
+                false -> defaultLineWidth
             }
             val animSpec: AnimationSpec<Float> = when (isProgressCaptured) {
                 true -> spring(
@@ -157,6 +159,7 @@ fun ClickTrackView(
                         for (mark in marks) {
                             drawLine(
                                 color = mark.color,
+                                strokeWidth = defaultLineWidth / scaleX,
                                 start = Offset(mark.x, 0f),
                                 end = Offset(mark.x, size.height),
                             )
@@ -165,9 +168,9 @@ fun ClickTrackView(
                         if (progressPosition != null) {
                             drawLine(
                                 color = playbackStampColor,
+                                strokeWidth = progressLineWidth.value / scaleX,
                                 start = Offset(progressPosition.value, 0f),
-                                end = Offset(progressPosition.value, size.height),
-                                strokeWidth = progressLineWidth.value / scaleX
+                                end = Offset(progressPosition.value, size.height)
                             )
                         }
                     }
@@ -485,7 +488,6 @@ private val AnimatableViewport.transformations
         }
     }
 
-private const val PROGRESS_LINE_WIDTH_DEFAULT = 0f
 private const val PROGRESS_LINE_WIDTH_CAPTURED = 10f
 
 @Preview
