@@ -15,7 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.DrawerScreenState
@@ -44,9 +43,13 @@ fun ContentView(
     ClickTrackTheme {
         val modifier = Modifier.fillMaxSize()
 
-        var previousPosition by remember { mutableStateOf(positionInBackstack) }
-        val isPush = remember(positionInBackstack) { positionInBackstack > previousPosition }
-        previousPosition = positionInBackstack
+        val previousPosition = remember { mutableStateOf(positionInBackstack) }
+        val isPush = remember { mutableStateOf(true) }
+
+        if (positionInBackstack != previousPosition.value) {
+            isPush.value = positionInBackstack > previousPosition.value
+            previousPosition.value = positionInBackstack
+        }
 
         Scaffold(
             scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerScreenState, dispatch)),
@@ -57,15 +60,11 @@ fun ContentView(
                 key = positionInBackstack,
                 state = screen,
             ) { _, screen, transition ->
-                if (transition.currentState == VISIBLE) {
-                    previousPosition = positionInBackstack
-                }
-
                 val offset by transition.animateFloat(transitionSpec = { spring() }) { state ->
                     when (state) {
                         VISIBLE -> 0.0f
-                        ENTERING -> if (isPush) 1.0f else -1.0f
-                        EXITING -> if (isPush) -1.0f else 1.0f
+                        ENTERING -> if (isPush.value) 1.0f else -1.0f
+                        EXITING -> if (isPush.value) -1.0f else 1.0f
                     }
                 }
 
