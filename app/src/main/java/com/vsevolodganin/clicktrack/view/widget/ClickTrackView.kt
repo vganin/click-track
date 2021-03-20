@@ -36,6 +36,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.consumeAllChanges
@@ -53,7 +54,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
@@ -64,6 +64,7 @@ import com.vsevolodganin.clicktrack.utils.compose.AnimatableViewport
 import com.vsevolodganin.clicktrack.utils.compose.awaitLongPressOrCancellation
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import kotlin.math.abs
+import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
@@ -82,7 +83,7 @@ fun ClickTrackView(
     onProgressDragStart: () -> Unit = {},
     onProgressDrop: (Double) -> Unit = {},
     viewportPanEnabled: Boolean = false,
-    defaultLineWidth: Float = with(LocalDensity.current) { 0.5f.dp.toPx() },
+    defaultLineWidth: Float = Stroke.HairlineWidth,
 ) {
     BoxWithConstraints(modifier = modifier) {
         val width = minWidth
@@ -156,21 +157,26 @@ fun ClickTrackView(
                         translate(translateX, translateY)
                     },
                     drawBlock = {
+                        // Need to avoid anti-aliasing effect
+                        fun Float.restrictToPixelBounds() = roundToInt().toFloat()
+
                         for (mark in marks) {
+                            val markX = mark.x.restrictToPixelBounds()
                             drawLine(
                                 color = mark.color,
                                 strokeWidth = defaultLineWidth / scaleX,
-                                start = Offset(mark.x, 0f),
-                                end = Offset(mark.x, size.height),
+                                start = Offset(markX, 0f),
+                                end = Offset(markX, size.height),
                             )
                         }
 
                         if (progressPosition != null) {
+                            val progressX = progressPosition.value.restrictToPixelBounds()
                             drawLine(
                                 color = playbackStampColor,
                                 strokeWidth = progressLineWidth.value / scaleX,
-                                start = Offset(progressPosition.value, 0f),
-                                end = Offset(progressPosition.value, size.height)
+                                start = Offset(progressX, 0f),
+                                end = Offset(progressX, size.height)
                             )
                         }
                     }
