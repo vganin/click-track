@@ -3,8 +3,10 @@ package com.vsevolodganin.clicktrack.view.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
@@ -110,11 +112,13 @@ private fun BuiltinClickSoundsItem(
             onClick = onSelect,
         )
 
+        Spacer(modifier = Modifier.width(16.dp))
+
         Text(
             text = stringResource(item.data.nameStringRes),
             modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.h6
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.subtitle1
         )
     }
 }
