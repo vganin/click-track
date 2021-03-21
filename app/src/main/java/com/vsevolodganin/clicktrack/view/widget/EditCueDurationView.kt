@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -87,14 +88,14 @@ fun EditCueDurationView(
 
         DurationTypeDropdown(
             state = durationTypeState,
-            modifier = Modifier.align(Alignment.CenterVertically)
+            modifier = Modifier.fillMaxHeight()
         )
 
         Spacer(modifier = Modifier.width(8.dp))
 
         val commonCueDurationModifier = Modifier
             .align(Alignment.CenterVertically)
-            .width(DURATION_FIELD_WIDTH)
+            .width(DURATION_VALUE_WIDTH)
 
         when (durationTypeState.value) {
             CueDurationType.BEATS -> {
@@ -135,7 +136,7 @@ private fun DurationTypeDropdown(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(),
                 )
-                .width(DROPDOWN_TOGGLE_WIDTH)
+                .width(DURATION_TYPE_WIDTH)
         ) {
             Box(
                 modifier = Modifier
@@ -167,7 +168,7 @@ private fun DurationTypeDropdown(
         DropdownMenu(
             expanded = toggleState.value,
             onDismissRequest = { toggleState.value = false },
-            offset = DpOffset(-DROPDOWN_TOGGLE_WIDTH, 0.dp),
+            offset = DpOffset(-DURATION_TYPE_WIDTH, 0.dp),
             content = {
                 CueDurationType.values().forEach { durationType ->
                     DropdownMenuItem(onClick = {
@@ -255,8 +256,8 @@ private val CueDuration.type: CueDurationType
         }
     }
 
-private val DROPDOWN_TOGGLE_WIDTH = 64.dp
-private val DURATION_FIELD_WIDTH = 140.dp
+private val DURATION_TYPE_WIDTH = 70.dp
+private val DURATION_VALUE_WIDTH = 150.dp
 
 @Preview
 @Composable

@@ -1,7 +1,9 @@
 package com.vsevolodganin.clicktrack.view.widget
 
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
@@ -49,7 +51,7 @@ fun EditCueWithDurationView(
         val viewModifier = Modifier.align(Alignment.CenterVertically)
         val spacerModifier = Modifier.width(16.dp)
 
-        EditCueDurationView(state = durationState, modifier = viewModifier)
+        EditCueDurationView(state = durationState, modifier = viewModifier.height(IntrinsicSize.Min))
         Spacer(modifier = spacerModifier)
         TimeSignatureView(state = timeSignatureState, modifier = viewModifier)
         Spacer(modifier = spacerModifier)
