@@ -24,7 +24,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
@@ -125,7 +125,19 @@ fun ClickTrackView(
 
         val bounds = remember { Rect(0f, 0f, widthPx, heightPx) }
         val viewportState = remember { AnimatableViewport(bounds) }
-        val viewportTransformations by derivedStateOf { viewportState.transformations }
+        val viewportTransformations = viewportState.transformations
+        val scaleX = viewportTransformations.scaleX
+        val scaleY = viewportTransformations.scaleY
+        val translateX = viewportTransformations.translateX
+        val translateY = viewportTransformations.translateY
+
+        fun Float.transformXAndPixelAlign(): Float {
+            return ((this + translateX) * scaleX).roundToInt().toFloat()
+        }
+
+        val transformedAndPixelAlignedMarks = marks.map { mark ->
+            mark.copy(x = mark.x.transformXAndPixelAlign())
+        }
 
         Box(
             modifier = Modifier
@@ -145,36 +157,29 @@ fun ClickTrackView(
                     }
                 )
         ) {
-            val scaleX = viewportTransformations.scaleX
-            val scaleY = viewportTransformations.scaleY
-            val translateX = viewportTransformations.translateX
-            val translateY = viewportTransformations.translateY
-
             Canvas(modifier = Modifier.size(width, height)) {
                 withTransform(
                     transformBlock = {
-                        scale(scaleX, scaleY, Offset(0f, 0f))
-                        translate(translateX, translateY)
+                        // Transform only Y because X transformation needs post pixel alignment
+                        scale(1f, scaleY, Offset(0f, 0f))
+                        translate(0f, translateY)
                     },
                     drawBlock = {
-                        // Need to avoid anti-aliasing effect
-                        fun Float.restrictToPixelBounds() = roundToInt().toFloat()
-
-                        for (mark in marks) {
-                            val markX = mark.x.restrictToPixelBounds()
+                        for (mark in transformedAndPixelAlignedMarks) {
+                            val markX = mark.x
                             drawLine(
                                 color = mark.color,
-                                strokeWidth = defaultLineWidth / scaleX,
+                                strokeWidth = defaultLineWidth,
                                 start = Offset(markX, 0f),
                                 end = Offset(markX, size.height),
                             )
                         }
 
                         if (progressPosition != null) {
-                            val progressX = progressPosition.value.restrictToPixelBounds()
+                            val progressX = progressPosition.value.transformXAndPixelAlign()
                             drawLine(
                                 color = playbackStampColor,
-                                strokeWidth = progressLineWidth.value / scaleX,
+                                strokeWidth = progressLineWidth.value,
                                 start = Offset(progressX, 0f),
                                 end = Offset(progressX, size.height)
                             )
@@ -187,7 +192,7 @@ fun ClickTrackView(
                 Layout(
                     modifier = Modifier.wrapContentSize(),
                     content = {
-                        for (mark in marks) {
+                        for (mark in transformedAndPixelAlignedMarks) {
                             val layoutIdModifier = Modifier.layoutId(mark)
                             mark.briefSummary?.invoke(layoutIdModifier)
                             mark.detailedSummary?.invoke(layoutIdModifier)
@@ -199,24 +204,22 @@ fun ClickTrackView(
                         }.toSortedMap { lhs, rhs -> lhs.x.compareTo(rhs.x) }.toList()
 
                         layout(constraints.maxWidth, constraints.maxHeight) {
-                            var currentEndX = (translateX * scaleX).toInt()
-                            var currentEndY = 0
-
-                            fun Mark.transformedX() = ((x + translateX) * scaleX).toInt()
+                            var currentEndX = Float.NEGATIVE_INFINITY
+                            var currentEndY = 0f
 
                             placeables
-                                .forEachIndexed { index, (mark, summaries) ->
-                                    val markX = mark.transformedX()
+                                .fastForEachIndexed { index, (mark, summaries) ->
+                                    val markX = mark.x
 
-                                    val firstSummary = summaries.firstOrNull() ?: return@forEachIndexed
+                                    val firstSummary = summaries.firstOrNull() ?: return@fastForEachIndexed
 
                                     if (markX < currentEndX) {
                                         currentEndY += firstSummary.height
                                     } else {
-                                        currentEndY = 0
+                                        currentEndY = 0f
                                     }
 
-                                    val nextMarkX = marks.getOrNull(index + 1)?.transformedX() ?: Int.MAX_VALUE
+                                    val nextMarkX = transformedAndPixelAlignedMarks.getOrNull(index + 1)?.x ?: Float.POSITIVE_INFINITY
 
                                     val summariesSortedByDescendingWidth = summaries.sortedByDescending(Placeable::width)
                                     val placeable = summariesSortedByDescendingWidth
@@ -225,7 +228,7 @@ fun ClickTrackView(
                                         }
                                         ?: summariesSortedByDescendingWidth.last()
 
-                                    placeable.placeRelative(x = markX, y = currentEndY)
+                                    placeable.placeRelative(x = markX.toInt(), y = currentEndY.toInt())
 
                                     currentEndX = markX + placeable.width
                                 }
@@ -271,7 +274,7 @@ private fun animatedProgressPosition(
     return playbackStampX
 }
 
-private class Mark(
+private data class Mark(
     val x: Float,
     val color: Color,
     val briefSummary: (@Composable (modifier: Modifier) -> Unit)?,
