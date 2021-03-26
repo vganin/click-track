@@ -15,6 +15,7 @@ import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
 import com.vsevolodganin.clicktrack.utils.coroutine.delay
 import com.vsevolodganin.clicktrack.utils.coroutine.tick
+import com.vsevolodganin.clicktrack.utils.grabIf
 import com.vsevolodganin.clicktrack.utils.time.rem
 import javax.inject.Inject
 import kotlin.time.Duration
@@ -60,15 +61,16 @@ class PlayerImpl @Inject constructor(
     private var pausedState = MutableNonConflatedStateFlow(false)
 
     override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?): Unit = withContext(mainDispatcher) {
-        val currentProgress = currentProgress()
-        val atProgressCoerced = atProgress ?: currentProgress ?: 0.0
-        val startAtTime = clickTrack.value.durationInTime * atProgressCoerced
+        val currentPlayback = playbackState.value
+        val progress = atProgress
+            ?: grabIf(clickTrack.id == currentPlayback?.clickTrack?.id) { currentPlayback?.currentProgress() }
+            ?: 0.0
+        val startAtTime = clickTrack.value.durationInTime * progress
 
         updatePlaybackState {
             InternalPlaybackState(
                 clickTrack = clickTrack,
-                progress = atProgressCoerced,
-                startMark = TimeSource.Monotonic.markNow(),
+                startProgress = progress,
             )
         }
 
@@ -96,17 +98,10 @@ class PlayerImpl @Inject constructor(
                 internalPlaybackState ?: return@map null
                 PlaybackState(
                     clickTrack = internalPlaybackState.clickTrack,
-                    progress = internalPlaybackState.progress,
+                    progress = internalPlaybackState.currentProgress(),
                 )
             }
             .distinctUntilChanged()
-    }
-
-    private fun currentProgress(): Double? {
-        return playbackState.value?.run {
-            val elapsedSinceStart = startMark.elapsedNow()
-            elapsedSinceStart / clickTrack.value.durationInTime
-        }
     }
 
     private suspend fun startImpl(clickTrack: ClickTrackWithId, startAt: Duration) = coroutineScope {
@@ -127,7 +122,7 @@ class PlayerImpl @Inject constructor(
                         updatePlaybackState {
                             this?.copy(
                                 clickTrack = clickTrack,
-                                progress = (cueGlobalStart + beatTimestamp).toProgress(),
+                                startProgress = (cueGlobalStart + beatTimestamp).toProgress(),
                             )
                         }
                     }
@@ -157,7 +152,6 @@ class PlayerImpl @Inject constructor(
             val nextBeatTimestamp = (beatInterval * nextBeatIndex).coerceAtMost(totalDuration)
             val beatRemainingDuration = nextBeatTimestamp - startAt
 
-            reportProgress(startAt)
             delay(beatRemainingDuration)
 
             beatIndex = nextBeatIndex
@@ -207,9 +201,15 @@ class PlayerImpl @Inject constructor(
 
     private data class InternalPlaybackState(
         val clickTrack: ClickTrackWithId,
-        val progress: Double,
-        val startMark: TimeMark,
-    )
+        val startProgress: Double,
+    ) {
+        val startedAt: TimeMark = TimeSource.Monotonic.markNow()
+
+        fun currentProgress(): Double {
+            val elapsedSinceStart = startedAt.elapsedNow()
+            return startProgress + elapsedSinceStart / clickTrack.value.durationInTime
+        }
+    }
 
     private object Const {
         val TIME_EPSILON_TO_AVOID_SPURIOUS_CLICKS = 1.milliseconds
