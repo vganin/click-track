@@ -147,6 +147,8 @@ class PlayerImpl @Inject constructor(
         var beatIndex: Int
         val initialDelay: Duration
 
+        reportProgress(startAt)
+
         if (startAt % beatInterval > Duration.ZERO) {
             val nextBeatIndex = (startAt / beatInterval).toInt() + 1
             val nextBeatTimestamp = (beatInterval * nextBeatIndex).coerceAtMost(totalDuration)
@@ -164,7 +166,7 @@ class PlayerImpl @Inject constructor(
         tick(
             duration = (totalDuration - initialDelay - Const.TIME_EPSILON_TO_AVOID_SPURIOUS_CLICKS).coerceAtLeast(Duration.ZERO),
             interval = beatInterval,
-            onTick = { passed ->
+            onTick = {
                 if (pausedState.value) {
                     pausedState.filter { false }.take(1).collect()
                 }
@@ -177,8 +179,6 @@ class PlayerImpl @Inject constructor(
                         sounds.weakBeat?.let { soundPool.play(it, ClickSoundPriority.WEAK) }
                     }
                 }
-
-                reportProgress(initialDelay + passed)
 
                 ++beatIndex
             },
