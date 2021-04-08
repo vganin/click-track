@@ -2,15 +2,15 @@ buildscript {
     rootProject.apply from: 'properties.gradle'
 
     ext {
-        kotlinVersion = '1.4.31'
-        composeVersion = '1.0.0-beta02'
+        kotlinVersion = '1.4.32'
+        composeVersion = '1.0.0-beta04'
         kotlinxSerializationVersion = '1.1.0'
         sqlDelightVersion = '1.4.4'
     }
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -26,7 +26,7 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 
