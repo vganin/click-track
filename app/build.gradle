@@ -16,6 +16,10 @@ if (hasKeystoreProperties) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+def buildNumber = rootProject.ext.buildNumber ?: 1
+def baseBuildNumber = 0
+def displayBuildNumber = buildNumber - baseBuildNumber
+
 android {
     compileSdkVersion 29
 
@@ -23,14 +27,14 @@ android {
         applicationId "com.vsevolodganin.clicktrack"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode rootProject.ext.buildNumber ?: 1
-        versionName "alpha"
+        versionCode buildNumber
+        versionName "alpha${String.format("%02d", displayBuildNumber)}"
 
         setProperty("archivesBaseName", "click-track-$versionName$versionCode")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField 'String', 'DISPLAY_VERSION', "\"$versionName$versionCode\""
+        buildConfigField 'String', 'DISPLAY_VERSION', "\"$versionName\""
     }
 
     signingConfigs {
