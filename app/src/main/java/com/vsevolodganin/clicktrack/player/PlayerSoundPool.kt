@@ -6,6 +6,7 @@ import android.media.AudioAttributes
 import android.media.SoundPool
 import android.net.Uri
 import android.util.Log
+import androidx.media.AudioAttributesCompat
 import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundPriority
@@ -24,16 +25,16 @@ class PlayerSoundPool @Inject constructor(
     @ApplicationContext private val context: Context,
     private val contentResolver: ContentResolver,
 ) {
+    companion object {
+        val AUDIO_ATTRIBUTES: AudioAttributesCompat = AudioAttributesCompat.Builder()
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
+    }
 
     private val soundPool = SoundPool.Builder()
         .setMaxStreams(Int.MAX_VALUE)
-        .setAudioAttributes(
-            AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_UNKNOWN)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-                .build()
-        )
+        .setAudioAttributes(AUDIO_ATTRIBUTES.unwrap() as AudioAttributes)
         .build()
 
     private val awaitLoad = SoundPoolSuspendingLoadWait(soundPool)

@@ -10,6 +10,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.vsevolodganin.clicktrack.di.module.ActivityScopedAppStateEpic
 import com.vsevolodganin.clicktrack.migration.MigrationManager
+import com.vsevolodganin.clicktrack.player.PlayerSoundPool
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
 import com.vsevolodganin.clicktrack.redux.EpicMiddleware
@@ -80,6 +81,11 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         epicMiddleware.unregister(*epics.toTypedArray())
         renderScope.cancel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        volumeControlStream = PlayerSoundPool.AUDIO_ATTRIBUTES.volumeControlStream
     }
 
     override fun onBackPressed() {
