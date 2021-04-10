@@ -93,6 +93,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion composeVersion
     }
+
+    lintOptions {
+        // FIXME(https://issuetracker.google.com/issues/184830262)
+        disable "NullSafeMutableLiveData"
+    }
 }
 
 sqldelight {

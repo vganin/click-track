@@ -27,8 +27,8 @@ class PlayerSoundPool @Inject constructor(
 ) {
     companion object {
         val AUDIO_ATTRIBUTES: AudioAttributesCompat = AudioAttributesCompat.Builder()
-            .setUsage(AudioAttributes.USAGE_MEDIA)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .setUsage(AudioAttributesCompat.USAGE_MEDIA)
+            .setContentType(AudioAttributesCompat.CONTENT_TYPE_SONIFICATION)
             .build()
     }
 
