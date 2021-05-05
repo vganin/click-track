@@ -26,7 +26,9 @@ sealed class SelectableClickSoundsItem : Parcelable {
     data class UserDefined(
         override val id: ClickSoundsId.Database,
         val strongBeatValue: String,
+        val strongBeatHasError: Boolean,
         val weakBeatValue: String,
+        val weakBeatHasError: Boolean,
         val selected: Boolean,
     ) : SelectableClickSoundsItem()
 }

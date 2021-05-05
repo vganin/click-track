@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CenterFocusStrong
 import androidx.compose.material.icons.filled.CenterFocusWeak
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -217,30 +218,48 @@ private fun UserDefinedSoundsItem(
                     )
                 }
 
-                IconButton(
+                PlayButtonOrError(
                     modifier = Modifier.constrainAs(playStrongBeat) {
                         start.linkTo(strongBeatValue.end, 16.dp)
                         end.linkTo(parent.end)
                         top.linkTo(strongBeatIcon.top)
                         bottom.linkTo(strongBeatIcon.bottom)
                     },
-                    onClick = { dispatch(SoundLibraryAction.PlaySound(item.id, ClickSoundType.STRONG)) }
-                ) {
-                    Icon(imageVector = Icons.Default.PlayCircle, contentDescription = null)
-                }
+                    hasError = item.strongBeatHasError,
+                    onClick = { dispatch(SoundLibraryAction.PlaySound(item.id, ClickSoundType.STRONG)) },
+                )
 
-                IconButton(
+                PlayButtonOrError(
                     modifier = Modifier.constrainAs(playWeakBeat) {
                         start.linkTo(weakBeatValue.end, 16.dp)
                         end.linkTo(parent.end)
                         top.linkTo(weakBeatIcon.top)
                         bottom.linkTo(weakBeatIcon.bottom)
                     },
+                    hasError = item.weakBeatHasError,
                     onClick = { dispatch(SoundLibraryAction.PlaySound(item.id, ClickSoundType.WEAK)) }
-                ) {
-                    Icon(imageVector = Icons.Default.PlayCircle, contentDescription = null)
-                }
+                )
             }
+        }
+    }
+}
+
+@Composable
+private fun PlayButtonOrError(modifier: Modifier, hasError: Boolean, onClick: () -> Unit) {
+    if (hasError) {
+        IconButton(
+            modifier = modifier,
+            enabled = false,
+            onClick = {}
+        ) {
+            Icon(imageVector = Icons.Default.Error, contentDescription = null, tint = MaterialTheme.colors.error)
+        }
+    } else {
+        IconButton(
+            modifier = modifier,
+            onClick = onClick,
+        ) {
+            Icon(imageVector = Icons.Default.PlayCircle, contentDescription = null)
         }
     }
 }
@@ -258,7 +277,9 @@ private fun Preview() {
                 SelectableClickSoundsItem.UserDefined(
                     id = ClickSoundsId.Database(0L),
                     strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
-                    weakBeatValue = "/audio/weak.mp3",
+                    strongBeatHasError = false,
+                    weakBeatValue = "/Downloads/no_access.mp3",
+                    weakBeatHasError = true,
                     selected = false
                 )
             ),

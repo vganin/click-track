@@ -116,7 +116,9 @@ class SoundLibraryEpic @Inject constructor(
         return SelectableClickSoundsItem.UserDefined(
             id = id,
             strongBeatValue = value.strongBeat.toText(),
+            strongBeatHasError = value.strongBeat.hasError(),
             weakBeatValue = value.weakBeat.toText(),
+            weakBeatHasError = value.weakBeat.hasError(),
             selected = selectedId == id,
         )
     }
@@ -126,6 +128,14 @@ class SoundLibraryEpic @Inject constructor(
             is ClickSoundSource.Bundled -> "📦"
             is ClickSoundSource.Uri -> documentMetadataHelper.getDisplayName(value) ?: value
             null -> ""
+        }
+    }
+
+    private fun ClickSoundSource?.hasError(): Boolean {
+        return when (this) {
+            is ClickSoundSource.Bundled -> false
+            is ClickSoundSource.Uri -> !documentMetadataHelper.hasReadPermission(value)
+            null -> false
         }
     }
 

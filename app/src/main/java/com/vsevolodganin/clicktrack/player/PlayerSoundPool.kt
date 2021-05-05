@@ -5,7 +5,6 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.net.Uri
-import android.util.Log
 import androidx.media.AudioAttributesCompat
 import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.di.module.ApplicationContext
@@ -19,6 +18,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import timber.log.Timber
 
 @ApplicationScoped
 class PlayerSoundPool @Inject constructor(
@@ -95,7 +95,10 @@ class PlayerSoundPool @Inject constructor(
                 load(fileDescriptor, assetFileDescriptor.startOffset, assetFileDescriptor.length, priority)
             }
         } catch (e: IOException) {
-            Log.e("PlayerSoundPool", "Failed to open uri: $uri")
+            Timber.e(e, "Failed to open uri: $uri")
+            null
+        } catch (e: SecurityException) {
+            Timber.e(e, "Failed to open uri: $uri")
             null
         }
     }
