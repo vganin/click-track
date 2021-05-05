@@ -12,10 +12,12 @@ buildscript {
     }
 }
 
-val inputDir = file("src/main/svg")
-val outputDir = file("build/generated/icons_gen")
+private val inputDir = file("src/main/svg")
+private val outputDir = file("build/generated/icons_gen")
 
 tasks.register("generateIcons") {
+    inputs.dir(inputDir)
+    outputs.dir(outputDir)
     doLast {
         Svg2Compose.parse(
             applicationIconPackage = "com.vsevolodganin.clicktrack.icons",
