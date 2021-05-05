@@ -12,8 +12,8 @@ buildscript {
     }
 }
 
-private val inputDir = file("src/main/svg")
-private val outputDir = file("build/generated/icons_gen")
+val inputDir = file("src/main/svg")
+val outputDir = file("build/generated/icons_gen")
 
 tasks.register("generateIcons") {
     inputs.dir(inputDir)
