@@ -8,6 +8,16 @@ import timber.log.Timber
 
 class DocumentMetadataHelper @Inject constructor(private val contentResolver: ContentResolver) {
 
+    fun isAccessible(uri: String): Boolean {
+        return try {
+            contentResolver.query(Uri.parse(uri), null, null, null, null, null)?.use {
+                it.moveToFirst()
+            } ?: false
+        } catch (e: SecurityException) {
+            false
+        }
+    }
+
     fun hasReadPermission(uri: String): Boolean {
         return contentResolver.persistedUriPermissions.any { permission ->
             permission.uri.toString() == uri && permission.isReadPermission
@@ -15,16 +25,16 @@ class DocumentMetadataHelper @Inject constructor(private val contentResolver: Co
     }
 
     fun getDisplayName(uri: String): String? {
-        val compiledUri = Uri.parse(uri)
+        val parsedUri = Uri.parse(uri)
 
         return try {
-            contentResolver.query(compiledUri, null, null, null, null, null)?.use {
+            contentResolver.query(parsedUri, null, null, null, null, null)?.use {
                 if (it.moveToFirst()) {
                     return it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                 } else {
                     null
                 }
-            } ?: compiledUri.lastPathSegment
+            }
         } catch (e: SecurityException) {
             Timber.e(e, "Failed to get display name for URI: $uri")
             null

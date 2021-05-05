@@ -134,7 +134,7 @@ class SoundLibraryEpic @Inject constructor(
     private fun ClickSoundSource?.hasError(): Boolean {
         return when (this) {
             is ClickSoundSource.Bundled -> false
-            is ClickSoundSource.Uri -> !documentMetadataHelper.hasReadPermission(value)
+            is ClickSoundSource.Uri -> !documentMetadataHelper.hasReadPermission(value) || !documentMetadataHelper.isAccessible(value)
             null -> false
         }
     }
