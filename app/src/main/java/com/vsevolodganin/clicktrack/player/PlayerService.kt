@@ -1,17 +1,15 @@
 package com.vsevolodganin.clicktrack.player
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
+import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
 import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.R
@@ -21,6 +19,8 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.DEFAULT_NOTIFICATION_ID
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_CHANNEL_ID
 import com.vsevolodganin.clicktrack.utils.cast
+import javax.inject.Inject
+import kotlin.random.Random
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -30,8 +30,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
-import javax.inject.Inject
-import kotlin.random.Random
 
 class PlayerService : Service() {
 
@@ -151,28 +149,30 @@ class PlayerService : Service() {
     }
 
     private fun startForeground(clickTrack: ClickTrackWithId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                PLAYING_NOW_CHANNEL_ID,
-                getString(R.string.notification_channel_playing_now),
-                NotificationManager.IMPORTANCE_LOW
-            )
-            val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannelCompat.Builder(PLAYING_NOW_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MAX)
+            .setName(getString(R.string.notification_channel_playing_now))
+            .setLightsEnabled(false)
+            .setSound(null, null)
+            .setLightsEnabled(false)
+            .setVibrationEnabled(false)
+            .build()
+        val notificationManager = NotificationManagerCompat.from(this)
+        notificationManager.createNotificationChannel(channel)
 
         val launchAppIntent = PendingIntent.getActivity(this, 0, intentForLaunchAppWithClickTrack(this, clickTrack), PendingIntent.FLAG_UPDATE_CURRENT)
         val stopServiceIntent = PendingIntent.getService(this, 0, serviceIntent(this).apply { action = ACTION_STOP }, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val notification: Notification = NotificationCompat.Builder(this, PLAYING_NOW_CHANNEL_ID)
+        val notification = NotificationCompat.Builder(this, PLAYING_NOW_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ResourcesCompat.getColor(resources, R.color.secondary_dark, null))
             .setContentTitle(getString(R.string.notification_playing_now))
             .setContentText(clickTrack.value.name)
             .setContentIntent(launchAppIntent)
             .setDeleteIntent(stopServiceIntent)
-            .addAction(R.mipmap.ic_launcher, getString(R.string.notification_stop), stopServiceIntent)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .addAction(0, getString(R.string.notification_stop), stopServiceIntent)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setDefaults(0)
+            .setOngoing(true)
             .build()
 
         startForeground(DEFAULT_NOTIFICATION_ID, notification)
