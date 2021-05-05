@@ -54,9 +54,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastAny
-import androidx.compose.ui.util.fastForEach
-import androidx.compose.ui.util.fastForEachIndexed
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
@@ -208,10 +205,10 @@ fun ClickTrackView(
                             var currentEndY = 0f
 
                             placeables
-                                .fastForEachIndexed { index, (mark, summaries) ->
+                                .forEachIndexed { index, (mark, summaries) ->
                                     val markX = mark.x
 
-                                    val firstSummary = summaries.firstOrNull() ?: return@fastForEachIndexed
+                                    val firstSummary = summaries.firstOrNull() ?: return@forEachIndexed
 
                                     if (markX < currentEndX) {
                                         currentEndY += firstSummary.height
@@ -401,7 +398,7 @@ private fun Modifier.clickTrackGestures(
                             awaitFirstDown(requireUnconsumed = false)
                             do {
                                 val event = awaitPointerEvent()
-                                val canceled = event.changes.fastAny { it.positionChangeConsumed() }
+                                val canceled = event.changes.any { it.positionChangeConsumed() }
                                 if (!canceled) {
                                     val zoomChange = event.calculateZoom()
                                     val panChange = event.calculatePan()
@@ -450,14 +447,14 @@ private fun Modifier.clickTrackGestures(
                                                 }
                                             }
                                         }
-                                        event.changes.fastForEach {
+                                        event.changes.forEach {
                                             if (it.positionChanged()) {
                                                 it.consumeAllChanges()
                                             }
                                         }
                                     }
                                 }
-                            } while (!canceled && event.changes.fastAny { it.pressed })
+                            } while (!canceled && event.changes.any { it.pressed })
 
                             flingCoroutineScope.launch {
                                 if (abs(zoom - 1f) < zoomChangeEpsilon) {

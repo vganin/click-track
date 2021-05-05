@@ -13,8 +13,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.offset
-import androidx.compose.ui.util.fastForEach
-import androidx.compose.ui.util.fastSumBy
 import kotlin.math.roundToInt
 
 @Composable
@@ -31,7 +29,7 @@ fun FlowRow(
     var rowConstraints = constraints
     var rowPlaceables = mutableListOf<Placeable>()
 
-    measurables.fastForEach { measurable ->
+    measurables.forEach { measurable ->
         val placeable = measurable.measure(Constraints())
         if (placeable.measuredWidth !in rowConstraints.minWidth..rowConstraints.maxWidth) {
             rows += Row(rowPlaceables, horizontalGapPx)
@@ -45,15 +43,15 @@ fun FlowRow(
     rows += Row(rowPlaceables, horizontalGapPx)
 
     val width = constraints.maxWidth
-    val height = (rows.fastSumBy { row -> row.height } + (rows.size - 1) * verticalGapPx)
+    val height = (rows.sumBy { row -> row.height } + (rows.size - 1) * verticalGapPx)
         .coerceAtMost(constraints.maxHeight)
 
     layout(width, height) {
         var y = 0
-        rows.fastForEach { row ->
+        rows.forEach { row ->
             val offset = alignment.align(row.width, width, layoutDirection)
             var x = offset
-            row.placeables.fastForEach { placeable ->
+            row.placeables.forEach { placeable ->
                 placeable.placeRelative(x, y)
                 x += placeable.width + horizontalGapPx
             }
@@ -67,7 +65,7 @@ private class Row(
     val horizontalGapPx: Int,
 ) {
     val width by lazy(mode = LazyThreadSafetyMode.NONE) {
-        placeables.fastSumBy { it.width } + (placeables.size - 1) * horizontalGapPx
+        placeables.sumBy { it.width } + (placeables.size - 1) * horizontalGapPx
     }
 
     val height by lazy(mode = LazyThreadSafetyMode.NONE) {

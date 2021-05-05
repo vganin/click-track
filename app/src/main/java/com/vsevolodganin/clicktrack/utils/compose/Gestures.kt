@@ -8,9 +8,6 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
 import androidx.compose.ui.input.pointer.isOutOfBounds
 import androidx.compose.ui.input.pointer.positionChangeConsumed
-import androidx.compose.ui.util.fastAll
-import androidx.compose.ui.util.fastAny
-import androidx.compose.ui.util.fastFirstOrNull
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
 
@@ -27,13 +24,13 @@ suspend fun PointerInputScope.awaitLongPressOrCancellation(
                 var finished = false
                 while (!finished) {
                     val event = awaitPointerEvent(PointerEventPass.Main)
-                    if (event.changes.fastAll { it.changedToUpIgnoreConsumed() }) {
+                    if (event.changes.all { it.changedToUpIgnoreConsumed() }) {
                         // All pointers are up
                         finished = true
                     }
 
                     if (
-                        event.changes.fastAny { it.consumed.downChange || it.isOutOfBounds(size) }
+                        event.changes.any { it.consumed.downChange || it.isOutOfBounds(size) }
                     ) {
                         finished = true // Canceled
                     }
@@ -42,13 +39,13 @@ suspend fun PointerInputScope.awaitLongPressOrCancellation(
                     // the existing pointer event because it comes after the Main pass we checked
                     // above.
                     val consumeCheck = awaitPointerEvent(PointerEventPass.Final)
-                    if (consumeCheck.changes.fastAny { it.positionChangeConsumed() }) {
+                    if (consumeCheck.changes.any { it.positionChangeConsumed() }) {
                         finished = true
                     }
                     if (!event.isPointerUp(currentDown.id)) {
                         longPress = event.changes.firstOrNull { it.id == currentDown.id }
                     } else {
-                        val newPressed = event.changes.fastFirstOrNull { it.pressed }
+                        val newPressed = event.changes.firstOrNull { it.pressed }
                         if (newPressed != null) {
                             currentDown = newPressed
                             longPress = currentDown

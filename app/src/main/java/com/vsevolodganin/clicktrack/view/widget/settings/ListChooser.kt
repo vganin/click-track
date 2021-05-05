@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEachIndexed
 import com.vsevolodganin.clicktrack.utils.compose.toUpperCase
 
 data class ListChooserItem<T>(
@@ -91,7 +90,7 @@ private fun <T> DialogContent(
     onChoose: (T) -> Unit,
 ) {
     Column {
-        variants.fastForEachIndexed { index, item ->
+        variants.forEachIndexed { index, item ->
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
