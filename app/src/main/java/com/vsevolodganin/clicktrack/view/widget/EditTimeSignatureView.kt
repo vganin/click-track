@@ -22,13 +22,13 @@ fun TimeSignatureView(
     modifier: Modifier = Modifier
 ) {
     val noteCountState = remember { observableMutableStateOf(state.value.noteCount) }
-    val noteDurationState = remember { observableMutableStateOf(state.value.noteDuration) }
+    val noteDurationState = remember { observableMutableStateOf(state.value.noteValue) }
 
     LaunchedEffect(Unit) {
         fun update() {
             state.value = TimeSignature(
                 noteCount = noteCountState.value,
-                noteDuration = noteDurationState.value
+                noteValue = noteDurationState.value
             )
         }
         noteCountState.observe { update() }

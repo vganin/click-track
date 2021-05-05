@@ -29,13 +29,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.icons.ClickTrackIcons
+import com.vsevolodganin.clicktrack.icons.clicktrackicons.Metronome
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.DrawerScreenState
 import com.vsevolodganin.clicktrack.state.actions.CloseDrawer
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
-import com.vsevolodganin.clicktrack.view.icon.ClickTrackIcons
-import com.vsevolodganin.clicktrack.view.icon.Metronome
 
 @Composable
 fun DrawerScreenView(

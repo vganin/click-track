@@ -9,6 +9,8 @@ plugins {
     id 'com.google.firebase.crashlytics'
 }
 
+apply from: 'generate_icons.gradle.kts'
+
 def keystorePropertiesFile = file("keystore.properties")
 def hasKeystoreProperties = keystorePropertiesFile.exists()
 def keystoreProperties = new Properties()
@@ -64,6 +66,12 @@ android {
             applicationIdSuffix '.debug'
 
             manifestPlaceholders = [crashlyticsCollectionEnabled: "false"]
+        }
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs += file("build/generated/icons_gen")
         }
     }
 
@@ -151,3 +159,5 @@ dependencies {
     implementation "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 }
+
+preBuild.dependsOn 'generateIcons'

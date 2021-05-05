@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.view.widget
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,7 +37,7 @@ fun EditCueWithDurationView(
 
     LaunchedEffect(Unit) {
         fun update() {
-            state.value = Cue(
+            state.value = state.value.copy(
                 bpm = bpmState.value,
                 timeSignature = timeSignatureState.value,
                 duration = durationState.value
@@ -47,23 +48,38 @@ fun EditCueWithDurationView(
         durationState.observe { update() }
     }
 
-    Row(modifier = modifier.padding(8.dp)) {
-        val viewModifier = Modifier.align(Alignment.CenterVertically)
-        val spacerModifier = Modifier.width(16.dp)
+    Column(modifier = modifier.padding(8.dp)) {
+        Row {
+            val viewModifier = Modifier.align(Alignment.CenterVertically)
+            val spacerModifier = Modifier.width(16.dp)
 
-        EditCueDurationView(state = durationState, modifier = viewModifier.height(IntrinsicSize.Min))
-        Spacer(modifier = spacerModifier)
-        TimeSignatureView(state = timeSignatureState, modifier = viewModifier)
-        Spacer(modifier = spacerModifier)
-        BpmWheel(
-            state = bpmState,
-            modifier = viewModifier,
-        ) {
-            Text(
-                text = bpmState.value.value.toString(),
-                style = MaterialTheme.typography.h6,
-            )
+            EditCueDurationView(state = durationState, modifier = viewModifier.height(IntrinsicSize.Min))
+
+            Spacer(modifier = spacerModifier)
+
+            TimeSignatureView(state = timeSignatureState, modifier = viewModifier)
+
+            Spacer(modifier = spacerModifier)
+
+            BpmWheel(
+                state = bpmState,
+                modifier = viewModifier,
+            ) {
+                Text(
+                    text = bpmState.value.value.toString(),
+                    style = MaterialTheme.typography.h6,
+                )
+            }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        SubdivisionsChooser(
+            cue = state.value,
+            onSubdivisionChoose = {
+                state.value = state.value.copy(pattern = it)
+            }
+        )
     }
 }
 
@@ -71,12 +87,14 @@ fun EditCueWithDurationView(
 @Composable
 fun PreviewEditCueWithDurationView() {
     EditCueWithDurationView(
-        state = mutableStateOf(
-            Cue(
-                bpm = 999.bpm,
-                timeSignature = TimeSignature(3, 4),
-                duration = CueDuration.Time(SerializableDuration(1.minutes))
+        state = remember {
+            mutableStateOf(
+                Cue(
+                    bpm = 999.bpm,
+                    timeSignature = TimeSignature(3, 4),
+                    duration = CueDuration.Time(SerializableDuration(1.minutes))
+                )
             )
-        ),
+        },
     )
 }

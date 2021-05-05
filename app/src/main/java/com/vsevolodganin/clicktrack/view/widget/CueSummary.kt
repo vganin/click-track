@@ -40,7 +40,7 @@ fun CueSummary(
             val textModifier = Modifier.align(Alignment.CenterHorizontally)
 
             Text(text = cue.timeSignature.noteCount.toString(), textModifier)
-            Text(text = cue.timeSignature.noteDuration.toString(), textModifier)
+            Text(text = cue.timeSignature.noteValue.toString(), textModifier)
         }
     }
 }

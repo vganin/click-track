@@ -1,15 +1,21 @@
 package com.vsevolodganin.clicktrack.utils.coroutine
 
 import android.os.SystemClock
-import kotlinx.coroutines.runInterruptible
+import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 import kotlin.time.nanoseconds
+import kotlinx.coroutines.runInterruptible
+
+enum class TickDelayMethod {
+    THREAD_SLEEP, SUSPEND
+}
 
 suspend fun tick(
     duration: Duration,
     interval: Duration,
     onTick: suspend (passed: Duration) -> Unit,
+    delayMethod: TickDelayMethod = TickDelayMethod.THREAD_SLEEP,
 ) {
     require(!duration.isNegative())
     require(!interval.isNegative())
@@ -18,7 +24,7 @@ suspend fun tick(
         durationNanos = duration.toLongNanoseconds(),
         intervalNanos = interval.coerceAtMost(duration).toLongNanoseconds(),
         onTick = { onTick(startTime.elapsedNow()) },
-        delayNanos = { delayNanosThreadSleep(it) },
+        delayNanos = delayMethod.methodReference(),
     )
 }
 
@@ -42,6 +48,55 @@ private suspend fun tick(
         }
         delayNanos(deadline - now)
     }
+}
+
+suspend fun <T> tick(
+    duration: Duration,
+    objects: Iterable<T>,
+    intervalSelector: (T) -> Duration,
+    onTick: suspend (passed: Duration, `object`: T) -> Unit,
+    delayMethod: TickDelayMethod = TickDelayMethod.THREAD_SLEEP,
+) {
+    require(!duration.isNegative())
+    val startTime = TimeSource.Monotonic.markNow()
+    tick(
+        durationNanos = duration.toLongNanoseconds(),
+        objects = objects,
+        intervalNanosSelector = { intervalSelector(it).coerceAtMost(duration).toLongNanoseconds() },
+        onTick = { `object` -> onTick(startTime.elapsedNow(), `object`) },
+        delayNanos = delayMethod.methodReference(),
+    )
+}
+
+private suspend fun <T> tick(
+    durationNanos: Long,
+    objects: Iterable<T>,
+    intervalNanosSelector: (T) -> Long,
+    onTick: suspend (`object`: T) -> Unit,
+    delayNanos: suspend (Long) -> Unit,
+) {
+    val objectsRoundRobin = objects.takeIf { it.any() }?.toRoundRobin() ?: return
+    val startTime = nanoTime()
+    val maxDeadline = startTime + durationNanos
+    var deadline = startTime
+    var now: Long
+    while (deadline < maxDeadline) {
+        val `object` = objectsRoundRobin.next() ?: return
+        val intervalNanos = intervalNanosSelector(`object`)
+        onTick(`object`)
+        deadline = (deadline + intervalNanos).coerceAtMost(maxDeadline)
+        now = nanoTime()
+        if (now >= deadline) {
+            val previousDeadline = (now - startTime) / intervalNanos * intervalNanos + startTime
+            deadline = (previousDeadline + intervalNanos).coerceAtMost(maxDeadline)
+        }
+        delayNanos(deadline - now)
+    }
+}
+
+private fun TickDelayMethod.methodReference() = when (this) {
+    TickDelayMethod.THREAD_SLEEP -> ::delayNanosThreadSleep
+    TickDelayMethod.SUSPEND -> ::delayNanosCoroutines
 }
 
 @Suppress("unused")

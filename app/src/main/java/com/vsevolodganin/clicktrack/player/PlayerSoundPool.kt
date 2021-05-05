@@ -33,7 +33,7 @@ class PlayerSoundPool @Inject constructor(
     }
 
     private val soundPool = SoundPool.Builder()
-        .setMaxStreams(Int.MAX_VALUE)
+        .setMaxStreams(2)
         .setAudioAttributes(AUDIO_ATTRIBUTES.unwrap() as AudioAttributes)
         .build()
 
