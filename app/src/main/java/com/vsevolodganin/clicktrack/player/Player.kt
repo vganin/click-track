@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.player
 
+import android.os.SystemClock
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
@@ -7,20 +8,19 @@ import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.NoteEvent
 import com.vsevolodganin.clicktrack.lib.Polyrhythm
 import com.vsevolodganin.clicktrack.lib.interval
-import com.vsevolodganin.clicktrack.lib.math.Rational
-import com.vsevolodganin.clicktrack.lib.math.ZERO
-import com.vsevolodganin.clicktrack.lib.math.compareTo
 import com.vsevolodganin.clicktrack.lib.math.over
 import com.vsevolodganin.clicktrack.lib.math.times
+import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundPriority
+import com.vsevolodganin.clicktrack.player.PlayerImpl.PlaySchedule.SoundEvent
+import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.state.PlaybackState
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
-import com.vsevolodganin.clicktrack.utils.coroutine.tick
+import com.vsevolodganin.clicktrack.utils.coroutine.delayNanosThreadSleep
 import com.vsevolodganin.clicktrack.utils.grabIf
 import javax.inject.Inject
 import kotlin.time.Duration
@@ -113,7 +113,7 @@ class PlayerImpl @Inject constructor(
         var iterationStartsWith = if (startAt < clickTrack.value.durationInTime) startAt else Duration.ZERO
 
         do {
-            fun Duration.toProgress(): Double = this / clickTrack.value.durationInTime
+            fun Duration.toRelativeProgress(): Double = this / clickTrack.value.durationInTime
 
             var cueGlobalStart = Duration.ZERO
 
@@ -123,11 +123,11 @@ class PlayerImpl @Inject constructor(
                 startImpl(
                     cue = cue,
                     startAt = cueLocalStart,
-                    reportProgress = { beatTimestamp ->
+                    reportProgress = { progress ->
                         updatePlaybackState {
                             this?.copy(
                                 clickTrack = clickTrack,
-                                startProgress = (cueGlobalStart + beatTimestamp).toProgress(),
+                                startProgress = (cueGlobalStart + progress).toRelativeProgress(),
                             )
                         }
                     }
@@ -143,7 +143,7 @@ class PlayerImpl @Inject constructor(
     private suspend fun startImpl(
         cue: Cue,
         startAt: Duration,
-        reportProgress: suspend (beatTimestamp: Duration) -> Unit,
+        reportProgress: suspend (progress: Duration) -> Unit,
     ) {
         val totalDuration = cue.durationAsTime
 
@@ -151,97 +151,118 @@ class PlayerImpl @Inject constructor(
             return
         }
 
-        val playEvents = cue.toPlayEvents().startingAt(startAt)
+        val playSchedule = cue.toPlaySchedule()
+            .withDuration(totalDuration)
+            .startingAt(startAt)
 
         reportProgress(startAt)
 
-        playEvents.playLoop(totalDuration - startAt)
+        playSchedule.play()
     }
 
-    private suspend fun List<PlayEvent>.playLoop(forDuration: Duration) {
-        tick(
-            duration = (forDuration - Const.TIME_EPSILON_TO_AVOID_SPURIOUS_CLICKS).coerceAtLeast(Duration.ZERO),
-            objects = this,
-            intervalSelector = { it.duration },
-            onTick = { _, playEvent ->
-                if (pausedState.value) {
-                    pausedState.filter { false }.take(1).collect()
-                }
+    private suspend fun PlaySchedule.play() {
+        fun nanoTime() = SystemClock.elapsedRealtimeNanos()
+        suspend fun delayNanos(nanos: Long) = delayNanosThreadSleep(nanos)
 
-                when (playEvent) {
-                    is PlayEvent.Rest -> return@tick
-                    is PlayEvent.Sound -> {
-                        val priority = playEvent.priority
-                        val sounds = selectedSounds()
-                        if (sounds != null) {
-                            val sound = when (priority) {
-                                ClickSoundPriority.STRONG -> sounds.strongBeat
-                                ClickSoundPriority.WEAK -> sounds.weakBeat
-                            }
-                            sound?.let { soundPool.play(it, priority) }
-                        }
-                    }
-                }
-            },
-        )
+        delayNanos(initialDelay.toLongNanoseconds())
+
+        var eventFinish = nanoTime()
+        var eventStart: Long
+        for (soundEvent in soundEvents) {
+            soundEvent.play()
+            eventFinish += soundEvent.duration.toLongNanoseconds()
+            eventStart = nanoTime()
+            delayNanos(eventFinish - eventStart)
+        }
     }
 
-    private sealed class PlayEvent {
-        abstract val duration: Duration
+    private suspend fun SoundEvent.play() {
+        if (pausedState.value) {
+            pausedState.filter { false }.take(1).collect()
+        }
 
-        data class Sound(val priority: ClickSoundPriority, override val duration: Duration) : PlayEvent()
-        data class Rest(override val duration: Duration) : PlayEvent()
+        val sounds = selectedSounds()
+        if (sounds != null) {
+            val sound = when (type) {
+                ClickSoundType.STRONG -> sounds.strongBeat
+                ClickSoundType.WEAK -> sounds.weakBeat
+            }
+            sound?.let { soundPool.play(it, type) }
+        }
     }
 
-    private fun Cue.toPlayEvents(): List<PlayEvent> {
-        val result = mutableListOf<PlayEvent>()
+    private data class PlaySchedule(val soundEvents: List<SoundEvent>, val initialDelay: Duration) {
+        data class SoundEvent(val type: ClickSoundType, val duration: Duration)
+    }
+
+    private fun Cue.toPlaySchedule(): PlaySchedule {
         val bpmInterval = bpm.interval
         val polyrhythm = Polyrhythm(
             pattern1 = listOf(NoteEvent(timeSignature.noteCount over 1, NoteEvent.Type.NOTE)),
             pattern2 = pattern.events,
         )
 
-        if (polyrhythm.untilFirst > Rational.ZERO) {
-            result += PlayEvent.Rest(bpmInterval * polyrhythm.untilFirst)
-        }
-
-        var runningDuration = Duration.ZERO
-        for (column in polyrhythm.columns) {
-            runningDuration += bpmInterval * column.untilNext
-            val priority = when {
-                column.indices.contains(0) -> ClickSoundPriority.STRONG
-                else -> ClickSoundPriority.WEAK
-            }
-            result += PlayEvent.Sound(
-                priority = priority,
-                duration = runningDuration,
-            )
-            runningDuration = Duration.ZERO
-        }
-
-        return result
+        return PlaySchedule(
+            soundEvents = mutableListOf<SoundEvent>().apply {
+                for (column in polyrhythm.columns) {
+                    val soundType = when {
+                        column.indices.contains(0) -> ClickSoundType.STRONG
+                        else -> ClickSoundType.WEAK
+                    }
+                    this += SoundEvent(
+                        type = soundType,
+                        duration = bpmInterval * column.untilNext,
+                    )
+                }
+            },
+            initialDelay = bpmInterval * polyrhythm.untilFirst
+        )
     }
 
-    private fun List<PlayEvent>.startingAt(startAt: Duration): List<PlayEvent> {
-        var runningTime = Duration.ZERO
+    private fun PlaySchedule.withDuration(duration: Duration): PlaySchedule {
+        if (soundEvents.isEmpty() || duration <= initialDelay) {
+            return PlaySchedule(emptyList(), duration)
+        }
+
+        val soundEventsCycled = soundEvents.toRoundRobin()
+        val updatedSoundEvents = mutableListOf<SoundEvent>()
+
+        var runningDuration = initialDelay
+        while (runningDuration + Const.CLICK_MIN_DELTA < duration) {
+            val next = soundEventsCycled.next()
+            updatedSoundEvents += next
+            runningDuration += next.duration
+        }
+
+        if (runningDuration != duration) {
+            val lastIndex = updatedSoundEvents.lastIndex
+            updatedSoundEvents[lastIndex] = updatedSoundEvents[lastIndex].let {
+                it.copy(duration = it.duration - (runningDuration - duration))
+            }
+        }
+
+        return copy(soundEvents = updatedSoundEvents)
+    }
+
+    private fun PlaySchedule.startingAt(startAt: Duration): PlaySchedule {
+        var runningDuration = Duration.ZERO
         var startIndex: Int? = null
-        for (index in indices) {
-            if (runningTime >= startAt) {
+        for (index in soundEvents.indices) {
+            if (runningDuration >= startAt) {
                 startIndex = index
                 break
             }
-            runningTime += this[index].duration
-        }
-        startIndex ?: return emptyList()
-
-        val fromStartToFirstEvent = runningTime - startAt
-        val initialRest = if (fromStartToFirstEvent > Const.TIME_EPSILON_TO_AVOID_SPURIOUS_CLICKS) {
-            PlayEvent.Rest(duration = fromStartToFirstEvent)
-        } else {
-            null
+            runningDuration += soundEvents[index].duration
         }
 
-        return listOfNotNull(initialRest) + subList(startIndex, size)
+        return PlaySchedule(
+            soundEvents = if (startIndex == null) {
+                emptyList()
+            } else {
+                soundEvents.subList(startIndex, soundEvents.size)
+            },
+            initialDelay = (runningDuration - startAt).coerceAtLeast(Duration.ZERO)
+        )
     }
 
     private suspend fun updatePlaybackState(
@@ -271,6 +292,6 @@ class PlayerImpl @Inject constructor(
     }
 
     private object Const {
-        val TIME_EPSILON_TO_AVOID_SPURIOUS_CLICKS = 1.milliseconds
+        val CLICK_MIN_DELTA = 1.milliseconds
     }
 }

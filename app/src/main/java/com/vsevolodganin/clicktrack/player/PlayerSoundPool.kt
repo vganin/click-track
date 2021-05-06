@@ -8,8 +8,8 @@ import android.net.Uri
 import androidx.media.AudioAttributesCompat
 import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.di.module.ApplicationContext
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundPriority
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
+import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.utils.android.media.SoundPoolSuspendingLoadWait
 import java.io.IOException
 import javax.inject.Inject
@@ -47,7 +47,7 @@ class PlayerSoundPool @Inject constructor(
         awaitAll(*sounds.map { async { awaitLoad(it) } }.toTypedArray())
     }
 
-    suspend fun play(sound: ClickSoundSource, priority: ClickSoundPriority) {
+    suspend fun play(sound: ClickSoundSource, type: ClickSoundType) {
         val soundId = awaitLoad(sound) ?: return
 
         mutex.withLock {
@@ -55,7 +55,7 @@ class PlayerSoundPool @Inject constructor(
                 soundId,
                 /* leftVolume = */ 1f,
                 /* rightVolume = */ 1f,
-                /* priority = */ priority.asInt(),
+                /* priority = */ type.toPriorityInt(),
                 /* loop = */ 0,
                 /* rate = */ 1f
             )
@@ -76,9 +76,9 @@ class PlayerSoundPool @Inject constructor(
         return soundId
     }
 
-    private fun ClickSoundPriority.asInt(): Int = when (this) {
-        ClickSoundPriority.STRONG -> 2
-        ClickSoundPriority.WEAK -> 1
+    private fun ClickSoundType.toPriorityInt(): Int = when (this) {
+        ClickSoundType.STRONG -> 2
+        ClickSoundType.WEAK -> 1
     }
 
     private fun SoundPool.load(sound: ClickSoundSource): Int? {
