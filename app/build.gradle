@@ -28,7 +28,7 @@ android {
         versionCode 19
         versionName "alpha19"
 
-        setProperty("archivesBaseName", "click-track-$versionName$versionCode")
+        setProperty("archivesBaseName", "click-track-$versionName")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
