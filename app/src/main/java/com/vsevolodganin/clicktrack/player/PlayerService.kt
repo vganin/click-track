@@ -149,12 +149,8 @@ class PlayerService : Service() {
     }
 
     private fun startForeground(clickTrack: ClickTrackWithId) {
-        val channel = NotificationChannelCompat.Builder(PLAYING_NOW_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MAX)
+        val channel = NotificationChannelCompat.Builder(PLAYING_NOW_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MIN)
             .setName(getString(R.string.notification_channel_playing_now))
-            .setLightsEnabled(false)
-            .setSound(null, null)
-            .setLightsEnabled(false)
-            .setVibrationEnabled(false)
             .build()
         val notificationManager = NotificationManagerCompat.from(this)
         notificationManager.createNotificationChannel(channel)
@@ -170,8 +166,7 @@ class PlayerService : Service() {
             .setContentIntent(launchAppIntent)
             .setDeleteIntent(stopServiceIntent)
             .addAction(0, getString(R.string.notification_stop), stopServiceIntent)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setDefaults(0)
+            .setPriority(NotificationCompat.PRIORITY_MIN)
             .setOngoing(true)
             .build()
 
