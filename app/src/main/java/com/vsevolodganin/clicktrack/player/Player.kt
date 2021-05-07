@@ -224,7 +224,7 @@ class PlayerImpl @Inject constructor(
     }
 
     private fun PlaySchedule.startingAt(startAt: Duration): PlaySchedule {
-        var runningDuration = Duration.ZERO
+        var runningDuration = initialDelay
         var startIndex: Int? = null
         for (index in soundEvents.indices) {
             if (runningDuration >= startAt) {
@@ -240,7 +240,7 @@ class PlayerImpl @Inject constructor(
             } else {
                 soundEvents.subList(startIndex, soundEvents.size)
             },
-            initialDelay = (startAt - runningDuration).coerceAtLeast(Duration.ZERO)
+            initialDelay = (runningDuration - startAt).coerceAtLeast(Duration.ZERO)
         )
     }
 
