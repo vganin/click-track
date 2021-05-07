@@ -4,6 +4,7 @@ import android.os.SystemClock
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
+import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.NoteEvent
 import com.vsevolodganin.clicktrack.lib.Polyrhythm
@@ -20,6 +21,7 @@ import com.vsevolodganin.clicktrack.state.PlaybackState
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
+import com.vsevolodganin.clicktrack.utils.coroutine.delayNanosCoroutines
 import com.vsevolodganin.clicktrack.utils.coroutine.delayNanosThreadSleep
 import com.vsevolodganin.clicktrack.utils.grabIf
 import javax.inject.Inject
@@ -70,7 +72,7 @@ class PlayerImpl @Inject constructor(
         val progress = atProgress
             ?: grabIf(clickTrack.id == currentPlayback?.clickTrack?.id) { currentPlayback?.currentProgress() }
             ?: 0.0
-        val startAtTime = clickTrack.value.durationInTime * progress
+        val startAt = clickTrack.value.durationInTime * progress
 
         updatePlaybackState {
             InternalPlaybackState(
@@ -82,7 +84,19 @@ class PlayerImpl @Inject constructor(
         playerJob?.cancel()
         playerJob = launch(playerDispatcher) {
             pausedState.setValue(false)
-            startImpl(clickTrack, startAtTime)
+
+            clickTrack.value.play(
+                startAt = startAt,
+                reportProgress = { progress ->
+                    updatePlaybackState {
+                        this?.copy(
+                            clickTrack = clickTrack,
+                            startProgress = progress / clickTrack.value.durationInTime,
+                        )
+                    }
+                }
+            )
+
             stop()
         }
     }
@@ -109,71 +123,36 @@ class PlayerImpl @Inject constructor(
             .distinctUntilChanged()
     }
 
-    private suspend fun startImpl(clickTrack: ClickTrackWithId, startAt: Duration) = coroutineScope {
-        var iterationStartsWith = if (startAt < clickTrack.value.durationInTime) startAt else Duration.ZERO
-
-        do {
-            fun Duration.toRelativeProgress(): Double = this / clickTrack.value.durationInTime
-
-            var cueGlobalStart = Duration.ZERO
-
-            for (cue in clickTrack.value.cues) {
-                val cueLocalStart = (iterationStartsWith - cueGlobalStart).coerceAtLeast(Duration.ZERO)
-
-                startImpl(
-                    cue = cue,
-                    startAt = cueLocalStart,
-                    reportProgress = { progress ->
-                        updatePlaybackState {
-                            this?.copy(
-                                clickTrack = clickTrack,
-                                startProgress = (cueGlobalStart + progress).toRelativeProgress(),
-                            )
-                        }
-                    }
-                )
-
-                cueGlobalStart += cue.durationAsTime
-            }
-
-            iterationStartsWith = Duration.ZERO
-        } while (clickTrack.value.loop && coroutineContext.isActive)
-    }
-
-    private suspend fun startImpl(
-        cue: Cue,
+    private suspend fun ClickTrack.play(
         startAt: Duration,
         reportProgress: suspend (progress: Duration) -> Unit,
-    ) {
-        val totalDuration = cue.durationAsTime
-
-        if (startAt >= totalDuration) {
-            return
+    ) = coroutineScope {
+        @Suppress("NAME_SHADOWING")
+        var startAt = if (startAt >= durationInTime) {
+            if (loop) Duration.ZERO else return@coroutineScope
+        } else {
+            startAt
         }
 
-        val playSchedule = cue.toPlaySchedule()
-            .withDuration(totalDuration)
-            .startingAt(startAt)
+        do {
+            val playSchedule = cues.map { cue ->
+                cue.toPlaySchedule().withDuration(cue.durationAsTime)
+            }.merge().startingAt(startAt)
 
-        reportProgress(startAt)
+            if (playSchedule.isEmpty()) return@coroutineScope
 
-        playSchedule.play()
-    }
+            reportProgress(startAt)
 
-    private suspend fun PlaySchedule.play() {
-        fun nanoTime() = SystemClock.elapsedRealtimeNanos()
-        suspend fun delayNanos(nanos: Long) = delayNanosThreadSleep(nanos)
+            GenericPatternPlayer.play(
+                initialDelay = playSchedule.initialDelay,
+                pattern = playSchedule.soundEvents,
+                interval = { event -> event.duration },
+                play = { event -> event.play() },
+                delayMethod = GenericPatternPlayer.DelayMethod.THREAD_SLEEP
+            )
 
-        delayNanos(initialDelay.toLongNanoseconds())
-
-        var eventFinish = nanoTime()
-        var eventStart: Long
-        for (soundEvent in soundEvents) {
-            soundEvent.play()
-            eventFinish += soundEvent.duration.toLongNanoseconds()
-            eventStart = nanoTime()
-            delayNanos(eventFinish - eventStart)
-        }
+            startAt = Duration.ZERO
+        } while (loop && isActive)
     }
 
     private suspend fun SoundEvent.play() {
@@ -261,9 +240,29 @@ class PlayerImpl @Inject constructor(
             } else {
                 soundEvents.subList(startIndex, soundEvents.size)
             },
-            initialDelay = (runningDuration - startAt).coerceAtLeast(Duration.ZERO)
+            initialDelay = (startAt - runningDuration).coerceAtLeast(Duration.ZERO)
         )
     }
+
+    private fun Iterable<PlaySchedule>.merge(): PlaySchedule {
+        if (!any()) return PlaySchedule(emptyList(), Duration.ZERO)
+
+        val first = first()
+        val initialDelay = first.initialDelay
+        val soundEvents = first.soundEvents.toMutableList()
+
+        for (schedule in drop(1)) {
+            val lastIndex = soundEvents.lastIndex
+            soundEvents[lastIndex] = soundEvents[lastIndex].let {
+                it.copy(duration = it.duration + schedule.initialDelay)
+            }
+            soundEvents += schedule.soundEvents
+        }
+
+        return PlaySchedule(soundEvents, initialDelay)
+    }
+
+    private fun PlaySchedule.isEmpty() = soundEvents.isEmpty() && initialDelay > Duration.ZERO
 
     private suspend fun updatePlaybackState(
         update: InternalPlaybackState?.() -> InternalPlaybackState?,
@@ -294,4 +293,56 @@ class PlayerImpl @Inject constructor(
     private object Const {
         val CLICK_MIN_DELTA = 1.milliseconds
     }
+}
+
+private object GenericPatternPlayer {
+
+    enum class DelayMethod {
+        THREAD_SLEEP, SUSPEND
+    }
+
+    suspend fun <T> play(
+        initialDelay: Duration,
+        pattern: Iterable<T>,
+        interval: (T) -> Duration,
+        play: suspend (element: T) -> Unit,
+        delayMethod: DelayMethod,
+    ) {
+        play(
+            initialDelay = initialDelay.toLongNanoseconds(),
+            pattern = pattern,
+            interval = { element -> interval(element).toLongNanoseconds() },
+            play = { element -> play(element) },
+            delay = delayMethod.asReference(),
+        )
+    }
+
+    private suspend fun <T> play(
+        initialDelay: Long,
+        pattern: Iterable<T>,
+        interval: (T) -> Long,
+        play: suspend (element: T) -> Unit,
+        delay: suspend (Long) -> Unit,
+    ) {
+        delay(initialDelay)
+        val patternIterator = pattern.iterator()
+        val startTime = nanoTime()
+        var deadline = startTime
+        var now: Long
+        while (patternIterator.hasNext()) {
+            val element = patternIterator.next()
+            val elementInterval = interval(element)
+            play(element)
+            deadline += elementInterval
+            now = nanoTime()
+            delay(deadline - now)
+        }
+    }
+
+    private fun DelayMethod.asReference() = when (this) {
+        DelayMethod.THREAD_SLEEP -> ::delayNanosThreadSleep
+        DelayMethod.SUSPEND -> ::delayNanosCoroutines
+    }
+
+    private fun nanoTime() = SystemClock.elapsedRealtimeNanos()
 }
