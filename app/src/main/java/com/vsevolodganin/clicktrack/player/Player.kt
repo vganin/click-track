@@ -139,8 +139,6 @@ class PlayerImpl @Inject constructor(
                 cue.toPlaySchedule().withDuration(cue.durationAsTime)
             }.merge().startingAt(startAt)
 
-            if (playSchedule.isEmpty()) return@coroutineScope
-
             reportProgress(startAt)
 
             GenericPatternPlayer.play(
