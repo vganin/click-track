@@ -264,13 +264,6 @@ class PlayerImpl @Inject constructor(
 
     private fun PlaySchedule.isEmpty() = soundEvents.isEmpty() && initialDelay > Duration.ZERO
 
-    private suspend fun updatePlaybackState(
-        update: InternalPlaybackState?.() -> InternalPlaybackState?,
-    ) = playbackStateMutex.withLock {
-        val previous = playbackState.value
-        playbackState.setValue(previous.update())
-    }
-
     private suspend fun selectedSounds(): ClickSounds? {
         return when (val soundsId = userPreferencesRepository.selectedSoundsId) {
             is ClickSoundsId.Builtin -> soundsId.value.sounds
@@ -288,6 +281,13 @@ class PlayerImpl @Inject constructor(
             val elapsedSinceStart = startedAt.elapsedNow()
             return startProgress + elapsedSinceStart / clickTrack.value.durationInTime
         }
+    }
+
+    private suspend fun updatePlaybackState(
+        update: InternalPlaybackState?.() -> InternalPlaybackState?,
+    ) = playbackStateMutex.withLock {
+        val previous = playbackState.value
+        playbackState.setValue(previous.update())
     }
 
     private object Const {
