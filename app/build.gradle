@@ -91,6 +91,7 @@ android {
         freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.InternalCoroutinesApi'
         freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.FlowPreview'
         freeCompilerArgs += '-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi'
+        freeCompilerArgs += '-Xopt-in=androidx.compose.animation.ExperimentalAnimationApi'
         freeCompilerArgs += '-Xopt-in=androidx.compose.animation.core.InternalAnimationApi'
     }
 
@@ -138,6 +139,7 @@ dependencies {
 
     // Compose
     implementation "androidx.compose.ui:ui:$composeVersion"
+    implementation "androidx.compose.ui:ui-util:$composeVersion"
     implementation "androidx.compose.ui:ui-tooling:$composeVersion"
     implementation "androidx.compose.foundation:foundation:$composeVersion"
     implementation "androidx.compose.material:material:$composeVersion"

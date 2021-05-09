@@ -1,5 +1,12 @@
 package com.vsevolodganin.clicktrack.view.widget
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -11,10 +18,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,6 +63,7 @@ import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.ThirtySecondTrip
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.Whole
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.NotePattern
+import com.vsevolodganin.clicktrack.lib.NotePatternGroup
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 
@@ -63,662 +73,778 @@ fun SubdivisionsChooser(
     onSubdivisionChoose: (NotePattern) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pattern = cue.pattern
-    when (cue.timeSignature.noteValue) {
-        1 -> WholeNoteLayout(pattern, onSubdivisionChoose, modifier)
-        in 2..3 -> HalfNoteLayout(pattern, onSubdivisionChoose, modifier)
-        in 4..7 -> QuarterNoteLayout(pattern, onSubdivisionChoose, modifier)
-        in 8..15 -> EighthNoteLayout(pattern, onSubdivisionChoose, modifier)
-        in 16..31 -> SixteenthNoteLayout(pattern, onSubdivisionChoose, modifier)
-        in 32..Int.MAX_VALUE -> ThirtySecondNoteLayout(pattern, onSubdivisionChoose, modifier)
-        else -> error("Non-positive note value")
+    var expanded by remember { mutableStateOf(false) }
+
+    Row(modifier) {
+        val pattern = cue.pattern
+        val layoutModifier = Modifier.weight(1f)
+        val noteValue = cue.timeSignature.noteValue
+
+        when (noteValue) {
+            1 -> WholeNoteLayout(pattern, onSubdivisionChoose, layoutModifier, expanded)
+            in 2..3 -> HalfNoteLayout(pattern, onSubdivisionChoose, layoutModifier, expanded)
+            in 4..7 -> QuarterNoteLayout(pattern, onSubdivisionChoose, layoutModifier, expanded)
+            in 8..15 -> EighthNoteLayout(pattern, onSubdivisionChoose, layoutModifier, expanded)
+            in 16..31 -> SixteenthNoteLayout(pattern, onSubdivisionChoose, layoutModifier, expanded)
+            in 32..Int.MAX_VALUE -> ThirtySecondNoteLayout(pattern, onSubdivisionChoose, layoutModifier)
+            else -> error("Non-positive note value")
+        }
+
+        AnimatedVisibility(
+            visible = noteValue < 32,
+            enter = fadeIn() + slideInHorizontally(initialOffsetX = { it / 2 }),
+            exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it / 2 }),
+        ) {
+            IconButton(modifier = Modifier.wrapContentWidth(unbounded = true), onClick = { expanded = !expanded }) {
+                ExpandableChevron(expanded)
+            }
+        }
     }
 }
 
 @Composable
-private fun WholeNoteLayout(pattern: NotePattern, onSubdivisionChoose: (NotePattern) -> Unit, modifier: Modifier) {
+private fun WholeNoteLayout(
+    pattern: NotePattern,
+    onSubdivisionChoose: (NotePattern) -> Unit,
+    modifier: Modifier,
+    expanded: Boolean,
+) {
     Column(modifier = modifier) {
         val rowModifier = Modifier.fillMaxWidth()
 
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Whole,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Half,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Quarter,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Eighth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X16,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Sixteenth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X32,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecond,
-            )
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.STRAIGHT) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Whole,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Half,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Quarter,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Eighth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X16,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Sixteenth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X32,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecond,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.HalfTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.QuarterTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X16,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondTriplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.TRIPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.HalfTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.QuarterTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X16,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondTriplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.QuarterQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondQuintuplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.QUINTUPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.QuarterQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondQuintuplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.QuarterSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondSeptuplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.SEPTUPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.QuarterSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondSeptuplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedHalf,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedQuarter,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedEighth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedSixteenth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X16,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedThirtySecond,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.DISPLACED) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedHalf,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedQuarter,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedEighth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedSixteenth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X16,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedThirtySecond,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun HalfNoteLayout(pattern: NotePattern, onSubdivisionChoose: (NotePattern) -> Unit, modifier: Modifier) {
+private fun HalfNoteLayout(
+    pattern: NotePattern,
+    onSubdivisionChoose: (NotePattern) -> Unit,
+    modifier: Modifier,
+    expanded: Boolean,
+) {
     Column(modifier = modifier) {
         val rowModifier = Modifier.fillMaxWidth()
 
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Half,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Quarter,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Eighth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Sixteenth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X16,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecond,
-            )
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.STRAIGHT) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Half,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Quarter,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Eighth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Sixteenth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X16,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecond,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.HalfTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.QuarterTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X16,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondTriplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.TRIPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.HalfTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.QuarterTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X16,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondTriplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.QuarterQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondQuintuplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.QUINTUPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.QuarterQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondQuintuplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.QuarterSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondSeptuplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.SEPTUPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.QuarterSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondSeptuplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedHalf,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedQuarter,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedEighth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedSixteenth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X16,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedThirtySecond,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.DISPLACED) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedHalf,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedQuarter,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedEighth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedSixteenth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X16,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedThirtySecond,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun QuarterNoteLayout(pattern: NotePattern, onSubdivisionChoose: (NotePattern) -> Unit, modifier: Modifier) {
+private fun QuarterNoteLayout(
+    pattern: NotePattern,
+    onSubdivisionChoose: (NotePattern) -> Unit,
+    modifier: Modifier,
+    expanded: Boolean,
+) {
     Column(modifier = modifier) {
         val rowModifier = Modifier.fillMaxWidth()
 
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Quarter,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Eighth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Sixteenth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecond,
-            )
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.STRAIGHT) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Quarter,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Eighth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Sixteenth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecond,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.QuarterTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondTriplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.TRIPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.QuarterTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondTriplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.QuarterQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondQuintuplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.QUINTUPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.QuarterQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondQuintuplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.QuarterSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondSeptuplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.SEPTUPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.QuarterSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondSeptuplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedQuarter,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedEighth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedSixteenth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X8,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedThirtySecond,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.DISPLACED) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedQuarter,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedEighth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedSixteenth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X8,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedThirtySecond,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun EighthNoteLayout(pattern: NotePattern, onSubdivisionChoose: (NotePattern) -> Unit, modifier: Modifier) {
+private fun EighthNoteLayout(
+    pattern: NotePattern,
+    onSubdivisionChoose: (NotePattern) -> Unit,
+    modifier: Modifier,
+    expanded: Boolean,
+) {
     Column(modifier = modifier) {
         val rowModifier = Modifier.fillMaxWidth()
 
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Eighth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Sixteenth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecond,
-            )
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.STRAIGHT) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Eighth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Sixteenth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecond,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondTriplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.TRIPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondTriplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondQuintuplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.QUINTUPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondQuintuplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.EighthSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondSeptuplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.SEPTUPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.EighthSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondSeptuplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedEighth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedSixteenth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X4,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedThirtySecond,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.DISPLACED) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedEighth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedSixteenth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X4,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedThirtySecond,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun SixteenthNoteLayout(pattern: NotePattern, onSubdivisionChoose: (NotePattern) -> Unit, modifier: Modifier) {
+private fun SixteenthNoteLayout(
+    pattern: NotePattern,
+    onSubdivisionChoose: (NotePattern) -> Unit,
+    modifier: Modifier,
+    expanded: Boolean,
+) {
     Column(modifier = modifier) {
         val rowModifier = Modifier.fillMaxWidth()
 
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.Sixteenth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.STRAIGHT_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecond,
-            )
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.STRAIGHT) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.Sixteenth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.STRAIGHT_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecond,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthTriplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.TRIPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondTriplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.TRIPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthTriplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.TRIPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondTriplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthQuintuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.QUINTUPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondQuintuplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.QUINTUPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthQuintuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.QUINTUPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondQuintuplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.SixteenthSeptuplet,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.SEPTUPLET_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.ThirtySecondSeptuplet,
-            )
+
+        RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.SEPTUPLET) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.SixteenthSeptuplet,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.SEPTUPLET_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.ThirtySecondSeptuplet,
+                )
+            }
         }
-        Row(modifier = rowModifier) {
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X1,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedSixteenth,
-            )
-            SubdivisionItem(
-                actualPattern = pattern,
-                expectedPattern = NotePattern.DISPLACED_X2,
-                onSubdivisionChoose = onSubdivisionChoose,
-                imageVector = ClickTrackIcons.Notes.DisplacedThirtySecond,
-            )
+
+        AnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.DISPLACED) {
+            Row(modifier = rowModifier) {
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X1,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedSixteenth,
+                )
+                SubdivisionItem(
+                    actualPattern = pattern,
+                    expectedPattern = NotePattern.DISPLACED_X2,
+                    onSubdivisionChoose = onSubdivisionChoose,
+                    imageVector = ClickTrackIcons.Notes.DisplacedThirtySecond,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun ThirtySecondNoteLayout(pattern: NotePattern, onSubdivisionChoose: (NotePattern) -> Unit, modifier: Modifier) {
+private fun ThirtySecondNoteLayout(
+    pattern: NotePattern,
+    onSubdivisionChoose: (NotePattern) -> Unit,
+    modifier: Modifier,
+) {
     Row(modifier = modifier.fillMaxWidth()) {
         SubdivisionItem(
             actualPattern = pattern,
@@ -797,6 +923,14 @@ private fun RowScope.SubdivisionItem(
         )
     }
 }
+
+@Composable
+private fun RowAnimatedVisibility(visible: Boolean, content: @Composable () -> Unit) = AnimatedVisibility(
+    visible = visible,
+    enter = fadeIn() + expandVertically(),
+    exit = fadeOut() + shrinkVertically(),
+    content = content
+)
 
 @Preview
 @Composable
