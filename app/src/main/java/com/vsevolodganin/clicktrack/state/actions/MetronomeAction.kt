@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.state.actions
 
 import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
+import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 
@@ -10,5 +11,13 @@ sealed class MetronomeAction : Action {
 
     class ChangeBpm(val bpm: BeatsPerMinute) : MetronomeAction()
 
+    class ChangePattern(val pattern: NotePattern) : MetronomeAction()
+
     object BpmMeterTap : MetronomeAction()
+
+    object ToggleOptions : MetronomeAction()
+
+    object OpenOptions : MetronomeAction()
+
+    object CloseOptions : MetronomeAction()
 }

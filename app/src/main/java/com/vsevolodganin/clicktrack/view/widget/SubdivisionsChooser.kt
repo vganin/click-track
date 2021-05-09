@@ -72,6 +72,7 @@ fun SubdivisionsChooser(
     cue: Cue,
     onSubdivisionChoose: (NotePattern) -> Unit,
     modifier: Modifier = Modifier,
+    alwaysExpanded: Boolean = false,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -86,19 +87,20 @@ fun SubdivisionsChooser(
         val pattern = cue.pattern
         val layoutModifier = Modifier.weight(1f)
         val noteValue = cue.timeSignature.noteValue
+        val reallyExpanded = alwaysExpanded || expanded
 
         when (noteValue) {
-            1 -> WholeNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, expanded)
-            in 2..3 -> HalfNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, expanded)
-            in 4..7 -> QuarterNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, expanded)
-            in 8..15 -> EighthNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, expanded)
-            in 16..31 -> SixteenthNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, expanded)
+            1 -> WholeNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, reallyExpanded)
+            in 2..3 -> HalfNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, reallyExpanded)
+            in 4..7 -> QuarterNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, reallyExpanded)
+            in 8..15 -> EighthNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, reallyExpanded)
+            in 16..31 -> SixteenthNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, reallyExpanded)
             in 32..Int.MAX_VALUE -> ThirtySecondNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier)
             else -> error("Non-positive note value")
         }
 
         AnimatedVisibility(
-            visible = noteValue < 32,
+            visible = noteValue < 32 && !alwaysExpanded,
             enter = fadeIn() + slideInHorizontally(initialOffsetX = { it / 2 }),
             exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it / 2 }),
         ) {

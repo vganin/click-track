@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.di.module.UserPreferences
 import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
+import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
@@ -22,6 +23,7 @@ class UserPreferencesRepository @Inject constructor(
 ) {
     var appVersionCode: Int by Properties.APP_VERSION_CODE
     var metronomeBpm: BeatsPerMinute by Properties.METRONOME_BPM
+    var metronomePattern: NotePattern by Properties.METRONOME_PATTERN
     var theme: Theme by Properties.THEME
     var selectedSoundsId: ClickSoundsId by Properties.SELECTED_SOUNDS
 
@@ -49,6 +51,13 @@ class UserPreferencesRepository @Inject constructor(
             defaultValue = 120.bpm,
             toInt = { value },
             fromInt = { bpm }
+        )
+
+        val METRONOME_PATTERN = StringConvertibleProperty(
+            key = "metronome_pattern",
+            defaultValue = NotePattern.STRAIGHT_X1,
+            toString = { toString() },
+            fromString = { NotePattern.valueOf(this) }
         )
 
         val THEME = StringConvertibleProperty(

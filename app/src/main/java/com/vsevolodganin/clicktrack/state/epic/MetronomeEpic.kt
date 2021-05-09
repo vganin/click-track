@@ -41,10 +41,13 @@ class MetronomeEpic @Inject constructor(
                 .mapNotNull { screen ->
                     if (screen is Screen.Metronome) {
                         val currentlyPlayingMetronome = currentlyPlayingMetronome()
+                        val areOptionsExpanded = screen.state?.areOptionsExpanded ?: false
                         MetronomeScreenState(
                             bpm = userPreferencesRepository.metronomeBpm,
+                            pattern = userPreferencesRepository.metronomePattern,
                             progress = currentlyPlayingMetronome?.progress,
-                            isPlaying = currentlyPlayingMetronome != null
+                            isPlaying = currentlyPlayingMetronome != null,
+                            areOptionsExpanded = areOptionsExpanded,
                         )
                     } else {
                         null
@@ -78,6 +81,28 @@ class MetronomeEpic @Inject constructor(
                 .debounce(100.milliseconds)
                 .consumeEach { action ->
                     userPreferencesRepository.metronomeBpm = action.bpm
+                },
+
+            actions.filterIsInstance<MetronomeAction.ChangePattern>()
+                .mapNotNull { action ->
+                    currentlyPlayingMetronome()?.clickTrack?.run {
+                        copy(
+                            value = value.copy(
+                                cues = value.cues.map {
+                                    it.copy(pattern = action.pattern)
+                                }
+                            )
+                        )
+                    }?.let { updatedClickTrack ->
+                        ClickTrackAction.StartPlay(clickTrack = updatedClickTrack)
+                    }
+                },
+
+            actions
+                .filterIsInstance<MetronomeAction.ChangePattern>()
+                .debounce(100.milliseconds)
+                .consumeEach { action ->
+                    userPreferencesRepository.metronomePattern = action.pattern
                 }
         )
     }

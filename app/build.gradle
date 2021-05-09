@@ -93,6 +93,7 @@ android {
         freeCompilerArgs += '-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi'
         freeCompilerArgs += '-Xopt-in=androidx.compose.animation.ExperimentalAnimationApi'
         freeCompilerArgs += '-Xopt-in=androidx.compose.animation.core.InternalAnimationApi'
+        freeCompilerArgs += '-Xopt-in=androidx.compose.material.ExperimentalMaterialApi'
     }
 
     composeOptions {
