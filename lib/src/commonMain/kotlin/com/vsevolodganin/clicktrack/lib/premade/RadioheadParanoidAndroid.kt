@@ -7,6 +7,7 @@ import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
 
 // Source: https://www.songsterr.com/a/wsa/radiohead-paranoid-android-2-drum-tab-s407051t4
+@Suppress("unused") // Used for scope
 public val PreMadeClickTracks.RadioheadParanoidAndroid: ClickTrack
     get() = ClickTrack(
         name = "Radiohead – Paranoid Android",

@@ -260,8 +260,6 @@ class PlayerImpl @Inject constructor(
         return PlaySchedule(soundEvents, initialDelay)
     }
 
-    private fun PlaySchedule.isEmpty() = soundEvents.isEmpty() && initialDelay > Duration.ZERO
-
     private suspend fun selectedSounds(): ClickSounds? {
         return when (val soundsId = userPreferencesRepository.selectedSoundsId) {
             is ClickSoundsId.Builtin -> soundsId.value.sounds

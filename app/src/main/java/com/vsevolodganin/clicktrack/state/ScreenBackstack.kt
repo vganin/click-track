@@ -18,10 +18,6 @@ fun List<Screen>.pop(): List<Screen> {
     return dropLast(1)
 }
 
-fun List<Screen>.pushOrIgnore(screen: Screen): List<Screen> {
-    return pushOrIgnore { screen }
-}
-
 fun List<Screen>.pushOrIgnore(screenFactory: () -> Screen): List<Screen> {
     val current = frontScreen()
     val next = screenFactory()

@@ -7,20 +7,17 @@ import android.os.IBinder
 import androidx.annotation.MainThread
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.di.module.ApplicationContext
-import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.state.PlaybackState
-import kotlinx.coroutines.CoroutineDispatcher
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import javax.inject.Inject
 
 @ViewModelScoped
 class PlayerServiceAccess @Inject constructor(
     @ApplicationContext private val context: Context,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
 ) : Player {
 
     private val binderState = MutableStateFlow<PlayerServiceBinder?>(null)

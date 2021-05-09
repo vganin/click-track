@@ -102,5 +102,5 @@ fun NumberInputField(
 @Preview
 @Composable
 fun PreviewNumberInputField() {
-    NumberInputField(state = mutableStateOf(666))
+    NumberInputField(state = remember { mutableStateOf(666) })
 }

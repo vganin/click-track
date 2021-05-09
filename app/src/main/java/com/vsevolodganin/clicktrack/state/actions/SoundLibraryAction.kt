@@ -9,8 +9,6 @@ import com.vsevolodganin.clicktrack.state.SelectableClickSoundsItem
 
 sealed class SoundLibraryAction : Action {
 
-    object RefreshClickSoundsList : SoundLibraryAction()
-
     class UpdateClickSoundsList(
         val items: List<SelectableClickSoundsItem>,
     ) : SoundLibraryAction()

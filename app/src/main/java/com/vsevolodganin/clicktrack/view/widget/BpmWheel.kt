@@ -143,7 +143,7 @@ private const val WHEEL_WIDTH_MULTIPLIER = 0.125f
 @Composable
 fun PreviewBpmWheel() {
     BpmWheel(
-        state = mutableStateOf(60.bpm),
+        state = remember { mutableStateOf(60.bpm) },
         modifier = Modifier.size(200.dp)
     )
 }

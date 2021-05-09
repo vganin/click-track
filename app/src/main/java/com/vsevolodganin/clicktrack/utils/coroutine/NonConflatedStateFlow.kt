@@ -12,6 +12,7 @@ interface MutableNonConflatedStateFlow<T> : NonConflatedStateFlow<T>, MutableSha
     suspend fun setValue(value: T)
 }
 
+@Suppress("FunctionName") // Factory function
 fun <T> MutableNonConflatedStateFlow(initialValue: T): MutableNonConflatedStateFlow<T> {
     val sharedFlow = MutableSharedFlow<T>(
         replay = 1,
