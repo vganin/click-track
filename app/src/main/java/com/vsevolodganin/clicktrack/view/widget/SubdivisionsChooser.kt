@@ -75,18 +75,25 @@ fun SubdivisionsChooser(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
+    val collapsingOnSubdivisionChoose: (NotePattern) -> Unit = remember {
+        {
+            expanded = false
+            onSubdivisionChoose(it)
+        }
+    }
+
     Row(modifier) {
         val pattern = cue.pattern
         val layoutModifier = Modifier.weight(1f)
         val noteValue = cue.timeSignature.noteValue
 
         when (noteValue) {
-            1 -> WholeNoteLayout(pattern, onSubdivisionChoose, layoutModifier, expanded)
-            in 2..3 -> HalfNoteLayout(pattern, onSubdivisionChoose, layoutModifier, expanded)
-            in 4..7 -> QuarterNoteLayout(pattern, onSubdivisionChoose, layoutModifier, expanded)
-            in 8..15 -> EighthNoteLayout(pattern, onSubdivisionChoose, layoutModifier, expanded)
-            in 16..31 -> SixteenthNoteLayout(pattern, onSubdivisionChoose, layoutModifier, expanded)
-            in 32..Int.MAX_VALUE -> ThirtySecondNoteLayout(pattern, onSubdivisionChoose, layoutModifier)
+            1 -> WholeNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, expanded)
+            in 2..3 -> HalfNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, expanded)
+            in 4..7 -> QuarterNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, expanded)
+            in 8..15 -> EighthNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, expanded)
+            in 16..31 -> SixteenthNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, expanded)
+            in 32..Int.MAX_VALUE -> ThirtySecondNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier)
             else -> error("Non-positive note value")
         }
 
