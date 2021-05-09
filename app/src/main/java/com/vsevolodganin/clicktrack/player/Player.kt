@@ -9,11 +9,13 @@ import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.NoteEvent
 import com.vsevolodganin.clicktrack.lib.Polyrhythm
 import com.vsevolodganin.clicktrack.lib.interval
+import com.vsevolodganin.clicktrack.lib.math.Rational
+import com.vsevolodganin.clicktrack.lib.math.ZERO
+import com.vsevolodganin.clicktrack.lib.math.compareTo
 import com.vsevolodganin.clicktrack.lib.math.over
 import com.vsevolodganin.clicktrack.lib.math.times
 import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.player.PlayerImpl.PlaySchedule.SoundEvent
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
@@ -39,7 +41,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -128,136 +129,119 @@ class PlayerImpl @Inject constructor(
         reportProgress: suspend (progress: Duration) -> Unit,
     ) = coroutineScope {
         @Suppress("NAME_SHADOWING")
-        var startAt = if (startAt >= durationInTime) {
+        val startAt = if (startAt >= durationInTime) {
             if (loop) Duration.ZERO else return@coroutineScope
         } else {
             startAt
         }
 
-        do {
-            val playSchedule = cues.map { cue ->
-                cue.toPlaySchedule().withDuration(cue.durationAsTime)
-            }.merge().startingAt(startAt)
-
-            reportProgress(startAt)
-
-            GenericPatternPlayer.play(
-                initialDelay = playSchedule.initialDelay,
-                pattern = playSchedule.soundEvents,
-                interval = { event -> event.duration },
-                play = { event -> event.play() },
-                delayMethod = GenericPatternPlayer.DelayMethod.THREAD_SLEEP
-            )
-
-            startAt = Duration.ZERO
-        } while (loop && isActive)
-    }
-
-    private suspend fun SoundEvent.play() {
-        if (pausedState.value) {
-            pausedState.filter { false }.take(1).collect()
-        }
-
-        val sounds = selectedSounds()
-        if (sounds != null) {
-            val sound = when (type) {
-                ClickSoundType.STRONG -> sounds.strongBeat
-                ClickSoundType.WEAK -> sounds.weakBeat
+        val schedule = cues
+            .asSequence()
+            .flatMap { cue -> cue.toPlayerSchedule().withDuration(cue.durationAsTime) }
+            .reportProgress(reportProgress)
+            .loop(loop)
+            .run {
+                if (startAt > Duration.ZERO) {
+                    startingAt(startAt)
+                        .reportProgress { passed -> reportProgress(startAt + passed) }
+                } else {
+                    this@run
+                }
             }
-            sound?.let { soundPool.play(it, type) }
-        }
+
+        GenericPatternPlayer.play(
+            pattern = schedule,
+            interval = { event -> event.interval },
+            play = { event -> event.play() },
+            delayMethod = GenericPatternPlayer.DelayMethod.THREAD_SLEEP
+        )
     }
 
-    private data class PlaySchedule(val soundEvents: List<SoundEvent>, val initialDelay: Duration) {
-        data class SoundEvent(val type: ClickSoundType, val duration: Duration)
-    }
-
-    private fun Cue.toPlaySchedule(): PlaySchedule {
+    private fun Cue.toPlayerSchedule(): PlayerSchedule {
         val bpmInterval = bpm.interval
         val polyrhythm = Polyrhythm(
             pattern1 = listOf(NoteEvent(timeSignature.noteCount over 1, NoteEvent.Type.NOTE)),
             pattern2 = pattern.events,
         )
+        val selectedSounds = ::selectedSounds
 
-        return PlaySchedule(
-            soundEvents = mutableListOf<SoundEvent>().apply {
-                for (column in polyrhythm.columns) {
-                    val soundType = when {
-                        column.indices.contains(0) -> ClickSoundType.STRONG
-                        else -> ClickSoundType.WEAK
-                    }
-                    this += SoundEvent(
+        return sequence {
+            if (polyrhythm.untilFirst > Rational.ZERO) {
+                yield(DelayEvent(bpmInterval * polyrhythm.untilFirst))
+            }
+
+            for (column in polyrhythm.columns) {
+                val soundType = when {
+                    column.indices.contains(0) -> ClickSoundType.STRONG
+                    else -> ClickSoundType.WEAK
+                }
+
+                yield(
+                    SoundEvent(
                         type = soundType,
                         duration = bpmInterval * column.untilNext,
+                        waitResume = {
+                            if (pausedState.value) {
+                                pausedState.filter { false }.take(1).collect()
+                            }
+                        },
+                        selectedSounds = selectedSounds,
+                        soundPool = soundPool,
                     )
-                }
-            },
-            initialDelay = bpmInterval * polyrhythm.untilFirst
-        )
-    }
-
-    private fun PlaySchedule.withDuration(duration: Duration): PlaySchedule {
-        if (soundEvents.isEmpty() || duration <= initialDelay) {
-            return PlaySchedule(emptyList(), duration)
-        }
-
-        val soundEventsCycled = soundEvents.toRoundRobin()
-        val updatedSoundEvents = mutableListOf<SoundEvent>()
-
-        var runningDuration = initialDelay
-        while (runningDuration + Const.CLICK_MIN_DELTA < duration) {
-            val next = soundEventsCycled.next()
-            updatedSoundEvents += next
-            runningDuration += next.duration
-        }
-
-        if (runningDuration != duration) {
-            val lastIndex = updatedSoundEvents.lastIndex
-            updatedSoundEvents[lastIndex] = updatedSoundEvents[lastIndex].let {
-                it.copy(duration = it.duration - (runningDuration - duration))
+                )
             }
         }
-
-        return copy(soundEvents = updatedSoundEvents)
     }
 
-    private fun PlaySchedule.startingAt(startAt: Duration): PlaySchedule {
-        var runningDuration = initialDelay
-        var startIndex: Int? = null
-        for (index in soundEvents.indices) {
+    private fun PlayerSchedule.withDuration(duration: Duration): PlayerSchedule {
+        return sequence {
+            val soundEventsCycledIterator = toRoundRobin().iterator()
+
+            var runningDuration = Duration.ZERO
+            while (true) {
+                val next = soundEventsCycledIterator.next()
+                runningDuration += next.interval
+
+                if (runningDuration + Const.CLICK_MIN_DELTA >= duration) {
+                    if (runningDuration != duration) {
+                        yield(next.withInterval(interval = next.interval - (runningDuration - duration)))
+                    } else {
+                        yield(next)
+                    }
+                    return@sequence
+                } else {
+                    yield(next)
+                }
+            }
+        }
+    }
+
+    private fun PlayerSchedule.startingAt(startAt: Duration): PlayerSchedule {
+        var runningDuration = Duration.ZERO
+        var dropCount = 0
+        for (event in this) {
             if (runningDuration >= startAt) {
-                startIndex = index
                 break
             }
-            runningDuration += soundEvents[index].duration
+            dropCount += 1
+            runningDuration += event.interval
         }
 
-        return PlaySchedule(
-            soundEvents = if (startIndex == null) {
-                emptyList()
-            } else {
-                soundEvents.subList(startIndex, soundEvents.size)
-            },
-            initialDelay = (runningDuration - startAt).coerceAtLeast(Duration.ZERO)
-        )
+        return sequence {
+            yield(DelayEvent((runningDuration - startAt).coerceAtLeast(Duration.ZERO)))
+            yieldAll(drop(dropCount))
+        }
     }
 
-    private fun Iterable<PlaySchedule>.merge(): PlaySchedule {
-        if (!any()) return PlaySchedule(emptyList(), Duration.ZERO)
-
-        val first = first()
-        val initialDelay = first.initialDelay
-        val soundEvents = first.soundEvents.toMutableList()
-
-        for (schedule in drop(1)) {
-            val lastIndex = soundEvents.lastIndex
-            soundEvents[lastIndex] = soundEvents[lastIndex].let {
-                it.copy(duration = it.duration + schedule.initialDelay)
-            }
-            soundEvents += schedule.soundEvents
+    private fun PlayerSchedule.reportProgress(reportProgress: suspend (progress: Duration) -> Unit): PlayerSchedule {
+        return sequence {
+            yield(ReportProgressEvent(TimeSource.Monotonic.markNow(), reportProgress))
+            yieldAll(this@reportProgress)
         }
+    }
 
-        return PlaySchedule(soundEvents, initialDelay)
+    private fun PlayerSchedule.loop(loop: Boolean): PlayerSchedule {
+        return if (loop) toRoundRobin() else this
     }
 
     private suspend fun selectedSounds(): ClickSounds? {
@@ -291,6 +275,68 @@ class PlayerImpl @Inject constructor(
     }
 }
 
+private interface PlayerScheduleEvent {
+    val interval: Duration
+    suspend fun play()
+    fun withInterval(interval: Duration): PlayerScheduleEvent
+}
+
+private typealias PlayerSchedule = Sequence<PlayerScheduleEvent>
+
+private data class SoundEvent(
+    private val type: ClickSoundType,
+    private val duration: Duration,
+    private val waitResume: suspend () -> Unit,
+    private val selectedSounds: suspend () -> ClickSounds?,
+    private val soundPool: PlayerSoundPool,
+) : PlayerScheduleEvent {
+
+    override val interval: Duration get() = duration
+
+    override suspend fun play() {
+        waitResume()
+
+        val sounds = selectedSounds()
+        if (sounds != null) {
+            val sound = when (type) {
+                ClickSoundType.STRONG -> sounds.strongBeat
+                ClickSoundType.WEAK -> sounds.weakBeat
+            }
+            sound?.let { soundPool.play(it, type) }
+        }
+    }
+
+    override fun withInterval(interval: Duration): PlayerScheduleEvent {
+        return copy(duration = interval)
+    }
+}
+
+private data class DelayEvent(private val duration: Duration) : PlayerScheduleEvent {
+
+    override val interval: Duration get() = duration
+
+    override suspend fun play() = Unit
+
+    override fun withInterval(interval: Duration): PlayerScheduleEvent {
+        return copy(duration = interval)
+    }
+}
+
+private data class ReportProgressEvent(
+    private val timeMark: TimeMark,
+    private val reportProgress: suspend (progress: Duration) -> Unit,
+    override val interval: Duration = Duration.ZERO,
+) : PlayerScheduleEvent {
+
+    override suspend fun play() {
+        reportProgress(timeMark.elapsedNow())
+    }
+
+    override fun withInterval(interval: Duration): PlayerScheduleEvent {
+        return copy(interval = interval)
+    }
+}
+
 private object GenericPatternPlayer {
 
     enum class DelayMethod {
@@ -298,14 +344,12 @@ private object GenericPatternPlayer {
     }
 
     suspend fun <T> play(
-        initialDelay: Duration,
-        pattern: Iterable<T>,
+        pattern: Sequence<T>,
         interval: (T) -> Duration,
         play: suspend (element: T) -> Unit,
         delayMethod: DelayMethod,
     ) {
         play(
-            initialDelay = initialDelay.toLongNanoseconds(),
             pattern = pattern,
             interval = { element -> interval(element).toLongNanoseconds() },
             play = { element -> play(element) },
@@ -314,13 +358,11 @@ private object GenericPatternPlayer {
     }
 
     private suspend fun <T> play(
-        initialDelay: Long,
-        pattern: Iterable<T>,
+        pattern: Sequence<T>,
         interval: (T) -> Long,
         play: suspend (element: T) -> Unit,
         delay: suspend (Long) -> Unit,
     ) {
-        delay(initialDelay)
         val patternIterator = pattern.iterator()
         val startTime = nanoTime()
         var deadline = startTime
