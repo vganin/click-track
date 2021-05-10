@@ -71,7 +71,7 @@ public fun Polyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): Pol
 private fun List<NoteEvent>.resize(length: Rational): List<NoteEvent> {
     if (isEmpty()) return emptyList()
 
-    val roundSequence = toRoundRobin()
+    val roundSequence = toRoundRobin().iterator()
     val result = mutableListOf<NoteEvent>()
 
     var runningLength = Rational.ZERO
