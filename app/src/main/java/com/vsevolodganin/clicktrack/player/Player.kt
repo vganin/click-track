@@ -302,7 +302,7 @@ private data class SoundEvent(
                 ClickSoundType.STRONG -> sounds.strongBeat
                 ClickSoundType.WEAK -> sounds.weakBeat
             }
-            sound?.let { soundPool.play(it, type) }
+            sound?.let { soundPool.play(it) }
         }
     }
 

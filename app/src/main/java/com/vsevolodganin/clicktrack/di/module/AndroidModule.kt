@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
 import android.content.SharedPreferences
+import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
 import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.MainActivity
@@ -29,6 +30,12 @@ abstract class ApplicationScopedAndroidModule {
     abstract fun provideContext(application: Application): Context
 
     companion object {
+
+        @Provides
+        @ApplicationScoped
+        fun provideAudioManager(@ApplicationContext context: Context): AudioManager {
+            return context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        }
 
         @Provides
         @UserPreferences
