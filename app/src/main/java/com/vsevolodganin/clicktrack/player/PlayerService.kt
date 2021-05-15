@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.os.Parcelable
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.FLAG_FOREGROUND_SERVICE
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
 import com.vsevolodganin.clicktrack.Application
@@ -17,11 +18,10 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.intentForLaunchAppWithClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.DEFAULT_NOTIFICATION_ID
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_CHANNEL_ID
+import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_NOTIFICATION_ID
 import com.vsevolodganin.clicktrack.utils.cast
 import javax.inject.Inject
-import kotlin.random.Random
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -81,6 +81,8 @@ class PlayerService : Service() {
     @Inject
     @MainDispatcher
     lateinit var mainDispatcher: CoroutineDispatcher
+
+    private var isNotificationDisplayed = false
 
     override fun onCreate() {
         super.onCreate()
@@ -171,16 +173,25 @@ class PlayerService : Service() {
             .setContentText(clickTrack.value.name)
             .setContentIntent(launchAppIntent)
             .setDeleteIntent(stopServiceIntent)
-            .addAction(0, getString(R.string.notification_stop), stopServiceIntent)
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setOngoing(true)
+            .addAction(0, getString(R.string.notification_stop), stopServiceIntent)
             .build()
+            .apply {
+                flags = flags or FLAG_FOREGROUND_SERVICE
+            }
 
-        startForeground(DEFAULT_NOTIFICATION_ID, notification)
+        if (isNotificationDisplayed) {
+            notificationManager.notify(PLAYING_NOW_NOTIFICATION_ID, notification)
+        } else {
+            startForeground(PLAYING_NOW_NOTIFICATION_ID, notification)
+            isNotificationDisplayed = true
+        }
     }
 
     private fun stopForeground() {
         stopForeground(true)
+        isNotificationDisplayed = false
     }
 
     private fun inject() {
@@ -199,6 +210,6 @@ class PlayerService : Service() {
 
     private object NotificationConst {
         const val PLAYING_NOW_CHANNEL_ID = "playing_now"
-        val DEFAULT_NOTIFICATION_ID = Random.nextInt(Int.MAX_VALUE) + 1
+        const val PLAYING_NOW_NOTIFICATION_ID = 1
     }
 }
