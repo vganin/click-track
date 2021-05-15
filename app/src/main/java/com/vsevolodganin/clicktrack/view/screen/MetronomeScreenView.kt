@@ -31,15 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
-import com.vsevolodganin.clicktrack.lib.ClickTrack
-import com.vsevolodganin.clicktrack.lib.Cue
-import com.vsevolodganin.clicktrack.lib.CueDuration
 import com.vsevolodganin.clicktrack.lib.NotePattern
-import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
-import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.model.MetronomeId
+import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
@@ -48,7 +42,6 @@ import com.vsevolodganin.clicktrack.state.actions.MetronomeAction.ChangePattern
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction.CloseOptions
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction.OpenOptions
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
-import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import com.vsevolodganin.clicktrack.view.widget.BpmWheel
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackView
@@ -100,13 +93,6 @@ private fun Content(
     state: MetronomeScreenState,
     dispatch: Dispatch,
 ) {
-    val bpmState = remember(state.bpm) {
-        observableMutableStateOf(state.bpm).observe { bpm ->
-            dispatch(MetronomeAction.ChangeBpm(bpm))
-        }
-    }
-    val metronomeClickTrack = metronomeClickTrack(bpmState.value, state.pattern)
-
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (clickTrackRef, bpmText, bpmWheel, bpmMeter) = createRefs()
 
@@ -119,7 +105,7 @@ private fun Content(
             elevation = 8.dp,
         ) {
             ClickTrackView(
-                clickTrack = metronomeClickTrack.value,
+                clickTrack = state.clickTrack.value,
                 drawAllBeatsMarks = true,
                 drawTextMarks = false,
                 progress = state.progress,
@@ -127,8 +113,10 @@ private fun Content(
             )
         }
 
+        val bpm = state.clickTrack.value.cues.first().bpm
+
         Text(
-            text = bpmState.value.value.toString(),
+            text = bpm.value.toString(),
             style = MaterialTheme.typography.h1.copy(
                 fontWeight = FontWeight.Medium,
                 letterSpacing = 8.sp,
@@ -142,7 +130,8 @@ private fun Content(
         )
 
         BpmWheel(
-            state = bpmState,
+            value = bpm,
+            onValueChange = { dispatch(MetronomeAction.ChangeBpm(it)) },
             modifier = Modifier
                 .size(200.dp)
                 .constrainAs(bpmWheel) {
@@ -154,7 +143,7 @@ private fun Content(
                 val action = if (state.isPlaying) {
                     ClickTrackAction.StopPlay
                 } else {
-                    ClickTrackAction.StartPlay(metronomeClickTrack)
+                    ClickTrackAction.StartPlay(state.clickTrack)
                 }
                 dispatch(action)
             })
@@ -187,39 +176,13 @@ private fun Options(
     dispatch: Dispatch,
 ) {
     SubdivisionsChooser(
-        cue = metronomeCue(bpm = state.bpm, pattern = state.pattern),
+        cue = state.clickTrack.value.cues.first(),
         onSubdivisionChoose = {
             dispatch(ChangePattern(it))
             dispatch(CloseOptions)
         },
         modifier = Modifier.padding(8.dp),
         alwaysExpanded = true,
-    )
-}
-
-@Composable
-private fun metronomeClickTrack(bpm: BeatsPerMinute, pattern: NotePattern): ClickTrackWithId {
-    val name = stringResource(R.string.metronome)
-    val cue = metronomeCue(bpm, pattern)
-    return remember(cue) {
-        ClickTrackWithId(
-            id = MetronomeId,
-            value = ClickTrack(
-                name = name,
-                cues = listOf(cue),
-                loop = true,
-            )
-        )
-    }
-}
-
-@Composable
-private fun metronomeCue(bpm: BeatsPerMinute, pattern: NotePattern): Cue = remember(bpm, pattern) {
-    Cue(
-        bpm = bpm,
-        pattern = pattern,
-        timeSignature = TimeSignature(4, 4),
-        duration = CueDuration.Beats(4),
     )
 }
 
@@ -266,8 +229,11 @@ private fun backdropState(screenState: MetronomeScreenState?, dispatch: Dispatch
 private fun Preview() {
     MetronomeScreenView(
         MetronomeScreenState(
-            bpm = 90.bpm,
-            pattern = NotePattern.QUINTUPLET_X2,
+            clickTrack = metronomeClickTrack(
+                name = stringResource(R.string.metronome),
+                bpm = 90.bpm,
+                pattern = NotePattern.QUINTUPLET_X2,
+            ),
             progress = 0.1,
             isPlaying = false,
             areOptionsExpanded = true,

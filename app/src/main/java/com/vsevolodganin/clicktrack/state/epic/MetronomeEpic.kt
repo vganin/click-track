@@ -1,8 +1,12 @@
 package com.vsevolodganin.clicktrack.state.epic
 
+import android.content.Context
+import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
+import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.meter.BpmMeter
 import com.vsevolodganin.clicktrack.model.MetronomeId
+import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
 import com.vsevolodganin.clicktrack.redux.Store
@@ -30,6 +34,7 @@ class MetronomeEpic @Inject constructor(
     private val store: Store<AppState>,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val bpmMeter: BpmMeter,
+    @ApplicationContext private val context: Context,
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {
@@ -43,8 +48,11 @@ class MetronomeEpic @Inject constructor(
                         val currentlyPlayingMetronome = currentlyPlayingMetronome()
                         val areOptionsExpanded = screen.state?.areOptionsExpanded ?: false
                         MetronomeScreenState(
-                            bpm = userPreferencesRepository.metronomeBpm,
-                            pattern = userPreferencesRepository.metronomePattern,
+                            clickTrack = metronomeClickTrack(
+                                name = context.getString(R.string.metronome),
+                                bpm = userPreferencesRepository.metronomeBpm,
+                                pattern = userPreferencesRepository.metronomePattern,
+                            ),
                             progress = currentlyPlayingMetronome?.progress,
                             isPlaying = currentlyPlayingMetronome != null,
                             areOptionsExpanded = areOptionsExpanded,

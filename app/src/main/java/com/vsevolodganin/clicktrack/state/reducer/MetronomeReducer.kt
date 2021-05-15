@@ -16,8 +16,12 @@ fun Screen.Metronome.reduceMetronome(action: Action): Screen {
 private fun MetronomeScreenState?.reduce(action: Action): MetronomeScreenState? {
     return when (action) {
         is MetronomeAction.SetScreenState -> action.state
-        is MetronomeAction.ChangeBpm -> this?.copy(bpm = action.bpm)
-        is MetronomeAction.ChangePattern -> this?.copy(pattern = action.pattern)
+        is MetronomeAction.ChangeBpm -> this?.copy(clickTrack = clickTrack.run {
+            copy(value = value.copy(cues = value.cues.map { it.copy(bpm = action.bpm) }))
+        })
+        is MetronomeAction.ChangePattern -> this?.copy(clickTrack = clickTrack.run {
+            copy(value = value.copy(cues = value.cues.map { it.copy(pattern = action.pattern) }))
+        })
         is MetronomeAction.ToggleOptions -> this?.copy(areOptionsExpanded = !areOptionsExpanded)
         is MetronomeAction.OpenOptions -> this?.copy(areOptionsExpanded = true)
         is MetronomeAction.CloseOptions -> this?.copy(areOptionsExpanded = false)
