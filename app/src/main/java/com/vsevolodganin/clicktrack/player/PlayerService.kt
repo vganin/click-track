@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
 import androidx.core.app.NotificationChannelCompat
@@ -155,8 +156,13 @@ class PlayerService : Service() {
         val notificationManager = NotificationManagerCompat.from(this)
         notificationManager.createNotificationChannel(channel)
 
-        val launchAppIntent = PendingIntent.getActivity(this, 0, intentForLaunchAppWithClickTrack(this, clickTrack), PendingIntent.FLAG_UPDATE_CURRENT)
-        val stopServiceIntent = PendingIntent.getService(this, 0, serviceIntent(this).apply { action = ACTION_STOP }, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        } else {
+            PendingIntent.FLAG_UPDATE_CURRENT
+        }
+        val launchAppIntent = PendingIntent.getActivity(this, 0, intentForLaunchAppWithClickTrack(this, clickTrack), pendingIntentFlags)
+        val stopServiceIntent = PendingIntent.getService(this, 0, serviceIntent(this).apply { action = ACTION_STOP }, pendingIntentFlags)
 
         val notification = NotificationCompat.Builder(this, PLAYING_NOW_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
