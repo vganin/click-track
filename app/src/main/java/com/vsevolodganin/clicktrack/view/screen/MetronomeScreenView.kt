@@ -188,7 +188,10 @@ private fun Options(
 ) {
     SubdivisionsChooser(
         cue = metronomeCue(bpm = state.bpm, pattern = state.pattern),
-        onSubdivisionChoose = { dispatch(ChangePattern(it)) },
+        onSubdivisionChoose = {
+            dispatch(ChangePattern(it))
+            dispatch(CloseOptions)
+        },
         modifier = Modifier.padding(8.dp),
         alwaysExpanded = true,
     )
