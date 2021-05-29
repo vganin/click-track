@@ -9,7 +9,7 @@ sealed class MetronomeAction : Action {
 
     class SetScreenState(val state: MetronomeScreenState) : MetronomeAction()
 
-    class ChangeBpm(val bpm: BeatsPerMinute, val updateState: Boolean) : MetronomeAction()
+    class ChangeBpm(val bpm: BeatsPerMinute) : MetronomeAction()
 
     class ChangePattern(val pattern: NotePattern) : MetronomeAction()
 

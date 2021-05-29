@@ -66,7 +66,7 @@ class MetronomeEpic @Inject constructor(
             actions.filterIsInstance<MetronomeAction.BpmMeterTap>()
                 .mapNotNull {
                     bpmMeter.addTap()
-                    bpmMeter.calculateBpm()?.let { MetronomeAction.ChangeBpm(it, updateState = true) }
+                    bpmMeter.calculateBpm()?.let(MetronomeAction::ChangeBpm)
                 },
 
             actions.filterIsInstance<MetronomeAction.ChangeBpm>()

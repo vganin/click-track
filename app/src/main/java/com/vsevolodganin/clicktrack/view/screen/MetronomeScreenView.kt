@@ -21,10 +21,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -117,10 +114,9 @@ private fun Content(
         }
 
         val bpm = state.clickTrack.value.cues.first().bpm
-        var internalBpm by remember(bpm) { mutableStateOf(bpm) }
 
         Text(
-            text = internalBpm.value.toString(),
+            text = bpm.value.toString(),
             style = MaterialTheme.typography.h1.copy(
                 fontWeight = FontWeight.Medium,
                 letterSpacing = 8.sp,
@@ -135,10 +131,7 @@ private fun Content(
 
         BpmWheel(
             value = bpm,
-            onValueChange = {
-                internalBpm = it
-                dispatch(MetronomeAction.ChangeBpm(it, updateState = false))
-            },
+            onValueChange = { dispatch(MetronomeAction.ChangeBpm(it)) },
             modifier = Modifier
                 .size(200.dp)
                 .constrainAs(bpmWheel) {
