@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.view.widget
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -934,7 +935,7 @@ private fun RowScope.SubdivisionItem(
 }
 
 @Composable
-private fun RowAnimatedVisibility(visible: Boolean, content: @Composable () -> Unit) = AnimatedVisibility(
+private fun RowAnimatedVisibility(visible: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) = AnimatedVisibility(
     visible = visible,
     enter = fadeIn() + expandVertically(),
     exit = fadeOut() + shrinkVertically(),
