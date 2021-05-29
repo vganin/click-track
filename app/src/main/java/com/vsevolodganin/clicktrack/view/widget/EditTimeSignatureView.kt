@@ -64,7 +64,7 @@ fun TimeSignatureView(
 fun PreviewTimeSignatureView() {
     Box(modifier = Modifier.fillMaxSize()) {
         TimeSignatureView(
-            state = mutableStateOf(TimeSignature(4, 4)),
+            state = remember { mutableStateOf(TimeSignature(4, 4)) },
             modifier = Modifier.align(Alignment.Center)
         )
     }

@@ -263,8 +263,8 @@ private val DURATION_VALUE_WIDTH = 150.dp
 @Composable
 fun PreviewEditCueDurationView() {
     Column(modifier = Modifier.fillMaxSize()) {
-        EditCueDurationView(state = mutableStateOf(CueDuration.Beats(999999)))
-        EditCueDurationView(state = mutableStateOf(CueDuration.Measures(999999)))
-        EditCueDurationView(state = mutableStateOf(CueDuration.Time(SerializableDuration(1.minutes))))
+        EditCueDurationView(state = remember { mutableStateOf(CueDuration.Beats(999999)) })
+        EditCueDurationView(state = remember { mutableStateOf(CueDuration.Measures(999999)) })
+        EditCueDurationView(state = remember { mutableStateOf(CueDuration.Time(SerializableDuration(1.minutes))) })
     }
 }

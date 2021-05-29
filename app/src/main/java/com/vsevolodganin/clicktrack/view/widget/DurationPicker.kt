@@ -211,9 +211,9 @@ fun PreviewDurationPicker() {
     Column {
         DurationPicker(sharedState)
         DurationPicker(sharedState)
-        DurationPicker(mutableStateOf(1.minutes + 2.seconds + 3.milliseconds))
-        DurationPicker(mutableStateOf(1.seconds + 2.milliseconds))
-        DurationPicker(mutableStateOf(1.milliseconds))
+        DurationPicker(remember { mutableStateOf(1.minutes + 2.seconds + 3.milliseconds) })
+        DurationPicker(remember { mutableStateOf(1.seconds + 2.milliseconds) })
+        DurationPicker(remember { mutableStateOf(1.milliseconds) })
     }
 }
 

@@ -180,7 +180,7 @@ private suspend fun Animatable<Float, AnimationVector1D>.fling(
 fun PreviewNumberPicker() {
     Box(modifier = Modifier.fillMaxSize()) {
         NumberPicker(
-            state = mutableStateOf(9),
+            state = remember { mutableStateOf(9) },
             range = 0..10,
             modifier = Modifier.align(Alignment.Center)
         )
