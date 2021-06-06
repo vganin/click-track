@@ -4,7 +4,7 @@ package com.vsevolodganin.clicktrack.utils.android.sharedprefs
 
 import android.content.SharedPreferences
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.sendBlocking
+import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
@@ -92,7 +92,7 @@ private fun <T> SharedPreferences.flowFrom(key: String, getter: SharedPreference
     return callbackFlow {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, changed ->
             if (changed == key) {
-                sendBlocking(sp.getter())
+                trySendBlocking(sp.getter())
             }
         }
         registerOnSharedPreferenceChangeListener(listener)

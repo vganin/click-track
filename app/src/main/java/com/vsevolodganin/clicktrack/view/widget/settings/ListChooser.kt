@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.utils.compose.toUpperCase
 
 data class ListChooserItem<T>(
     val value: T,
@@ -68,7 +67,7 @@ fun <T> ListChooser(
                     onClick = { showChooser = false },
                     shape = RectangleShape
                 ) {
-                    Text(text = stringResource(id = android.R.string.cancel).toUpperCase())
+                    Text(text = stringResource(id = android.R.string.cancel).uppercase())
                 }
             },
             text = {

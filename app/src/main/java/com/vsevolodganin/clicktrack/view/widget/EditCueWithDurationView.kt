@@ -24,7 +24,7 @@ import com.vsevolodganin.clicktrack.lib.SerializableDuration
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
-import kotlin.time.minutes
+import kotlin.time.Duration
 
 @Composable
 fun EditCueWithDurationView(
@@ -92,7 +92,7 @@ fun PreviewEditCueWithDurationView() {
                 Cue(
                     bpm = 999.bpm,
                     timeSignature = TimeSignature(3, 4),
-                    duration = CueDuration.Time(SerializableDuration(1.minutes))
+                    duration = CueDuration.Time(SerializableDuration(Duration.minutes(1)))
                 )
             )
         },

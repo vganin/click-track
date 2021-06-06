@@ -24,9 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.isFocused
+import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalTextInputService
@@ -46,10 +45,6 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.view.utils.focusableBorder
 import java.text.DecimalFormat
 import kotlin.time.Duration
-import kotlin.time.hours
-import kotlin.time.milliseconds
-import kotlin.time.minutes
-import kotlin.time.seconds
 
 @Composable
 fun DurationPicker(
@@ -72,13 +67,13 @@ fun DurationPicker(
         for ((sequence, timeMultiplier) in sequenceToTimeMultiplier) {
             var baseMultiplier = 1
             for (char in sequence.reversed()) {
-                val int = char.toInt() - '0'.toInt()
+                val int = char.code - '0'.code
                 seconds += int * baseMultiplier * timeMultiplier
                 baseMultiplier *= radix
             }
         }
 
-        return seconds.seconds
+        return Duration.seconds(seconds)
     }
 
     /** Converts Duration to String in format "hhmmss" */
@@ -169,7 +164,7 @@ fun DurationPicker(
                     textInputSession = null
                 }
             }
-            .focusModifier()
+            .focusTarget()
             .pointerInput(Unit) {
                 detectTapGestures {
                     focusRequester.requestFocus()
@@ -207,13 +202,13 @@ private fun Int.twoDigits() = twoDigitsFormat.format(this)
 @Preview
 @Composable
 fun PreviewDurationPicker() {
-    val sharedState = remember { mutableStateOf(1.hours + 2.minutes + 3.seconds + 4.milliseconds) }
+    val sharedState = remember { mutableStateOf(Duration.hours(1) + Duration.minutes(2) + Duration.seconds(3) + Duration.milliseconds(4)) }
     Column {
         DurationPicker(sharedState)
         DurationPicker(sharedState)
-        DurationPicker(remember { mutableStateOf(1.minutes + 2.seconds + 3.milliseconds) })
-        DurationPicker(remember { mutableStateOf(1.seconds + 2.milliseconds) })
-        DurationPicker(remember { mutableStateOf(1.milliseconds) })
+        DurationPicker(remember { mutableStateOf(Duration.minutes(1) + Duration.seconds(2) + Duration.milliseconds(3)) })
+        DurationPicker(remember { mutableStateOf(Duration.seconds(1) + Duration.milliseconds(2)) })
+        DurationPicker(remember { mutableStateOf(Duration.milliseconds(1)) })
     }
 }
 

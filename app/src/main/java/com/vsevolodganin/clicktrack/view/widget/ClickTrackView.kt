@@ -262,7 +262,7 @@ private fun animatedProgressPosition(
         playbackStampX.animateTo(
             targetValue = totalWidthPx,
             animationSpec = tween(
-                durationMillis = animationDuration.coerceAtLeast(Duration.ZERO).toLongMilliseconds().toInt(),
+                durationMillis = animationDuration.coerceAtLeast(Duration.ZERO).inWholeMilliseconds.toInt(),
                 easing = LinearEasing
             )
         )

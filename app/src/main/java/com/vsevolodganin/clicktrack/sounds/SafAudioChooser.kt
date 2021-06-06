@@ -21,7 +21,7 @@ class SafAudioChooser @Inject constructor(
     private val activity: AppCompatActivity,
 ) {
     private val resultChannel = Channel<Uri?>()
-    private val intentLauncher = activity.registerForActivityResult(OpenAudio(), resultChannel::offer)
+    private val intentLauncher = activity.registerForActivityResult(OpenAudio(), resultChannel::trySend)
 
     suspend fun chooseAudio(initialUri: String?): Uri? = coroutineScope {
         val resultAsync = async(start = CoroutineStart.UNDISPATCHED) {

@@ -8,7 +8,7 @@ buildscript {
         maven { url = uri("https://jitpack.io") }
     }
     dependencies {
-        classpath("com.github.DevSrSouza:svg-to-compose:0.6.0")
+        classpath("com.github.DevSrSouza:svg-to-compose:0.7.0")
     }
 }
 

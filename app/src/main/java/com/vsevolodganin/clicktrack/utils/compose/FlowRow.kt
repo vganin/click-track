@@ -43,7 +43,7 @@ fun FlowRow(
     rows += Row(rowPlaceables, horizontalGapPx)
 
     val width = constraints.maxWidth
-    val height = (rows.sumBy { row -> row.height } + (rows.size - 1) * verticalGapPx)
+    val height = (rows.sumOf { row -> row.height } + (rows.size - 1) * verticalGapPx)
         .coerceAtMost(constraints.maxHeight)
 
     layout(width, height) {
@@ -65,7 +65,7 @@ private class Row(
     val horizontalGapPx: Int,
 ) {
     val width by lazy(mode = LazyThreadSafetyMode.NONE) {
-        placeables.sumBy { it.width } + (placeables.size - 1) * horizontalGapPx
+        placeables.sumOf { it.width } + (placeables.size - 1) * horizontalGapPx
     }
 
     val height by lazy(mode = LazyThreadSafetyMode.NONE) {

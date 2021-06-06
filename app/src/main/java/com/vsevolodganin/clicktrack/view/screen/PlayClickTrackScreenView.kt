@@ -30,7 +30,6 @@ import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.PlayClickTrackScreenState
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
-import com.vsevolodganin.clicktrack.utils.compose.toUpperCase
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackView
 import com.vsevolodganin.clicktrack.view.widget.PlayStopButton
@@ -139,7 +138,7 @@ private fun TopBar(
                             onClick = confirm,
                             shape = RectangleShape
                         ) {
-                            Text(text = stringResource(id = android.R.string.ok).toUpperCase())
+                            Text(text = stringResource(id = android.R.string.ok).uppercase())
                         }
                     },
                     dismissButton = {
@@ -147,7 +146,7 @@ private fun TopBar(
                             onClick = dismiss,
                             shape = RectangleShape
                         ) {
-                            Text(text = stringResource(id = android.R.string.no).toUpperCase())
+                            Text(text = stringResource(id = android.R.string.no).uppercase())
                         }
                     }
                 )

@@ -30,7 +30,6 @@ import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
-import kotlin.time.milliseconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -271,7 +270,7 @@ class PlayerImpl @Inject constructor(
     }
 
     private object Const {
-        val CLICK_MIN_DELTA = 1.milliseconds
+        val CLICK_MIN_DELTA = Duration.milliseconds(1)
     }
 }
 
@@ -351,7 +350,7 @@ private object GenericPatternPlayer {
     ) {
         play(
             pattern = pattern,
-            interval = { element -> interval(element).toLongNanoseconds() },
+            interval = { element -> interval(element).inWholeNanoseconds },
             play = { element -> play(element) },
             delay = delayMethod.asReference(),
         )

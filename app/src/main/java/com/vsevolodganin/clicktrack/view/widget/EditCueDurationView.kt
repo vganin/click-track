@@ -36,7 +36,6 @@ import com.vsevolodganin.clicktrack.lib.CueDuration
 import com.vsevolodganin.clicktrack.lib.SerializableDuration
 import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import kotlin.time.Duration
-import kotlin.time.minutes
 
 @Composable
 fun EditCueDurationView(
@@ -44,7 +43,7 @@ fun EditCueDurationView(
     modifier: Modifier = Modifier,
     defaultBeatsDuration: () -> CueDuration.Beats = { CueDuration.Beats(4) },
     defaultMeasuresDuration: () -> CueDuration.Measures = { CueDuration.Measures(1) },
-    defaultTimeDuration: () -> CueDuration.Time = { CueDuration.Time(SerializableDuration(1.minutes)) },
+    defaultTimeDuration: () -> CueDuration.Time = { CueDuration.Time(SerializableDuration(Duration.minutes(1))) },
 ) {
     Row(modifier = modifier) {
         val onDurationChange: (CueDuration) -> Unit = { state.value = it }
@@ -265,6 +264,6 @@ fun PreviewEditCueDurationView() {
     Column(modifier = Modifier.fillMaxSize()) {
         EditCueDurationView(state = remember { mutableStateOf(CueDuration.Beats(999999)) })
         EditCueDurationView(state = remember { mutableStateOf(CueDuration.Measures(999999)) })
-        EditCueDurationView(state = remember { mutableStateOf(CueDuration.Time(SerializableDuration(1.minutes))) })
+        EditCueDurationView(state = remember { mutableStateOf(CueDuration.Time(SerializableDuration(Duration.minutes(1)))) })
     }
 }

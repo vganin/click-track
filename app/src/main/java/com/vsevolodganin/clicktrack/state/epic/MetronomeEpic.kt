@@ -20,7 +20,7 @@ import com.vsevolodganin.clicktrack.state.frontScreen
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
 import javax.inject.Inject
-import kotlin.time.milliseconds
+import kotlin.time.Duration
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChangedBy
@@ -86,7 +86,7 @@ class MetronomeEpic @Inject constructor(
 
             actions
                 .filterIsInstance<MetronomeAction.ChangeBpm>()
-                .debounce(100.milliseconds)
+                .debounce(Duration.milliseconds(100))
                 .consumeEach { action ->
                     userPreferencesRepository.metronomeBpm = action.bpm
                 },
@@ -108,7 +108,7 @@ class MetronomeEpic @Inject constructor(
 
             actions
                 .filterIsInstance<MetronomeAction.ChangePattern>()
-                .debounce(100.milliseconds)
+                .debounce(Duration.milliseconds(100))
                 .consumeEach { action ->
                     userPreferencesRepository.metronomePattern = action.pattern
                 }

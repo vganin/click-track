@@ -1,10 +1,10 @@
 package com.vsevolodganin.clicktrack.utils.coroutine
 
-import kotlin.time.nanoseconds
+import kotlin.time.Duration
 import kotlinx.coroutines.runInterruptible
 
 suspend fun delayNanosCoroutines(timeNanos: Long) {
-    delay(timeNanos.nanoseconds)
+    delay(Duration.nanoseconds(timeNanos))
 }
 
 suspend fun delayNanosThreadSleep(timeNanos: Long) {

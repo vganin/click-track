@@ -44,6 +44,6 @@ class Store<T>(
     }
 
     fun dispatch(action: Action) {
-        actions.offer(action)
+        actions.trySend(action)
     }
 }

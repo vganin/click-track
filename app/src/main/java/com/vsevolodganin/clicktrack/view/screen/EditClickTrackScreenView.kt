@@ -65,7 +65,7 @@ import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.view.widget.EditCueWithDurationView
 import com.vsevolodganin.clicktrack.view.widget.GenericTopBarWithBack
 import kotlin.math.roundToInt
-import kotlin.time.minutes
+import kotlin.time.Duration
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -351,7 +351,7 @@ private fun Preview() {
                         Cue(
                             bpm = 120.bpm,
                             timeSignature = TimeSignature(5, 4),
-                            duration = CueDuration.Time(SerializableDuration(1.minutes)),
+                            duration = CueDuration.Time(SerializableDuration(Duration.minutes(1))),
                         ),
                     ),
                     loop = true,

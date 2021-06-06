@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.redux
 
+import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -10,7 +11,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
 interface Epic {
     fun act(actions: Flow<Action>): Flow<Action>
@@ -24,6 +24,7 @@ class EpicMiddleware<T>(private val epicCoroutineContext: CoroutineContext) : Mi
     private val subscriptions = mutableMapOf<Epic, Job>()
 
     fun register(vararg epics: Epic) {
+        @Suppress("DEPRECATION") // FIXME: Adopt StateFlow or SharedFlow
         val actionsFlow = actions.asFlow()
 
         for (epic in epics) {
