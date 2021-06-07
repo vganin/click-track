@@ -30,15 +30,15 @@ class AppStateModule {
     @Provides
     @ViewModelScoped
     fun provideEpicMiddleware(
-        @ComputationDispatcher computationDispatcher: CoroutineDispatcher
-    ) = EpicMiddleware<AppState>(computationDispatcher)
+        @SerialBackgroundDispatcher coroutineDispatcher: CoroutineDispatcher
+    ) = EpicMiddleware<AppState>(coroutineDispatcher)
 
     @Provides
     @ViewModelScoped
     fun provideStore(
         savedStateHandle: SavedStateHandle,
         coroutineScope: CoroutineScope,
-        @ComputationDispatcher coroutineDispatcher: CoroutineDispatcher,
+        @SerialBackgroundDispatcher coroutineDispatcher: CoroutineDispatcher,
         epicMiddleware: EpicMiddleware<AppState>,
     ): Store<AppState> {
         val initialState = savedStateHandle.get<Bundle?>(SavedStateConst.APP_STATE_BUNDLE_KEY)

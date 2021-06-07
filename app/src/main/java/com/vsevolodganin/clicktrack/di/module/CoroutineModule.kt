@@ -14,7 +14,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class ComputationDispatcher
+annotation class SerialBackgroundDispatcher
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -34,8 +34,14 @@ class ApplicationScopedCoroutineModule {
 
     @Provides
     @ApplicationScoped
-    @ComputationDispatcher
-    fun provideComputationDispatcher(): CoroutineDispatcher = Dispatchers.Default
+    @SerialBackgroundDispatcher
+    fun provideSerialBackgroundDispatcher(): CoroutineDispatcher {
+        return Executors.newSingleThreadExecutor { runnable ->
+            Thread(runnable, "ClickTrackSerialBackground").apply {
+                priority = Thread.NORM_PRIORITY
+            }
+        }.also { it.bootstrap() }.asCoroutineDispatcher()
+    }
 
     @Provides
     @ApplicationScoped

@@ -8,15 +8,16 @@ import com.vsevolodganin.clicktrack.sounds.model.UserClickSounds
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 
 class AllClickSoundsPreloader @Inject constructor(
     private val clickSoundsRepository: ClickSoundsRepository,
     private val playerSoundPool: PlayerSoundPool,
     @PlayerDispatcher private val playerDispatcher: CoroutineDispatcher,
 ) {
-    suspend fun preload() = withContext(playerDispatcher) {
+    fun preload() = GlobalScope.launch(playerDispatcher) {
         playerSoundPool.preload(
             BuiltinClickSounds.values()
                 .asSequence()

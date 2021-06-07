@@ -1,14 +1,12 @@
 package com.vsevolodganin.clicktrack.redux
 
 import kotlin.coroutines.CoroutineContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
@@ -29,14 +27,13 @@ class EpicMiddleware<T>(private val epicCoroutineContext: CoroutineContext) : Mi
 
         for (epic in epics) {
             subscriptions[epic]?.cancel()
-            subscriptions[epic] = GlobalScope.launch(Dispatchers.Unconfined) {
+            subscriptions[epic] = GlobalScope.launch(epicCoroutineContext) {
                 epic.act(actionsFlow)
                     .onEach { action ->
                         val store = store
                         requireNotNull(store)
                         store.dispatch(action)
                     }
-                    .flowOn(epicCoroutineContext)
                     .collect()
             }
         }
