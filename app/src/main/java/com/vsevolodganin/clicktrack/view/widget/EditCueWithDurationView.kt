@@ -20,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.lib.SerializableDuration
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
@@ -92,7 +91,7 @@ fun PreviewEditCueWithDurationView() {
                 Cue(
                     bpm = 999.bpm,
                     timeSignature = TimeSignature(3, 4),
-                    duration = CueDuration.Time(SerializableDuration(Duration.minutes(1)))
+                    duration = CueDuration.Time(Duration.minutes(1))
                 )
             )
         },

@@ -18,7 +18,7 @@ public data class Cue(
     val durationAsTime: Duration
         get() {
             return when (duration) {
-                is CueDuration.Time -> duration.value.value
+                is CueDuration.Time -> duration.value
                 is CueDuration.Beats -> bpm.interval * duration.value
                 is CueDuration.Measures -> bpm.interval * timeSignature.noteCount * duration.value
             }
