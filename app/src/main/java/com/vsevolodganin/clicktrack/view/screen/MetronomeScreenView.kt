@@ -38,9 +38,9 @@ import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction
-import com.vsevolodganin.clicktrack.state.actions.MetronomeAction.ChangePattern
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction.CloseOptions
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction.OpenOptions
+import com.vsevolodganin.clicktrack.state.actions.MetronomeAction.SetPattern
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.view.widget.BpmWheel
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
@@ -178,7 +178,7 @@ private fun Options(
     SubdivisionsChooser(
         cue = state.clickTrack.value.cues.first(),
         onSubdivisionChoose = {
-            dispatch(ChangePattern(it))
+            dispatch(SetPattern(it))
             dispatch(CloseOptions)
         },
         modifier = Modifier.padding(8.dp),
