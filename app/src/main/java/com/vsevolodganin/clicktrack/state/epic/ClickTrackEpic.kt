@@ -6,6 +6,7 @@ import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
 import com.vsevolodganin.clicktrack.redux.Store
@@ -17,8 +18,10 @@ import com.vsevolodganin.clicktrack.state.utils.NewClickTrackNameSuggester
 import com.vsevolodganin.clicktrack.state.utils.onScreen
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
+import com.vsevolodganin.clicktrack.utils.optionalCast
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -39,7 +42,8 @@ class ClickTrackEpic @Inject constructor(
             },
 
             store.onScreen<Screen.PlayClickTrack> { screen ->
-                clickTrackRepository.getById(screen.state.clickTrack.id)
+                val databaseId = screen.state.clickTrack.id.optionalCast<ClickTrackId.Database>() ?: return@onScreen emptyFlow()
+                clickTrackRepository.getById(databaseId)
                     .filterNotNull()
                     .map { track -> ClickTrackAction.UpdateClickTrack(data = track, shouldStore = false) }
             },
@@ -64,10 +68,11 @@ class ClickTrackEpic @Inject constructor(
                 .transform { action ->
                     if (action.shouldStore) {
                         val clickTrack = action.data
+                        val databaseId = clickTrack.id.optionalCast<ClickTrackId.Database>() ?: return@transform
                         val (validatedClickTrack, isErrorInName) = validate(clickTrack.value)
-                        emit(ClickTrackAction.UpdateErrorInName(clickTrack.id, isErrorInName))
+                        emit(ClickTrackAction.UpdateErrorInName(databaseId, isErrorInName))
                         if (!isErrorInName) {
-                            clickTrackRepository.update(clickTrack.copy(value = validatedClickTrack))
+                            clickTrackRepository.update(databaseId, validatedClickTrack)
                         }
                     }
                 },

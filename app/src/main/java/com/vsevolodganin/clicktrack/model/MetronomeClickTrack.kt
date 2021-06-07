@@ -13,7 +13,7 @@ fun metronomeClickTrack(
     pattern: NotePattern,
 ): ClickTrackWithId {
     return ClickTrackWithId(
-        id = MetronomeId,
+        id = ClickTrackId.Builtin.METRONOME,
         value = ClickTrack(
             name = name,
             cues = listOf(Cue(

@@ -2,6 +2,7 @@
 
 package com.vsevolodganin.clicktrack.state.actions
 
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.PlaybackState
@@ -12,11 +13,11 @@ sealed class ClickTrackAction : Action {
 
     class UpdateClickTrack(val data: ClickTrackWithId, val shouldStore: Boolean) : ClickTrackAction()
 
-    class UpdateErrorInName(val id: Long, val isPresent: Boolean) : ClickTrackAction()
+    class UpdateErrorInName(val id: ClickTrackId.Database, val isPresent: Boolean) : ClickTrackAction()
 
     object NewClickTrack : ClickTrackAction()
 
-    class RemoveClickTrack(val id: Long, val shouldStore: Boolean) : ClickTrackAction()
+    class RemoveClickTrack(val id: ClickTrackId.Database, val shouldStore: Boolean) : ClickTrackAction()
 
     class UpdateCurrentlyPlaying(val playbackState: PlaybackState?) : ClickTrackAction()
 

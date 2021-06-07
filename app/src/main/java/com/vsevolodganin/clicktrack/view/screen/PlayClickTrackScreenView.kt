@@ -26,10 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.PlayClickTrackScreenState
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
+import com.vsevolodganin.clicktrack.utils.optionalCast
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackView
 import com.vsevolodganin.clicktrack.view.widget.PlayStopButton
@@ -123,8 +125,9 @@ private fun TopBar(
                     { showDeleteConfirmation = false }
                 }
                 val confirm: () -> Unit = remember {
-                    {
-                        dispatch(ClickTrackAction.RemoveClickTrack(state.clickTrack.id, shouldStore = true))
+                    lambda@{
+                        val databaseId = state.clickTrack.id.optionalCast<ClickTrackId.Database>() ?: return@lambda
+                        dispatch(ClickTrackAction.RemoveClickTrack(databaseId, shouldStore = true))
                         dispatch(NavigationAction.Back)
                     }
                 }

@@ -5,10 +5,11 @@ import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 
 val PREVIEW_CLICK_TRACK_1 = ClickTrackWithId(
-    id = 1,
+    id = ClickTrackId.Database(1),
     value = ClickTrack(
         name = "Preview 1",
         cues = listOf(
@@ -38,7 +39,7 @@ val PREVIEW_CLICK_TRACK_1 = ClickTrackWithId(
 )
 
 val PREVIEW_CLICK_TRACK_2 = ClickTrackWithId(
-    id = 2,
+    id = ClickTrackId.Database(2),
     value = ClickTrack(
         name = "Preview 2",
         cues = listOf(

@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.state.reducer
 
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.EditClickTrackScreenState
@@ -27,7 +28,7 @@ private fun ClickTrackWithId.reduce(action: Action): ClickTrackWithId {
     }
 }
 
-private fun Boolean.reduceIsErrorInName(action: Action, id: Long): Boolean {
+private fun Boolean.reduceIsErrorInName(action: Action, id: ClickTrackId): Boolean {
     return when {
         action is ClickTrackAction.UpdateErrorInName && action.id == id -> action.isPresent
         else -> this

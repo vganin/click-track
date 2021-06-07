@@ -6,6 +6,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ClickTrackWithId(
-    val id: Long,
-    val value: ClickTrack
+    val id: ClickTrackId,
+    val value: ClickTrack,
 ) : Parcelable

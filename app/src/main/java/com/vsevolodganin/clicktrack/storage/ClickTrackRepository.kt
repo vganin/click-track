@@ -6,6 +6,7 @@ import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.premade.PreMadeClickTracks
 import com.vsevolodganin.clicktrack.migration.CanMigrate
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -38,8 +39,8 @@ class ClickTrackRepository @Inject constructor(
         return database.sqlClickTrackQueries.getAllNames().executeAsList()
     }
 
-    fun getById(id: Long): Flow<ClickTrackWithId?> {
-        return database.sqlClickTrackQueries.getById(id).asFlow()
+    fun getById(id: ClickTrackId.Database): Flow<ClickTrackWithId?> {
+        return database.sqlClickTrackQueries.getById(id.value).asFlow()
             .map { it.executeAsOneOrNull()?.toCommon() }
     }
 
@@ -52,12 +53,12 @@ class ClickTrackRepository @Inject constructor(
             database.sqlClickTrackQueries.lastRowId().executeAsOne()
         }
         return ClickTrackWithId(
-            id = insertedRowId,
+            id = ClickTrackId.Database(insertedRowId),
             value = clickTrack
         )
     }
 
-    fun insertIfHasNoSuchName(clickTrack: ClickTrack): ClickTrackWithId? {
+    private fun insertIfHasNoSuchName(clickTrack: ClickTrack): ClickTrackWithId? {
         val insertedRowId: Long = database.sqlClickTrackQueries.transactionWithResult {
             val allNames = database.sqlClickTrackQueries.getAllNames().executeAsList()
             if (clickTrack.name in allNames) return@transactionWithResult null
@@ -68,28 +69,26 @@ class ClickTrackRepository @Inject constructor(
             database.sqlClickTrackQueries.lastRowId().executeAsOne()
         } ?: return null
         return ClickTrackWithId(
-            id = insertedRowId,
+            id = ClickTrackId.Database(insertedRowId),
             value = clickTrack
         )
     }
 
-    fun update(id: Long, clickTrack: ClickTrack) {
+    fun update(id: ClickTrackId.Database, clickTrack: ClickTrack) {
         database.sqlClickTrackQueries.update(
-            id = id,
+            id = id.value,
             name = clickTrack.name,
             serializedValue = clickTrack.serializeToString()
         )
     }
 
-    fun update(clickTrack: ClickTrackWithId) = update(clickTrack.id, clickTrack.value)
-
-    fun remove(id: Long) {
-        database.sqlClickTrackQueries.removeById(id)
+    fun remove(id: ClickTrackId.Database) {
+        database.sqlClickTrackQueries.removeById(id.value)
     }
 
     private fun StorageClickTrack.toCommon(): ClickTrackWithId {
         return ClickTrackWithId(
-            id = id,
+            id = ClickTrackId.Database(id),
             value = serializedValue.deserializeToClickTrack()
         )
     }

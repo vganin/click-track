@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.ClickTrackListScreenState
@@ -34,6 +35,7 @@ import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.actions.OpenDrawer
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
+import com.vsevolodganin.clicktrack.utils.optionalCast
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_2
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
@@ -95,7 +97,8 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithId, dispa
         Card(
             modifier = Modifier
                 .swipeToRemove(constraints = constraints, onDelete = {
-                    dispatch(ClickTrackAction.RemoveClickTrack(clickTrack.id, shouldStore = true))
+                    val databaseId = clickTrack.id.optionalCast<ClickTrackId.Database>() ?: return@swipeToRemove
+                    dispatch(ClickTrackAction.RemoveClickTrack(databaseId, shouldStore = true))
                 })
                 .padding(8.dp),
             elevation = 2.dp

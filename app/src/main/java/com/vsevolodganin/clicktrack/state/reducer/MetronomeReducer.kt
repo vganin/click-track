@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.state.reducer
 
-import com.vsevolodganin.clicktrack.model.MetronomeId
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 import com.vsevolodganin.clicktrack.state.Screen
@@ -25,13 +25,13 @@ private fun MetronomeScreenState?.reduce(action: Action): MetronomeScreenState? 
         is MetronomeAction.ToggleOptions -> this?.copy(areOptionsExpanded = !areOptionsExpanded)
         is MetronomeAction.OpenOptions -> this?.copy(areOptionsExpanded = true)
         is MetronomeAction.CloseOptions -> this?.copy(areOptionsExpanded = false)
-        is ClickTrackAction.StartPlay -> if (action.clickTrack.id == MetronomeId) {
+        is ClickTrackAction.StartPlay -> if (action.clickTrack.id == ClickTrackId.Builtin.METRONOME) {
             this?.copy(isPlaying = true)
         } else {
             this
         }
         ClickTrackAction.StopPlay -> this?.copy(isPlaying = false)
-        is ClickTrackAction.UpdateCurrentlyPlaying -> if (action.playbackState?.clickTrack?.id == MetronomeId) {
+        is ClickTrackAction.UpdateCurrentlyPlaying -> if (action.playbackState?.clickTrack?.id == ClickTrackId.Builtin.METRONOME) {
             this?.copy(progress = action.playbackState.progress, isPlaying = true)
         } else {
             this?.copy(progress = null, isPlaying = false)

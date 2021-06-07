@@ -50,6 +50,7 @@ import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.lib.bpm
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.EditClickTrackScreenState
@@ -338,7 +339,7 @@ private fun Preview() {
     EditClickTrackScreenView(
         state = EditClickTrackScreenState(
             clickTrack = ClickTrackWithId(
-                id = 0,
+                id = ClickTrackId.Database(0),
                 value = ClickTrack(
                     name = "Good click track",
                     cues = listOf(

@@ -3,8 +3,8 @@ package com.vsevolodganin.clicktrack
 import android.content.Context
 import android.content.Intent
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.model.MetronomeId
 import com.vsevolodganin.clicktrack.redux.Store
 import com.vsevolodganin.clicktrack.state.AppState
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
@@ -18,7 +18,7 @@ class IntentProcessor @Inject constructor(
         when (intent.action) {
             Action.OPEN_CLICK_TRACK -> {
                 val clickTrack = requireNotNull(intent.getParcelableExtra<ClickTrackWithId>(Extras.CLICK_TRACK))
-                val navigateAction = if (clickTrack.id == MetronomeId) {
+                val navigateAction = if (clickTrack.id == ClickTrackId.Builtin.METRONOME) {
                     NavigationAction.ToMetronomeScreen
                 } else {
                     NavigationAction.ToClickTrackScreen(clickTrack)

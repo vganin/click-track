@@ -5,7 +5,7 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.meter.BpmMeter
-import com.vsevolodganin.clicktrack.model.MetronomeId
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
@@ -116,6 +116,6 @@ class MetronomeEpic @Inject constructor(
     }
 
     private fun currentlyPlayingMetronome(): PlaybackState? {
-        return store.state.value.currentlyPlaying?.takeIf { it.clickTrack.id == MetronomeId }
+        return store.state.value.currentlyPlaying?.takeIf { it.clickTrack.id == ClickTrackId.Builtin.METRONOME }
     }
 }
