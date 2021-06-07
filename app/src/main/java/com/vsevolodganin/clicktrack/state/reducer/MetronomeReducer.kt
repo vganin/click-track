@@ -34,12 +34,6 @@ private fun MetronomeScreenState.reduce(action: Action): MetronomeScreenState {
         is MetronomeAction.ToggleOptions -> copy(areOptionsExpanded = !areOptionsExpanded)
         is MetronomeAction.OpenOptions -> copy(areOptionsExpanded = true)
         is MetronomeAction.CloseOptions -> copy(areOptionsExpanded = false)
-        is ClickTrackAction.StartPlay -> if (action.clickTrack.id == ClickTrackId.Builtin.METRONOME) {
-            copy(isPlaying = true)
-        } else {
-            this
-        }
-        ClickTrackAction.StopPlay -> copy(isPlaying = false)
         is ClickTrackAction.UpdateCurrentlyPlaying -> if (action.playbackState?.clickTrack?.id == ClickTrackId.Builtin.METRONOME) {
             copy(progress = action.playbackState.progress, isPlaying = true)
         } else {
