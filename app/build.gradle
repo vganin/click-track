@@ -104,6 +104,9 @@ android {
     lintOptions {
         // FIXME(https://issuetracker.google.com/issues/184830262)
         disable "NullSafeMutableLiveData"
+
+        // FIXME(https://issuetracker.google.com/issues/189967522)
+        disable "DialogFragmentCallbacksDetector"
     }
 }
 
