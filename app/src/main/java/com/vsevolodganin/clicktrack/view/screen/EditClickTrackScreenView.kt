@@ -182,12 +182,10 @@ private fun Content(
                     val snap = localMoveReorderSourceIndex == null || localMoveReorderTargetIndex == null
                     val itemIsMoving = localMoveReorderSourceIndex == index
 
-                    // FIXME(https://youtrack.jetbrains.com/issue/KT-44878)
-                    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
                     val offsetTargetValue = when {
                         localMoveReorderSourceIndex == null || localMoveReorderTargetIndex == null -> 0f
-                        index in (localMoveReorderSourceIndex!! + 1)..localMoveReorderTargetIndex!! -> -reorderHeight
-                        index in localMoveReorderTargetIndex!! until localMoveReorderSourceIndex!! -> reorderHeight
+                        index in (localMoveReorderSourceIndex + 1)..localMoveReorderTargetIndex -> -reorderHeight
+                        index in localMoveReorderTargetIndex until localMoveReorderSourceIndex -> reorderHeight
                         else -> 0f
                     }
                     val elevationTargetValue = if (itemIsMoving) 12.dp else 2.dp
