@@ -1,10 +1,9 @@
 package com.vsevolodganin.clicktrack.view
 
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.with
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.material.DrawerState
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
@@ -15,16 +14,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.DrawerScreenState
 import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.CloseDrawer
 import com.vsevolodganin.clicktrack.state.actions.OpenDrawer
-import com.vsevolodganin.clicktrack.utils.compose.ComposableSwitcher
-import com.vsevolodganin.clicktrack.utils.compose.ComposableTransitionState.ENTERING
-import com.vsevolodganin.clicktrack.utils.compose.ComposableTransitionState.EXITING
-import com.vsevolodganin.clicktrack.utils.compose.ComposableTransitionState.VISIBLE
 import com.vsevolodganin.clicktrack.view.screen.ClickTrackListScreenView
 import com.vsevolodganin.clicktrack.view.screen.DrawerScreenView
 import com.vsevolodganin.clicktrack.view.screen.EditClickTrackScreenView
@@ -36,19 +32,19 @@ import com.vsevolodganin.clicktrack.view.screen.SoundLibraryScreenView
 @Composable
 fun ContentView(
     screen: Screen,
-    positionInBackstack: Int,
+    position: Int,
     drawerScreenState: DrawerScreenState,
     dispatch: Dispatch,
 ) {
     ClickTrackTheme {
         val modifier = Modifier.fillMaxSize()
 
-        val previousPosition = remember { mutableStateOf(positionInBackstack) }
+        val previousPosition = remember { mutableStateOf(position) }
         val isPush = remember { mutableStateOf(true) }
 
-        if (positionInBackstack != previousPosition.value) {
-            isPush.value = positionInBackstack > previousPosition.value
-            previousPosition.value = positionInBackstack
+        if (position != previousPosition.value) {
+            isPush.value = position > previousPosition.value
+            previousPosition.value = position
         }
 
         Scaffold(
@@ -56,32 +52,30 @@ fun ContentView(
             drawerContent = { DrawerScreenView(drawerScreenState, dispatch) },
             drawerGesturesEnabled = drawerScreenState.gesturesEnabled,
         ) {
-            ComposableSwitcher(
-                key = previousPosition.value,
-                state = screen,
-            ) { _, screen, transition ->
-                val offset by transition.animateFloat(transitionSpec = { spring() }) { state ->
-                    when (state) {
-                        VISIBLE -> 0.0f
-                        ENTERING -> if (isPush.value) 1.0f else -1.0f
-                        EXITING -> if (isPush.value) -1.0f else 1.0f
+            AnimatedContent(
+                targetState = position,
+                transitionSpec = {
+                    if (isPush.value) {
+                        slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Left) with
+                                slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left)
+                    } else {
+                        slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right) with
+                                slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Right)
                     }
                 }
+            ) { targetPosition ->
+                var targetScreen by remember { mutableStateOf(screen) }
+                if (position == targetPosition) {
+                    targetScreen = screen
+                }
 
-                BoxWithConstraints {
-                    val width = maxWidth
-
-                    val modifierUnderTransition = modifier
-                        .offset(x = width * offset)
-
-                    when (screen) {
-                        is Screen.ClickTrackList -> ClickTrackListScreenView(screen.state, modifierUnderTransition, dispatch)
-                        is Screen.PlayClickTrack -> PlayClickTrackScreenView(screen.state, modifierUnderTransition, dispatch)
-                        is Screen.EditClickTrack -> EditClickTrackScreenView(screen.state, modifierUnderTransition, dispatch)
-                        is Screen.Metronome -> MetronomeScreenView(screen.state, modifierUnderTransition, dispatch)
-                        is Screen.Settings -> SettingsScreenView(screen.state, modifierUnderTransition, dispatch)
-                        is Screen.SoundLibrary -> SoundLibraryScreenView(screen.state, modifierUnderTransition, dispatch)
-                    }
+                when (@Suppress("NAME_SHADOWING") val screen = targetScreen) {
+                    is Screen.ClickTrackList -> ClickTrackListScreenView(screen.state, modifier, dispatch)
+                    is Screen.PlayClickTrack -> PlayClickTrackScreenView(screen.state, modifier, dispatch)
+                    is Screen.EditClickTrack -> EditClickTrackScreenView(screen.state, modifier, dispatch)
+                    is Screen.Metronome -> MetronomeScreenView(screen.state, modifier, dispatch)
+                    is Screen.Settings -> SettingsScreenView(screen.state, modifier, dispatch)
+                    is Screen.SoundLibrary -> SoundLibraryScreenView(screen.state, modifier, dispatch)
                 }
             }
         }

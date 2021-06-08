@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             ContentView(
                 screen = frontScreen,
-                positionInBackstack = frontScreenPosition,
+                position = frontScreenPosition,
                 drawerScreenState = drawerState,
                 dispatch = ::dispatch
             )
