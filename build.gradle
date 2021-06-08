@@ -2,8 +2,10 @@ buildscript {
     rootProject.apply from: 'properties.gradle'
 
     ext {
+        // FIXME: Change tp beta09+ when it's out
+        androidxSnapshotBranch = '7437341'
         kotlinVersion = '1.5.10'
-        composeVersion = '1.0.0-beta08'
+        composeVersion = '1.0.0-SNAPSHOT'
         kotlinxSerializationVersion = '1.2.1'
         sqlDelightVersion = '1.5.0'
     }
@@ -11,6 +13,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://androidx.dev/snapshots/builds/$androidxSnapshotBranch/artifacts/repository" }
     }
 
     dependencies {
@@ -27,6 +30,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://androidx.dev/snapshots/builds/$androidxSnapshotBranch/artifacts/repository" }
     }
 }
 
