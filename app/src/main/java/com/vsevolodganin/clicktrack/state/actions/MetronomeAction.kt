@@ -6,21 +6,23 @@ import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 
-sealed class MetronomeAction : Action {
+sealed interface MetronomeAction : Action {
 
-    class SetScreenState(val state: MetronomeScreenState) : MetronomeAction()
+    object RefreshData : MetronomeAction
 
-    class SetBpm(val bpm: BeatsPerMinute) : MetronomeAction()
+    class SetScreenState(val state: MetronomeScreenState) : MetronomeAction
 
-    class ChangeBpm(val by: BeatsPerMinuteDiff) : MetronomeAction()
+    class SetBpm(val bpm: BeatsPerMinute) : MetronomeAction
 
-    class SetPattern(val pattern: NotePattern) : MetronomeAction()
+    class ChangeBpm(val by: BeatsPerMinuteDiff) : MetronomeAction
 
-    object BpmMeterTap : MetronomeAction()
+    class SetPattern(val pattern: NotePattern) : MetronomeAction
 
-    object ToggleOptions : MetronomeAction()
+    object BpmMeterTap : MetronomeAction
 
-    object OpenOptions : MetronomeAction()
+    object ToggleOptions : MetronomeAction
 
-    object CloseOptions : MetronomeAction()
+    object OpenOptions : MetronomeAction
+
+    object CloseOptions : MetronomeAction
 }

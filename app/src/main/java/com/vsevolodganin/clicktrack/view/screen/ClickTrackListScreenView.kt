@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -31,6 +32,7 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.ClickTrackListScreenState
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackListAction
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.actions.OpenDrawer
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
@@ -47,6 +49,13 @@ fun ClickTrackListScreenView(
     modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
+    DisposableEffect(Unit) {
+        dispatch(ClickTrackListAction.SubscribeToData)
+        onDispose {
+            dispatch(ClickTrackListAction.SubscribeToData.Dispose)
+        }
+    }
+
     Scaffold(
         topBar = { TopBar(dispatch) },
         floatingActionButtonPosition = FabPosition.Center,

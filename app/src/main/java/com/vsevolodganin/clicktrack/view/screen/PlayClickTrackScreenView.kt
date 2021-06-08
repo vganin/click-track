@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,14 @@ fun PlayClickTrackScreenView(
     modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
+    DisposableEffect(Unit) {
+        val databaseId = state.clickTrack.id.optionalCast<ClickTrackId.Database>() ?: return@DisposableEffect onDispose {}
+        dispatch(ClickTrackAction.SubscribeToData(databaseId))
+        onDispose {
+            dispatch(ClickTrackAction.SubscribeToData.Dispose)
+        }
+    }
+
     Scaffold(
         topBar = { TopBar(state, dispatch) },
         floatingActionButtonPosition = FabPosition.Center,

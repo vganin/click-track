@@ -3,6 +3,7 @@ package com.vsevolodganin.clicktrack.view.screen
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,6 +22,10 @@ fun SettingsScreenView(
     modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
+    LaunchedEffect(Unit) {
+        dispatch(SettingsAction.RefreshData)
+    }
+
     Scaffold(
         topBar = { GenericTopBarWithBack(R.string.settings, dispatch) },
         modifier = modifier,

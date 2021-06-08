@@ -54,6 +54,10 @@ fun MetronomeScreenView(
     modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
+    LaunchedEffect(Unit) {
+        dispatch(MetronomeAction.RefreshData)
+    }
+
     BackdropScaffold(
         appBar = { AppBar(dispatch) },
         backLayerContent = {

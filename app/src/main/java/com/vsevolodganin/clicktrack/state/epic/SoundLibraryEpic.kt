@@ -3,7 +3,6 @@ package com.vsevolodganin.clicktrack.state.epic
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
-import com.vsevolodganin.clicktrack.redux.Store
 import com.vsevolodganin.clicktrack.sounds.ClickSoundPlayer
 import com.vsevolodganin.clicktrack.sounds.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
@@ -11,26 +10,24 @@ import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.sounds.model.UserClickSounds
-import com.vsevolodganin.clicktrack.state.AppState
-import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.state.actions.SoundLibraryAction
-import com.vsevolodganin.clicktrack.state.utils.onScreen
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
+import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.transform
 
 @ViewModelScoped
 class SoundLibraryEpic @Inject constructor(
-    private val store: Store<AppState>,
     private val clickSoundsRepository: ClickSoundsRepository,
     private val clickSoundPlayer: ClickSoundPlayer,
     private val userPreferences: UserPreferencesRepository,
@@ -39,9 +36,11 @@ class SoundLibraryEpic @Inject constructor(
 
     override fun act(actions: Flow<Action>): Flow<Action> {
         return merge(
-            store.onScreen<Screen.SoundLibrary> {
-                items().map(SoundLibraryAction::UpdateClickSoundsList)
-            },
+            actions.filterIsInstance<SoundLibraryAction.SubscribeToData>()
+                .flatMapLatest {
+                    items().map(SoundLibraryAction::UpdateClickSoundsList)
+                        .takeUntilSignal(actions.filterIsInstance<SoundLibraryAction.SubscribeToData.Dispose>())
+                },
 
             actions.filterIsInstance<SoundLibraryAction.NewClickSounds>()
                 .consumeEach {

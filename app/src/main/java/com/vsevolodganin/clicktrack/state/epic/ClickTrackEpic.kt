@@ -9,44 +9,44 @@ import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
-import com.vsevolodganin.clicktrack.redux.Store
-import com.vsevolodganin.clicktrack.state.AppState
-import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
+import com.vsevolodganin.clicktrack.state.actions.ClickTrackListAction
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.utils.NewClickTrackNameSuggester
-import com.vsevolodganin.clicktrack.state.utils.onScreen
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
+import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
 import com.vsevolodganin.clicktrack.utils.optionalCast
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.transform
 
 @ViewModelScoped
 class ClickTrackEpic @Inject constructor(
-    private val store: Store<AppState>,
     private val clickTrackRepository: ClickTrackRepository,
     private val newClickTrackNameSuggester: NewClickTrackNameSuggester,
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {
         return merge(
-            store.onScreen<Screen.ClickTrackList> {
-                clickTrackRepository.getAll().map(ClickTrackAction::UpdateClickTrackList)
-            },
+            actions.filterIsInstance<ClickTrackListAction.SubscribeToData>()
+                .flatMapLatest {
+                    clickTrackRepository.getAll().map(ClickTrackListAction::SetData)
+                        .takeUntilSignal(actions.filterIsInstance<ClickTrackListAction.SubscribeToData.Dispose>())
+                },
 
-            store.onScreen<Screen.PlayClickTrack> { screen ->
-                val databaseId = screen.state.clickTrack.id.optionalCast<ClickTrackId.Database>() ?: return@onScreen emptyFlow()
-                clickTrackRepository.getById(databaseId)
-                    .filterNotNull()
-                    .map { track -> ClickTrackAction.UpdateClickTrack(data = track, shouldStore = false) }
-            },
+            actions.filterIsInstance<ClickTrackAction.SubscribeToData>()
+                .flatMapLatest { action ->
+                    clickTrackRepository.getById(action.id)
+                        .filterNotNull()
+                        .map { track -> ClickTrackAction.UpdateClickTrack(data = track, shouldStore = false) }
+                        .takeUntilSignal(actions.filterIsInstance<ClickTrackAction.SubscribeToData.Dispose>())
+                },
 
             actions
                 .filterIsInstance<ClickTrackAction.NewClickTrack>()

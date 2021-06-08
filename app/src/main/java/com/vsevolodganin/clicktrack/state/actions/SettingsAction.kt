@@ -4,9 +4,11 @@ import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.SettingsScreenState
 import com.vsevolodganin.clicktrack.theme.Theme
 
-sealed class SettingsAction : Action {
+sealed interface SettingsAction : Action {
 
-    class SetScreenState(val state: SettingsScreenState) : SettingsAction()
+    object RefreshData : SettingsAction
 
-    class ChangeTheme(val value: Theme) : SettingsAction()
+    class SetScreenState(val state: SettingsScreenState) : SettingsAction
+
+    class ChangeTheme(val value: Theme) : SettingsAction
 }

@@ -15,10 +15,9 @@ import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction
-import com.vsevolodganin.clicktrack.state.frontScreen
+import com.vsevolodganin.clicktrack.state.utils.frontScreenOfType
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
-import com.vsevolodganin.clicktrack.utils.optionalCast
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlinx.coroutines.flow.Flow
@@ -41,28 +40,21 @@ class MetronomeEpic @Inject constructor(
 
     override fun act(actions: Flow<Action>): Flow<Action> {
         return merge(
-            // TODO: Use `onScreen`
-            store.state
-                .map { it.backstack.screens.frontScreen() }
-                .distinctUntilChangedBy { it?.javaClass }
-                .mapNotNull { screen ->
-                    if (screen is Screen.Metronome) {
-                        val currentlyPlayingMetronome = store.state.value.currentlyPlaying
-                            ?.takeIf { it.clickTrack.id == ClickTrackId.Builtin.METRONOME }
-                        val areOptionsExpanded = screen.state?.areOptionsExpanded ?: false
-                        MetronomeScreenState(
-                            clickTrack = metronomeClickTrack(
-                                name = context.getString(R.string.metronome),
-                                bpm = userPreferencesRepository.metronomeBpm,
-                                pattern = userPreferencesRepository.metronomePattern,
-                            ),
-                            progress = currentlyPlayingMetronome?.progress,
-                            isPlaying = currentlyPlayingMetronome != null,
-                            areOptionsExpanded = areOptionsExpanded,
-                        )
-                    } else {
-                        null
-                    }
+            actions.filterIsInstance<MetronomeAction.RefreshData>()
+                .map {
+                    val currentlyPlayingMetronome = store.state.value.currentlyPlaying
+                        ?.takeIf { it.clickTrack.id == ClickTrackId.Builtin.METRONOME }
+                    val areOptionsExpanded = store.frontScreenOfType<Screen.Metronome>()?.state?.areOptionsExpanded ?: false
+                    MetronomeScreenState(
+                        clickTrack = metronomeClickTrack(
+                            name = context.getString(R.string.metronome),
+                            bpm = userPreferencesRepository.metronomeBpm,
+                            pattern = userPreferencesRepository.metronomePattern,
+                        ),
+                        progress = currentlyPlayingMetronome?.progress,
+                        isPlaying = currentlyPlayingMetronome != null,
+                        areOptionsExpanded = areOptionsExpanded,
+                    )
                 }
                 .map(MetronomeAction::SetScreenState),
 
@@ -73,7 +65,7 @@ class MetronomeEpic @Inject constructor(
                 },
 
             store.state
-                .mapNotNull { it.backstack.screens.frontScreen().optionalCast<Screen.Metronome>()?.state }
+                .mapNotNull { it.frontScreenOfType<Screen.Metronome>()?.state }
                 .distinctUntilChangedBy(MetronomeScreenState::clickTrack)
                 .transform { metronomeState ->
                     if (metronomeState.isPlaying) {
@@ -82,7 +74,7 @@ class MetronomeEpic @Inject constructor(
                 },
 
             store.state
-                .mapNotNull { it.backstack.screens.frontScreen().optionalCast<Screen.Metronome>()?.state }
+                .mapNotNull { it.frontScreenOfType<Screen.Metronome>()?.state }
                 .map { it.clickTrack.value.cues.first().bpm }
                 .distinctUntilChanged()
                 .debounce(Duration.milliseconds(100))
@@ -91,7 +83,7 @@ class MetronomeEpic @Inject constructor(
                 },
 
             store.state
-                .mapNotNull { it.backstack.screens.frontScreen().optionalCast<Screen.Metronome>()?.state }
+                .mapNotNull { it.frontScreenOfType<Screen.Metronome>()?.state }
                 .map { it.clickTrack.value.cues.first().pattern }
                 .distinctUntilChanged()
                 .debounce(Duration.milliseconds(100))

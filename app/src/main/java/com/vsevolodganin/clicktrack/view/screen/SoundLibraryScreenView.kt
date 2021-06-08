@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.CenterFocusWeak
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +55,13 @@ fun SoundLibraryScreenView(
     modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
+    DisposableEffect(Unit) {
+        dispatch(SoundLibraryAction.SubscribeToData)
+        onDispose {
+            dispatch(SoundLibraryAction.SubscribeToData.Dispose)
+        }
+    }
+
     Scaffold(
         topBar = { GenericTopBarWithBack(R.string.sound_library, dispatch) },
         floatingActionButtonPosition = FabPosition.Center,

@@ -10,19 +10,19 @@ object OpenDrawer : Action
 
 object CloseDrawer : Action
 
-sealed class NavigationAction : Action {
+sealed interface NavigationAction : Action {
 
-    object Back : NavigationAction()
+    object Back : NavigationAction
 
-    class ToClickTrackListScreen(val clickTrack: List<ClickTrackWithId>) : NavigationAction()
+    class ToClickTrackListScreen(val clickTrack: List<ClickTrackWithId>) : NavigationAction
 
-    class ToClickTrackScreen(val clickTrack: ClickTrackWithId) : NavigationAction()
+    class ToClickTrackScreen(val clickTrack: ClickTrackWithId) : NavigationAction
 
-    class ToEditClickTrackScreen(val clickTrack: ClickTrackWithId) : NavigationAction()
+    class ToEditClickTrackScreen(val clickTrack: ClickTrackWithId) : NavigationAction
 
-    object ToMetronomeScreen : NavigationAction()
+    object ToMetronomeScreen : NavigationAction
 
-    object ToSettingsScreen : NavigationAction()
+    object ToSettingsScreen : NavigationAction
 
-    object ToSoundLibraryScreen : NavigationAction()
+    object ToSoundLibraryScreen : NavigationAction
 }
