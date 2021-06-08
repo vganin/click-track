@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -76,10 +75,8 @@ private fun Content(
     dispatch: Dispatch,
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
-        items(state.items) { clickTrack ->
-            key(clickTrack.id) {
-                ClickTrackListItem(clickTrack, dispatch)
-            }
+        items(items = state.items, key = ClickTrackWithId::id) { clickTrack ->
+            ClickTrackListItem(clickTrack, dispatch)
         }
 
         padWithFabSpace()

@@ -169,84 +169,82 @@ private fun Content(
             }
         }
 
-        itemsIndexed(items = cuesState) { index, cueState ->
-            key(index, cueState) {
-                var zIndex by remember { mutableStateOf(0f) }
+        itemsIndexed(items = cuesState, key = { index, item -> index to item }) { index, cueState ->
+            var zIndex by remember { mutableStateOf(0f) }
 
-                BoxWithConstraints(modifier = Modifier.zIndex(zIndex)) {
-                    val offset = remember { Animatable(0f) }
-                    val elevation = remember { Animatable(0.dp, Dp.VectorConverter) }
+            BoxWithConstraints(modifier = Modifier.zIndex(zIndex)) {
+                val offset = remember { Animatable(0f) }
+                val elevation = remember { Animatable(0.dp, Dp.VectorConverter) }
 
-                    LaunchedEffect(moveReorderSourceIndex, moveReorderTargetIndex) {
-                        val localMoveReorderSourceIndex = moveReorderSourceIndex
-                        val localMoveReorderTargetIndex = moveReorderTargetIndex
-                        val snap = localMoveReorderSourceIndex == null || localMoveReorderTargetIndex == null
-                        val itemIsMoving = localMoveReorderSourceIndex == index
+                LaunchedEffect(moveReorderSourceIndex, moveReorderTargetIndex) {
+                    val localMoveReorderSourceIndex = moveReorderSourceIndex
+                    val localMoveReorderTargetIndex = moveReorderTargetIndex
+                    val snap = localMoveReorderSourceIndex == null || localMoveReorderTargetIndex == null
+                    val itemIsMoving = localMoveReorderSourceIndex == index
 
-                        // FIXME(https://youtrack.jetbrains.com/issue/KT-44878)
-                        @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-                        val offsetTargetValue = when {
-                            localMoveReorderSourceIndex == null || localMoveReorderTargetIndex == null -> 0f
-                            index in (localMoveReorderSourceIndex!! + 1)..localMoveReorderTargetIndex!! -> -reorderHeight
-                            index in localMoveReorderTargetIndex!! until localMoveReorderSourceIndex!! -> reorderHeight
-                            else -> 0f
+                    // FIXME(https://youtrack.jetbrains.com/issue/KT-44878)
+                    @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+                    val offsetTargetValue = when {
+                        localMoveReorderSourceIndex == null || localMoveReorderTargetIndex == null -> 0f
+                        index in (localMoveReorderSourceIndex!! + 1)..localMoveReorderTargetIndex!! -> -reorderHeight
+                        index in localMoveReorderTargetIndex!! until localMoveReorderSourceIndex!! -> reorderHeight
+                        else -> 0f
+                    }
+                    val elevationTargetValue = if (itemIsMoving) 12.dp else 2.dp
+
+                    if (snap) {
+                        launch { offset.snapTo(targetValue = offsetTargetValue) }
+                        launch { elevation.snapTo(targetValue = elevationTargetValue) }
+                    } else {
+                        launch {
+                            offset.animateTo(
+                                targetValue = offsetTargetValue,
+                                animationSpec = spring()
+                            )
                         }
-                        val elevationTargetValue = if (itemIsMoving) 12.dp else 2.dp
-
-                        if (snap) {
-                            launch { offset.snapTo(targetValue = offsetTargetValue) }
-                            launch { elevation.snapTo(targetValue = elevationTargetValue) }
-                        } else {
-                            launch {
-                                offset.animateTo(
-                                    targetValue = offsetTargetValue,
-                                    animationSpec = spring()
+                        launch {
+                            elevation.animateTo(
+                                targetValue = elevationTargetValue,
+                                animationSpec = tween(
+                                    durationMillis = 300,
+                                    easing = LinearEasing
                                 )
-                            }
-                            launch {
-                                elevation.animateTo(
-                                    targetValue = elevationTargetValue,
-                                    animationSpec = tween(
-                                        durationMillis = 300,
-                                        easing = LinearEasing
-                                    )
-                                )
-                            }
+                            )
                         }
-
-                        zIndex = if (itemIsMoving) 1f else 0f
                     }
 
-                    CueListItem(
-                        state = cueState,
-                        elevation = elevation.value,
-                        modifier = Modifier
-                            .swipeToRemove(
-                                constraints = constraints,
-                                onDelete = {
-                                    cuesState.removeAt(index)
-                                }
-                            )
-                            .moveReorder(
-                                position = index,
-                                elementsCount = cuesState.size,
-                                padding = 8.dp,
-                                onBegin = {
-                                    moveReorderSourceIndex = index
-                                },
-                                onMove = { targetPosition, height ->
-                                    moveReorderTargetIndex = targetPosition
-                                    reorderHeight = height
-                                },
-                                onDrop = { targetPosition ->
-                                    cuesState.add(targetPosition, cuesState[index].also { cuesState.removeAt(index) })
-                                    moveReorderSourceIndex = null
-                                    moveReorderTargetIndex = null
-                                }
-                            )
-                            .offset(y = { offset.value.roundToInt() })
-                    )
+                    zIndex = if (itemIsMoving) 1f else 0f
                 }
+
+                CueListItem(
+                    state = cueState,
+                    elevation = elevation.value,
+                    modifier = Modifier
+                        .swipeToRemove(
+                            constraints = constraints,
+                            onDelete = {
+                                cuesState.removeAt(index)
+                            }
+                        )
+                        .moveReorder(
+                            position = index,
+                            elementsCount = cuesState.size,
+                            padding = 8.dp,
+                            onBegin = {
+                                moveReorderSourceIndex = index
+                            },
+                            onMove = { targetPosition, height ->
+                                moveReorderTargetIndex = targetPosition
+                                reorderHeight = height
+                            },
+                            onDrop = { targetPosition ->
+                                cuesState.add(targetPosition, cuesState[index].also { cuesState.removeAt(index) })
+                                moveReorderSourceIndex = null
+                                moveReorderTargetIndex = null
+                            }
+                        )
+                        .offset(y = { offset.value.roundToInt() })
+                )
             }
         }
 
