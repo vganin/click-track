@@ -107,31 +107,17 @@ private fun AnimationScreen(
 @Composable
 private fun drawerState(drawerScreenState: DrawerScreenState, dispatch: Dispatch): DrawerState {
     val drawerValue = if (drawerScreenState.isOpened) DrawerValue.Open else DrawerValue.Closed
-    return rememberDrawerState(drawerValue) { newDrawerValue ->
+    return rememberDrawerState(initialValue = drawerValue, confirmStateChange = { newDrawerValue ->
         when (newDrawerValue) {
             DrawerValue.Closed -> dispatch(CloseDrawer)
             DrawerValue.Open -> dispatch(OpenDrawer)
         }
-        true
-    }.apply {
+        false
+    }).apply {
         LaunchedEffect(drawerValue) {
-            try {
-                when (drawerValue) {
-                    DrawerValue.Closed -> close()
-                    DrawerValue.Open -> open()
-                }
-            } catch (e: IllegalArgumentException) {
-                // FIXME: Ignoring spurious exception `java.lang.IllegalArgumentException: State androidx.compose.material.DrawerState@6294caf is not attached to a component. Have you passed state object to a component?`
-            }
-        }
-
-        // FIXME(https://issuetracker.google.com/issues/181387076): Synchronizing manually internal drawer state with external for now
-        LaunchedEffect(currentValue) {
-            if (drawerValue != currentValue && !isAnimationRunning) {
-                when (currentValue) {
-                    DrawerValue.Closed -> dispatch(CloseDrawer)
-                    DrawerValue.Open -> dispatch(OpenDrawer)
-                }
+            when (drawerValue) {
+                DrawerValue.Closed -> close()
+                DrawerValue.Open -> open()
             }
         }
     }

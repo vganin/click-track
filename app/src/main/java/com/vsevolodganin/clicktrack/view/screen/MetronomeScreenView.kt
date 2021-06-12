@@ -21,7 +21,6 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -193,36 +192,17 @@ private fun Options(
 @Composable
 private fun backdropState(screenState: MetronomeScreenState?, dispatch: Dispatch): BackdropScaffoldState {
     val backdropValue = if (screenState?.areOptionsExpanded == true) BackdropValue.Revealed else BackdropValue.Concealed
-    return rememberBackdropScaffoldState(
-        initialValue = backdropValue,
-        confirmStateChange = remember {
-            { newDrawerValue ->
-                when (newDrawerValue) {
-                    BackdropValue.Concealed -> dispatch(CloseOptions)
-                    BackdropValue.Revealed -> dispatch(OpenOptions)
-                }
-                true
-            }
+    return rememberBackdropScaffoldState(initialValue = backdropValue, confirmStateChange = { newDrawerValue ->
+        when (newDrawerValue) {
+            BackdropValue.Concealed -> dispatch(CloseOptions)
+            BackdropValue.Revealed -> dispatch(OpenOptions)
         }
-    ).apply {
+        false
+    }).apply {
         LaunchedEffect(backdropValue) {
-            try {
-                when (backdropValue) {
-                    BackdropValue.Concealed -> conceal()
-                    BackdropValue.Revealed -> reveal()
-                }
-            } catch (e: IllegalArgumentException) {
-                // FIXME: Ignoring spurious exception `java.lang.IllegalArgumentException: State androidx.compose.material.DrawerState@6294caf is not attached to a component. Have you passed state object to a component?`
-            }
-        }
-
-        // FIXME(https://issuetracker.google.com/issues/181387076): Synchronizing manually internal backdrop state with external for now
-        LaunchedEffect(currentValue) {
-            if (backdropValue != currentValue && !isAnimationRunning) {
-                when (currentValue) {
-                    BackdropValue.Concealed -> dispatch(CloseOptions)
-                    BackdropValue.Revealed -> dispatch(OpenOptions)
-                }
+            when (backdropValue) {
+                BackdropValue.Concealed -> conceal()
+                BackdropValue.Revealed -> reveal()
             }
         }
     }
