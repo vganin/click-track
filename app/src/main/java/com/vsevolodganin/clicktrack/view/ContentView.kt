@@ -2,6 +2,11 @@ package com.vsevolodganin.clicktrack.view
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.with
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.DrawerState
@@ -11,11 +16,10 @@ import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.DrawerScreenState
 import com.vsevolodganin.clicktrack.state.Screen
@@ -37,48 +41,66 @@ fun ContentView(
     dispatch: Dispatch,
 ) {
     ClickTrackTheme {
-        val modifier = Modifier.fillMaxSize()
-
-        val previousPosition = remember { mutableStateOf(position) }
-        val isPush = remember { mutableStateOf(true) }
-
-        if (position != previousPosition.value) {
-            isPush.value = position > previousPosition.value
-            previousPosition.value = position
-        }
-
         Scaffold(
             scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerScreenState, dispatch)),
             drawerContent = { DrawerScreenView(drawerScreenState, dispatch) },
             drawerGesturesEnabled = drawerScreenState.gesturesEnabled,
         ) {
-            AnimatedContent(
-                targetState = position,
-                transitionSpec = {
-                    if (isPush.value) {
-                        slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Left) with
-                                slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left)
-                    } else {
-                        slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right) with
-                                slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Right)
-                    }
-                }
-            ) { targetPosition ->
-                var targetScreen by remember { mutableStateOf(screen) }
-                if (position == targetPosition) {
-                    targetScreen = screen
-                }
-
-                when (@Suppress("NAME_SHADOWING") val screen = targetScreen) {
-                    is Screen.ClickTrackList -> ClickTrackListScreenView(screen.state, modifier, dispatch)
-                    is Screen.PlayClickTrack -> PlayClickTrackScreenView(screen.state, modifier, dispatch)
-                    is Screen.EditClickTrack -> EditClickTrackScreenView(screen.state, modifier, dispatch)
-                    is Screen.Metronome -> MetronomeScreenView(screen.state, modifier, dispatch)
-                    is Screen.Settings -> SettingsScreenView(screen.state, modifier, dispatch)
-                    is Screen.SoundLibrary -> SoundLibraryScreenView(screen.state, modifier, dispatch)
+            AnimationScreen(screen, position) { targetScreen ->
+                val modifier = Modifier.fillMaxSize()
+                when (targetScreen) {
+                    is Screen.ClickTrackList -> ClickTrackListScreenView(targetScreen.state, modifier, dispatch)
+                    is Screen.PlayClickTrack -> PlayClickTrackScreenView(targetScreen.state, modifier, dispatch)
+                    is Screen.EditClickTrack -> EditClickTrackScreenView(targetScreen.state, modifier, dispatch)
+                    is Screen.Metronome -> MetronomeScreenView(targetScreen.state, modifier, dispatch)
+                    is Screen.Settings -> SettingsScreenView(targetScreen.state, modifier, dispatch)
+                    is Screen.SoundLibrary -> SoundLibraryScreenView(targetScreen.state, modifier, dispatch)
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun AnimationScreen(
+    screen: Screen,
+    position: Int,
+    content: @Composable (screen: Screen) -> Unit,
+) {
+    val isPush = remember { mutableStateOf(true) }
+    val previousPosition = remember { mutableStateOf(position) }
+    val keyToScreen = remember { mutableStateOf(mapOf(position to screen)) }
+
+    if (position != previousPosition.value) {
+        isPush.value = position > previousPosition.value
+        previousPosition.value = position
+        keyToScreen.value += position to screen
+    }
+
+    val transition = updateTransition(targetState = position, label = "AnimatedScreen")
+
+    if (transition.targetState == transition.currentState) {
+        keyToScreen.value = mapOf(position to screen)
+    }
+
+    transition.AnimatedContent(
+        transitionSpec = {
+            val animationSpec = if (DEBUG_TRANSITIONS) {
+                tween(durationMillis = 5000, easing = LinearEasing)
+            } else {
+                spring(visibilityThreshold = IntOffset.VisibilityThreshold)
+            }
+
+            if (isPush.value) {
+                slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec) with
+                        slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec)
+            } else {
+                slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = animationSpec) with
+                        slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = animationSpec)
+            }
+        }
+    ) { targetState ->
+        content(keyToScreen.value[targetState]!!)
     }
 }
 
@@ -114,3 +136,5 @@ private fun drawerState(drawerScreenState: DrawerScreenState, dispatch: Dispatch
         }
     }
 }
+
+private const val DEBUG_TRANSITIONS = false
