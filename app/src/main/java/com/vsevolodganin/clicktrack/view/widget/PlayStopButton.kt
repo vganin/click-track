@@ -113,7 +113,7 @@ private fun PathBuilder.lineTo(point: Offset) = lineTo(point.x, point.y)
 
 @Preview
 @Composable
-fun PreviewPlayStopButton() {
+private fun Preview() {
     PlayStopButton(
         isPlaying = false,
         onToggle = {},

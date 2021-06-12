@@ -177,7 +177,7 @@ private suspend fun Animatable<Float, AnimationVector1D>.fling(
 
 @Preview
 @Composable
-fun PreviewNumberPicker() {
+private fun Preview() {
     Box(modifier = Modifier.fillMaxSize()) {
         NumberPicker(
             state = remember { mutableStateOf(9) },

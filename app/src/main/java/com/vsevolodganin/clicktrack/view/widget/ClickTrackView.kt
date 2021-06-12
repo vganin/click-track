@@ -290,7 +290,7 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
             x = currentX,
             color = MaterialTheme.colors.onSurface,
             briefSummary = { modifier ->
-                CueSummary(cue, modifier)
+                CueSummaryView(cue, modifier)
             },
             detailedSummary = cue.name?.let { name ->
                 { modifier ->
@@ -300,7 +300,7 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
                             style = TextStyle(fontWeight = FontWeight.Bold),
                             fontSize = 14.sp,
                         )
-                        CueSummary(cue)
+                        CueSummaryView(cue)
                     }
                 }
             }
@@ -498,7 +498,7 @@ private const val PROGRESS_LINE_WIDTH_CAPTURED = 10f
 
 @Preview
 @Composable
-fun PreviewClickTrackView() {
+private fun Preview() {
     ClickTrackView(
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,

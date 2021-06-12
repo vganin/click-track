@@ -62,7 +62,7 @@ import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.utils.compose.toObservableMutableStateList
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
-import com.vsevolodganin.clicktrack.view.widget.EditCueWithDurationView
+import com.vsevolodganin.clicktrack.view.widget.CueView
 import com.vsevolodganin.clicktrack.view.widget.GenericTopBarWithBack
 import kotlin.math.roundToInt
 import kotlin.time.Duration
@@ -325,7 +325,7 @@ private fun CueListItem(
         modifier = modifier,
         elevation = elevation
     ) {
-        EditCueWithDurationView(state)
+        CueView(state)
     }
 }
 

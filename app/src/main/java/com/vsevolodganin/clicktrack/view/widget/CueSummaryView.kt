@@ -16,7 +16,7 @@ import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.view.preview.PREVIEW_CLICK_TRACK_1
 
 @Composable
-fun CueSummary(
+fun CueSummaryView(
     cue: Cue,
     modifier: Modifier = Modifier,
 ) {
@@ -47,6 +47,6 @@ fun CueSummary(
 
 @Preview
 @Composable
-fun PreviewCueSummary() {
-    CueSummary(PREVIEW_CLICK_TRACK_1.value.cues[0])
+private fun Preview() {
+    CueSummaryView(PREVIEW_CLICK_TRACK_1.value.cues[0])
 }

@@ -100,6 +100,6 @@ fun NumberInputField(
 
 @Preview
 @Composable
-fun PreviewNumberInputField() {
+private fun Preview() {
     NumberInputField(state = remember { mutableStateOf(666) })
 }

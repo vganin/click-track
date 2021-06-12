@@ -199,9 +199,12 @@ fun DurationPicker(
 private val twoDigitsFormat = DecimalFormat("00")
 private fun Int.twoDigits() = twoDigitsFormat.format(this)
 
+private const val SECONDS_PER_MINUTE = 60L
+private const val MINUTES_PER_HOUR = 60L
+
 @Preview
 @Composable
-fun PreviewDurationPicker() {
+private fun Preview() {
     val sharedState = remember { mutableStateOf(Duration.hours(1) + Duration.minutes(2) + Duration.seconds(3) + Duration.milliseconds(4)) }
     Column {
         DurationPicker(sharedState)
@@ -211,6 +214,3 @@ fun PreviewDurationPicker() {
         DurationPicker(remember { mutableStateOf(Duration.milliseconds(1)) })
     }
 }
-
-private const val SECONDS_PER_MINUTE = 60L
-private const val MINUTES_PER_HOUR = 60L

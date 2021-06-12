@@ -26,7 +26,7 @@ import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import kotlin.time.Duration
 
 @Composable
-fun EditCueWithDurationView(
+fun CueView(
     state: MutableState<Cue>,
     modifier: Modifier = Modifier,
 ) {
@@ -52,7 +52,7 @@ fun EditCueWithDurationView(
             val viewModifier = Modifier.align(Alignment.CenterVertically)
             val spacerModifier = Modifier.width(16.dp)
 
-            EditCueDurationView(state = durationState, modifier = viewModifier.height(IntrinsicSize.Min))
+            CueDurationView(state = durationState, modifier = viewModifier.height(IntrinsicSize.Min))
 
             Spacer(modifier = spacerModifier)
 
@@ -84,8 +84,8 @@ fun EditCueWithDurationView(
 
 @Preview
 @Composable
-fun PreviewEditCueWithDurationView() {
-    EditCueWithDurationView(
+private fun Preview() {
+    CueView(
         state = remember {
             mutableStateOf(
                 Cue(

@@ -74,7 +74,7 @@ fun arrowVectorResource(direction: ArrowDirection): ImageVector {
 
 @Preview
 @Composable
-fun PreviewArrow() {
+private fun Preview() {
     Row {
         Arrow(LEFT)
         Arrow(UP)

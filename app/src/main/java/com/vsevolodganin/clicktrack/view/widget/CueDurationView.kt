@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.DropdownMenu
@@ -37,7 +36,7 @@ import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import kotlin.time.Duration
 
 @Composable
-fun EditCueDurationView(
+fun CueDurationView(
     state: MutableState<CueDuration>,
     modifier: Modifier = Modifier,
     defaultBeatsDuration: () -> CueDuration.Beats = { CueDuration.Beats(4) },
@@ -259,10 +258,10 @@ private val DURATION_VALUE_WIDTH = 150.dp
 
 @Preview
 @Composable
-fun PreviewEditCueDurationView() {
-    Column(modifier = Modifier.fillMaxSize()) {
-        EditCueDurationView(state = remember { mutableStateOf(CueDuration.Beats(999999)) })
-        EditCueDurationView(state = remember { mutableStateOf(CueDuration.Measures(999999)) })
-        EditCueDurationView(state = remember { mutableStateOf(CueDuration.Time(Duration.minutes(1))) })
+private fun Preview() {
+    Column {
+        CueDurationView(state = remember { mutableStateOf(CueDuration.Beats(999999)) })
+        CueDurationView(state = remember { mutableStateOf(CueDuration.Measures(999999)) })
+        CueDurationView(state = remember { mutableStateOf(CueDuration.Time(Duration.minutes(1))) })
     }
 }

@@ -61,7 +61,7 @@ fun TimeSignatureView(
 
 @Preview
 @Composable
-fun PreviewTimeSignatureView() {
+private fun Preview() {
     Box(modifier = Modifier.fillMaxSize()) {
         TimeSignatureView(
             state = remember { mutableStateOf(TimeSignature(4, 4)) },
