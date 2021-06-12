@@ -4,6 +4,8 @@ package com.vsevolodganin.clicktrack.lib
 
 import com.vsevolodganin.clicktrack.lib.android.AndroidParcelable
 import com.vsevolodganin.clicktrack.lib.android.AndroidParcelize
+import com.vsevolodganin.clicktrack.lib.android.AndroidTypeParceler
+import com.vsevolodganin.clicktrack.lib.android.parceler.DurationParceler
 import com.vsevolodganin.clicktrack.lib.serializer.DurationSerializer
 import kotlin.time.Duration
 import kotlinx.serialization.Serializable
@@ -30,6 +32,7 @@ public sealed class CueDuration : AndroidParcelable {
 
     @Serializable
     @AndroidParcelize
+    @AndroidTypeParceler<Duration, DurationParceler>
     public data class Time(public val value: Duration) : CueDuration() {
         init {
             require(value >= Duration.ZERO) { "Time should be non-negative but was: $value" }
