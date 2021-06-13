@@ -5,9 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.DropdownMenu
@@ -27,9 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.CueDuration
 import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
@@ -43,8 +44,9 @@ fun CueDurationView(
     defaultMeasuresDuration: () -> CueDuration.Measures = { CueDuration.Measures(1) },
     defaultTimeDuration: () -> CueDuration.Time = { CueDuration.Time(Duration.minutes(1)) },
 ) {
-    Row(modifier = modifier) {
+    Row(modifier = modifier.height(IntrinsicSize.Min)) {
         val onDurationChange: (CueDuration) -> Unit = { state.value = it }
+
         val beatsDurationState = remember(CueDurationType.BEATS) {
             state.value.let {
                 if (it is CueDuration.Beats) {
@@ -83,16 +85,13 @@ fun CueDurationView(
             }
         }
 
-        DurationTypeDropdown(
-            state = durationTypeState,
-            modifier = Modifier.fillMaxHeight()
-        )
+        DurationTypeDropdown(state = durationTypeState)
 
         Spacer(modifier = Modifier.width(8.dp))
 
         val commonCueDurationModifier = Modifier
             .align(Alignment.CenterVertically)
-            .width(DURATION_VALUE_WIDTH)
+            .fillMaxWidth()
 
         when (durationTypeState.value) {
             CueDurationType.BEATS -> {
@@ -118,66 +117,54 @@ fun CueDurationView(
 }
 
 @Composable
-private fun DurationTypeDropdown(
-    state: MutableState<CueDurationType>,
-    modifier: Modifier,
-) {
+private fun DurationTypeDropdown(state: MutableState<CueDurationType>) {
     val toggleState = remember { mutableStateOf(false) }
     val onToggleClick = { toggleState.value = !toggleState.value }
 
-    Box {
-        Row(
-            modifier = modifier
+    Row(
+        modifier = Modifier
+            .fillMaxHeight()
+            .clickable(
+                onClick = onToggleClick,
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(),
+            )
+    ) {
+        Text(
+            text = stringResource(id = state.value.displayStringResId),
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .width(100.dp)
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .size(16.dp, 16.dp)
                 .clickable(
                     onClick = onToggleClick,
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(),
+                    indication = rememberRipple(bounded = false),
                 )
-                .width(DURATION_TYPE_WIDTH)
         ) {
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .weight(1f)
-            ) {
-                val textStyle = MaterialTheme.typography.subtitle1
-                val fontSize = if (state.value == CueDurationType.MEASURES) 11.sp else textStyle.fontSize
-                Text(
-                    text = stringResource(id = state.value.displayStringResId),
-                    style = textStyle,
-                    fontSize = fontSize
-                )
-            }
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .size(16.dp, 16.dp)
-                    .clickable(
-                        onClick = onToggleClick,
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(bounded = false),
-                    )
-            ) {
-                Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
-            }
+            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
         }
+    }
 
-        DropdownMenu(
-            expanded = toggleState.value,
-            onDismissRequest = { toggleState.value = false },
-            offset = DpOffset(-DURATION_TYPE_WIDTH, 0.dp),
-            content = {
-                CueDurationType.values().forEach { durationType ->
-                    DropdownMenuItem(onClick = {
-                        state.value = durationType
-                        toggleState.value = false
-                    }) {
-                        Text(text = stringResource(id = durationType.displayStringResId))
-                    }
+    DropdownMenu(
+        expanded = toggleState.value,
+        onDismissRequest = { toggleState.value = false },
+        content = {
+            CueDurationType.values().forEach { durationType ->
+                DropdownMenuItem(onClick = {
+                    state.value = durationType
+                    toggleState.value = false
+                }) {
+                    Text(text = stringResource(id = durationType.displayStringResId))
                 }
             }
-        )
-    }
+        }
+    )
 }
 
 @Composable
@@ -252,9 +239,6 @@ private val CueDuration.type: CueDurationType
             is CueDuration.Time -> CueDurationType.TIME
         }
     }
-
-private val DURATION_TYPE_WIDTH = 70.dp
-private val DURATION_VALUE_WIDTH = 150.dp
 
 @Preview
 @Composable

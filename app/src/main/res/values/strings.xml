@@ -7,6 +7,9 @@
     <string name="cue_duration_beats">Beats</string>
     <string name="cue_duration_measures">Measures</string>
     <string name="cue_duration_time">Time</string>
+    <string name="cue_position">#%1$d</string>
+    <string name="cue_name_hint">Enter cue name (optional)</string>
+    <string name="cue_bpm_suffix">\ bpm</string>
     <string name="duration_picker_seconds">s</string>
     <string name="duration_picker_minutes">m</string>
     <string name="duration_picker_hours">h</string>

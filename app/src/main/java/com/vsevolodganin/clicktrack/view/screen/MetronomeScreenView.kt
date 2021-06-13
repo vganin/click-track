@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.view.screen
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -132,24 +134,32 @@ private fun Content(
                 }
         )
 
-        BpmWheel(
-            value = bpm,
-            onValueChange = { dispatch(MetronomeAction.ChangeBpm(it)) },
+        Box(
             modifier = Modifier
-                .size(200.dp)
                 .constrainAs(bpmWheel) {
                     centerHorizontallyTo(parent)
                     bottom.linkTo(parent.bottom, margin = 32.dp)
                 }
         ) {
-            PlayStopButton(state.isPlaying, onToggle = {
-                val action = if (state.isPlaying) {
-                    ClickTrackAction.StopPlay
-                } else {
-                    ClickTrackAction.StartPlay(state.clickTrack)
-                }
-                dispatch(action)
-            })
+            BpmWheel(
+                value = bpm,
+                onValueChange = { dispatch(MetronomeAction.ChangeBpm(it)) },
+                modifier = Modifier
+                    .size(200.dp)
+                    .align(Alignment.Center)
+            )
+            PlayStopButton(
+                isPlaying = state.isPlaying,
+                onToggle = {
+                    val action = if (state.isPlaying) {
+                        ClickTrackAction.StopPlay
+                    } else {
+                        ClickTrackAction.StartPlay(state.clickTrack)
+                    }
+                    dispatch(action)
+                },
+                modifier = Modifier.align(Alignment.Center),
+            )
         }
 
         ClickTrackFloatingActionButton(

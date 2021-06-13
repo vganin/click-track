@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.view.widget
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,10 +31,42 @@ import kotlinx.coroutines.launch
 fun NumberInputField(
     state: MutableState<Int>,
     modifier: Modifier = Modifier,
-    maxDigitsCount: Int = 6,
+    maxDigitsCount: Int = DEFAULT_MAX_DIGITS,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
-    var text by remember { mutableStateOf(state.value.toString()) }
+    NumberInputField(
+        value = state.value,
+        onValueChange = { state.value = it },
+        modifier = modifier,
+        maxDigitsCount = maxDigitsCount,
+        visualTransformation = visualTransformation,
+    )
+}
+
+@Composable
+fun NumberInputField(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    maxDigitsCount: Int = DEFAULT_MAX_DIGITS,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+) {
+    val maxValue = 10.pow(maxDigitsCount) - 1
+    val valuesCoerced = if (value > maxValue) {
+        onValueChange(maxValue)
+        maxValue
+    } else {
+        value
+    }
+
+    var text by remember { mutableStateOf(valuesCoerced.toString()) } // Should not updated by changes
     var selection by remember { mutableStateOf(TextRange.Zero) }
+
+    text = valuesCoerced.toString().also { newText ->
+        if (selection.start == 0 && selection.end == text.length) {
+            selection = TextRange(0, newText.length)
+        }
+    }
 
     fun TextRange.constrain(minimumValue: Int, maximumValue: Int): TextRange {
         val newStart = start.coerceIn(minimumValue, maximumValue)
@@ -43,15 +77,13 @@ fun NumberInputField(
         return this
     }
 
-    val textFieldValue = TextFieldValue(
-        text = text,
-        selection = selection.constrain(0, text.length),
-    )
-
     var isFocused by remember { mutableStateOf(false) }
 
     BasicTextField(
-        value = textFieldValue,
+        value = TextFieldValue(
+            text = text,
+            selection = selection.constrain(0, text.length),
+        ),
         onValueChange = { newValue ->
             val newText = newValue.text
             val newInt = when {
@@ -60,16 +92,12 @@ fun NumberInputField(
                 else -> null
             } ?: return@BasicTextField
 
-            text = newText
             selection = newValue.selection
-            state.value = newInt
+
+            if (valuesCoerced != newInt) {
+                onValueChange(newInt)
+            }
         },
-        cursorBrush = SolidColor(LocalContentColor.current),
-        textStyle = LocalTextStyle.current
-            .copy(
-                color = LocalContentColor.current,
-                textAlign = TextAlign.Center
-            ),
         modifier = modifier
             .focusableBorder()
             .onFocusChanged {
@@ -85,21 +113,33 @@ fun NumberInputField(
                     GlobalScope.launch(Dispatchers.Main) {
                         selection = TextRange(0, text.length)
                     }
-                } else {
-                    text = state.value.toString()
                 }
             }
             .padding(8.dp),
+        cursorBrush = SolidColor(LocalContentColor.current),
+        textStyle = LocalTextStyle.current
+            .copy(
+                color = LocalContentColor.current,
+                textAlign = TextAlign.Center
+            ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number
         ),
         singleLine = true,
-        maxLines = 1
+        maxLines = 1,
+        visualTransformation = visualTransformation,
     )
 }
+
+private fun Int.pow(n: Int) = IntArray(n) { this }.fold(1) { lhs, rhs -> lhs * rhs }
+
+private const val DEFAULT_MAX_DIGITS = 6
 
 @Preview
 @Composable
 private fun Preview() {
-    NumberInputField(state = remember { mutableStateOf(666) })
+    Column {
+        NumberInputField(state = remember { mutableStateOf(666) })
+        NumberInputField(state = remember { mutableStateOf(1666) }, maxDigitsCount = 3)
+    }
 }

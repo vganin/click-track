@@ -1,7 +1,6 @@
 package com.vsevolodganin.clicktrack.view.widget
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -18,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -44,16 +41,12 @@ fun BpmWheel(
     state: MutableState<BeatsPerMinute>,
     modifier: Modifier = Modifier,
     sensitivity: Float = 0.08f,
-    content: @Composable () -> Unit = {
-        Text(text = state.value.value.toString())
-    },
 ) {
     BpmWheel(
         value = state.value,
         onValueChange = { state.value = state.value.applyDiff(it) },
         modifier = modifier,
         sensitivity = sensitivity,
-        content = content,
     )
 }
 
@@ -63,31 +56,21 @@ fun BpmWheel(
     onValueChange: (BeatsPerMinuteDiff) -> Unit,
     modifier: Modifier = Modifier,
     sensitivity: Float = 0.08f,
-    content: @Composable () -> Unit = {
-        Text(text = value.value.toString())
-    },
 ) {
     var floatState by remember { mutableStateOf(value.value.toFloat()) }
 
-    Box(modifier) {
-        Wheel(
-            onAngleChange = {
-                val floatChange = it * sensitivity
-                val newFloatState = floatState + floatChange
-                val intChange = newFloatState.roundToInt() - floatState.roundToInt()
-                floatState = newFloatState
-                if (intChange != 0) {
-                    onValueChange(BeatsPerMinuteDiff(intChange))
-                }
-            },
-            modifier = Modifier
-                .align(Alignment.Center)
-                .aspectRatio(1f)
-        )
-        Box(modifier = Modifier.align(Alignment.Center)) {
-            content()
-        }
-    }
+    Wheel(
+        onAngleChange = {
+            val floatChange = it * sensitivity
+            val newFloatState = floatState + floatChange
+            val intChange = newFloatState.roundToInt() - floatState.roundToInt()
+            floatState = newFloatState
+            if (intChange != 0) {
+                onValueChange(BeatsPerMinuteDiff(intChange))
+            }
+        },
+        modifier = modifier.aspectRatio(1f)
+    )
 }
 
 @Composable

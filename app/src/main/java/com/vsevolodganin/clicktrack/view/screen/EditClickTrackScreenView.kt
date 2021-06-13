@@ -216,6 +216,7 @@ private fun Content(
 
                 CueListItem(
                     state = cueState,
+                    position = index + 1,
                     elevation = elevation.value,
                     modifier = Modifier
                         .swipeToRemove(
@@ -318,6 +319,7 @@ private fun Modifier.moveReorder(
 @Composable
 private fun CueListItem(
     state: MutableState<Cue>,
+    position: Int,
     elevation: Dp,
     modifier: Modifier,
 ) {
@@ -325,7 +327,7 @@ private fun CueListItem(
         modifier = modifier,
         elevation = elevation
     ) {
-        CueView(state)
+        CueView(state, position)
     }
 }
 
