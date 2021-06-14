@@ -107,6 +107,16 @@ android {
 
         // FIXME(https://issuetracker.google.com/issues/189967522)
         disable "DialogFragmentCallbacksDetector"
+
+        // FIXME(https://github.com/JakeWharton/timber/issues/408)
+        disable "LogNotTimber",
+                "StringFormatInTimber",
+                "ThrowableNotAtBeginning",
+                "BinaryOperationInTimber",
+                "TimberArgCount",
+                "TimberArgTypes",
+                "TimberTagLength",
+                "TimberExceptionLogging"
     }
 }
 
