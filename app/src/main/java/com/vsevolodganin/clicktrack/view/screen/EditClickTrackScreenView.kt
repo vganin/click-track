@@ -53,8 +53,8 @@ import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Dispatch
-import com.vsevolodganin.clicktrack.state.EditClickTrackScreenState
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
+import com.vsevolodganin.clicktrack.state.screen.EditClickTrackScreenState
 import com.vsevolodganin.clicktrack.utils.compose.ObservableMutableState
 import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import com.vsevolodganin.clicktrack.utils.compose.offset

@@ -11,11 +11,11 @@ import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
 import com.vsevolodganin.clicktrack.redux.Store
 import com.vsevolodganin.clicktrack.state.AppState
-import com.vsevolodganin.clicktrack.state.MetronomeScreenState
-import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction
-import com.vsevolodganin.clicktrack.state.utils.frontScreenOfType
+import com.vsevolodganin.clicktrack.state.screen.MetronomeScreenState
+import com.vsevolodganin.clicktrack.state.screen.Screen
+import com.vsevolodganin.clicktrack.state.screen.frontScreenOfType
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
 import javax.inject.Inject

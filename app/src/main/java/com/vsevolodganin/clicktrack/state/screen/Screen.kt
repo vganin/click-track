@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.state
+package com.vsevolodganin.clicktrack.state.screen
 
 import android.os.Parcelable
 import com.vsevolodganin.clicktrack.redux.Action
@@ -50,7 +50,7 @@ sealed class Screen : Parcelable {
     }
 
     @Parcelize
-    data class SoundLibrary(val state: SoundLibraryState?) : Screen() {
+    data class SoundLibrary(val state: SoundLibraryScreenState?) : Screen() {
         override fun reduce(action: Action): Screen {
             return reduceSoundLibraryScreen(action)
         }

@@ -9,8 +9,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.redux.Dispatch
-import com.vsevolodganin.clicktrack.state.SettingsScreenState
 import com.vsevolodganin.clicktrack.state.actions.SettingsAction
+import com.vsevolodganin.clicktrack.state.screen.SettingsScreenState
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.view.widget.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.view.widget.settings.ListChooser

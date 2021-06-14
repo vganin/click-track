@@ -1,9 +1,9 @@
 package com.vsevolodganin.clicktrack.state.reducer
 
 import com.vsevolodganin.clicktrack.redux.Action
-import com.vsevolodganin.clicktrack.state.Screen
-import com.vsevolodganin.clicktrack.state.SettingsScreenState
 import com.vsevolodganin.clicktrack.state.actions.SettingsAction
+import com.vsevolodganin.clicktrack.state.screen.Screen
+import com.vsevolodganin.clicktrack.state.screen.SettingsScreenState
 import com.vsevolodganin.clicktrack.theme.Theme
 
 fun Screen.Settings.reduceSettings(action: Action): Screen.Settings {

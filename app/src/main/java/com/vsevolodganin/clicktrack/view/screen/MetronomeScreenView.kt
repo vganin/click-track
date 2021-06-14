@@ -36,13 +36,13 @@ import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.redux.Dispatch
-import com.vsevolodganin.clicktrack.state.MetronomeScreenState
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction.CloseOptions
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction.OpenOptions
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction.SetPattern
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
+import com.vsevolodganin.clicktrack.state.screen.MetronomeScreenState
 import com.vsevolodganin.clicktrack.view.widget.BpmWheel
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackView

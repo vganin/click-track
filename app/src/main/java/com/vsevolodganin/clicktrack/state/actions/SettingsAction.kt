@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.state.actions
 
 import com.vsevolodganin.clicktrack.redux.Action
-import com.vsevolodganin.clicktrack.state.SettingsScreenState
+import com.vsevolodganin.clicktrack.state.screen.SettingsScreenState
 import com.vsevolodganin.clicktrack.theme.Theme
 
 sealed interface SettingsAction : Action {

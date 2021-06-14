@@ -6,7 +6,6 @@ import javax.inject.Inject
 class NewClickTrackNameSuggester @Inject constructor(
     private val storage: ClickTrackRepository
 ) {
-
     fun suggest(): String {
         val maxUsedDefaultNameNumber = storage.getAllNames()
             .asSequence()

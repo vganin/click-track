@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.state
+package com.vsevolodganin.clicktrack.state.screen
 
 import android.os.Parcelable
 import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
@@ -6,7 +6,7 @@ import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class SoundLibraryState(
+data class SoundLibraryScreenState(
     val items: List<SelectableClickSoundsItem>,
 ) : Parcelable
 

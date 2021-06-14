@@ -1,10 +1,10 @@
 package com.vsevolodganin.clicktrack.state.reducer
 
 import com.vsevolodganin.clicktrack.redux.Action
-import com.vsevolodganin.clicktrack.state.ClickTrackListScreenState
-import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackListAction
+import com.vsevolodganin.clicktrack.state.screen.ClickTrackListScreenState
+import com.vsevolodganin.clicktrack.state.screen.Screen
 
 fun Screen.ClickTrackList.reduceClickTrackListScreen(action: Action): Screen {
     return Screen.ClickTrackList(

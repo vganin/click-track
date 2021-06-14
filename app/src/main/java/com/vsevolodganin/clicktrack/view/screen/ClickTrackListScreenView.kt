@@ -29,11 +29,11 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Dispatch
-import com.vsevolodganin.clicktrack.state.ClickTrackListScreenState
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackListAction
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
 import com.vsevolodganin.clicktrack.state.actions.OpenDrawer
+import com.vsevolodganin.clicktrack.state.screen.ClickTrackListScreenState
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.utils.optionalCast

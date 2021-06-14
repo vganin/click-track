@@ -3,9 +3,9 @@ package com.vsevolodganin.clicktrack.state.reducer
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Action
-import com.vsevolodganin.clicktrack.state.EditClickTrackScreenState
-import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
+import com.vsevolodganin.clicktrack.state.screen.EditClickTrackScreenState
+import com.vsevolodganin.clicktrack.state.screen.Screen
 
 fun Screen.EditClickTrack.reduceEditClickTrackScreen(action: Action): Screen {
     return Screen.EditClickTrack(

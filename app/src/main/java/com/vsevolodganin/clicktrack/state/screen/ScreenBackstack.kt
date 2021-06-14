@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.state
+package com.vsevolodganin.clicktrack.state.screen
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

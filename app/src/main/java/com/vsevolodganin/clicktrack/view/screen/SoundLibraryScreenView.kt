@@ -41,9 +41,9 @@ import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
-import com.vsevolodganin.clicktrack.state.SelectableClickSoundsItem
-import com.vsevolodganin.clicktrack.state.SoundLibraryState
 import com.vsevolodganin.clicktrack.state.actions.SoundLibraryAction
+import com.vsevolodganin.clicktrack.state.screen.SelectableClickSoundsItem
+import com.vsevolodganin.clicktrack.state.screen.SoundLibraryScreenState
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import com.vsevolodganin.clicktrack.view.widget.ClickTrackFloatingActionButton
@@ -51,7 +51,7 @@ import com.vsevolodganin.clicktrack.view.widget.GenericTopBarWithBack
 
 @Composable
 fun SoundLibraryScreenView(
-    state: SoundLibraryState?,
+    state: SoundLibraryScreenState?,
     modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
@@ -80,7 +80,7 @@ fun SoundLibraryScreenView(
 
 @Composable
 private fun Content(
-    state: SoundLibraryState,
+    state: SoundLibraryScreenState,
     dispatch: Dispatch,
 ) {
     LazyColumn {
@@ -276,7 +276,7 @@ private fun PlayButtonOrError(modifier: Modifier, hasError: Boolean, onClick: ()
 @Composable
 private fun Preview() {
     SoundLibraryScreenView(
-        state = SoundLibraryState(
+        state = SoundLibraryScreenState(
             items = listOf(
                 SelectableClickSoundsItem.Builtin(
                     data = BuiltinClickSounds.BEEP,

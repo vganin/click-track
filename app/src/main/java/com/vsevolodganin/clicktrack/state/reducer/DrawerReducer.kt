@@ -1,12 +1,12 @@
 package com.vsevolodganin.clicktrack.state.reducer
 
 import com.vsevolodganin.clicktrack.redux.Action
-import com.vsevolodganin.clicktrack.state.DrawerScreenState
-import com.vsevolodganin.clicktrack.state.Screen
 import com.vsevolodganin.clicktrack.state.actions.CloseDrawer
 import com.vsevolodganin.clicktrack.state.actions.OpenDrawer
-import com.vsevolodganin.clicktrack.state.frontScreen
-import com.vsevolodganin.clicktrack.state.frontScreenPosition
+import com.vsevolodganin.clicktrack.state.screen.DrawerScreenState
+import com.vsevolodganin.clicktrack.state.screen.Screen
+import com.vsevolodganin.clicktrack.state.screen.frontScreen
+import com.vsevolodganin.clicktrack.state.screen.frontScreenPosition
 
 fun DrawerScreenState.reduceDrawerState(action: Action, screens: List<Screen>): DrawerScreenState {
     val isOpened = isOpened.reduceIsOpened(action)

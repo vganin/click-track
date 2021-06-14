@@ -2,6 +2,10 @@ package com.vsevolodganin.clicktrack.state
 
 import android.os.Parcelable
 import com.vsevolodganin.clicktrack.BuildConfig
+import com.vsevolodganin.clicktrack.state.screen.ClickTrackListScreenState
+import com.vsevolodganin.clicktrack.state.screen.DrawerScreenState
+import com.vsevolodganin.clicktrack.state.screen.Screen
+import com.vsevolodganin.clicktrack.state.screen.ScreenBackstack
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

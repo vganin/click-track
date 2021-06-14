@@ -5,7 +5,7 @@ import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.sounds.model.UserClickSounds
-import com.vsevolodganin.clicktrack.state.SelectableClickSoundsItem
+import com.vsevolodganin.clicktrack.state.screen.SelectableClickSoundsItem
 
 sealed interface SoundLibraryAction : Action {
 

@@ -4,8 +4,8 @@ import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
-import com.vsevolodganin.clicktrack.state.SettingsScreenState
 import com.vsevolodganin.clicktrack.state.actions.SettingsAction
+import com.vsevolodganin.clicktrack.state.screen.SettingsScreenState
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.ThemeManager
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach

@@ -10,8 +10,8 @@ import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.sounds.model.UserClickSounds
-import com.vsevolodganin.clicktrack.state.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.state.actions.SoundLibraryAction
+import com.vsevolodganin.clicktrack.state.screen.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach

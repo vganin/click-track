@@ -17,8 +17,8 @@ import com.vsevolodganin.clicktrack.redux.EpicMiddleware
 import com.vsevolodganin.clicktrack.redux.Store
 import com.vsevolodganin.clicktrack.state.AppState
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
-import com.vsevolodganin.clicktrack.state.frontScreen
-import com.vsevolodganin.clicktrack.state.frontScreenPosition
+import com.vsevolodganin.clicktrack.state.screen.frontScreen
+import com.vsevolodganin.clicktrack.state.screen.frontScreenPosition
 import com.vsevolodganin.clicktrack.view.ContentView
 import javax.inject.Inject
 import kotlinx.coroutines.MainScope

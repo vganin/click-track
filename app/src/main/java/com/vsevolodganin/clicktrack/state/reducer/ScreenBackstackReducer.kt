@@ -1,17 +1,17 @@
 package com.vsevolodganin.clicktrack.state.reducer
 
 import com.vsevolodganin.clicktrack.redux.Action
-import com.vsevolodganin.clicktrack.state.ClickTrackListScreenState
-import com.vsevolodganin.clicktrack.state.EditClickTrackScreenState
-import com.vsevolodganin.clicktrack.state.PlayClickTrackScreenState
 import com.vsevolodganin.clicktrack.state.PlaybackState
-import com.vsevolodganin.clicktrack.state.Screen
-import com.vsevolodganin.clicktrack.state.ScreenBackstack
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
-import com.vsevolodganin.clicktrack.state.pop
-import com.vsevolodganin.clicktrack.state.pushOrIgnore
-import com.vsevolodganin.clicktrack.state.pushOrReplace
-import com.vsevolodganin.clicktrack.state.replaceCurrentScreen
+import com.vsevolodganin.clicktrack.state.screen.ClickTrackListScreenState
+import com.vsevolodganin.clicktrack.state.screen.EditClickTrackScreenState
+import com.vsevolodganin.clicktrack.state.screen.PlayClickTrackScreenState
+import com.vsevolodganin.clicktrack.state.screen.Screen
+import com.vsevolodganin.clicktrack.state.screen.ScreenBackstack
+import com.vsevolodganin.clicktrack.state.screen.pop
+import com.vsevolodganin.clicktrack.state.screen.pushOrIgnore
+import com.vsevolodganin.clicktrack.state.screen.pushOrReplace
+import com.vsevolodganin.clicktrack.state.screen.replaceCurrentScreen
 
 fun ScreenBackstack.reduce(action: Action, currentlyPlaying: PlaybackState?): ScreenBackstack {
     return when (action) {
