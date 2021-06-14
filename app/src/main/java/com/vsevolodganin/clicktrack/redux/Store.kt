@@ -3,6 +3,7 @@ package com.vsevolodganin.clicktrack.redux
 import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
 import com.vsevolodganin.clicktrack.utils.coroutine.NonConflatedStateFlow
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.flow.collect
@@ -20,8 +21,8 @@ interface SuspendDispatch {
 class Store<T>(
     initialState: T,
     reducer: Reducer<T>,
-    storeCoroutineScope: CoroutineScope,
-    vararg middlewares: Middleware<T>
+    coroutineScope: CoroutineScope,
+    vararg middlewares: Middleware<T>,
 ) {
     private val _state = MutableNonConflatedStateFlow(initialState)
     val state: NonConflatedStateFlow<T> = _state
@@ -38,7 +39,7 @@ class Store<T>(
             middleware.interfere(this@Store, dispatch)
         }
 
-        storeCoroutineScope.launch {
+        coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
             actions.consumeAsFlow().collect { action -> dispatch(action) }
         }
     }

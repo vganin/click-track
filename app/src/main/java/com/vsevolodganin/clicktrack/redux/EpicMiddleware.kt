@@ -1,33 +1,38 @@
 package com.vsevolodganin.clicktrack.redux
 
-import kotlin.coroutines.CoroutineContext
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.RENDEZVOUS
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 
 interface Epic {
     fun act(actions: Flow<Action>): Flow<Action>
 }
 
-class EpicMiddleware<T>(private val epicCoroutineContext: CoroutineContext) : Middleware<T> {
+class EpicMiddleware<T>(private val coroutineScope: CoroutineScope) : Middleware<T> {
 
-    private val actions = BroadcastChannel<Action>(1)
+    private val actions = Channel<Action>(RENDEZVOUS)
     private var store: Store<T>? = null
 
     private val subscriptions = mutableMapOf<Epic, Job>()
 
     fun register(vararg epics: Epic) {
-        @Suppress("DEPRECATION") // FIXME: Adopt StateFlow or SharedFlow
-        val actionsFlow = actions.asFlow()
+        val actionsFlow = actions.consumeAsFlow().shareIn(
+            scope = coroutineScope,
+            started = SharingStarted.Eagerly
+        )
 
         for (epic in epics) {
             subscriptions[epic]?.cancel()
-            subscriptions[epic] = GlobalScope.launch(epicCoroutineContext) {
+            subscriptions[epic] = coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
                 epic.act(actionsFlow)
                     .onEach { action ->
                         val store = store

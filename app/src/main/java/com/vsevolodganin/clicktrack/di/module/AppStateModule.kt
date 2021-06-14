@@ -30,8 +30,11 @@ class AppStateModule {
     @Provides
     @ViewModelScoped
     fun provideEpicMiddleware(
-        @SerialBackgroundDispatcher coroutineDispatcher: CoroutineDispatcher
-    ) = EpicMiddleware<AppState>(coroutineDispatcher)
+        coroutineScope: CoroutineScope,
+        @SerialBackgroundDispatcher coroutineDispatcher: CoroutineDispatcher,
+    ): EpicMiddleware<AppState> {
+        return EpicMiddleware(CoroutineScope(coroutineScope.coroutineContext + coroutineDispatcher))
+    }
 
     @Provides
     @ViewModelScoped
