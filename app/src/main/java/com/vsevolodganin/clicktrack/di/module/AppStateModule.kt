@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.SavedStateHandle
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
+import com.vsevolodganin.clicktrack.redux.DebugMiddleware
 import com.vsevolodganin.clicktrack.redux.Epic
 import com.vsevolodganin.clicktrack.redux.EpicMiddleware
 import com.vsevolodganin.clicktrack.redux.Store
@@ -38,11 +39,16 @@ class AppStateModule {
 
     @Provides
     @ViewModelScoped
+    fun provideDebugMiddleware(): DebugMiddleware<AppState> = DebugMiddleware()
+
+    @Provides
+    @ViewModelScoped
     fun provideStore(
         savedStateHandle: SavedStateHandle,
         coroutineScope: CoroutineScope,
         @SerialBackgroundDispatcher coroutineDispatcher: CoroutineDispatcher,
         epicMiddleware: EpicMiddleware<AppState>,
+        debugMiddleware: DebugMiddleware<AppState>,
     ): Store<AppState> {
         val initialState = savedStateHandle.get<Bundle?>(SavedStateConst.APP_STATE_BUNDLE_KEY)
             ?.getParcelable(SavedStateConst.APP_STATE_KEY)
@@ -52,7 +58,8 @@ class AppStateModule {
             initialState,
             AppState::reduce,
             CoroutineScope(coroutineScope.coroutineContext + coroutineDispatcher),
-            epicMiddleware
+            epicMiddleware,
+            debugMiddleware
         )
 
         savedStateHandle.setSavedStateProvider(SavedStateConst.APP_STATE_BUNDLE_KEY) {

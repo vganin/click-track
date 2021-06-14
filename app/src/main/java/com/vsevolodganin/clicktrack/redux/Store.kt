@@ -14,7 +14,7 @@ fun interface Dispatch {
     operator fun invoke(action: Action)
 }
 
-interface SuspendDispatch {
+fun interface SuspendDispatch {
     suspend operator fun invoke(action: Action)
 }
 
@@ -30,10 +30,8 @@ class Store<T>(
     private val actions = Channel<Action>(UNLIMITED)
 
     init {
-        val initialDispatch: SuspendDispatch = object : SuspendDispatch {
-            override suspend fun invoke(action: Action) {
-                _state.setValue(reducer(_state.value, action))
-            }
+        val initialDispatch = SuspendDispatch { action ->
+            _state.setValue(reducer(_state.value, action))
         }
         val dispatch = middlewares.fold(initialDispatch) { dispatch, middleware ->
             middleware.interfere(this@Store, dispatch)
