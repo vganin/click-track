@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.state.reducer
 
+import com.vsevolodganin.clicktrack.model.ClickTrackProgress
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
@@ -15,7 +16,7 @@ fun Screen.PlayClickTrack.reducePlayClickTrackScreen(action: Action): Screen {
 private fun PlayClickTrackScreenState.reduce(action: Action): PlayClickTrackScreenState {
     return when (action) {
         is ClickTrackAction.UpdateCurrentlyPlaying -> if (action.playbackState?.clickTrack?.id == clickTrack.id) {
-            copy(progress = action.playbackState.progress, isPlaying = true)
+            copy(progress = ClickTrackProgress(action.playbackState.progress), isPlaying = true)
         } else {
             copy(progress = null, isPlaying = false)
         }

@@ -35,6 +35,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.bpm
+import com.vsevolodganin.clicktrack.model.ClickTrackProgress
 import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.redux.Dispatch
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
@@ -231,7 +232,7 @@ private fun Preview() {
                 bpm = 90.bpm,
                 pattern = NotePattern.QUINTUPLET_X2,
             ),
-            progress = 0.1,
+            progress = ClickTrackProgress(0.1),
             isPlaying = false,
             areOptionsExpanded = true,
         )

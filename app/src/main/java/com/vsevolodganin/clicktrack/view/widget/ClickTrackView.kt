@@ -56,6 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.interval
+import com.vsevolodganin.clicktrack.model.ClickTrackProgress
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableViewport
 import com.vsevolodganin.clicktrack.utils.compose.awaitLongPressOrCancellation
@@ -75,7 +76,7 @@ fun ClickTrackView(
     modifier: Modifier = Modifier,
     drawAllBeatsMarks: Boolean = false,
     drawTextMarks: Boolean = true,
-    progress: Double? = null,
+    progress: ClickTrackProgress? = null,
     progressDragAndDropEnabled: Boolean = false,
     onProgressDragStart: () -> Unit = {},
     onProgressDrop: (Double) -> Unit = {},
@@ -92,7 +93,7 @@ fun ClickTrackView(
         // Progress
         var isProgressCaptured by remember { mutableStateOf(false) }
         val progressLineWidth by progressLineWidth(defaultLineWidth, isProgressCaptured)
-        val progressLinePosition = progressLinePosition(clickTrack, progress, widthPx)
+        val progressLinePosition = progressLinePosition(progress, clickTrack.durationInTime, widthPx)
         val progressLineColor = MaterialTheme.colors.secondaryVariant
 
         // Camera
@@ -215,27 +216,27 @@ fun ClickTrackView(
 
 @Composable
 private fun progressLinePosition(
-    clickTrack: ClickTrack,
-    progress: Double?,
+    progress: ClickTrackProgress?,
+    totalDuration: Duration,
     totalWidthPx: Float,
 ): AnimatableFloat? {
     progress ?: return null
 
-    val playbackStampX = remember { Animatable(0f) }.apply {
-        updateBounds(0f, totalWidthPx)
-    }
-
-    val totalTrackDuration = clickTrack.durationInTime
-    val targetPosition = totalTrackDuration * progress
+    val animatableProgressLinePosition = remember { Animatable(0f) }
+        .apply {
+            updateBounds(0f, totalWidthPx)
+        }
 
     LaunchedEffect(progress) {
-        val targetPositionX = targetPosition.toX(totalTrackDuration, totalWidthPx)
-        playbackStampX.snapTo(targetPositionX)
+        val progressTimePosition = totalDuration * progress.value
+        val progressX = progressTimePosition.toX(totalDuration, totalWidthPx)
+        animatableProgressLinePosition.snapTo(progressX)
     }
 
-    LaunchedEffect(progress, totalTrackDuration) {
-        val animationDuration = totalTrackDuration - targetPosition
-        playbackStampX.animateTo(
+    LaunchedEffect(progress, totalDuration, totalWidthPx) {
+        val currentTimePosition = totalDuration * (animatableProgressLinePosition.value / totalWidthPx).toDouble()
+        val animationDuration = totalDuration - currentTimePosition
+        animatableProgressLinePosition.animateTo(
             targetValue = totalWidthPx,
             animationSpec = tween(
                 durationMillis = animationDuration.coerceAtLeast(Duration.ZERO).inWholeMilliseconds.toInt(),
@@ -244,7 +245,7 @@ private fun progressLinePosition(
         )
     }
 
-    return playbackStampX
+    return animatableProgressLinePosition
 }
 
 @Composable
@@ -512,7 +513,7 @@ private fun Preview() {
     ClickTrackView(
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,
-        progress = 0.13,
+        progress = ClickTrackProgress(0.13),
         modifier = Modifier.fillMaxSize()
     )
 }

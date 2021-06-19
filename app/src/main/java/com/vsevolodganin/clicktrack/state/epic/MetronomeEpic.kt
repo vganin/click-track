@@ -6,6 +6,7 @@ import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.meter.BpmMeter
 import com.vsevolodganin.clicktrack.model.ClickTrackId
+import com.vsevolodganin.clicktrack.model.ClickTrackProgress
 import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.redux.Epic
@@ -51,7 +52,7 @@ class MetronomeEpic @Inject constructor(
                             bpm = userPreferencesRepository.metronomeBpm,
                             pattern = userPreferencesRepository.metronomePattern,
                         ),
-                        progress = currentlyPlayingMetronome?.progress,
+                        progress = currentlyPlayingMetronome?.progress?.let(::ClickTrackProgress),
                         isPlaying = currentlyPlayingMetronome != null,
                         areOptionsExpanded = areOptionsExpanded,
                     )

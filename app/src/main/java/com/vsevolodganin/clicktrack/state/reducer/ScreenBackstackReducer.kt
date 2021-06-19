@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.state.reducer
 
+import com.vsevolodganin.clicktrack.model.ClickTrackProgress
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.PlaybackState
 import com.vsevolodganin.clicktrack.state.actions.NavigationAction
@@ -48,7 +49,7 @@ private fun ScreenBackstack.reduce(action: NavigationAction, currentlyPlaying: P
             Screen.PlayClickTrack(
                 state = PlayClickTrackScreenState(
                     clickTrack = clickTrack,
-                    progress = progress,
+                    progress = progress?.let(::ClickTrackProgress),
                     isPlaying = progress != null
                 )
             )

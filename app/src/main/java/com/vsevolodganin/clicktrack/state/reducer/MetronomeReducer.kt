@@ -4,6 +4,7 @@ import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.applyDiff
 import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.model.ClickTrackId
+import com.vsevolodganin.clicktrack.model.ClickTrackProgress
 import com.vsevolodganin.clicktrack.redux.Action
 import com.vsevolodganin.clicktrack.state.actions.ClickTrackAction
 import com.vsevolodganin.clicktrack.state.actions.MetronomeAction
@@ -35,7 +36,7 @@ private fun MetronomeScreenState.reduce(action: Action): MetronomeScreenState {
         is MetronomeAction.OpenOptions -> copy(areOptionsExpanded = true)
         is MetronomeAction.CloseOptions -> copy(areOptionsExpanded = false)
         is ClickTrackAction.UpdateCurrentlyPlaying -> if (action.playbackState?.clickTrack?.id == ClickTrackId.Builtin.METRONOME) {
-            copy(progress = action.playbackState.progress, isPlaying = true)
+            copy(progress = ClickTrackProgress(action.playbackState.progress), isPlaying = true)
         } else {
             copy(progress = null, isPlaying = false)
         }
