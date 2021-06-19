@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BackdropScaffold
+import androidx.compose.material.BackdropScaffoldDefaults
 import androidx.compose.material.BackdropScaffoldState
 import androidx.compose.material.BackdropValue
 import androidx.compose.material.Card
@@ -73,6 +74,8 @@ fun MetronomeScreenView(
         },
         scaffoldState = backdropState(state, dispatch),
         modifier = modifier,
+        // FIXME(https://issuetracker.google.com/issues/190893491)
+        peekHeight = BackdropScaffoldDefaults.PeekHeight + 1.dp,
     )
 }
 
