@@ -13,7 +13,6 @@ import androidx.compose.foundation.gestures.calculateCentroidSize
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.drag
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +23,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -83,43 +83,19 @@ fun ClickTrackView(
     defaultLineWidth: Float = Stroke.HairlineWidth,
 ) {
     BoxWithConstraints(modifier = modifier) {
+        // Bounds
         val width = minWidth
         val height = minHeight
         val widthPx = with(LocalDensity.current) { width.toPx() }
         val heightPx = with(LocalDensity.current) { height.toPx() }
-        val marks = clickTrack.asMarks(widthPx, drawAllBeatsMarks)
 
+        // Progress
         var isProgressCaptured by remember { mutableStateOf(false) }
-        val progressLineWidth = remember { Animatable(defaultLineWidth) }
-        LaunchedEffect(isProgressCaptured) {
-            val newProgressLineWidth = when (isProgressCaptured) {
-                true -> PROGRESS_LINE_WIDTH_CAPTURED
-                false -> defaultLineWidth
-            }
-            val animSpec: AnimationSpec<Float> = when (isProgressCaptured) {
-                true -> spring(
-                    dampingRatio = Spring.DampingRatioHighBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-                false -> spring()
-            }
+        val progressLineWidth by progressLineWidth(defaultLineWidth, isProgressCaptured)
+        val progressLinePosition = progressLinePosition(clickTrack, progress, widthPx)
+        val progressLineColor = MaterialTheme.colors.secondaryVariant
 
-            progressLineWidth.animateTo(
-                targetValue = newProgressLineWidth,
-                animationSpec = animSpec
-            )
-        }
-
-        val progressPosition = progress?.let {
-            animatedProgressPosition(
-                clickTrack = clickTrack,
-                progress = progress,
-                totalWidthPx = widthPx,
-            )
-        }
-
-        val playbackStampColor = MaterialTheme.colors.secondaryVariant
-
+        // Camera
         val bounds = remember { Rect(0f, 0f, widthPx, heightPx) }
         val viewportState = remember { AnimatableViewport(bounds) }
         val viewportTransformations = viewportState.transformations
@@ -128,21 +104,22 @@ fun ClickTrackView(
         val translateX = viewportTransformations.translateX
         val translateY = viewportTransformations.translateY
 
+        // Marks
+        val marks = clickTrack.asMarks(widthPx, drawAllBeatsMarks)
         fun Float.transformXAndPixelAlign(): Float {
             return ((this + translateX) * scaleX).roundToInt().toFloat()
         }
-
-        val transformedAndPixelAlignedMarks = marks.map { mark ->
-            mark.copy(x = mark.x.transformXAndPixelAlign())
+        val transformedAndPixelAlignedMarks = remember(marks, translateX, scaleX) {
+            marks.map { mark -> mark.copy(x = mark.x.transformXAndPixelAlign()) }
         }
 
-        Box(
+        Canvas(
             modifier = Modifier
                 .clickTrackGestures(
                     viewportZoomAndPanEnabled = viewportPanEnabled,
                     progressDragAndDropEnabled = progressDragAndDropEnabled,
                     viewportState = viewportState,
-                    progressPosition = progressPosition,
+                    progressPosition = progressLinePosition,
                     onProgressDragStart = { progress ->
                         isProgressCaptured = true
                         progress.stop()
@@ -153,100 +130,99 @@ fun ClickTrackView(
                         onProgressDrop(progress.value.toDouble() / widthPx)
                     }
                 )
+                .size(width, height)
         ) {
-            Canvas(modifier = Modifier.size(width, height)) {
-                withTransform(
-                    transformBlock = {
-                        // Transform only Y because X transformation needs post pixel alignment
-                        scale(1f, scaleY, Offset(0f, 0f))
-                        translate(0f, translateY)
-                    },
-                    drawBlock = {
-                        for (mark in transformedAndPixelAlignedMarks) {
-                            val markX = mark.x
-                            drawLine(
-                                color = mark.color,
-                                strokeWidth = defaultLineWidth,
-                                start = Offset(markX, 0f),
-                                end = Offset(markX, size.height),
-                            )
-                        }
-
-                        if (progressPosition != null) {
-                            val progressX = progressPosition.value.transformXAndPixelAlign()
-                            drawLine(
-                                color = playbackStampColor,
-                                strokeWidth = progressLineWidth.value,
-                                start = Offset(progressX, 0f),
-                                end = Offset(progressX, size.height)
-                            )
-                        }
+            withTransform(
+                transformBlock = {
+                    // Transform only Y because X transformation needs post pixel alignment
+                    scale(1f, scaleY, Offset(0f, 0f))
+                    translate(0f, translateY)
+                },
+                drawBlock = {
+                    for (mark in transformedAndPixelAlignedMarks) {
+                        val markX = mark.x
+                        drawLine(
+                            color = mark.color,
+                            strokeWidth = defaultLineWidth,
+                            start = Offset(markX, 0f),
+                            end = Offset(markX, size.height),
+                        )
                     }
-                )
-            }
 
-            if (drawTextMarks) {
-                Layout(
-                    modifier = Modifier.wrapContentSize(),
-                    content = {
-                        for (mark in transformedAndPixelAlignedMarks) {
-                            val layoutIdModifier = Modifier.layoutId(mark)
-                            mark.briefSummary?.invoke(layoutIdModifier)
-                            mark.detailedSummary?.invoke(layoutIdModifier)
-                        }
-                    },
-                    measurePolicy = { measurables, constraints ->
-                        val placeables = measurables.groupBy({ it.layoutId as Mark }) { measurable ->
-                            measurable.measure(constraints)
-                        }.toSortedMap { lhs, rhs -> lhs.x.compareTo(rhs.x) }.toList()
+                    if (progressLinePosition != null) {
+                        val progressX = progressLinePosition.value.transformXAndPixelAlign()
+                        drawLine(
+                            color = progressLineColor,
+                            strokeWidth = progressLineWidth,
+                            start = Offset(progressX, 0f),
+                            end = Offset(progressX, size.height)
+                        )
+                    }
+                }
+            )
+        }
 
-                        layout(constraints.maxWidth, constraints.maxHeight) {
-                            var currentEndX = Float.NEGATIVE_INFINITY
-                            var currentEndY = 0f
+        if (drawTextMarks) {
+            Layout(
+                modifier = Modifier.wrapContentSize(),
+                content = {
+                    for (mark in transformedAndPixelAlignedMarks) {
+                        val layoutIdModifier = Modifier.layoutId(mark)
+                        mark.briefSummary?.invoke(layoutIdModifier)
+                        mark.detailedSummary?.invoke(layoutIdModifier)
+                    }
+                },
+                measurePolicy = { measurables, constraints ->
+                    val placeables = measurables.groupBy({ it.layoutId as Mark }) { measurable ->
+                        measurable.measure(constraints)
+                    }.toSortedMap { lhs, rhs -> lhs.x.compareTo(rhs.x) }.toList()
 
-                            placeables
-                                .forEachIndexed { index, (mark, summaries) ->
-                                    val markX = mark.x
+                    layout(constraints.maxWidth, constraints.maxHeight) {
+                        var currentEndX = Float.NEGATIVE_INFINITY
+                        var currentEndY = 0f
 
-                                    val firstSummary = summaries.firstOrNull() ?: return@forEachIndexed
+                        placeables
+                            .forEachIndexed { index, (mark, summaries) ->
+                                val markX = mark.x
 
-                                    if (markX < currentEndX) {
-                                        currentEndY += firstSummary.height
-                                    } else {
-                                        currentEndY = 0f
-                                    }
+                                val firstSummary = summaries.firstOrNull() ?: return@forEachIndexed
 
-                                    val nextMarkX = transformedAndPixelAlignedMarks.getOrNull(index + 1)?.x ?: Float.POSITIVE_INFINITY
-
-                                    val summariesSortedByDescendingWidth = summaries.sortedByDescending(Placeable::width)
-                                    val placeable = summariesSortedByDescendingWidth
-                                        .firstOrNull { placeableCandidate ->
-                                            markX + placeableCandidate.width < nextMarkX
-                                        }
-                                        ?: summariesSortedByDescendingWidth.last()
-
-                                    placeable.placeRelative(x = markX.toInt(), y = currentEndY.toInt())
-
-                                    currentEndX = markX + placeable.width
+                                if (markX < currentEndX) {
+                                    currentEndY += firstSummary.height
+                                } else {
+                                    currentEndY = 0f
                                 }
-                        }
+
+                                val nextMarkX = transformedAndPixelAlignedMarks.getOrNull(index + 1)?.x ?: Float.POSITIVE_INFINITY
+
+                                val summariesSortedByDescendingWidth = summaries.sortedByDescending(Placeable::width)
+                                val placeable = summariesSortedByDescendingWidth
+                                    .firstOrNull { placeableCandidate ->
+                                        markX + placeableCandidate.width < nextMarkX
+                                    }
+                                    ?: summariesSortedByDescendingWidth.last()
+
+                                placeable.placeRelative(x = markX.toInt(), y = currentEndY.toInt())
+
+                                currentEndX = markX + placeable.width
+                            }
                     }
-                )
-            }
+                }
+            )
         }
     }
 }
 
 @Composable
-private fun animatedProgressPosition(
+private fun progressLinePosition(
     clickTrack: ClickTrack,
-    progress: Double,
+    progress: Double?,
     totalWidthPx: Float,
-): AnimatableFloat {
-    val playbackStampX = remember {
-        Animatable(0f).apply {
-            updateBounds(0f, totalWidthPx)
-        }
+): AnimatableFloat? {
+    progress ?: return null
+
+    val playbackStampX = remember { Animatable(0f) }.apply {
+        updateBounds(0f, totalWidthPx)
     }
 
     val totalTrackDuration = clickTrack.durationInTime
@@ -271,6 +247,35 @@ private fun animatedProgressPosition(
     return playbackStampX
 }
 
+@Composable
+private fun progressLineWidth(
+    defaultWidth: Float,
+    isProgressCaptured: Boolean,
+): State<Float> {
+    val animatableWidth = remember { Animatable(defaultWidth) }
+
+    LaunchedEffect(isProgressCaptured) {
+        val newProgressLineWidth = when (isProgressCaptured) {
+            true -> PROGRESS_LINE_WIDTH_CAPTURED
+            false -> defaultWidth
+        }
+        val animSpec: AnimationSpec<Float> = when (isProgressCaptured) {
+            true -> spring(
+                dampingRatio = Spring.DampingRatioHighBouncy,
+                stiffness = Spring.StiffnessLow
+            )
+            false -> spring()
+        }
+
+        animatableWidth.animateTo(
+            targetValue = newProgressLineWidth,
+            animationSpec = animSpec
+        )
+    }
+
+    return animatableWidth.asState()
+}
+
 private data class Mark(
     val x: Float,
     val color: Color,
@@ -280,47 +285,52 @@ private data class Mark(
 
 @Composable
 private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<Mark> {
-    val result = mutableListOf<Mark>()
-    val duration = durationInTime
+    val primaryMarkColor = MaterialTheme.colors.onSurface
+    val secondaryMarkColor = primaryMarkColor.copy(alpha = ContentAlpha.medium)
 
-    var currentTimestamp = Duration.ZERO
-    var currentX = 0f
-    for (cue in cues) {
-        result += Mark(
-            x = currentX,
-            color = MaterialTheme.colors.onSurface,
-            briefSummary = { modifier ->
-                CueSummaryView(cue, modifier)
-            },
-            detailedSummary = cue.name?.let { name ->
-                { modifier ->
-                    Column(modifier) {
-                        Text(
-                            text = "\"$name\"",
-                            style = TextStyle(fontWeight = FontWeight.Bold),
-                            fontSize = 14.sp,
-                        )
-                        CueSummaryView(cue)
+    return remember(cues, width, drawAllBeatsMarks) {
+        val result = mutableListOf<Mark>()
+        val duration = durationInTime
+
+        var currentTimestamp = Duration.ZERO
+        var currentX = 0f
+        for (cue in cues) {
+            result += Mark(
+                x = currentX,
+                color = primaryMarkColor,
+                briefSummary = { modifier ->
+                    CueSummaryView(cue, modifier)
+                },
+                detailedSummary = cue.name?.let { name ->
+                    { modifier ->
+                        Column(modifier) {
+                            Text(
+                                text = "\"$name\"",
+                                style = TextStyle(fontWeight = FontWeight.Bold),
+                                fontSize = 14.sp,
+                            )
+                            CueSummaryView(cue)
+                        }
                     }
                 }
+            )
+            if (drawAllBeatsMarks) {
+                for (i in 1 until cue.timeSignature.noteCount) {
+                    result += Mark(
+                        x = (currentTimestamp + cue.bpm.interval * i).toX(duration, width),
+                        color = secondaryMarkColor,
+                        briefSummary = null,
+                        detailedSummary = null,
+                    )
+                }
             }
-        )
-        if (drawAllBeatsMarks) {
-            for (i in 1 until cue.timeSignature.noteCount) {
-                result += Mark(
-                    x = (currentTimestamp + cue.bpm.interval * i).toX(duration, width),
-                    color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium),
-                    briefSummary = null,
-                    detailedSummary = null,
-                )
-            }
+            val nextTimestamp = currentTimestamp + cue.durationAsTime
+            currentX = nextTimestamp.toX(duration, width)
+            currentTimestamp = nextTimestamp
         }
-        val nextTimestamp = currentTimestamp + cue.durationAsTime
-        currentX = nextTimestamp.toX(duration, width)
-        currentTimestamp = nextTimestamp
-    }
 
-    return result.distinctBy(Mark::x)
+        result.distinctBy(Mark::x)
+    }
 }
 
 private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
