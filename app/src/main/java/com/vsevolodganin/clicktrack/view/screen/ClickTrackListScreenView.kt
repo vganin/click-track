@@ -1,5 +1,9 @@
 package com.vsevolodganin.clicktrack.view.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -21,6 +25,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -74,9 +79,18 @@ private fun Content(
     state: ClickTrackListScreenState,
     dispatch: Dispatch,
 ) {
+    val enterTransition = remember { slideInHorizontally(initialOffsetX = { it / 2 }) }
+    val exitTransition = remember { slideOutHorizontally(targetOffsetX = { it / 2 }) }
+
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(items = state.items, key = ClickTrackWithId::id) { clickTrack ->
-            ClickTrackListItem(clickTrack, dispatch)
+            AnimatedVisibility(
+                visibleState = remember { MutableTransitionState(initialState = false).apply { targetState = true } },
+                enter = enterTransition,
+                exit = exitTransition,
+            ) {
+                ClickTrackListItem(clickTrack, dispatch)
+            }
         }
 
         padWithFabSpace()
