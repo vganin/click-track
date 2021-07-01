@@ -158,7 +158,7 @@ private fun TopBar(
                             onClick = dismiss,
                             shape = RectangleShape
                         ) {
-                            Text(text = stringResource(id = android.R.string.no).uppercase())
+                            Text(text = stringResource(id = android.R.string.cancel).uppercase())
                         }
                     }
                 )

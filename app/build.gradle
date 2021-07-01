@@ -19,7 +19,7 @@ if (hasKeystoreProperties) {
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "com.vsevolodganin.clicktrack"
@@ -133,12 +133,12 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
-    implementation 'androidx.appcompat:appcompat:1.4.0-alpha02'
-    implementation 'androidx.core:core-ktx:1.6.0-rc01'
-    implementation 'androidx.activity:activity-compose:1.3.0-beta02'
-    implementation 'androidx.fragment:fragment-ktx:1.4.0-alpha03' // Essential for Activity Result APIs (as per https://developer.android.com/training/basics/intents/result)
+    implementation 'androidx.appcompat:appcompat:1.4.0-alpha03'
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.activity:activity-compose:1.3.0-rc01'
+    implementation 'androidx.fragment:fragment-ktx:1.4.0-alpha04' // Essential for Activity Result APIs (as per https://developer.android.com/training/basics/intents/result)
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha08"
-    implementation 'androidx.media:media:1.4.0-alpha01'
+    implementation 'androidx.media:media:1.4.0-rc01'
 
     def lifecycleVersion = '2.4.0-alpha02'
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
@@ -153,6 +153,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$composeVersion"
     implementation "androidx.compose.ui:ui-util:$composeVersion"
     implementation "androidx.compose.ui:ui-tooling:$composeVersion"
+    implementation "androidx.compose.ui:ui-tooling-preview:$composeVersion"
     implementation "androidx.compose.foundation:foundation:$composeVersion"
     implementation "androidx.compose.material:material:$composeVersion"
     implementation "androidx.compose.material:material-icons-core:$composeVersion"

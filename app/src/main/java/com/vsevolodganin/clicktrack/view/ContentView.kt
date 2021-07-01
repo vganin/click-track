@@ -100,7 +100,7 @@ private fun AnimationScreen(
             }
         }
     ) { targetState ->
-        content(keyToScreen.value[targetState]!!)
+        keyToScreen.value[targetState]?.let { content(it) }
     }
 }
 
