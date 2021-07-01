@@ -5,7 +5,10 @@ import com.vsevolodganin.clicktrack.lib.ClickTrack
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ClickTrackWithId(
-    val id: ClickTrackId,
+data class ClickTrackWithSpecificId<Id : ClickTrackId>(
+    val id: Id,
     val value: ClickTrack,
 ) : Parcelable
+
+typealias ClickTrackWithId = ClickTrackWithSpecificId<*>
+typealias ClickTrackWithDatabaseId = ClickTrackWithSpecificId<ClickTrackId.Database>

@@ -7,7 +7,7 @@ import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.premade.PreMadeClickTracks
 import com.vsevolodganin.clicktrack.migration.CanMigrate
 import com.vsevolodganin.clicktrack.model.ClickTrackId
-import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -30,7 +30,7 @@ class ClickTrackRepository @Inject constructor(
         }
     }
 
-    fun getAll(): Flow<List<ClickTrackWithId>> {
+    fun getAll(): Flow<List<ClickTrackWithDatabaseId>> {
         return database.sqlClickTrackQueries.getAll().asFlow()
             .map { it.executeAsList().map { elem -> elem.toCommon() } }
     }
@@ -39,39 +39,30 @@ class ClickTrackRepository @Inject constructor(
         return database.sqlClickTrackQueries.getAllNames().executeAsList()
     }
 
-    fun getById(id: ClickTrackId.Database): Flow<ClickTrackWithId?> {
+    fun getById(id: ClickTrackId.Database): Flow<ClickTrackWithDatabaseId?> {
         return database.sqlClickTrackQueries.getById(id.value).asFlow()
             .map { it.executeAsOneOrNull()?.toCommon() }
     }
 
-    fun insert(clickTrack: ClickTrack): ClickTrackWithId {
-        val insertedRowId: Long = database.sqlClickTrackQueries.transactionWithResult {
+    fun insert(clickTrack: ClickTrack): ClickTrackId.Database {
+        return database.sqlClickTrackQueries.transactionWithResult<Long> {
             database.sqlClickTrackQueries.insert(
                 name = clickTrack.name,
                 serializedValue = json.encodeToString(clickTrack)
             )
             database.sqlClickTrackQueries.lastRowId().executeAsOne()
-        }
-        return ClickTrackWithId(
-            id = ClickTrackId.Database(insertedRowId),
-            value = clickTrack
-        )
+        }.let(ClickTrackId::Database)
     }
 
-    private fun insertIfHasNoSuchName(clickTrack: ClickTrack): ClickTrackWithId? {
-        val insertedRowId: Long = database.sqlClickTrackQueries.transactionWithResult {
+    private fun insertIfHasNoSuchName(clickTrack: ClickTrack) {
+        database.sqlClickTrackQueries.transaction {
             val allNames = database.sqlClickTrackQueries.getAllNames().executeAsList()
-            if (clickTrack.name in allNames) return@transactionWithResult null
+            if (clickTrack.name in allNames) return@transaction
             database.sqlClickTrackQueries.insert(
                 name = clickTrack.name,
                 serializedValue = json.encodeToString(clickTrack)
             )
-            database.sqlClickTrackQueries.lastRowId().executeAsOne()
-        } ?: return null
-        return ClickTrackWithId(
-            id = ClickTrackId.Database(insertedRowId),
-            value = clickTrack
-        )
+        }
     }
 
     fun update(id: ClickTrackId.Database, clickTrack: ClickTrack) {
@@ -86,8 +77,8 @@ class ClickTrackRepository @Inject constructor(
         database.sqlClickTrackQueries.removeById(id.value)
     }
 
-    private fun StorageClickTrack.toCommon(): ClickTrackWithId {
-        return ClickTrackWithId(
+    private fun StorageClickTrack.toCommon(): ClickTrackWithDatabaseId {
+        return ClickTrackWithDatabaseId(
             id = ClickTrackId.Database(id),
             value = serializedValue.deserializeToClickTrack()
         )

@@ -15,11 +15,11 @@ import com.vsevolodganin.clicktrack.lib.math.compareTo
 import com.vsevolodganin.clicktrack.lib.math.over
 import com.vsevolodganin.clicktrack.lib.math.times
 import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
+import com.vsevolodganin.clicktrack.model.ClickTrackProgress
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
-import com.vsevolodganin.clicktrack.state.PlaybackState
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
@@ -117,7 +117,7 @@ class PlayerImpl @Inject constructor(
                 internalPlaybackState ?: return@map null
                 PlaybackState(
                     clickTrack = internalPlaybackState.clickTrack,
-                    progress = internalPlaybackState.currentProgress(),
+                    progress = ClickTrackProgress(internalPlaybackState.currentProgress()),
                 )
             }
             .distinctUntilChanged()
@@ -127,7 +127,7 @@ class PlayerImpl @Inject constructor(
         startAt: Duration,
         reportProgress: suspend (progress: Duration) -> Unit,
     ) = coroutineScope {
-        @Suppress("NAME_SHADOWING")
+        @Suppress("NAME_SHADOWING") // Because that looks better
         val startAt = if (startAt >= durationInTime) {
             if (loop) Duration.ZERO else return@coroutineScope
         } else {

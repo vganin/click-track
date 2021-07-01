@@ -12,7 +12,7 @@ fun metronomeClickTrack(
     bpm: BeatsPerMinute,
     pattern: NotePattern,
 ): ClickTrackWithId {
-    return ClickTrackWithId(
+    return ClickTrackWithSpecificId(
         id = ClickTrackId.Builtin.METRONOME,
         value = ClickTrack(
             name = name,

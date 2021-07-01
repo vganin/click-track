@@ -5,9 +5,9 @@ import android.content.Intent
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.redux.Store
-import com.vsevolodganin.clicktrack.state.AppState
-import com.vsevolodganin.clicktrack.state.actions.NavigationAction
+import com.vsevolodganin.clicktrack.state.redux.AppState
+import com.vsevolodganin.clicktrack.state.redux.action.NavigationAction
+import com.vsevolodganin.clicktrack.state.redux.core.Store
 import javax.inject.Inject
 
 @ActivityScoped
@@ -17,11 +17,9 @@ class IntentProcessor @Inject constructor(
     fun process(intent: Intent) {
         when (intent.action) {
             Action.OPEN_CLICK_TRACK -> {
-                val clickTrack = requireNotNull(intent.getParcelableExtra<ClickTrackWithId>(Extras.CLICK_TRACK))
-                val navigateAction = if (clickTrack.id == ClickTrackId.Builtin.METRONOME) {
-                    NavigationAction.ToMetronomeScreen
-                } else {
-                    NavigationAction.ToClickTrackScreen(clickTrack)
+                val navigateAction = when (val clickTrackId = requireNotNull(intent.getParcelableExtra<ClickTrackId>(Extras.CLICK_TRACK_ID))) {
+                    is ClickTrackId.Database -> NavigationAction.ToClickTrackScreen(clickTrackId)
+                    ClickTrackId.Builtin.METRONOME -> NavigationAction.ToMetronomeScreen
                 }
                 store.dispatch(navigateAction)
             }
@@ -32,7 +30,7 @@ class IntentProcessor @Inject constructor(
 fun intentForLaunchAppWithClickTrack(context: Context, clickTrack: ClickTrackWithId): Intent {
     return Intent(context, MainActivity::class.java).apply {
         action = Action.OPEN_CLICK_TRACK
-        putExtra(Extras.CLICK_TRACK, clickTrack)
+        putExtra(Extras.CLICK_TRACK_ID, clickTrack.id)
     }
 }
 
@@ -41,5 +39,5 @@ private object Action {
 }
 
 private object Extras {
-    const val CLICK_TRACK = "click_track"
+    const val CLICK_TRACK_ID = "click_track_id"
 }

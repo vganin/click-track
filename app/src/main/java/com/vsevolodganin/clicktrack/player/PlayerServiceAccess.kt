@@ -8,7 +8,6 @@ import androidx.annotation.MainThread
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.state.PlaybackState
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

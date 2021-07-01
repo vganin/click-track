@@ -27,6 +27,9 @@ class UserPreferencesRepository @Inject constructor(
     var theme: Theme by Properties.THEME
     var selectedSoundsId: ClickSoundsId by Properties.SELECTED_SOUNDS
 
+    val metronomeBpmFlow: Flow<BeatsPerMinute> = Properties.METRONOME_BPM.flow()
+    val metronomePatternFlow: Flow<NotePattern> = Properties.METRONOME_PATTERN.flow()
+    val themeFlow: Flow<Theme> = Properties.THEME.flow()
     val selectedSoundsIdFlow: Flow<ClickSoundsId> = Properties.SELECTED_SOUNDS.flow()
 
     private operator fun <T> SharedPreferencesProperty<T>.getValue(thisObj: Any?, property: KProperty<*>): T {

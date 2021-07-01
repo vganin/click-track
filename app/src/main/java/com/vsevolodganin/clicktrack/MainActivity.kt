@@ -9,21 +9,24 @@ import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.vsevolodganin.clicktrack.di.module.ActivityScopedAppStateEpic
+import com.vsevolodganin.clicktrack.di.module.SerialBackgroundDispatcher
 import com.vsevolodganin.clicktrack.migration.MigrationManager
 import com.vsevolodganin.clicktrack.player.PlayerSoundPool
-import com.vsevolodganin.clicktrack.redux.Action
-import com.vsevolodganin.clicktrack.redux.Epic
-import com.vsevolodganin.clicktrack.redux.EpicMiddleware
-import com.vsevolodganin.clicktrack.redux.Store
-import com.vsevolodganin.clicktrack.state.AppState
-import com.vsevolodganin.clicktrack.state.actions.NavigationAction
-import com.vsevolodganin.clicktrack.state.screen.frontScreen
-import com.vsevolodganin.clicktrack.state.screen.frontScreenPosition
-import com.vsevolodganin.clicktrack.view.ContentView
+import com.vsevolodganin.clicktrack.state.presenter.PresenterOrchestrator
+import com.vsevolodganin.clicktrack.state.redux.AppState
+import com.vsevolodganin.clicktrack.state.redux.action.NavigationAction
+import com.vsevolodganin.clicktrack.state.redux.core.Action
+import com.vsevolodganin.clicktrack.state.redux.core.Epic
+import com.vsevolodganin.clicktrack.state.redux.core.EpicMiddleware
+import com.vsevolodganin.clicktrack.state.redux.core.Store
+import com.vsevolodganin.clicktrack.ui.ContentView
+import com.vsevolodganin.clicktrack.ui.model.AppUiState
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -42,6 +45,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var appStateStore: Store<AppState>
 
     @Inject
+    lateinit var presenterOrchestrator: PresenterOrchestrator
+
+    @Inject
     lateinit var epicMiddleware: EpicMiddleware<AppState>
 
     @Inject
@@ -53,6 +59,10 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var migrationManager: MigrationManager
+
+    @Inject
+    @SerialBackgroundDispatcher
+    lateinit var backgroundDispatcher: CoroutineDispatcher
 
     private val renderScope = MainScope()
 
@@ -66,7 +76,9 @@ class MainActivity : AppCompatActivity() {
         epicMiddleware.register(*epics.toTypedArray())
 
         renderScope.launch {
-            appStateStore.state.collect(::render)
+            presenterOrchestrator.states()
+                .flowOn(backgroundDispatcher)
+                .collect(::render)
         }
 
         intentProcessor.process(intent)
@@ -99,16 +111,10 @@ class MainActivity : AppCompatActivity() {
             .inject(this)
     }
 
-    private fun render(appState: AppState) {
-        val frontScreen = appState.backstack.screens.frontScreen() ?: return
-        val frontScreenPosition = appState.backstack.screens.frontScreenPosition()
-        val drawerState = appState.backstack.drawerState
-
+    private fun render(appUiState: AppUiState) {
         setContent {
             ContentView(
-                screen = frontScreen,
-                position = frontScreenPosition,
-                drawerScreenState = drawerState,
+                appUiState = appUiState,
                 dispatch = ::dispatch
             )
         }
