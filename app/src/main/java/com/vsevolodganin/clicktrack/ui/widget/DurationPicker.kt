@@ -1,11 +1,13 @@
 package com.vsevolodganin.clicktrack.ui.widget
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,9 +28,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.focusTarget
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.input.key.Key.Companion.Backspace
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.key.utf16CodePoint
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -94,20 +103,19 @@ fun DurationPicker(
         state.value = newInternalStringState.toDuration()
     }
 
-    fun enterDigit(char: Char) {
-        if (char.isDigit() && internalStringState.value.first() == '0') {
+    fun enterDigit(char: Char): Boolean {
+        return if (char.isDigit() && internalStringState.value.first() == '0') {
             updateInternalStringState(internalStringState.value.drop(1) + char)
+            true
+        } else {
+            false
         }
     }
 
-    fun removeDigit() {
+    fun removeDigit(): Boolean {
         updateInternalStringState('0' + internalStringState.value.dropLast(1))
+        return true
     }
-
-    val inputService = LocalTextInputService.current!!
-    var textInputSession: TextInputSession? by remember { mutableStateOf(null) }
-    var isFocused by remember { mutableStateOf(false) }
-    val focusRequester = FocusRequester()
 
     @Composable
     fun formatInternalState(): String {
@@ -127,77 +135,98 @@ fun DurationPicker(
         }.toString()
     }
 
+    val inputService = LocalTextInputService.current!!
+    val textInputSession: MutableState<TextInputSession?> = remember { mutableStateOf(null) }
+    val focusRequester = remember { FocusRequester() }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused = interactionSource.collectIsFocusedAsState().value
+    var focusRect: Rect? by remember { mutableStateOf(null) }
+
+    if (isFocused && textInputSession.value == null) {
+        textInputSession.value = inputService.startInput(
+            value = TextFieldValue(),
+            imeOptions = ImeOptions(
+                singleLine = true,
+                autoCorrect = false,
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Done,
+            ),
+            onEditCommand = { operations ->
+                operations.forEach { operation ->
+                    when (operation) {
+                        is BackspaceCommand -> removeDigit()
+                        is CommitTextCommand -> operation.text.forEach(::enterDigit)
+                    }
+                }
+            },
+            onImeActionPerformed = { action ->
+                if (action == ImeAction.Done) {
+                    focusRequester.freeFocus()
+                }
+            }
+        )
+    } else if (!isFocused && textInputSession.value != null) {
+        textInputSession.value?.let(inputService::stopInput)
+        textInputSession.value = null
+    }
+
+    DisposableEffect(focusRect, textInputSession.value) {
+        val focusRectValue = focusRect
+        val textInputSessionValue = textInputSession.value
+        if (focusRectValue != null && textInputSessionValue != null) {
+            textInputSessionValue.notifyFocusedRect(focusRectValue)
+        }
+        onDispose {}
+    }
+
     Row(
         modifier = modifier
             .focusableBorder()
             .focusRequester(focusRequester)
-            .onFocusChanged { focusState ->
-                if (isFocused == focusState.isFocused) {
-                    return@onFocusChanged
-                }
-
-                isFocused = focusState.isFocused
-
-                if (isFocused && textInputSession == null) {
-                    textInputSession = inputService.startInput(
-                        value = TextFieldValue(),
-                        imeOptions = ImeOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done,
-                        ),
-                        onEditCommand = { operations ->
-                            operations.forEach { operation ->
-                                when (operation) {
-                                    is BackspaceCommand -> removeDigit()
-                                    is CommitTextCommand -> operation.text.forEach(::enterDigit)
-                                }
-                            }
-                        },
-                        onImeActionPerformed = { action ->
-                            if (action == ImeAction.Done) {
-                                focusRequester.freeFocus()
-                            }
-                        }
-                    )
-                } else if (!isFocused && textInputSession != null) {
-                    textInputSession?.let(inputService::stopInput)
-                    textInputSession = null
+            .focusable(interactionSource = interactionSource)
+            .onKeyEvent {
+                // FIXME(https://issuetracker.google.com/issues/188119984): Should keep only onEditCommand
+                if (it.type != KeyEventType.KeyDown) return@onKeyEvent false
+                if (it.key == Backspace) {
+                    removeDigit()
+                } else {
+                    enterDigit(it.utf16CodePoint.toChar())
                 }
             }
-            .focusTarget()
-            .pointerInput(Unit) {
-                detectTapGestures {
-                    focusRequester.requestFocus()
-                }
-            }
+            .clickable { focusRequester.requestFocus() }
+            .onGloballyPositioned { layoutCoordinates -> focusRect = layoutCoordinates.boundsInWindow() }
             .padding(8.dp)
     ) {
-        val baseModifier = Modifier.align(Alignment.CenterVertically)
-
         Text(
             text = formatInternalState(),
-            modifier = baseModifier.weight(1.0f),
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .weight(1.0f),
             style = TextStyle(textAlign = TextAlign.Center)
         )
-
         Spacer(Modifier.width(8.dp))
-
-        Box(
-            modifier = baseModifier
-                .size(16.dp, 16.dp)
-                .clickable(
-                    onClick = { state.value = Duration.ZERO },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(bounded = false)
-                )
-        ) {
-            Icon(imageVector = Icons.Default.Close, contentDescription = null)
-        }
+        CloseIcon(state)
     }
 }
 
-private val twoDigitsFormat = DecimalFormat("00")
-private fun Int.twoDigits() = twoDigitsFormat.format(this)
+@Composable
+private fun RowScope.CloseIcon(state: MutableState<Duration>) {
+    Box(
+        modifier = Modifier
+            .align(Alignment.CenterVertically)
+            .size(16.dp, 16.dp)
+            .clickable(
+                onClick = { state.value = Duration.ZERO },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(bounded = false)
+            )
+    ) {
+        Icon(imageVector = Icons.Default.Close, contentDescription = null)
+    }
+}
+
+private val TWO_DIGITS_FORMAT = DecimalFormat("00")
+private fun Int.twoDigits() = TWO_DIGITS_FORMAT.format(this)
 
 private const val SECONDS_PER_MINUTE = 60L
 private const val MINUTES_PER_HOUR = 60L
