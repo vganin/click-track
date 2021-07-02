@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.state.redux.action.ClickTrackAction
@@ -149,7 +150,10 @@ private fun TopBar(
                         ) {
                             Text(text = stringResource(id = android.R.string.cancel).uppercase())
                         }
-                    }
+                    },
+                    properties = DialogProperties(
+                        usePlatformDefaultWidth = true
+                    )
                 )
             }
         }
