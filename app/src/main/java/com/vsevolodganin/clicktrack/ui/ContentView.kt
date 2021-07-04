@@ -23,7 +23,6 @@ import com.vsevolodganin.clicktrack.state.redux.action.CloseDrawer
 import com.vsevolodganin.clicktrack.state.redux.action.OpenDrawer
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.AppUiState
-import com.vsevolodganin.clicktrack.ui.model.DrawerUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
 import com.vsevolodganin.clicktrack.ui.screen.ClickTrackListScreenView
 import com.vsevolodganin.clicktrack.ui.screen.DrawerView
@@ -45,7 +44,7 @@ fun ContentView(
 
     ClickTrackTheme {
         Scaffold(
-            scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerState, dispatch)),
+            scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerState.isOpened, dispatch)),
             drawerContent = { DrawerView(drawerState, dispatch) },
             drawerGesturesEnabled = drawerState.gesturesEnabled,
         ) {
@@ -108,15 +107,20 @@ private fun AnimationScreen(
 }
 
 @Composable
-private fun drawerState(drawerState: DrawerUiState, dispatch: Dispatch): ComposeDrawerState {
-    val drawerValue = if (drawerState.isOpened) DrawerValue.Open else DrawerValue.Closed
-    return rememberDrawerState(initialValue = drawerValue, confirmStateChange = { newDrawerValue ->
-        when (newDrawerValue) {
-            DrawerValue.Closed -> dispatch(CloseDrawer)
-            DrawerValue.Open -> dispatch(OpenDrawer)
+private fun drawerState(isOpened: Boolean, dispatch: Dispatch): ComposeDrawerState {
+    val drawerValue = if (isOpened) DrawerValue.Open else DrawerValue.Closed
+    return rememberDrawerState(
+        initialValue = drawerValue,
+        confirmStateChange = remember {
+            { newDrawerValue ->
+                when (newDrawerValue) {
+                    DrawerValue.Closed -> dispatch(CloseDrawer)
+                    DrawerValue.Open -> dispatch(OpenDrawer)
+                }
+                true
+            }
         }
-        false
-    }).apply {
+    ).apply {
         LaunchedEffect(drawerValue) {
             when (drawerValue) {
                 DrawerValue.Closed -> close()

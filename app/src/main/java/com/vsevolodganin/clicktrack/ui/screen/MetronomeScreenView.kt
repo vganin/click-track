@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BackdropScaffold
-import androidx.compose.material.BackdropScaffoldDefaults
 import androidx.compose.material.BackdropScaffoldState
 import androidx.compose.material.BackdropValue
 import androidx.compose.material.Card
@@ -23,6 +22,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -58,6 +58,7 @@ fun MetronomeScreenView(
     dispatch: Dispatch = Dispatch {},
 ) {
     BackdropScaffold(
+        scaffoldState = backdropState(state.areOptionsExpanded, dispatch),
         appBar = { AppBar(dispatch) },
         backLayerContent = {
             Options(state, dispatch)
@@ -65,10 +66,7 @@ fun MetronomeScreenView(
         frontLayerContent = {
             Content(state, dispatch)
         },
-        scaffoldState = backdropState(state, dispatch),
         modifier = modifier,
-        // FIXME(https://issuetracker.google.com/issues/190893491)
-        peekHeight = BackdropScaffoldDefaults.PeekHeight + 1.dp,
     )
 }
 
@@ -196,15 +194,20 @@ private fun Options(
 }
 
 @Composable
-private fun backdropState(screenState: MetronomeUiState, dispatch: Dispatch): BackdropScaffoldState {
-    val backdropValue = if (screenState.areOptionsExpanded) BackdropValue.Revealed else BackdropValue.Concealed
-    return rememberBackdropScaffoldState(initialValue = backdropValue, confirmStateChange = { newDrawerValue ->
-        when (newDrawerValue) {
-            BackdropValue.Concealed -> dispatch(CloseOptions)
-            BackdropValue.Revealed -> dispatch(OpenOptions)
+private fun backdropState(areOptionsExpanded: Boolean, dispatch: Dispatch): BackdropScaffoldState {
+    val backdropValue = if (areOptionsExpanded) BackdropValue.Revealed else BackdropValue.Concealed
+    return rememberBackdropScaffoldState(
+        initialValue = backdropValue,
+        confirmStateChange = remember {
+            { newDrawerValue ->
+                when (newDrawerValue) {
+                    BackdropValue.Concealed -> dispatch(CloseOptions)
+                    BackdropValue.Revealed -> dispatch(OpenOptions)
+                }
+                true
+            }
         }
-        false
-    }).apply {
+    ).apply {
         LaunchedEffect(backdropValue) {
             when (backdropValue) {
                 BackdropValue.Concealed -> conceal()
