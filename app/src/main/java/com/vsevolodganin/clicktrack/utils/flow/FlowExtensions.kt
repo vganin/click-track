@@ -7,7 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
@@ -17,7 +18,11 @@ fun <T> Flow<*>.ignoreElements(): Flow<T> {
 }
 
 fun <T, R> Flow<T>.consumeEach(action: suspend (T) -> Unit): Flow<R> {
-    return onEach(action).ignoreElements()
+    return map(action).ignoreElements()
+}
+
+fun <T, R> Flow<T>.consumeEachLatest(action: suspend (T) -> Unit): Flow<R> {
+    return mapLatest(action).ignoreElements()
 }
 
 fun <T> Flow<T>.takeUntilSignal(signal: Flow<*>): Flow<T> = flow {

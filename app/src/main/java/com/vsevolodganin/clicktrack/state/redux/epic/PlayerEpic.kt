@@ -15,15 +15,17 @@ import com.vsevolodganin.clicktrack.state.redux.core.Epic
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
-import com.vsevolodganin.clicktrack.utils.flow.ignoreElements
+import com.vsevolodganin.clicktrack.utils.flow.consumeEachLatest
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.take
 
 @ViewModelScoped
 class PlayerEpic @Inject constructor(
@@ -36,20 +38,16 @@ class PlayerEpic @Inject constructor(
 
     override fun act(actions: Flow<Action>): Flow<Action> {
         return merge(
-            actions.filterIsInstance<PlayerAction.StartPlay>()
-                .flatMapLatest { action ->
-                    clickTrackUpdates(action.id)
-                        .onEach { clickTrack ->
-                            if (clickTrack != null) {
-                                player.start(clickTrack, action.progress)
-                            } else {
-                                player.stop()
-                            }
-                        }
-                }
-                .ignoreElements(),
+            player.playbackState()
+                .map { it?.clickTrack?.id }
+                .distinctUntilChanged()
+                .consumeEachLatest(::drivePlayerViaClickTrackUpdates),
 
-            // TODO: Subscribe to click track update upon app enter too
+            actions.filterIsInstance<PlayerAction.StartPlay>()
+                .consumeEach { action ->
+                    val clickTrack = clickTrackUpdates(action.id).take(1).single() ?: return@consumeEach
+                    player.start(clickTrack, action.progress)
+                },
 
             actions.filterIsInstance<PlayerAction.StopPlay>()
                 .consumeEach {
@@ -63,17 +61,24 @@ class PlayerEpic @Inject constructor(
         )
     }
 
+    private suspend fun drivePlayerViaClickTrackUpdates(id: ClickTrackId?) {
+        id ?: return
+
+        clickTrackUpdates(id)
+            .collect { clickTrack ->
+                if (clickTrack != null) {
+                    player.start(clickTrack)
+                } else {
+                    player.stop()
+                }
+            }
+    }
+
     private fun clickTrackUpdates(id: ClickTrackId): Flow<ClickTrackWithId?> {
-        val clickTrackUpdates = when (id) {
+        return when (id) {
             ClickTrackId.Builtin.METRONOME -> metronomeClickTrackUpdates()
             is ClickTrackId.Database -> clickTrackRepository.getById(id)
         }
-
-        return clickTrackUpdates
-//            .takeUntilSignal(
-//                player.playbackState()
-//                    .filter { it == null || it.clickTrack.id != id }
-//            )
     }
 
     private fun metronomeClickTrackUpdates(): Flow<ClickTrackWithId> {
