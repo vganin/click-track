@@ -1,9 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
@@ -77,18 +73,9 @@ private fun Content(
     state: SoundLibraryUiState,
     dispatch: Dispatch,
 ) {
-    val enterTransition = remember { slideInHorizontally(initialOffsetX = { it / 2 }) }
-    val exitTransition = remember { slideOutHorizontally(targetOffsetX = { it / 2 }) }
-
     LazyColumn {
         items(items = state.items, key = SelectableClickSoundsItem::id) { item ->
-            AnimatedVisibility(
-                visibleState = remember { MutableTransitionState(initialState = false).apply { targetState = true } },
-                enter = enterTransition,
-                exit = exitTransition,
-            ) {
-                ClicksSoundsItem(item, dispatch)
-            }
+            ClicksSoundsItem(item, dispatch)
         }
 
         padWithFabSpace()

@@ -1,13 +1,8 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,25 +34,19 @@ private fun Content(
     state: SettingsUiState,
     dispatch: Dispatch,
 ) {
-    AnimatedVisibility(
-        visibleState = remember { MutableTransitionState(initialState = false).apply { targetState = true } },
-        enter = remember { fadeIn() },
-        exit = remember { fadeOut() },
-    ) {
-        Column {
-            ListChooser(
-                title = stringResource(R.string.settings_theme),
-                value = state.theme.displayValue(),
-                variants = Theme.values().map {
-                    ListChooserItem(
-                        value = it,
-                        displayValue = it.displayValue(),
-                        description = it.description()
-                    )
-                },
-                onChoose = { theme -> dispatch(SettingsAction.ChangeTheme(theme)) },
-            )
-        }
+    Column {
+        ListChooser(
+            title = stringResource(R.string.settings_theme),
+            value = state.theme.displayValue(),
+            variants = Theme.values().map {
+                ListChooserItem(
+                    value = it,
+                    displayValue = it.displayValue(),
+                    description = it.description()
+                )
+            },
+            onChoose = { theme -> dispatch(SettingsAction.ChangeTheme(theme)) },
+        )
     }
 }
 
