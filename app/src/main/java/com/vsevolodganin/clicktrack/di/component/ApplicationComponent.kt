@@ -5,6 +5,7 @@ import com.vsevolodganin.clicktrack.di.module.ApplicationScopedAndroidModule
 import com.vsevolodganin.clicktrack.di.module.ApplicationScopedCoroutineModule
 import com.vsevolodganin.clicktrack.di.module.DatabaseModule
 import com.vsevolodganin.clicktrack.di.module.SerializationModule
+import com.vsevolodganin.clicktrack.di.module.UserPreferencesModule
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -18,6 +19,7 @@ typealias ApplicationScoped = Singleton
         ApplicationScopedAndroidModule::class,
         SerializationModule::class,
         DatabaseModule::class,
+        UserPreferencesModule::class,
     ]
 )
 interface ApplicationComponent {

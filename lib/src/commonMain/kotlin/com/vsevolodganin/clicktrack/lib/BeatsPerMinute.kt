@@ -47,4 +47,4 @@ public val BeatsPerMinute.interval: Duration
         return Duration.minutes(1) / value
     }
 
-private const val MIN_BPM_VALUE = 0
+private const val MIN_BPM_VALUE = 1

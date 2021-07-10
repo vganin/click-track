@@ -12,7 +12,6 @@ import com.vsevolodganin.clicktrack.utils.flow.consumeEach
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.merge
 
@@ -27,23 +26,29 @@ class MetronomeEpic @Inject constructor(
         return merge(
             actions.filterIsInstance<MetronomeAction.SetBpm>()
                 .consumeEach { action ->
-                    userPreferencesRepository.metronomeBpm = clickTrackValidator.limitBpm(action.bpm)
+                    userPreferencesRepository.metronomeBpm.edit {
+                        clickTrackValidator.limitBpm(action.bpm)
+                    }
+                },
+
+            actions.filterIsInstance<MetronomeAction.ChangeBpm>()
+                .consumeEach { action ->
+                    userPreferencesRepository.metronomeBpm.edit { bpm ->
+                        clickTrackValidator.limitBpm(bpm.applyDiff(action.by))
+                    }
                 },
 
             actions.filterIsInstance<MetronomeAction.SetPattern>()
                 .consumeEach { action ->
-                    userPreferencesRepository.metronomePattern = action.pattern
+                    userPreferencesRepository.metronomePattern.edit {
+                        action.pattern
+                    }
                 },
 
             actions.filterIsInstance<MetronomeAction.BpmMeterTap>()
                 .mapNotNull {
                     bpmMeter.addTap()
                     bpmMeter.calculateBpm()?.let(MetronomeAction::SetBpm)
-                },
-
-            actions.filterIsInstance<MetronomeAction.ChangeBpm>()
-                .map { action ->
-                    MetronomeAction.SetBpm(userPreferencesRepository.metronomeBpm.applyDiff(action.by))
                 },
         )
     }

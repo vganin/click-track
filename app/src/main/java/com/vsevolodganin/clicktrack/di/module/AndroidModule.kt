@@ -3,7 +3,6 @@ package com.vsevolodganin.clicktrack.di.module
 import android.app.Activity
 import android.content.ContentResolver
 import android.content.Context
-import android.content.SharedPreferences
 import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
 import com.vsevolodganin.clicktrack.Application
@@ -17,9 +16,6 @@ import javax.inject.Qualifier
 
 @Qualifier
 annotation class ApplicationContext
-
-@Qualifier
-annotation class UserPreferences
 
 @Module
 abstract class ApplicationScopedAndroidModule {
@@ -35,13 +31,6 @@ abstract class ApplicationScopedAndroidModule {
         @ApplicationScoped
         fun provideAudioManager(@ApplicationContext context: Context): AudioManager {
             return context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        }
-
-        @Provides
-        @UserPreferences
-        @ApplicationScoped
-        fun provideUserPreferences(@ApplicationContext context: Context): SharedPreferences {
-            return context.getSharedPreferences("user_preferences", Context.MODE_PRIVATE)
         }
 
         @Provides

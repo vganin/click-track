@@ -26,7 +26,9 @@ class SettingsEpic @Inject constructor(
         return merge(
             actions.filterIsInstance<SettingsAction.ChangeTheme>()
                 .consumeEach { action ->
-                    userPreferencesRepository.theme = action.value
+                    userPreferencesRepository.theme.edit {
+                        action.value
+                    }
                     withContext(mainDispatcher) {
                         themeManager.setTheme(action.value)
                     }

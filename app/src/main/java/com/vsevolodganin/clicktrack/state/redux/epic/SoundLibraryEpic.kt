@@ -14,6 +14,7 @@ import com.vsevolodganin.clicktrack.utils.flow.consumeEach
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.transform
@@ -49,12 +50,14 @@ class SoundLibraryEpic @Inject constructor(
 
             actions.filterIsInstance<SoundLibraryAction.SelectClickSounds>()
                 .consumeEach { action ->
-                    userPreferences.selectedSoundsId = action.id
+                    userPreferences.selectedSoundsId.edit {
+                        action.id
+                    }
                 },
 
             actions.filterIsInstance<SoundLibraryAction.RemoveClickSounds>()
                 .transform { action ->
-                    if (action.id == userPreferences.selectedSoundsId) {
+                    if (action.id == userPreferences.selectedSoundsId.flow.first()) {
                         emit(SoundLibraryAction.SelectClickSounds(fallbackClickSoundsId()))
                     }
                 },

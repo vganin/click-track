@@ -13,7 +13,7 @@ class SettingsPresenter @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     fun uiScreens(): Flow<UiScreen.Settings> {
-        return userPreferencesRepository.themeFlow
+        return userPreferencesRepository.theme.flow
             .map { theme -> SettingsUiState(theme = theme) }
             .map(UiScreen::Settings)
     }

@@ -140,6 +140,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.4.0-alpha04' // Essential for Activity Result APIs (as per https://developer.android.com/training/basics/intents/result)
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-alpha08"
     implementation 'androidx.media:media:1.4.0-rc01'
+    implementation 'androidx.datastore:datastore-preferences:1.0.0-rc01'
 
     def lifecycleVersion = '2.4.0-alpha02'
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"

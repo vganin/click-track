@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
@@ -244,7 +245,7 @@ class PlayerImpl @Inject constructor(
     }
 
     private suspend fun selectedSounds(): ClickSounds? {
-        return when (val soundsId = userPreferencesRepository.selectedSoundsId) {
+        return when (val soundsId = userPreferencesRepository.selectedSoundsId.flow.first()) {
             is ClickSoundsId.Builtin -> soundsId.value.sounds
             is ClickSoundsId.Database -> clickSoundsRepository.getById(soundsId).firstOrNull()?.value
         }

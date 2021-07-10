@@ -26,8 +26,8 @@ class MetronomePresenter @Inject constructor(
     fun uiScreens(screens: Flow<Screen.Metronome>): Flow<UiScreen.Metronome> {
         return combine(
             screens.map { it.state },
-            userPreferencesRepository.metronomeBpmFlow,
-            userPreferencesRepository.metronomePatternFlow,
+            userPreferencesRepository.metronomeBpm.flow,
+            userPreferencesRepository.metronomePattern.flow,
             player.playbackState(),
             ::uiState,
         ).map(UiScreen::Metronome)

@@ -30,7 +30,7 @@ class SoundLibraryPresenter @Inject constructor(
 
     private fun items(): Flow<List<SelectableClickSoundsItem>> {
         return combine(
-            userPreferencesRepository.selectedSoundsIdFlow,
+            userPreferencesRepository.selectedSoundsId.flow,
             clickSoundsRepository.getAll()
         ) { selectedId, userItems ->
             mutableListOf<SelectableClickSoundsItem>().apply {

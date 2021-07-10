@@ -8,7 +8,6 @@ import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.player.Player
-import com.vsevolodganin.clicktrack.state.logic.ClickTrackValidator
 import com.vsevolodganin.clicktrack.state.redux.action.PlayerAction
 import com.vsevolodganin.clicktrack.state.redux.core.Action
 import com.vsevolodganin.clicktrack.state.redux.core.Epic
@@ -32,7 +31,6 @@ class PlayerEpic @Inject constructor(
     private val player: Player,
     private val clickTrackRepository: ClickTrackRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val clickTrackValidator: ClickTrackValidator,
     @ApplicationContext val context: Context,
 ) : Epic {
 
@@ -83,8 +81,8 @@ class PlayerEpic @Inject constructor(
 
     private fun metronomeClickTrackUpdates(): Flow<ClickTrackWithId> {
         return combine(
-            userPreferencesRepository.metronomeBpmFlow.map(clickTrackValidator::limitBpm),
-            userPreferencesRepository.metronomePatternFlow,
+            userPreferencesRepository.metronomeBpm.flow,
+            userPreferencesRepository.metronomePattern.flow,
         ) { bpm, pattern ->
             metronomeClickTrack(
                 name = context.getString(R.string.metronome),
