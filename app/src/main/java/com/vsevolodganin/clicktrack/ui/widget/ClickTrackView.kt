@@ -228,7 +228,7 @@ private fun progressLinePosition(
         }
 
     LaunchedEffect(progress) {
-        val progressTimePosition = totalDuration * progress.value
+        val progressTimePosition = totalDuration * progress.value + progress.generationTimeMark.elapsedNow()
         val progressX = progressTimePosition.toX(totalDuration, totalWidthPx)
         animatableProgressLinePosition.snapTo(progressX)
     }
