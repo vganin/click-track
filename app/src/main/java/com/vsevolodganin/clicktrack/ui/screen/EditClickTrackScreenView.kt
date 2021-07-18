@@ -138,7 +138,7 @@ private fun Content(
                     Spacer(modifier = Modifier.width(8.dp))
                     Switch(
                         checked = state.loop,
-                        onCheckedChange = { EditClickTrackAction.EditLoop(it) }
+                        onCheckedChange = { dispatch(EditClickTrackAction.EditLoop(it)) }
                     )
                 }
             }
