@@ -1,8 +1,9 @@
 package com.vsevolodganin.clicktrack.state.presenter
 
-import com.vsevolodganin.clicktrack.model.DefaultCue
+import com.vsevolodganin.clicktrack.state.redux.EditCueState
 import com.vsevolodganin.clicktrack.state.redux.Screen
 import com.vsevolodganin.clicktrack.ui.model.EditClickTrackUiState
+import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
 import dagger.Reusable
 import javax.inject.Inject
@@ -17,11 +18,26 @@ class EditClickTrackPresenter @Inject constructor() {
             .map { it.state }
             .map { state ->
                 EditClickTrackUiState(
-                    clickTrack = state.clickTrack,
-                    defaultCue = DefaultCue,
-                    hasErrorInName = state.hasErrorInName
+                    name = state.name,
+                    loop = state.loop,
+                    cues = state.cues.map { it.toUiState() },
+                    errors = state.errors,
                 )
             }
             .map(UiScreen::EditClickTrack)
     }
+
+    private fun EditCueState.toUiState() = EditCueUiState(
+        id = id,
+        name = name,
+        bpm = bpm,
+        timeSignature = timeSignature,
+        duration = when (activeDurationType) {
+            EditCueState.DurationType.BEATS -> beats
+            EditCueState.DurationType.MEASURES -> measures
+            EditCueState.DurationType.TIME -> time
+        },
+        pattern = pattern,
+        errors = errors,
+    )
 }

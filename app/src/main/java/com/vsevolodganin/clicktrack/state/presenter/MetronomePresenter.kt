@@ -3,7 +3,6 @@ package com.vsevolodganin.clicktrack.state.presenter
 import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
 import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.model.ClickTrackId
-import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.player.PlaybackState
 import com.vsevolodganin.clicktrack.player.Player
 import com.vsevolodganin.clicktrack.state.redux.MetronomeState
@@ -42,11 +41,8 @@ class MetronomePresenter @Inject constructor(
         val isPlaying = playbackState?.clickTrack?.id == ClickTrackId.Builtin.METRONOME
 
         return MetronomeUiState(
-            clickTrack = metronomeClickTrack(
-                name = "",
-                bpm = bpm,
-                pattern = pattern,
-            ),
+            bpm = bpm,
+            pattern = pattern,
             isPlaying = isPlaying,
             progress = grabIf(isPlaying) { playbackState?.progress },
             areOptionsExpanded = metronomeState.areOptionsExpanded,

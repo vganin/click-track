@@ -42,6 +42,8 @@ public fun BeatsPerMinute.applyDiff(diff: BeatsPerMinuteDiff): BeatsPerMinute =
 
 public val Int.bpm: BeatsPerMinute get() = BeatsPerMinute(this)
 
+public fun IntRange.toBpmRange(): ClosedRange<BeatsPerMinute> = start.bpm..endInclusive.bpm
+
 public val BeatsPerMinute.interval: Duration
     get() {
         return Duration.minutes(1) / value

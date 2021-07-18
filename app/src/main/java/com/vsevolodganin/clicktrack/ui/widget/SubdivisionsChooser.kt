@@ -62,15 +62,14 @@ import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.ThirtySecondQuin
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.ThirtySecondSeptuplet
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.ThirtySecondTriplet
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.Whole
-import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.NotePatternGroup
 import com.vsevolodganin.clicktrack.lib.TimeSignature
-import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 
 @Composable
 fun SubdivisionsChooser(
-    cue: Cue,
+    pattern: NotePattern,
+    timeSignature: TimeSignature,
     onSubdivisionChoose: (NotePattern) -> Unit,
     modifier: Modifier = Modifier,
     alwaysExpanded: Boolean = false,
@@ -85,9 +84,8 @@ fun SubdivisionsChooser(
     }
 
     Row(modifier) {
-        val pattern = cue.pattern
         val layoutModifier = Modifier.weight(1f)
-        val noteValue = cue.timeSignature.noteValue
+        val noteValue = timeSignature.noteValue
         val reallyExpanded = alwaysExpanded || expanded
 
         when (noteValue) {
@@ -950,14 +948,11 @@ private fun Preview() {
         .verticalScroll(rememberScrollState())
     ) {
         for (noteDuration in arrayOf(1, 2, 4, 8, 16, 32)) {
-            var cue by remember {
-                mutableStateOf(PREVIEW_CLICK_TRACK_1.value.cues[0].copy(
-                    timeSignature = TimeSignature(4, noteDuration)
-                ))
-            }
+            var pattern by remember { mutableStateOf(NotePattern.STRAIGHT_X1) }
             SubdivisionsChooser(
-                cue = cue,
-                onSubdivisionChoose = { cue = cue.copy(pattern = it) }
+                pattern = pattern,
+                timeSignature = TimeSignature(4, noteDuration),
+                onSubdivisionChoose = { pattern = it }
             )
             Spacer(modifier = Modifier.height(16.dp))
         }

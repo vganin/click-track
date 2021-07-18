@@ -47,24 +47,39 @@ fun NumberPicker(
     range: IntRange? = null,
     textStyle: TextStyle = LocalTextStyle.current,
 ) {
+    NumberPicker(
+        value = state.value,
+        onValueChange = { state.value = it },
+        modifier = modifier,
+        range = range,
+        textStyle = textStyle,
+    )
+}
+
+@Composable
+fun NumberPicker(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    range: IntRange? = null,
+    textStyle: TextStyle = LocalTextStyle.current,
+) {
     val coroutineScope = rememberCoroutineScope()
     val numbersColumnHeight = 36.dp
     val halvedNumbersColumnHeight = numbersColumnHeight / 2
     val halvedNumbersColumnHeightPx = with(LocalDensity.current) { halvedNumbersColumnHeight.toPx() }
 
-    fun animatedStateValue(offset: Float): Int = state.value - (offset / halvedNumbersColumnHeightPx).toInt()
+    fun animatedStateValue(offset: Float): Int = value - (offset / halvedNumbersColumnHeightPx).toInt()
 
-    val animatedOffset = remember { Animatable(0f) }.apply {
-        if (range != null) {
-            val offsetRange = remember(state.value, range) {
-                val value = state.value
+    val animatedOffset = remember { Animatable(0f) }
+        .apply {
+            if (range != null) {
                 val first = -(range.last - value) * halvedNumbersColumnHeightPx
                 val last = -(range.first - value) * halvedNumbersColumnHeightPx
-                first..last
+                val offsetRange = first..last
+                updateBounds(offsetRange.start, offsetRange.endInclusive)
             }
-            updateBounds(offsetRange.start, offsetRange.endInclusive)
         }
-    }
     val coercedAnimatedOffset = animatedOffset.value % halvedNumbersColumnHeightPx
     val animatedStateValue = animatedStateValue(animatedOffset.value)
 
@@ -92,7 +107,7 @@ fun NumberPicker(
                             }
                         ).endState.value
 
-                        state.value = animatedStateValue(endValue)
+                        onValueChange(animatedStateValue(endValue))
                         animatedOffset.snapTo(0f)
                     }
                 }

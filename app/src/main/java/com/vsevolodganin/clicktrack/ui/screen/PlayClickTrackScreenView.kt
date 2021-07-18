@@ -126,7 +126,7 @@ private fun TopBar(
                 }
                 val confirm: () -> Unit = remember {
                     lambda@{
-                        dispatch(ClickTrackAction.RemoveClickTrack(state.clickTrack.id))
+                        dispatch(ClickTrackAction.Remove(state.clickTrack.id))
                         dispatch(NavigationAction.Back)
                     }
                 }

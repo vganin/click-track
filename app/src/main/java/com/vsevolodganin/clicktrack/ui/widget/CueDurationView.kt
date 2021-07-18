@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,59 +32,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
+import com.vsevolodganin.clicktrack.state.redux.EditCueState
 import kotlin.time.Duration
 
 @Composable
 fun CueDurationView(
-    state: MutableState<CueDuration>,
+    value: CueDuration,
+    onValueChange: (CueDuration) -> Unit,
+    onTypeChange: (EditCueState.DurationType) -> Unit,
     modifier: Modifier = Modifier,
-    defaultBeatsDuration: () -> CueDuration.Beats = { CueDuration.Beats(4) },
-    defaultMeasuresDuration: () -> CueDuration.Measures = { CueDuration.Measures(1) },
-    defaultTimeDuration: () -> CueDuration.Time = { CueDuration.Time(Duration.minutes(1)) },
 ) {
     Row(modifier = modifier.height(IntrinsicSize.Min)) {
-        val onDurationChange: (CueDuration) -> Unit = { state.value = it }
-
-        val beatsDurationState = remember(CueDurationType.BEATS) {
-            state.value.let {
-                if (it is CueDuration.Beats) {
-                    observableMutableStateOf(it)
-                } else {
-                    observableMutableStateOf(defaultBeatsDuration())
-                }
-            }.observe(onDurationChange)
-        }
-        val measuresDurationState = remember(CueDurationType.MEASURES) {
-            state.value.let {
-                if (it is CueDuration.Measures) {
-                    observableMutableStateOf(it)
-                } else {
-                    observableMutableStateOf(defaultMeasuresDuration())
-                }
-            }.observe(onDurationChange)
-        }
-        val timeDurationState = remember(CueDurationType.TIME) {
-            state.value.let {
-                if (it is CueDuration.Time) {
-                    observableMutableStateOf(it)
-                } else {
-                    observableMutableStateOf(defaultTimeDuration())
-                }
-            }.observe(onDurationChange)
-        }
-
-        val durationTypeState = remember {
-            observableMutableStateOf(state.value.type).observe {
-                state.value = when (it) {
-                    CueDurationType.BEATS -> beatsDurationState.value
-                    CueDurationType.MEASURES -> measuresDurationState.value
-                    CueDurationType.TIME -> timeDurationState.value
-                }
-            }
-        }
-
-        DurationTypeDropdown(state = durationTypeState)
+        DurationTypeDropdown(
+            value = value.type,
+            onValueChange = onTypeChange,
+        )
 
         Spacer(modifier = Modifier.width(8.dp))
 
@@ -93,22 +54,25 @@ fun CueDurationView(
             .align(Alignment.CenterVertically)
             .fillMaxWidth()
 
-        when (durationTypeState.value) {
-            CueDurationType.BEATS -> {
+        when (value) {
+            is CueDuration.Beats -> {
                 EditBeatsView(
-                    state = beatsDurationState,
+                    value = value,
+                    onValueChange = onValueChange,
                     modifier = commonCueDurationModifier
                 )
             }
-            CueDurationType.MEASURES -> {
+            is CueDuration.Measures -> {
                 EditMeasuresView(
-                    state = measuresDurationState,
+                    value = value,
+                    onValueChange = onValueChange,
                     modifier = commonCueDurationModifier
                 )
             }
-            CueDurationType.TIME -> {
+            is CueDuration.Time -> {
                 EditTimeView(
-                    state = timeDurationState,
+                    value = value,
+                    onValueChange = onValueChange,
                     modifier = commonCueDurationModifier
                 )
             }
@@ -117,7 +81,10 @@ fun CueDurationView(
 }
 
 @Composable
-private fun DurationTypeDropdown(state: MutableState<CueDurationType>) {
+private fun DurationTypeDropdown(
+    value: EditCueState.DurationType,
+    onValueChange: (EditCueState.DurationType) -> Unit,
+) {
     val toggleState = remember { mutableStateOf(false) }
     val onToggleClick = { toggleState.value = !toggleState.value }
 
@@ -131,7 +98,7 @@ private fun DurationTypeDropdown(state: MutableState<CueDurationType>) {
             )
     ) {
         Text(
-            text = stringResource(id = state.value.displayStringResId),
+            text = stringResource(id = value.displayStringResId),
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
@@ -155,9 +122,9 @@ private fun DurationTypeDropdown(state: MutableState<CueDurationType>) {
         expanded = toggleState.value,
         onDismissRequest = { toggleState.value = false },
         content = {
-            CueDurationType.values().forEach { durationType ->
+            EditCueState.DurationType.values().forEach { durationType ->
                 DropdownMenuItem(onClick = {
-                    state.value = durationType
+                    onValueChange(durationType)
                     toggleState.value = false
                 }) {
                     Text(text = stringResource(id = durationType.displayStringResId))
@@ -169,74 +136,65 @@ private fun DurationTypeDropdown(state: MutableState<CueDurationType>) {
 
 @Composable
 private fun EditBeatsView(
-    state: MutableState<CueDuration.Beats>,
+    value: CueDuration.Beats,
+    onValueChange: (CueDuration) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val beatsNumberState: MutableState<Int> = remember {
-        observableMutableStateOf(state.value.value).observe {
-            state.value = CueDuration.Beats(it)
-        }
-    }
-
     ProvideTextStyle(MaterialTheme.typography.subtitle1) {
-        NumberInputField(beatsNumberState, modifier)
+        NumberInputField(
+            value = value.value,
+            onValueChange = { onValueChange(CueDuration.Beats(it)) },
+            modifier = modifier
+        )
     }
 }
 
 @Composable
 private fun EditMeasuresView(
-    state: MutableState<CueDuration.Measures>,
+    value: CueDuration.Measures,
+    onValueChange: (CueDuration) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val beatsNumberState: MutableState<Int> = remember {
-        observableMutableStateOf(state.value.value).observe {
-            state.value = CueDuration.Measures(it)
-        }
-    }
-
     ProvideTextStyle(MaterialTheme.typography.subtitle1) {
-        NumberInputField(beatsNumberState, modifier)
+        NumberInputField(
+            value = value.value,
+            onValueChange = { onValueChange(CueDuration.Measures(it)) },
+            modifier = modifier
+        )
     }
 }
 
 @Composable
 private fun EditTimeView(
-    state: MutableState<CueDuration.Time>,
+    value: CueDuration.Time,
+    onValueChange: (CueDuration) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val durationState: MutableState<Duration> = remember {
-        observableMutableStateOf(state.value.value).observe {
-            state.value = CueDuration.Time(it)
-        }
-    }
-
     ProvideTextStyle(MaterialTheme.typography.subtitle1) {
-        DurationPicker(durationState, modifier)
+        DurationPicker(
+            value = value.value,
+            onValueChange = { onValueChange(CueDuration.Time(it)) },
+            modifier = modifier
+        )
     }
-}
-
-private enum class CueDurationType {
-    BEATS,
-    MEASURES,
-    TIME,
 }
 
 @get:StringRes
-private val CueDurationType.displayStringResId: Int
+private val EditCueState.DurationType.displayStringResId: Int
     get() {
         return when (this) {
-            CueDurationType.BEATS -> R.string.cue_duration_beats
-            CueDurationType.MEASURES -> R.string.cue_duration_measures
-            CueDurationType.TIME -> R.string.cue_duration_time
+            EditCueState.DurationType.BEATS -> R.string.cue_duration_beats
+            EditCueState.DurationType.MEASURES -> R.string.cue_duration_measures
+            EditCueState.DurationType.TIME -> R.string.cue_duration_time
         }
     }
 
-private val CueDuration.type: CueDurationType
+private val CueDuration.type: EditCueState.DurationType
     get() {
         return when (this) {
-            is CueDuration.Beats -> CueDurationType.BEATS
-            is CueDuration.Measures -> CueDurationType.MEASURES
-            is CueDuration.Time -> CueDurationType.TIME
+            is CueDuration.Beats -> EditCueState.DurationType.BEATS
+            is CueDuration.Measures -> EditCueState.DurationType.MEASURES
+            is CueDuration.Time -> EditCueState.DurationType.TIME
         }
     }
 
@@ -244,8 +202,8 @@ private val CueDuration.type: CueDurationType
 @Composable
 private fun Preview() {
     Column {
-        CueDurationView(state = remember { mutableStateOf(CueDuration.Beats(999999)) })
-        CueDurationView(state = remember { mutableStateOf(CueDuration.Measures(999999)) })
-        CueDurationView(state = remember { mutableStateOf(CueDuration.Time(Duration.minutes(1))) })
+        CueDurationView(CueDuration.Beats(999999), {}, {})
+        CueDurationView(CueDuration.Measures(999999), {}, {})
+        CueDurationView(CueDuration.Time(Duration.minutes(1)), {}, {})
     }
 }

@@ -60,6 +60,19 @@ fun DurationPicker(
     state: MutableState<Duration>,
     modifier: Modifier = Modifier,
 ) {
+    DurationPicker(
+        value = state.value,
+        onValueChange = { state.value = it },
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun DurationPicker(
+    value: Duration,
+    onValueChange: (Duration) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     /** Converts CharSequence in format "hhmmss" to Duration */
     fun CharSequence.toDuration(): Duration {
         val hoursSequence = subSequence(0, 2)
@@ -92,15 +105,15 @@ fun DurationPicker(
         }
     }
 
-    val internalStringState = remember { mutableStateOf(state.value.asString()) }
+    val internalStringState = remember { mutableStateOf(value.asString()) }
 
-    if (internalStringState.value.toDuration() != state.value) {
-        internalStringState.value = state.value.asString()
+    if (internalStringState.value.toDuration() != value) {
+        internalStringState.value = value.asString()
     }
 
     fun updateInternalStringState(newInternalStringState: String) {
         internalStringState.value = newInternalStringState
-        state.value = newInternalStringState.toDuration()
+        onValueChange(newInternalStringState.toDuration())
     }
 
     fun enterDigit(char: Char): Boolean {
@@ -205,18 +218,20 @@ fun DurationPicker(
             style = TextStyle(textAlign = TextAlign.Center)
         )
         Spacer(Modifier.width(8.dp))
-        CloseIcon(state)
+        CloseIcon {
+            onValueChange(Duration.ZERO)
+        }
     }
 }
 
 @Composable
-private fun RowScope.CloseIcon(state: MutableState<Duration>) {
+private fun RowScope.CloseIcon(onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .align(Alignment.CenterVertically)
             .size(16.dp, 16.dp)
             .clickable(
-                onClick = { state.value = Duration.ZERO },
+                onClick = onClick,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(bounded = false)
             )

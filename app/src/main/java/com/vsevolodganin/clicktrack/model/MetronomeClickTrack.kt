@@ -19,10 +19,13 @@ fun metronomeClickTrack(
             cues = listOf(Cue(
                 bpm = bpm,
                 pattern = pattern,
-                timeSignature = TimeSignature(4, 4),
-                duration = CueDuration.Beats(4),
+                timeSignature = MetronomeTimeSignature,
+                duration = MetronomeDuration,
             )),
             loop = true,
         )
     )
 }
+
+val MetronomeTimeSignature = TimeSignature(4, 4)
+val MetronomeDuration = CueDuration.Beats(4)

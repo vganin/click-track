@@ -49,7 +49,7 @@ fun ClickTrackListScreenView(
         topBar = { TopBar(dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            ClickTrackFloatingActionButton(onClick = { dispatch(ClickTrackAction.AddNewClickTrack) }) {
+            ClickTrackFloatingActionButton(onClick = { dispatch(ClickTrackAction.AddNew) }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
@@ -93,7 +93,7 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithDatabaseI
         Card(
             modifier = Modifier
                 .swipeToRemove(constraints = constraints, onDelete = {
-                    dispatch(ClickTrackAction.RemoveClickTrack(clickTrack.id))
+                    dispatch(ClickTrackAction.Remove(clickTrack.id))
                 })
                 .padding(8.dp),
             elevation = 2.dp

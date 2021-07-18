@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 fun NumberInputField(
     state: MutableState<Int>,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
     maxDigitsCount: Int = DEFAULT_MAX_DIGITS,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
@@ -38,6 +39,7 @@ fun NumberInputField(
         value = state.value,
         onValueChange = { state.value = it },
         modifier = modifier,
+        isError = isError,
         maxDigitsCount = maxDigitsCount,
         visualTransformation = visualTransformation,
     )
@@ -48,6 +50,7 @@ fun NumberInputField(
     value: Int,
     onValueChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    isError: Boolean = false,
     maxDigitsCount: Int = DEFAULT_MAX_DIGITS,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
@@ -99,7 +102,7 @@ fun NumberInputField(
             }
         },
         modifier = modifier
-            .focusableBorder()
+            .focusableBorder(isError = isError)
             .onFocusChanged {
                 if (isFocused == it.isFocused) {
                     return@onFocusChanged

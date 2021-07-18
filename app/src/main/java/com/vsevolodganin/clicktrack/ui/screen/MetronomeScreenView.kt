@@ -35,7 +35,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.bpm
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackProgress
+import com.vsevolodganin.clicktrack.model.MetronomeTimeSignature
 import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.state.redux.action.MetronomeAction
 import com.vsevolodganin.clicktrack.state.redux.action.MetronomeAction.CloseOptions
@@ -103,8 +105,17 @@ private fun Content(
                 .constrainAs(clickTrackRef) {},
             elevation = 8.dp,
         ) {
+            val metronomeClickTrackName = stringResource(R.string.metronome)
+            val metronomeClickTrack = remember(state.bpm, state.pattern) {
+                metronomeClickTrack(
+                    name = metronomeClickTrackName,
+                    bpm = state.bpm,
+                    pattern = state.pattern,
+                ).value
+            }
+
             ClickTrackView(
-                clickTrack = state.clickTrack.value,
+                clickTrack = metronomeClickTrack,
                 drawAllBeatsMarks = true,
                 drawTextMarks = false,
                 progress = state.progress,
@@ -112,10 +123,8 @@ private fun Content(
             )
         }
 
-        val bpm = state.clickTrack.value.cues.first().bpm
-
         Text(
-            text = bpm.value.toString(),
+            text = state.bpm.value.toString(),
             style = MaterialTheme.typography.h1.copy(
                 fontWeight = FontWeight.Medium,
                 letterSpacing = 8.sp,
@@ -136,7 +145,7 @@ private fun Content(
                 }
         ) {
             BpmWheel(
-                value = bpm,
+                value = state.bpm,
                 onValueChange = { dispatch(MetronomeAction.ChangeBpm(it)) },
                 modifier = Modifier
                     .size(200.dp)
@@ -148,7 +157,7 @@ private fun Content(
                     val action = if (state.isPlaying) {
                         PlayerAction.StopPlay
                     } else {
-                        PlayerAction.StartPlay(state.clickTrack.id)
+                        PlayerAction.StartPlay(ClickTrackId.Builtin.METRONOME)
                     }
                     dispatch(action)
                 },
@@ -183,7 +192,8 @@ private fun Options(
     dispatch: Dispatch,
 ) {
     SubdivisionsChooser(
-        cue = state.clickTrack.value.cues.first(),
+        pattern = state.pattern,
+        timeSignature = MetronomeTimeSignature,
         onSubdivisionChoose = {
             dispatch(SetPattern(it))
             dispatch(CloseOptions)
@@ -222,11 +232,8 @@ private fun backdropState(areOptionsExpanded: Boolean, dispatch: Dispatch): Back
 private fun Preview() {
     MetronomeScreenView(
         MetronomeUiState(
-            clickTrack = metronomeClickTrack(
-                name = stringResource(R.string.metronome),
-                bpm = 90.bpm,
-                pattern = NotePattern.QUINTUPLET_X2,
-            ),
+            bpm = 90.bpm,
+            pattern = NotePattern.QUINTUPLET_X2,
             progress = ClickTrackProgress(0.1),
             isPlaying = false,
             areOptionsExpanded = true,

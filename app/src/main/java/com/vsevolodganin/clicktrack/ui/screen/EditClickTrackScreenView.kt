@@ -30,7 +30,13 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -45,25 +51,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.lib.ClickTrack
-import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
+import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.TimeSignature
-import com.vsevolodganin.clicktrack.lib.bpm
-import com.vsevolodganin.clicktrack.model.ClickTrackId
-import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
-import com.vsevolodganin.clicktrack.state.redux.action.ClickTrackAction
+import com.vsevolodganin.clicktrack.state.redux.EditClickTrackState
+import com.vsevolodganin.clicktrack.state.redux.EditCueState
+import com.vsevolodganin.clicktrack.state.redux.action.EditClickTrackAction
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.EditClickTrackUiState
+import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.CueView
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
-import com.vsevolodganin.clicktrack.utils.compose.ObservableMutableState
-import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 import com.vsevolodganin.clicktrack.utils.compose.offset
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
-import com.vsevolodganin.clicktrack.utils.compose.toObservableMutableStateList
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlinx.coroutines.android.awaitFrame
@@ -76,31 +78,6 @@ fun EditClickTrackScreenView(
     modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
-    val nameState = remember { observableMutableStateOf(state.clickTrack.value.name) }
-    val loopState = remember { observableMutableStateOf(state.clickTrack.value.loop) }
-    val cuesState = remember { state.clickTrack.value.cues.map(::observableMutableStateOf).toObservableMutableStateList() }
-
-    fun update() {
-        dispatch(
-            ClickTrackAction.UpdateClickTrack(
-                clickTrack = state.clickTrack.copy(
-                    value = state.clickTrack.value.copy(
-                        name = nameState.value,
-                        loop = loopState.value,
-                        cues = cuesState.map(ObservableMutableState<Cue>::value),
-                    )
-                ),
-            )
-        )
-    }
-
-    LaunchedEffect(Unit) {
-        nameState.observe { update() }
-        loopState.observe { update() }
-        cuesState.observe { update() }
-        cuesState.forEach { it.observe { update() } }
-    }
-
     val coroutineScope = rememberCoroutineScope()
     val lazyListState = rememberLazyListState()
 
@@ -109,7 +86,7 @@ fun EditClickTrackScreenView(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             ClickTrackFloatingActionButton(onClick = {
-                cuesState += observableMutableStateOf(state.defaultCue).observe { update() }
+                dispatch(EditClickTrackAction.AddNewCue)
                 coroutineScope.launch {
                     awaitFrame()
                     lazyListState.scrollToItem(lazyListState.layoutInfo.totalItemsCount - 1)
@@ -120,17 +97,15 @@ fun EditClickTrackScreenView(
         },
         modifier = modifier,
     ) {
-        Content(nameState, state.hasErrorInName, loopState, cuesState, lazyListState)
+        Content(state, lazyListState, dispatch)
     }
 }
 
 @Composable
 private fun Content(
-    nameState: MutableState<String>,
-    isErrorInName: Boolean,
-    loopState: MutableState<Boolean>,
-    cuesState: MutableList<ObservableMutableState<Cue>>,
+    state: EditClickTrackUiState,
     lazyListState: LazyListState,
+    dispatch: Dispatch,
 ) {
     var moveReorderSourceIndex by remember { mutableStateOf<Int?>(null) }
     var moveReorderTargetIndex by remember { mutableStateOf<Int?>(null) }
@@ -142,12 +117,12 @@ private fun Content(
     ) {
         stickyHeader {
             TextField(
-                value = nameState.value,
-                onValueChange = { nameState.value = it },
+                value = state.name,
+                onValueChange = { dispatch(EditClickTrackAction.EditName(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(text = stringResource(R.string.click_track_name_hint)) },
                 textStyle = MaterialTheme.typography.h6,
-                isError = isErrorInName,
+                isError = EditClickTrackState.Error.NAME in state.errors,
                 colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
             )
         }
@@ -161,14 +136,15 @@ private fun Content(
                 ) {
                     Text(text = stringResource(R.string.repeat))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Switch(checked = loopState.value, onCheckedChange = {
-                        loopState.value = !loopState.value
-                    })
+                    Switch(
+                        checked = state.loop,
+                        onCheckedChange = { EditClickTrackAction.EditLoop(it) }
+                    )
                 }
             }
         }
 
-        itemsIndexed(items = cuesState, key = { index, item -> index to item }) { index, cueState ->
+        itemsIndexed(items = state.cues, key = { index, cue -> index to cue.id }) { index, cue ->
             var zIndex by remember { mutableStateOf(0f) }
 
             BoxWithConstraints(modifier = Modifier.zIndex(zIndex)) {
@@ -214,34 +190,33 @@ private fun Content(
                 }
 
                 CueListItem(
-                    state = cueState,
-                    position = index + 1,
+                    cue = cue,
+                    index = index,
                     elevation = elevation.value,
                     modifier = Modifier
                         .swipeToRemove(
                             constraints = constraints,
-                            onDelete = {
-                                cuesState.removeAt(index)
-                            }
+                            onDelete = { dispatch(EditClickTrackAction.RemoveCue(index)) }
                         )
                         .moveReorder(
                             position = index,
-                            elementsCount = cuesState.size,
+                            elementsCount = state.cues.size,
                             padding = 8.dp,
                             onBegin = {
                                 moveReorderSourceIndex = index
                             },
-                            onMove = { targetPosition, height ->
-                                moveReorderTargetIndex = targetPosition
+                            onMove = { targetIndex, height ->
+                                moveReorderTargetIndex = targetIndex
                                 reorderHeight = height
                             },
-                            onDrop = { targetPosition ->
-                                cuesState.add(targetPosition, cuesState[index].also { cuesState.removeAt(index) })
+                            onDrop = { targetIndex ->
+                                dispatch(EditClickTrackAction.MoveCue(index, targetIndex))
                                 moveReorderSourceIndex = null
                                 moveReorderTargetIndex = null
                             }
                         )
-                        .offset(y = { offset.value.roundToInt() })
+                        .offset(y = { offset.value.roundToInt() }),
+                    dispatch = dispatch,
                 )
             }
         }
@@ -255,8 +230,8 @@ private fun Modifier.moveReorder(
     elementsCount: Int,
     padding: Dp, // FIXME: Here because of ordering issues with onSizeChangedPaddingIncluded
     onBegin: () -> Unit,
-    onMove: (targetPosition: Int, height: Float) -> Unit,
-    onDrop: (targetPosition: Int) -> Unit,
+    onMove: (targetIndex: Int, height: Float) -> Unit,
+    onDrop: (targetIndex: Int) -> Unit,
 ): Modifier = composed {
     val hapticFeedback = LocalHapticFeedback.current
 
@@ -317,16 +292,26 @@ private fun Modifier.moveReorder(
 
 @Composable
 private fun CueListItem(
-    state: MutableState<Cue>,
-    position: Int,
+    cue: EditCueUiState,
+    index: Int,
     elevation: Dp,
     modifier: Modifier,
+    dispatch: Dispatch,
 ) {
     Card(
         modifier = modifier,
         elevation = elevation
     ) {
-        CueView(state, position)
+        CueView(
+            value = cue,
+            displayPosition = index + 1,
+            onNameChange = { dispatch(EditClickTrackAction.EditCueAction.EditName(index, it)) },
+            onBpmChange = { dispatch(EditClickTrackAction.EditCueAction.EditBpm(index, it)) },
+            onTimeSignatureChange = { dispatch(EditClickTrackAction.EditCueAction.EditTimeSignature(index, it)) },
+            onDurationChange = { dispatch(EditClickTrackAction.EditCueAction.EditDuration(index, it)) },
+            onDurationTypeChange = { dispatch(EditClickTrackAction.EditCueAction.EditDurationType(index, it)) },
+            onPatternChange = { dispatch(EditClickTrackAction.EditCueAction.EditPattern(index, it)) },
+        )
     }
 }
 
@@ -335,31 +320,28 @@ private fun CueListItem(
 private fun Preview() {
     EditClickTrackScreenView(
         state = EditClickTrackUiState(
-            clickTrack = ClickTrackWithDatabaseId(
-                id = ClickTrackId.Database(0),
-                value = ClickTrack(
-                    name = "Good click track",
-                    cues = listOf(
-                        Cue(
-                            bpm = 60.bpm,
-                            timeSignature = TimeSignature(3, 4),
-                            duration = CueDuration.Beats(4),
-                        ),
-                        Cue(
-                            bpm = 120.bpm,
-                            timeSignature = TimeSignature(5, 4),
-                            duration = CueDuration.Time(Duration.minutes(1)),
-                        ),
-                    ),
-                    loop = true,
-                )
+            name = "Good click track",
+            loop = true,
+            cues = listOf(
+                EditCueUiState(
+                    name = "",
+                    bpm = 60,
+                    timeSignature = TimeSignature(3, 4),
+                    duration = CueDuration.Beats(4),
+                    pattern = NotePattern.STRAIGHT_X1,
+                    errors = emptySet(),
+                ),
+                EditCueUiState(
+                    name = "",
+                    bpm = 120,
+                    timeSignature = TimeSignature(5, 4),
+                    duration = CueDuration.Time(Duration.minutes(1)),
+                    pattern = NotePattern.QUINTUPLET_X2,
+                    errors = setOf(EditCueState.Error.BPM),
+                ),
             ),
-            defaultCue = Cue(
-                bpm = 60.bpm,
-                timeSignature = TimeSignature(4, 4),
-                duration = CueDuration.Measures(1),
-            ),
-            hasErrorInName = false,
+            errors = setOf(EditClickTrackState.Error.NAME)
         ),
+        dispatch = {},
     )
 }

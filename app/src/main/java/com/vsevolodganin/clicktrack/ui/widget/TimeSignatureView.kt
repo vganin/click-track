@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,33 +13,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.vsevolodganin.clicktrack.lib.TimeSignature
-import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
 
 @Composable
 fun TimeSignatureView(
     state: MutableState<TimeSignature>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val noteCountState = remember { observableMutableStateOf(state.value.noteCount) }
-    val noteDurationState = remember { observableMutableStateOf(state.value.noteValue) }
+    TimeSignatureView(
+        value = state.value,
+        onValueChange = { state.value = it },
+        modifier = modifier,
+    )
+}
 
-    LaunchedEffect(Unit) {
-        fun update() {
-            state.value = TimeSignature(
-                noteCount = noteCountState.value,
-                noteValue = noteDurationState.value
-            )
-        }
-        noteCountState.observe { update() }
-        noteDurationState.observe { update() }
-    }
-
+@Composable
+fun TimeSignatureView(
+    value: TimeSignature,
+    onValueChange: (TimeSignature) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Row(modifier = modifier) {
         val commonModifier = Modifier.align(Alignment.CenterVertically)
         val commonTextStyle = MaterialTheme.typography.subtitle1
         val commonNumberRange = 1..64
         NumberPicker(
-            state = noteCountState,
+            value = value.noteCount,
+            onValueChange = { onValueChange(value.copy(noteCount = it)) },
             modifier = commonModifier,
             textStyle = commonTextStyle,
             range = commonNumberRange,
@@ -51,7 +49,8 @@ fun TimeSignatureView(
             modifier = commonModifier,
         )
         NumberPicker(
-            state = noteDurationState,
+            value = value.noteValue,
+            onValueChange = { onValueChange(value.copy(noteValue = it)) },
             modifier = commonModifier,
             textStyle = commonTextStyle,
             range = commonNumberRange,

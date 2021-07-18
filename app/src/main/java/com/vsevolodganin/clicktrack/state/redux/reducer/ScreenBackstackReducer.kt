@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.state.redux.reducer
 
-import com.vsevolodganin.clicktrack.state.redux.EditClickTrackState
 import com.vsevolodganin.clicktrack.state.redux.MetronomeState
 import com.vsevolodganin.clicktrack.state.redux.PlayClickTrackState
 import com.vsevolodganin.clicktrack.state.redux.Screen
@@ -11,6 +10,7 @@ import com.vsevolodganin.clicktrack.state.redux.pop
 import com.vsevolodganin.clicktrack.state.redux.pushOrIgnore
 import com.vsevolodganin.clicktrack.state.redux.pushOrReplace
 import com.vsevolodganin.clicktrack.state.redux.replaceCurrentScreen
+import com.vsevolodganin.clicktrack.state.redux.toEditState
 
 fun ScreenBackstack.reduce(action: Action): ScreenBackstack {
     return when (action) {
@@ -46,10 +46,7 @@ private fun ScreenBackstack.reduce(action: NavigationAction): ScreenBackstack {
         })
         is NavigationAction.ToEditClickTrackScreen -> copy(screens = screens.pushOrReplace(
             Screen.EditClickTrack(
-                state = EditClickTrackState(
-                    clickTrack = action.clickTrack,
-                    hasErrorInName = false,
-                )
+                state = action.clickTrack.toEditState()
             )
         ))
         NavigationAction.ToMetronomeScreen -> copy(screens = screens.pushOrIgnore {

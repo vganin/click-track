@@ -11,10 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,49 +20,35 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.CueDuration
+import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.TimeSignature
-import com.vsevolodganin.clicktrack.lib.bpm
-import com.vsevolodganin.clicktrack.utils.compose.observableMutableStateOf
+import com.vsevolodganin.clicktrack.state.redux.EditCueState
+import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
 import kotlin.time.Duration
 
 @Composable
 fun CueView(
-    state: MutableState<Cue>,
-    position: Int,
+    value: EditCueUiState,
+    displayPosition: Int,
+    onNameChange: (String) -> Unit,
+    onBpmChange: (Int) -> Unit,
+    onTimeSignatureChange: (TimeSignature) -> Unit,
+    onDurationChange: (CueDuration) -> Unit,
+    onDurationTypeChange: (EditCueState.DurationType) -> Unit,
+    onPatternChange: (NotePattern) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val nameState = remember { observableMutableStateOf(state.value.name) }
-    val bpmState = remember { observableMutableStateOf(state.value.bpm) }
-    val timeSignatureState = remember { observableMutableStateOf(state.value.timeSignature) }
-    val durationState = remember { observableMutableStateOf(state.value.duration) }
-
-    LaunchedEffect(Unit) {
-        fun update() {
-            state.value = state.value.copy(
-                name = nameState.value,
-                bpm = bpmState.value,
-                timeSignature = timeSignatureState.value,
-                duration = durationState.value
-            )
-        }
-        nameState.observe { update() }
-        bpmState.observe { update() }
-        timeSignatureState.observe { update() }
-        durationState.observe { update() }
-    }
-
     Column(modifier = modifier.padding(8.dp)) {
         Row {
             Text(
-                text = stringResource(R.string.cue_position, position),
+                text = stringResource(R.string.cue_position, displayPosition),
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
             Spacer(modifier = Modifier.width(8.dp))
             TextField(
-                value = nameState.value.orEmpty(),
-                onValueChange = { nameState.value = it },
+                value = value.name,
+                onValueChange = onNameChange,
                 placeholder = {
                     Text(stringResource(R.string.cue_name_hint))
                 },
@@ -78,7 +60,9 @@ fun CueView(
 
         Row {
             CueDurationView(
-                state = durationState,
+                value = value.duration,
+                onValueChange = onDurationChange,
+                onTypeChange = onDurationTypeChange,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .height(IntrinsicSize.Min)
@@ -90,23 +74,21 @@ fun CueView(
 
         Row {
             TimeSignatureView(
-                state = timeSignatureState,
+                value = value.timeSignature,
+                onValueChange = onTimeSignatureChange,
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            BpmSlider(
-                state = bpmState,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .weight(1f)
-            )
+
             Spacer(modifier = Modifier.width(16.dp))
 
             val bpmSuffix = stringResource(R.string.cue_bpm_suffix)
             NumberInputField(
-                value = bpmState.value.value,
-                onValueChange = { bpmState.value = it.bpm },
-                modifier = Modifier.align(Alignment.CenterVertically),
+                value = value.bpm,
+                onValueChange = onBpmChange,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterVertically),
+                isError = EditCueState.Error.BPM in value.errors,
                 maxDigitsCount = 3,
                 visualTransformation = { inputText ->
                     TransformedText(
@@ -123,10 +105,9 @@ fun CueView(
         Spacer(modifier = Modifier.height(8.dp))
 
         SubdivisionsChooser(
-            cue = state.value,
-            onSubdivisionChoose = {
-                state.value = state.value.copy(pattern = it)
-            }
+            pattern = value.pattern,
+            timeSignature = value.timeSignature,
+            onSubdivisionChoose = onPatternChange,
         )
     }
 }
@@ -135,15 +116,20 @@ fun CueView(
 @Composable
 private fun Preview() {
     CueView(
-        state = remember {
-            mutableStateOf(
-                Cue(
-                    bpm = 999.bpm,
-                    timeSignature = TimeSignature(3, 4),
-                    duration = CueDuration.Time(Duration.minutes(1))
-                )
-            )
-        },
-        position = 1,
+        value = EditCueUiState(
+            name = "",
+            bpm = 999,
+            timeSignature = TimeSignature(3, 4),
+            duration = CueDuration.Time(Duration.minutes(1)),
+            pattern = NotePattern.STRAIGHT_X1,
+            errors = setOf(EditCueState.Error.BPM)
+        ),
+        displayPosition = 1,
+        onNameChange = {},
+        onBpmChange = {},
+        onTimeSignatureChange = {},
+        onDurationChange = {},
+        onDurationTypeChange = {},
+        onPatternChange = {},
     )
 }
