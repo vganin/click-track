@@ -4,7 +4,7 @@ buildscript {
         minSdkVersion = 21
         targetSdkVersion = 30
         kotlinVersion = '1.5.10'
-        composeVersion = '1.0.0-rc01'
+        composeVersion = '1.0.0-rc02'
         kotlinxSerializationVersion = '1.2.1'
         sqlDelightVersion = '1.5.0'
     }
