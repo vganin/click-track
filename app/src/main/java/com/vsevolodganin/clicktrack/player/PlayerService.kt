@@ -99,8 +99,8 @@ class PlayerService : Service() {
         }
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        return when (intent.action) {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return when (intent?.action) {
             ACTION_START -> {
                 val args: StartArguments = intent.getParcelableExtra(EXTRA_KEY_ARGUMENTS)
                     ?: throw RuntimeException("No start arguments were supplied")
@@ -122,7 +122,13 @@ class PlayerService : Service() {
 
                 START_STICKY
             }
-            else -> throw IllegalArgumentException("Illegal action: ${intent.action}")
+            else -> { // The service was recreated with no intent so just stop everything
+                stopPlayer()
+                stopForeground()
+                stopSelf()
+
+                START_NOT_STICKY
+            }
         }
     }
 
