@@ -20,6 +20,7 @@ import com.vsevolodganin.clicktrack.intentForLaunchAppWithClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_CHANNEL_ID
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_NOTIFICATION_ID
+import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.utils.cast
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,14 +35,15 @@ import kotlinx.parcelize.Parcelize
 
 class PlayerService : Service() {
 
-    @Parcelize
-    data class StartArguments(
-        val clickTrack: ClickTrackWithId,
-        val startAtProgress: Double?,
-    ) : Parcelable
-
     companion object {
-        fun start(context: Context, arguments: StartArguments) {
+        fun start(
+            context: Context,
+            clickTrack: ClickTrackWithId,
+            atProgress: Double?,
+            soundsId: ClickSoundsId?,
+            keepInBackground: Boolean,
+        ) {
+            val arguments = StartArguments(clickTrack, atProgress, soundsId, keepInBackground)
             val intent = serviceIntent(context).apply {
                 action = ACTION_START
                 putExtra(EXTRA_KEY_ARGUMENTS, arguments)
@@ -73,6 +75,14 @@ class PlayerService : Service() {
         private const val ACTION_START = "start"
         private const val ACTION_STOP = "stop"
         private const val ACTION_PAUSE = "pause"
+
+        @Parcelize
+        private class StartArguments(
+            val clickTrack: ClickTrackWithId,
+            val startAtProgress: Double?,
+            val soundsId: ClickSoundsId?,
+            val keepInBackground: Boolean,
+        ) : Parcelable
     }
 
     @Inject
@@ -105,8 +115,13 @@ class PlayerService : Service() {
                 val args: StartArguments = intent.getParcelableExtra(EXTRA_KEY_ARGUMENTS)
                     ?: throw RuntimeException("No start arguments were supplied")
 
-                startPlayer(args)
-                startForeground(args.clickTrack)
+                startPlayer(args.clickTrack, args.startAtProgress, args.soundsId)
+
+                if (args.keepInBackground) {
+                    startForeground(args.clickTrack)
+                } else {
+                    stopForeground()
+                }
 
                 START_STICKY
             }
@@ -139,9 +154,9 @@ class PlayerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder = PlayerServiceBinder(player.playbackState())
 
-    private fun startPlayer(args: StartArguments) {
+    private fun startPlayer(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) {
         launchUndispatched {
-            player.start(args.clickTrack, args.startAtProgress)
+            player.start(clickTrack, atProgress, soundsId)
         }
     }
 

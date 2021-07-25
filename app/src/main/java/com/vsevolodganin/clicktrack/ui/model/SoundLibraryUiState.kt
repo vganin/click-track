@@ -21,9 +21,9 @@ sealed interface SelectableClickSoundsItem {
     data class UserDefined(
         override val id: ClickSoundsId.Database,
         val strongBeatValue: String,
-        val strongBeatHasError: Boolean,
         val weakBeatValue: String,
-        val weakBeatHasError: Boolean,
+        val hasError: Boolean,
+        val isPlaying: Boolean,
         val selected: Boolean,
     ) : SelectableClickSoundsItem
 }

@@ -33,8 +33,9 @@ sealed interface SoundLibraryAction : Action {
         val id: ClickSoundsId,
     ) : SoundLibraryAction
 
-    class PlaySound(
+    class StartSoundsTest(
         val id: ClickSoundsId,
-        val type: ClickSoundType,
     ) : SoundLibraryAction
+
+    object StopSoundsTest : SoundLibraryAction
 }

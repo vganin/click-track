@@ -157,7 +157,7 @@ private fun Content(
                     val action = if (state.isPlaying) {
                         PlayerAction.StopPlay
                     } else {
-                        PlayerAction.StartPlay(ClickTrackId.Builtin.METRONOME)
+                        PlayerAction.StartPlay(ClickTrackId.Builtin.Metronome)
                     }
                     dispatch(action)
                 },

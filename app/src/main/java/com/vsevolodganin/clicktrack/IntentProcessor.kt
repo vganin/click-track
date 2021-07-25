@@ -19,7 +19,8 @@ class IntentProcessor @Inject constructor(
             Action.OPEN_CLICK_TRACK -> {
                 val navigateAction = when (val clickTrackId = requireNotNull(intent.getParcelableExtra<ClickTrackId>(Extras.CLICK_TRACK_ID))) {
                     is ClickTrackId.Database -> NavigationAction.ToClickTrackScreen(clickTrackId)
-                    ClickTrackId.Builtin.METRONOME -> NavigationAction.ToMetronomeScreen
+                    ClickTrackId.Builtin.Metronome -> NavigationAction.ToMetronomeScreen
+                    is ClickTrackId.Builtin.ClickSoundsTest -> return
                 }
                 store.dispatch(navigateAction)
             }

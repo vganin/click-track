@@ -23,8 +23,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CenterFocusStrong
 import androidx.compose.material.icons.filled.CenterFocusWeak
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +45,7 @@ import com.vsevolodganin.clicktrack.ui.model.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.ui.model.SoundLibraryUiState
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.widget.PlayStopIcon
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 
@@ -65,6 +66,12 @@ fun SoundLibraryScreenView(
         modifier = modifier,
     ) {
         Content(state, dispatch)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            dispatch(SoundLibraryAction.StopSoundsTest)
+        }
     }
 }
 
@@ -143,7 +150,8 @@ private fun UserDefinedSoundsItem(
             elevation = 2.dp
         ) {
             ConstraintLayout(modifier = Modifier.padding(8.dp)) {
-                val (selected, strongBeatIcon, weakBeatIcon, strongBeatValue, weakBeatValue, playStrongBeat, playWeakBeat) = createRefs()
+                val (selected, strongBeatIcon, weakBeatIcon, strongBeatValue, weakBeatValue, playStopError) = createRefs()
+                val valuesEnd = createEndBarrier(weakBeatValue, strongBeatValue)
 
                 // FIXME(https://issuetracker.google.com/issues/181717954): Use proper barrier
 
@@ -182,7 +190,7 @@ private fun UserDefinedSoundsItem(
                             start.linkTo(strongBeatIcon.end, 16.dp)
                             top.linkTo(parent.top)
                             bottom.linkTo(weakBeatValue.top)
-                            end.linkTo(playStrongBeat.start)
+                            end.linkTo(valuesEnd)
                             width = Dimension.fillToConstraints
                         },
                     onClick = {
@@ -202,7 +210,7 @@ private fun UserDefinedSoundsItem(
                             start.linkTo(strongBeatIcon.end, 16.dp)
                             top.linkTo(strongBeatValue.bottom, 8.dp)
                             bottom.linkTo(parent.bottom)
-                            end.linkTo(playWeakBeat.start)
+                            end.linkTo(valuesEnd)
                             width = Dimension.fillToConstraints
                         },
                     onClick = {
@@ -216,48 +224,35 @@ private fun UserDefinedSoundsItem(
                     )
                 }
 
-                PlayButtonOrError(
-                    modifier = Modifier.constrainAs(playStrongBeat) {
-                        start.linkTo(strongBeatValue.end, 16.dp)
-                        end.linkTo(parent.end)
-                        top.linkTo(strongBeatIcon.top)
-                        bottom.linkTo(strongBeatIcon.bottom)
-                    },
-                    hasError = item.strongBeatHasError,
-                    onClick = { dispatch(SoundLibraryAction.PlaySound(item.id, ClickSoundType.STRONG)) },
-                )
-
-                PlayButtonOrError(
-                    modifier = Modifier.constrainAs(playWeakBeat) {
-                        start.linkTo(weakBeatValue.end, 16.dp)
-                        end.linkTo(parent.end)
-                        top.linkTo(weakBeatIcon.top)
-                        bottom.linkTo(weakBeatIcon.bottom)
-                    },
-                    hasError = item.weakBeatHasError,
-                    onClick = { dispatch(SoundLibraryAction.PlaySound(item.id, ClickSoundType.WEAK)) }
-                )
+                val playStopErrorButtonModifier = Modifier.constrainAs(playStopError) {
+                    start.linkTo(valuesEnd, 8.dp)
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom)
+                }
+                if (item.hasError) {
+                    IconButton(
+                        enabled = false,
+                        onClick = {},
+                        modifier = playStopErrorButtonModifier
+                    ) {
+                        Icon(imageVector = Icons.Default.Error, contentDescription = null, tint = MaterialTheme.colors.error)
+                    }
+                } else {
+                    IconButton(
+                        onClick = {
+                            if (item.isPlaying) {
+                                dispatch(SoundLibraryAction.StopSoundsTest)
+                            } else {
+                                dispatch(SoundLibraryAction.StartSoundsTest(item.id))
+                            }
+                        },
+                        modifier = playStopErrorButtonModifier
+                    ) {
+                        PlayStopIcon(isPlaying = item.isPlaying)
+                    }
+                }
             }
-        }
-    }
-}
-
-@Composable
-private fun PlayButtonOrError(modifier: Modifier, hasError: Boolean, onClick: () -> Unit) {
-    if (hasError) {
-        IconButton(
-            modifier = modifier,
-            enabled = false,
-            onClick = {}
-        ) {
-            Icon(imageVector = Icons.Default.Error, contentDescription = null, tint = MaterialTheme.colors.error)
-        }
-    } else {
-        IconButton(
-            modifier = modifier,
-            onClick = onClick,
-        ) {
-            Icon(imageVector = Icons.Default.PlayCircle, contentDescription = null)
         }
     }
 }
@@ -275,9 +270,17 @@ private fun Preview() {
                 SelectableClickSoundsItem.UserDefined(
                     id = ClickSoundsId.Database(0L),
                     strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
-                    strongBeatHasError = false,
+                    weakBeatValue = "/audio/audio/audio/audio/weak.mp3",
+                    hasError = false,
+                    isPlaying = true,
+                    selected = false
+                ),
+                SelectableClickSoundsItem.UserDefined(
+                    id = ClickSoundsId.Database(1L),
+                    strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
                     weakBeatValue = "/Downloads/no_access.mp3",
-                    weakBeatHasError = true,
+                    hasError = true,
+                    isPlaying = false,
                     selected = false
                 )
             ),

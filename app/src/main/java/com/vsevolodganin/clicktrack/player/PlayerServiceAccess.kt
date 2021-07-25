@@ -8,6 +8,7 @@ import androidx.annotation.MainThread
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,8 +42,17 @@ class PlayerServiceAccess @Inject constructor(
         context.unbindService(serviceConnection)
     }
 
-    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?) {
-        PlayerService.start(context, PlayerService.StartArguments(clickTrack, atProgress))
+    fun start(
+        clickTrack: ClickTrackWithId,
+        atProgress: Double?,
+        soundsId: ClickSoundsId?,
+        keepInBackground: Boolean,
+    ) {
+        PlayerService.start(context, clickTrack, atProgress, soundsId, keepInBackground)
+    }
+
+    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) {
+        start(clickTrack, atProgress, soundsId, keepInBackground = true)
     }
 
     override suspend fun pause() {

@@ -1,5 +1,7 @@
 package com.vsevolodganin.clicktrack.state.presenter
 
+import com.vsevolodganin.clicktrack.model.ClickTrackId
+import com.vsevolodganin.clicktrack.player.Player
 import com.vsevolodganin.clicktrack.sounds.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
@@ -10,10 +12,12 @@ import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.ui.model.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.ui.model.SoundLibraryUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
+import com.vsevolodganin.clicktrack.utils.optionalCast
 import dagger.Reusable
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 @Reusable
@@ -21,6 +25,7 @@ class SoundLibraryPresenter @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val clickSoundsRepository: ClickSoundsRepository,
     private val documentMetadataHelper: DocumentMetadataHelper,
+    private val player: Player,
 ) {
     fun uiScreens(): Flow<UiScreen.SoundLibrary> {
         return items()
@@ -31,11 +36,12 @@ class SoundLibraryPresenter @Inject constructor(
     private fun items(): Flow<List<SelectableClickSoundsItem>> {
         return combine(
             userPreferencesRepository.selectedSoundsId.flow,
-            clickSoundsRepository.getAll()
-        ) { selectedId, userItems ->
+            clickSoundsRepository.getAll(),
+            player.playbackState().map { it?.clickTrack?.id }.distinctUntilChanged(),
+        ) { selectedId, userItems, playingClickTrackId ->
             mutableListOf<SelectableClickSoundsItem>().apply {
                 this += BuiltinClickSounds.values().map { it.toItem(selectedId) }
-                this += userItems.map { it.toItem(selectedId) }
+                this += userItems.map { it.toItem(selectedId, playingClickTrackId) }
             }
         }
     }
@@ -47,13 +53,13 @@ class SoundLibraryPresenter @Inject constructor(
         )
     }
 
-    private fun UserClickSounds.toItem(selectedId: ClickSoundsId): SelectableClickSoundsItem.UserDefined {
+    private fun UserClickSounds.toItem(selectedId: ClickSoundsId, playingClickTrackId: ClickTrackId?): SelectableClickSoundsItem.UserDefined {
         return SelectableClickSoundsItem.UserDefined(
             id = id,
             strongBeatValue = value.strongBeat.toText(),
-            strongBeatHasError = value.strongBeat.hasError(),
             weakBeatValue = value.weakBeat.toText(),
-            weakBeatHasError = value.weakBeat.hasError(),
+            hasError = value.strongBeat.hasError() || value.weakBeat.hasError(),
+            isPlaying = playingClickTrackId?.optionalCast<ClickTrackId.Builtin.ClickSoundsTest>()?.soundsId == id,
             selected = selectedId == id,
         )
     }

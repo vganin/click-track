@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -74,7 +75,8 @@ class PlayerEpic @Inject constructor(
 
     private fun clickTrackUpdates(id: ClickTrackId): Flow<ClickTrackWithId?> {
         return when (id) {
-            ClickTrackId.Builtin.METRONOME -> metronomeClickTrackUpdates()
+            ClickTrackId.Builtin.Metronome -> metronomeClickTrackUpdates()
+            is ClickTrackId.Builtin.ClickSoundsTest -> emptyFlow()
             is ClickTrackId.Database -> clickTrackRepository.getById(id)
         }
     }

@@ -39,7 +39,7 @@ private enum class PlayStopIconState {
 }
 
 @Composable
-private fun PlayStopIcon(isPlaying: Boolean) {
+fun PlayStopIcon(isPlaying: Boolean) {
     val transition = updateTransition(targetState = if (isPlaying) STOP else PLAY)
 
     @Composable

@@ -1,7 +1,15 @@
 package com.vsevolodganin.clicktrack.state.redux.epic
 
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
-import com.vsevolodganin.clicktrack.sounds.ClickSoundPlayer
+import com.vsevolodganin.clicktrack.lib.ClickTrack
+import com.vsevolodganin.clicktrack.lib.Cue
+import com.vsevolodganin.clicktrack.lib.NotePattern
+import com.vsevolodganin.clicktrack.lib.bpm
+import com.vsevolodganin.clicktrack.model.ClickTrackId
+import com.vsevolodganin.clicktrack.model.ClickTrackWithSpecificId
+import com.vsevolodganin.clicktrack.model.MetronomeDuration
+import com.vsevolodganin.clicktrack.model.MetronomeTimeSignature
+import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
@@ -22,7 +30,7 @@ import kotlinx.coroutines.flow.transform
 @ViewModelScoped
 class SoundLibraryEpic @Inject constructor(
     private val clickSoundsRepository: ClickSoundsRepository,
-    private val clickSoundPlayer: ClickSoundPlayer,
+    private val playerServiceAccess: PlayerServiceAccess,
     private val userPreferences: UserPreferencesRepository,
 ) : Epic {
 
@@ -62,16 +70,21 @@ class SoundLibraryEpic @Inject constructor(
                     }
                 },
 
-            actions.filterIsInstance<SoundLibraryAction.PlaySound>()
+            actions.filterIsInstance<SoundLibraryAction.StartSoundsTest>()
                 .consumeEach { action ->
-                    val sounds = when (val id = action.id) {
-                        is ClickSoundsId.Builtin -> id.value.sounds
-                        is ClickSoundsId.Database -> clickSoundsRepository.getById(id).firstOrNull()?.value
-                    } ?: return@consumeEach
-                    val source = sounds.beatByType(action.type)
+                    playerServiceAccess.start(
+                        clickTrack = soundTestClickTrack(action.id),
+                        atProgress = null,
+                        soundsId = action.id,
+                        keepInBackground = false,
+                    )
+                },
 
-                    if (source != null) {
-                        clickSoundPlayer.play(source)
+            actions.filterIsInstance<SoundLibraryAction.StopSoundsTest>()
+                .consumeEach {
+                    val currentlyPlayingId = playerServiceAccess.playbackState().firstOrNull()?.clickTrack?.id
+                    if (currentlyPlayingId is ClickTrackId.Builtin.ClickSoundsTest) {
+                        playerServiceAccess.stop()
                     }
                 }
         )
@@ -80,4 +93,18 @@ class SoundLibraryEpic @Inject constructor(
     private fun defaultNewClickSounds() = ClickSounds(null, null)
 
     private fun fallbackClickSoundsId() = ClickSoundsId.Builtin(BuiltinClickSounds.BEEP)
+
+    private fun soundTestClickTrack(soundsId: ClickSoundsId) = ClickTrackWithSpecificId(
+        id = ClickTrackId.Builtin.ClickSoundsTest(soundsId),
+        value = ClickTrack(
+            name = "",
+            cues = listOf(Cue(
+                bpm = 120.bpm,
+                pattern = NotePattern.STRAIGHT_X1,
+                timeSignature = MetronomeTimeSignature,
+                duration = MetronomeDuration,
+            )),
+            loop = true,
+        )
+    )
 }

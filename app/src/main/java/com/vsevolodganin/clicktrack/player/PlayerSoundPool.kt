@@ -17,7 +17,7 @@ import javax.inject.Inject
 import timber.log.Timber
 
 /**
- * Thread-unsafe, should be accessed from a single thread.
+ * Thread-unsafe, should be accessed from a single thread (see [com.vsevolodganin.clicktrack.di.module.PlayerDispatcher]).
  */
 @ApplicationScoped
 class PlayerSoundPool @Inject constructor(

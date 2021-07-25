@@ -38,7 +38,7 @@ class MetronomePresenter @Inject constructor(
         pattern: NotePattern,
         playbackState: PlaybackState?,
     ): MetronomeUiState {
-        val isPlaying = playbackState?.clickTrack?.id == ClickTrackId.Builtin.METRONOME
+        val isPlaying = playbackState?.clickTrack?.id == ClickTrackId.Builtin.Metronome
 
         return MetronomeUiState(
             bpm = bpm,

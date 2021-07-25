@@ -47,7 +47,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 interface Player {
-    suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null)
+    suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null, soundsId: ClickSoundsId? = null)
     suspend fun pause()
     suspend fun stop()
 
@@ -68,7 +68,11 @@ class PlayerImpl @Inject constructor(
     private var playbackState = MutableNonConflatedStateFlow<InternalPlaybackState?>(null)
     private var pausedState = MutableNonConflatedStateFlow(false)
 
-    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?): Unit = withContext(mainDispatcher) {
+    override suspend fun start(
+        clickTrack: ClickTrackWithId,
+        atProgress: Double?,
+        soundsId: ClickSoundsId?,
+    ) = withContext(mainDispatcher) {
         val currentPlayback = playbackState.value
         val progress = atProgress
             ?: grabIf(clickTrack.id == currentPlayback?.clickTrack?.id) { currentPlayback?.currentProgress() }
@@ -95,7 +99,9 @@ class PlayerImpl @Inject constructor(
                             startProgress = progress / clickTrack.value.durationInTime,
                         )
                     }
-                }
+                },
+                soundsSelector = soundsId?.let { { soundById(it) } }
+                    ?: ::userSelectedSounds
             )
 
             stop()
@@ -127,6 +133,7 @@ class PlayerImpl @Inject constructor(
     private suspend fun ClickTrack.play(
         startAt: Duration,
         reportProgress: suspend (progress: Duration) -> Unit,
+        soundsSelector: suspend () -> ClickSounds?,
     ) = coroutineScope {
         @Suppress("NAME_SHADOWING") // Because that looks better
         val startAt = if (startAt >= durationInTime) {
@@ -137,7 +144,7 @@ class PlayerImpl @Inject constructor(
 
         val schedule = cues
             .asSequence()
-            .flatMap { cue -> cue.toPlayerSchedule().withDuration(cue.durationAsTime) }
+            .flatMap { cue -> cue.toPlayerSchedule(soundsSelector).withDuration(cue.durationAsTime) }
             .reportProgress(reportProgress)
             .loop(loop)
             .run {
@@ -157,13 +164,12 @@ class PlayerImpl @Inject constructor(
         )
     }
 
-    private fun Cue.toPlayerSchedule(): PlayerSchedule {
+    private fun Cue.toPlayerSchedule(soundsSelector: suspend () -> ClickSounds?): PlayerSchedule {
         val bpmInterval = bpm.interval
         val polyrhythm = Polyrhythm(
             pattern1 = listOf(NoteEvent(timeSignature.noteCount over 1, NoteEvent.Type.NOTE)),
             pattern2 = pattern.events,
         )
-        val selectedSounds = ::selectedSounds
 
         return sequence {
             if (polyrhythm.untilFirst > Rational.ZERO) {
@@ -185,7 +191,7 @@ class PlayerImpl @Inject constructor(
                                 pausedState.filter { false }.take(1).collect()
                             }
                         },
-                        selectedSounds = selectedSounds,
+                        selectedSounds = soundsSelector,
                         soundPool = soundPool,
                     )
                 )
@@ -244,8 +250,12 @@ class PlayerImpl @Inject constructor(
         return if (loop) toRoundRobin() else this
     }
 
-    private suspend fun selectedSounds(): ClickSounds? {
-        return when (val soundsId = userPreferencesRepository.selectedSoundsId.flow.first()) {
+    private suspend fun userSelectedSounds(): ClickSounds? {
+        return soundById(userPreferencesRepository.selectedSoundsId.flow.first())
+    }
+
+    private suspend fun soundById(soundsId: ClickSoundsId): ClickSounds? {
+        return when (soundsId) {
             is ClickSoundsId.Builtin -> soundsId.value.sounds
             is ClickSoundsId.Database -> clickSoundsRepository.getById(soundsId).firstOrNull()?.value
         }
