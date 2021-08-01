@@ -12,10 +12,12 @@ import com.vsevolodganin.clicktrack.state.redux.core.Store
 import com.vsevolodganin.clicktrack.state.redux.epic.ClickTrackEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.FinishAppEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.MetronomeEpic
+import com.vsevolodganin.clicktrack.state.redux.epic.NavigationEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.PlayerEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.SettingsEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.SoundChooserEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.SoundLibraryEpic
+import com.vsevolodganin.clicktrack.state.redux.epic.TrainingEpic
 import com.vsevolodganin.clicktrack.state.redux.reducer.reduce
 import dagger.Binds
 import dagger.Module
@@ -105,6 +107,12 @@ abstract class ViewModelScopedAppStateEpicModule {
     @Binds
     @IntoSet
     @ViewModelScopedAppStateEpic
+    abstract fun bindTrainingEpic(epic: TrainingEpic): Epic
+
+    @ViewModelScoped
+    @Binds
+    @IntoSet
+    @ViewModelScopedAppStateEpic
     abstract fun bindSettingsEpic(epic: SettingsEpic): Epic
 
     @ViewModelScoped
@@ -131,4 +139,10 @@ abstract class ActivityScopedAppStateEpicModule {
     @IntoSet
     @ActivityScopedAppStateEpic
     abstract fun bindSoundChooserEpic(epic: SoundChooserEpic): Epic
+
+    @ActivityScoped
+    @Binds
+    @IntoSet
+    @ActivityScopedAppStateEpic
+    abstract fun bindNavigationEpic(epic: NavigationEpic): Epic
 }

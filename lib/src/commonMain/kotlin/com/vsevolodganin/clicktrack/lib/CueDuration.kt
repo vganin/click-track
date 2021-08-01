@@ -39,3 +39,11 @@ public sealed class CueDuration : AndroidParcelable {
         }
     }
 }
+
+public fun CueDuration.asTimeGiven(tempo: BeatsPerMinute, timeSignature: TimeSignature): Duration {
+    return when (this) {
+        is CueDuration.Time -> value
+        is CueDuration.Beats -> tempo.interval * value
+        is CueDuration.Measures -> tempo.interval * timeSignature.noteCount * value
+    }
+}

@@ -2,6 +2,7 @@ package com.vsevolodganin.clicktrack.state.redux.action
 
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
+import com.vsevolodganin.clicktrack.state.redux.TrainingState
 import com.vsevolodganin.clicktrack.state.redux.core.Action
 
 /** Special action to exit app. Treated in activity. */
@@ -23,7 +24,14 @@ sealed interface NavigationAction : Action {
 
     object ToMetronomeScreen : NavigationAction
 
+    class ToTrainingScreen(val state: TrainingState) : NavigationAction
+
     object ToSettingsScreen : NavigationAction
 
     object ToSoundLibraryScreen : NavigationAction
+}
+
+sealed interface ComputingNavigationAction : Action {
+
+    object ToTrainingScreen : ComputingNavigationAction
 }

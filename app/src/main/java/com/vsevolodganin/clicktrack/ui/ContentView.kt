@@ -31,6 +31,7 @@ import com.vsevolodganin.clicktrack.ui.screen.MetronomeScreenView
 import com.vsevolodganin.clicktrack.ui.screen.PlayClickTrackScreenView
 import com.vsevolodganin.clicktrack.ui.screen.SettingsScreenView
 import com.vsevolodganin.clicktrack.ui.screen.SoundLibraryScreenView
+import com.vsevolodganin.clicktrack.ui.screen.TrainingScreenView
 import androidx.compose.material.DrawerState as ComposeDrawerState
 
 @Composable
@@ -57,6 +58,7 @@ fun ContentView(
                     is UiScreen.Metronome -> MetronomeScreenView(targetScreen.state, modifier, dispatch)
                     is UiScreen.Settings -> SettingsScreenView(targetScreen.state, modifier, dispatch)
                     is UiScreen.SoundLibrary -> SoundLibraryScreenView(targetScreen.state, modifier, dispatch)
+                    is UiScreen.Training -> TrainingScreenView(targetScreen.state, modifier, dispatch)
                 }
             }
         }

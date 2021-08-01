@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.utils
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.material.ContentAlpha
@@ -32,7 +33,7 @@ fun Modifier.focusableBorder(isError: Boolean = false): Modifier = composed {
             }
         }
     }
-    val borderWidth = if (isFocused) 2.dp else 1.dp
+    val borderWidth by animateDpAsState(if (isFocused) 2.dp else 1.dp)
 
     this
         .onFocusChanged { focusState ->

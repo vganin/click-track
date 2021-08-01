@@ -16,3 +16,5 @@ val DefaultCue = Cue(
     timeSignature = TimeSignature(4, 4),
     duration = DefaultMeasuresDuration,
 )
+
+val DefaultTempoRange = 1.bpm..999.bpm

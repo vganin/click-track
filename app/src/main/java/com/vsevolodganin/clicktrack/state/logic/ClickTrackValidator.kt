@@ -1,15 +1,14 @@
 package com.vsevolodganin.clicktrack.state.logic
 
-import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
-import com.vsevolodganin.clicktrack.lib.bpm
-import com.vsevolodganin.clicktrack.lib.toBpmRange
 import com.vsevolodganin.clicktrack.state.redux.EditClickTrackState
 import com.vsevolodganin.clicktrack.state.redux.EditCueState
 import javax.inject.Inject
 
-class ClickTrackValidator @Inject constructor() {
+class ClickTrackValidator @Inject constructor(
+    private val bpmValidator: BpmValidator,
+) {
 
     class ClickTrackValidationResult(
         val validClickTrack: ClickTrack,
@@ -44,14 +43,16 @@ class ClickTrackValidator @Inject constructor() {
     private fun validate(editCueState: EditCueState): CueValidationResult {
         val name = editCueState.name.trim()
         val errors = mutableSetOf<EditCueState.Error>()
-        if (editCueState.bpm !in Const.BPM_INT_RANGE) {
+
+        val bpmValidationResult = bpmValidator.validate(editCueState.bpm)
+        if (bpmValidationResult.hadError) {
             errors += EditCueState.Error.BPM
         }
 
         return CueValidationResult(
             validCue = Cue(
                 name = name,
-                bpm = limitBpm(editCueState.bpm.coerceIn(Const.BPM_INT_RANGE).bpm),
+                bpm = bpmValidationResult.coercedBpm,
                 timeSignature = editCueState.timeSignature,
                 duration = when (editCueState.activeDurationType) {
                     EditCueState.DurationType.BEATS -> editCueState.beats
@@ -62,14 +63,5 @@ class ClickTrackValidator @Inject constructor() {
             ),
             errors = errors,
         )
-    }
-
-    fun limitBpm(bpm: BeatsPerMinute): BeatsPerMinute {
-        return bpm.coerceIn(Const.BPM_RANGE)
-    }
-
-    private object Const {
-        val BPM_INT_RANGE = 1..999
-        val BPM_RANGE = BPM_INT_RANGE.toBpmRange()
     }
 }

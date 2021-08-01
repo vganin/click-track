@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -39,7 +40,6 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.BackspaceCommand
 import androidx.compose.ui.text.input.CommitTextCommand
 import androidx.compose.ui.text.input.ImeAction
@@ -215,7 +215,7 @@ fun DurationPicker(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .weight(1.0f),
-            style = TextStyle(textAlign = TextAlign.Center)
+            style = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
         )
         Spacer(Modifier.width(8.dp))
         CloseIcon {

@@ -17,6 +17,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
@@ -33,6 +34,7 @@ import com.vsevolodganin.clicktrack.icons.ClickTrackIcons
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.Metronome
 import com.vsevolodganin.clicktrack.state.redux.DrawerState
 import com.vsevolodganin.clicktrack.state.redux.action.CloseDrawer
+import com.vsevolodganin.clicktrack.state.redux.action.ComputingNavigationAction
 import com.vsevolodganin.clicktrack.state.redux.action.NavigationAction
 import com.vsevolodganin.clicktrack.state.redux.core.Action
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
@@ -57,6 +59,13 @@ fun DrawerView(
                 label = stringResource(R.string.drawer_item_metronome),
                 isSelected = state.selectedItem == DrawerState.SelectedItem.METRONOME,
                 action = { dispatchClosingDrawer(NavigationAction.ToMetronomeScreen) }
+            )
+
+            DrawerButton(
+                icon = Icons.Filled.FitnessCenter,
+                label = stringResource(R.string.drawer_item_training),
+                isSelected = state.selectedItem == DrawerState.SelectedItem.TRAINING,
+                action = { dispatchClosingDrawer(ComputingNavigationAction.ToTrainingScreen) }
             )
 
             DrawerButton(

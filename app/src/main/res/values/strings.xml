@@ -21,6 +21,7 @@
     <string name="settings">Settings</string>
     <string name="bpm_meter_tap">TAP</string>
     <string name="drawer_item_metronome">Metronome</string>
+    <string name="drawer_item_training">Training</string>
     <string name="drawer_item_settings">Settings</string>
     <string name="drawer_item_sound_library">Sound Library</string>
     <string name="drawer_version">version %1$s</string>
@@ -36,4 +37,12 @@
     <string name="builtin_sounds_claves">Claves</string>
     <string name="builtin_sounds_cowbell">Cowbell</string>
     <string name="builtin_sounds_drum_kit">Drum kit</string>
+    <string name="training">Generate training track…</string>
+    <string name="training_starting_tempo">Start with</string>
+    <string name="training_tempo_change">Change by</string>
+    <string name="training_increase_every">Increase every</string>
+    <string name="training_decrease_every">Decrease every</string>
+    <string name="training_ending_max_tempo">Max. tempo</string>
+    <string name="training_ending_min_tempo">Min. tempo</string>
+    <string name="training_ending_by_time">Play for</string>
 </resources>

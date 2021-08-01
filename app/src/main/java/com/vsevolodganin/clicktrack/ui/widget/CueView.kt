@@ -14,9 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
@@ -81,24 +78,13 @@ fun CueView(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            val bpmSuffix = stringResource(R.string.cue_bpm_suffix)
-            NumberInputField(
+            BpmInputField(
                 value = value.bpm,
                 onValueChange = onBpmChange,
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.CenterVertically),
-                isError = EditCueState.Error.BPM in value.errors,
-                maxDigitsCount = 3,
-                visualTransformation = { inputText ->
-                    TransformedText(
-                        text = inputText + AnnotatedString(bpmSuffix),
-                        offsetMapping = object : OffsetMapping {
-                            override fun originalToTransformed(offset: Int): Int = offset
-                            override fun transformedToOriginal(offset: Int): Int = offset.coerceIn(0..inputText.length)
-                        }
-                    )
-                }
+                isError = EditCueState.Error.BPM in value.errors
             )
         }
 

@@ -1,30 +1,15 @@
 package com.vsevolodganin.clicktrack.ui.widget
 
-import androidx.annotation.StringRes
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideTextStyle
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -54,27 +39,29 @@ fun CueDurationView(
             .align(Alignment.CenterVertically)
             .fillMaxWidth()
 
-        when (value) {
-            is CueDuration.Beats -> {
-                EditBeatsView(
-                    value = value,
-                    onValueChange = onValueChange,
-                    modifier = commonCueDurationModifier
-                )
-            }
-            is CueDuration.Measures -> {
-                EditMeasuresView(
-                    value = value,
-                    onValueChange = onValueChange,
-                    modifier = commonCueDurationModifier
-                )
-            }
-            is CueDuration.Time -> {
-                EditTimeView(
-                    value = value,
-                    onValueChange = onValueChange,
-                    modifier = commonCueDurationModifier
-                )
+        ProvideTextStyle(MaterialTheme.typography.subtitle1) {
+            when (value) {
+                is CueDuration.Beats -> {
+                    EditBeatsView(
+                        value = value,
+                        onValueChange = onValueChange,
+                        modifier = commonCueDurationModifier
+                    )
+                }
+                is CueDuration.Measures -> {
+                    EditMeasuresView(
+                        value = value,
+                        onValueChange = onValueChange,
+                        modifier = commonCueDurationModifier
+                    )
+                }
+                is CueDuration.Time -> {
+                    EditTimeView(
+                        value = value,
+                        onValueChange = onValueChange,
+                        modifier = commonCueDurationModifier
+                    )
+                }
             }
         }
     }
@@ -85,52 +72,14 @@ private fun DurationTypeDropdown(
     value: EditCueState.DurationType,
     onValueChange: (EditCueState.DurationType) -> Unit,
 ) {
-    val toggleState = remember { mutableStateOf(false) }
-    val onToggleClick = { toggleState.value = !toggleState.value }
-
-    Row(
-        modifier = Modifier
-            .fillMaxHeight()
-            .clickable(
-                onClick = onToggleClick,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(),
-            )
-    ) {
-        Text(
-            text = stringResource(id = value.displayStringResId),
-            style = MaterialTheme.typography.subtitle1,
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .width(100.dp)
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .size(16.dp, 16.dp)
-                .clickable(
-                    onClick = onToggleClick,
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(bounded = false),
-                )
-        ) {
-            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
-        }
-    }
-
-    DropdownMenu(
-        expanded = toggleState.value,
-        onDismissRequest = { toggleState.value = false },
-        content = {
-            EditCueState.DurationType.values().forEach { durationType ->
-                DropdownMenuItem(onClick = {
-                    onValueChange(durationType)
-                    toggleState.value = false
-                }) {
-                    Text(text = stringResource(id = durationType.displayStringResId))
-                }
-            }
-        }
+    DropdownSelector(
+        items = EditCueState.DurationType.values().toList(),
+        selectedValue = value,
+        onSelect = { selectedValue ->
+            onValueChange(selectedValue)
+        },
+        toString = { it.stringResource() },
+        modifier = Modifier.width(140.dp)
     )
 }
 
@@ -140,13 +89,11 @@ private fun EditBeatsView(
     onValueChange: (CueDuration) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ProvideTextStyle(MaterialTheme.typography.subtitle1) {
-        NumberInputField(
-            value = value.value,
-            onValueChange = { onValueChange(CueDuration.Beats(it)) },
-            modifier = modifier
-        )
-    }
+    NumberInputField(
+        value = value.value,
+        onValueChange = { onValueChange(CueDuration.Beats(it)) },
+        modifier = modifier
+    )
 }
 
 @Composable
@@ -155,13 +102,11 @@ private fun EditMeasuresView(
     onValueChange: (CueDuration) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ProvideTextStyle(MaterialTheme.typography.subtitle1) {
-        NumberInputField(
-            value = value.value,
-            onValueChange = { onValueChange(CueDuration.Measures(it)) },
-            modifier = modifier
-        )
-    }
+    NumberInputField(
+        value = value.value,
+        onValueChange = { onValueChange(CueDuration.Measures(it)) },
+        modifier = modifier
+    )
 }
 
 @Composable
@@ -170,24 +115,21 @@ private fun EditTimeView(
     onValueChange: (CueDuration) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ProvideTextStyle(MaterialTheme.typography.subtitle1) {
-        DurationPicker(
-            value = value.value,
-            onValueChange = { onValueChange(CueDuration.Time(it)) },
-            modifier = modifier
-        )
-    }
+    DurationPicker(
+        value = value.value,
+        onValueChange = { onValueChange(CueDuration.Time(it)) },
+        modifier = modifier
+    )
 }
 
-@get:StringRes
-private val EditCueState.DurationType.displayStringResId: Int
-    get() {
-        return when (this) {
-            EditCueState.DurationType.BEATS -> R.string.cue_duration_beats
-            EditCueState.DurationType.MEASURES -> R.string.cue_duration_measures
-            EditCueState.DurationType.TIME -> R.string.cue_duration_time
-        }
-    }
+@Composable
+private fun EditCueState.DurationType.stringResource(): String {
+    return when (this) {
+        EditCueState.DurationType.BEATS -> R.string.cue_duration_beats
+        EditCueState.DurationType.MEASURES -> R.string.cue_duration_measures
+        EditCueState.DurationType.TIME -> R.string.cue_duration_time
+    }.let { stringResource(it) }
+}
 
 private val CueDuration.type: EditCueState.DurationType
     get() {
@@ -201,9 +143,11 @@ private val CueDuration.type: EditCueState.DurationType
 @Preview
 @Composable
 private fun Preview() {
-    Column {
-        CueDurationView(CueDuration.Beats(999999), {}, {})
-        CueDurationView(CueDuration.Measures(999999), {}, {})
-        CueDurationView(CueDuration.Time(Duration.minutes(1)), {}, {})
+    MaterialTheme {
+        Column {
+            CueDurationView(CueDuration.Beats(999999), {}, {})
+            CueDurationView(CueDuration.Measures(999999), {}, {})
+            CueDurationView(CueDuration.Time(Duration.minutes(1)), {}, {})
+        }
     }
 }

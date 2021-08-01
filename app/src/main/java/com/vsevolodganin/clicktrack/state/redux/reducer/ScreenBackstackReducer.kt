@@ -56,6 +56,11 @@ private fun ScreenBackstack.reduce(action: NavigationAction): ScreenBackstack {
                 )
             )
         })
+        is NavigationAction.ToTrainingScreen -> copy(screens = screens.pushOrIgnore {
+            Screen.Training(
+                state = action.state
+            )
+        })
         NavigationAction.ToSettingsScreen -> copy(screens = screens.pushOrReplace {
             Screen.Settings
         })

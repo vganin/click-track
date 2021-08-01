@@ -10,6 +10,8 @@ sealed interface UiScreen {
 
     data class Metronome(val state: MetronomeUiState) : UiScreen
 
+    data class Training(val state: TrainingUiState) : UiScreen
+
     data class Settings(val state: SettingsUiState) : UiScreen
 
     data class SoundLibrary(val state: SoundLibraryUiState) : UiScreen

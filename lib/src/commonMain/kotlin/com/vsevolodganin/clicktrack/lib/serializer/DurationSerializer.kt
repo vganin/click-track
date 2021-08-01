@@ -9,7 +9,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-internal object DurationSerializer : KSerializer<Duration> {
+public object DurationSerializer : KSerializer<Duration> {
 
     override val descriptor: SerialDescriptor
         get() = PrimitiveSerialDescriptor(Duration::class.simpleName!!, PrimitiveKind.DOUBLE)

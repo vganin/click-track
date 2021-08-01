@@ -10,6 +10,7 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.model.DefaultBeatsDuration
 import com.vsevolodganin.clicktrack.model.DefaultMeasuresDuration
 import com.vsevolodganin.clicktrack.model.DefaultTimeDuration
+import com.vsevolodganin.clicktrack.utils.optionalCast
 import java.util.UUID
 import kotlinx.parcelize.Parcelize
 
@@ -62,14 +63,17 @@ fun Cue.toEditState() = EditCueState(
     name = name.orEmpty(),
     bpm = bpm.value,
     timeSignature = timeSignature,
-    activeDurationType = when (duration) {
-        is CueDuration.Beats -> EditCueState.DurationType.BEATS
-        is CueDuration.Measures -> EditCueState.DurationType.MEASURES
-        is CueDuration.Time -> EditCueState.DurationType.TIME
-    },
-    beats = if (duration is CueDuration.Beats) duration as CueDuration.Beats else DefaultBeatsDuration,
-    measures = if (duration is CueDuration.Measures) duration as CueDuration.Measures else DefaultMeasuresDuration,
-    time = if (duration is CueDuration.Time) duration as CueDuration.Time else DefaultTimeDuration,
+    activeDurationType = duration.type,
+    beats = duration.optionalCast<CueDuration.Beats>() ?: DefaultBeatsDuration,
+    measures = duration.optionalCast<CueDuration.Measures>() ?: DefaultMeasuresDuration,
+    time = duration.optionalCast<CueDuration.Time>() ?: DefaultTimeDuration,
     pattern = pattern,
     errors = emptySet(),
 )
+
+val CueDuration.type: EditCueState.DurationType
+    get() = when (this) {
+        is CueDuration.Beats -> EditCueState.DurationType.BEATS
+        is CueDuration.Measures -> EditCueState.DurationType.MEASURES
+        is CueDuration.Time -> EditCueState.DurationType.TIME
+    }

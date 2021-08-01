@@ -33,6 +33,7 @@ class PresenterOrchestrator @Inject constructor(
     private val metronomePresenter: Provider<MetronomePresenter>,
     private val settingsPresenter: Provider<SettingsPresenter>,
     private val soundLibraryPresenter: Provider<SoundLibraryPresenter>,
+    private val trainingPresenter: Provider<TrainingPresenter>,
 ) {
     fun states(): Flow<AppUiState> {
         return combine(
@@ -55,9 +56,11 @@ class PresenterOrchestrator @Inject constructor(
             collect { backstack ->
                 val screen = backstack.screens.frontScreen()
                 val screenPosition = backstack.screens.frontScreenPosition()
+
                 if (activeScreenType != screen?.javaClass) {
                     activeScreenType = screen?.javaClass
                     uiScreensCollection?.cancel()
+
                     if (screen != null) {
                         uiScreensCollection = launch(context = Dispatchers.Unconfined, start = CoroutineStart.UNDISPATCHED) {
                             val uiScreens = when (screen) {
@@ -67,6 +70,7 @@ class PresenterOrchestrator @Inject constructor(
                                 is Screen.Metronome -> metronomePresenter.get().uiScreens(screenFlow.reinterpret())
                                 is Screen.Settings -> settingsPresenter.get().uiScreens()
                                 is Screen.SoundLibrary -> soundLibraryPresenter.get().uiScreens()
+                                is Screen.Training -> trainingPresenter.get().uiScreens(screenFlow.reinterpret())
                             }
 
                             uiScreens.collect { uiScreen ->

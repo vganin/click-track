@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.state.redux.epic
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.lib.applyDiff
 import com.vsevolodganin.clicktrack.meter.BpmMeter
-import com.vsevolodganin.clicktrack.state.logic.ClickTrackValidator
+import com.vsevolodganin.clicktrack.state.logic.BpmValidator
 import com.vsevolodganin.clicktrack.state.redux.action.MetronomeAction
 import com.vsevolodganin.clicktrack.state.redux.core.Action
 import com.vsevolodganin.clicktrack.state.redux.core.Epic
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.merge
 class MetronomeEpic @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val bpmMeter: BpmMeter,
-    private val clickTrackValidator: ClickTrackValidator,
+    private val bpmValidator: BpmValidator,
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {
@@ -27,14 +27,14 @@ class MetronomeEpic @Inject constructor(
             actions.filterIsInstance<MetronomeAction.SetBpm>()
                 .consumeEach { action ->
                     userPreferencesRepository.metronomeBpm.edit {
-                        clickTrackValidator.limitBpm(action.bpm)
+                        bpmValidator.validate(action.bpm).coercedBpm
                     }
                 },
 
             actions.filterIsInstance<MetronomeAction.ChangeBpm>()
                 .consumeEach { action ->
                     userPreferencesRepository.metronomeBpm.edit { bpm ->
-                        clickTrackValidator.limitBpm(bpm.applyDiff(action.by))
+                        bpmValidator.validate(bpm.applyDiff(action.by)).coercedBpm
                     }
                 },
 
