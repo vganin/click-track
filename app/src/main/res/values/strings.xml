@@ -39,10 +39,11 @@
     <string name="builtin_sounds_drum_kit">Drum kit</string>
     <string name="training">Generate training track…</string>
     <string name="training_starting_tempo">Start with</string>
-    <string name="training_tempo_change">Change by</string>
+    <string name="training_increase_by">Increase by</string>
+    <string name="training_decrease_by">Decrease by</string>
     <string name="training_increase_every">Increase every</string>
     <string name="training_decrease_every">Decrease every</string>
-    <string name="training_ending_max_tempo">Max. tempo</string>
-    <string name="training_ending_min_tempo">Min. tempo</string>
-    <string name="training_ending_by_time">Play for</string>
+    <string name="training_max_tempo">Max. tempo</string>
+    <string name="training_min_tempo">Min. tempo</string>
+    <string name="training_play_for">Play for</string>
 </resources>

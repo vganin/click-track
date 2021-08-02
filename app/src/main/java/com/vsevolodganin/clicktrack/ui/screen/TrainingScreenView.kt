@@ -124,7 +124,10 @@ private fun Content(state: TrainingUiState, dispatch: Dispatch) {
         )
 
         Text(
-            text = stringResource(R.string.training_tempo_change),
+            text = stringResource(when (state.mode) {
+                TrainingMode.INCREASE_TEMPO -> R.string.training_increase_by
+                TrainingMode.DECREASE_TEMPO -> R.string.training_decrease_by
+            }),
             modifier = Modifier
                 .constrainAs(tempoChangeLabel) {
                     start.linkTo(parent.start)
@@ -213,10 +216,10 @@ private fun TrainingMode.stringResource(): String {
 private fun TrainingState.EndingKind.stringResource(mode: TrainingMode): String {
     return stringResource(when (this) {
         TrainingState.EndingKind.BY_TEMPO -> when (mode) {
-            TrainingMode.INCREASE_TEMPO -> R.string.training_ending_max_tempo
-            TrainingMode.DECREASE_TEMPO -> R.string.training_ending_min_tempo
+            TrainingMode.INCREASE_TEMPO -> R.string.training_max_tempo
+            TrainingMode.DECREASE_TEMPO -> R.string.training_min_tempo
         }
-        TrainingState.EndingKind.BY_TIME -> R.string.training_ending_by_time
+        TrainingState.EndingKind.BY_TIME -> R.string.training_play_for
     })
 }
 
