@@ -35,7 +35,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
@@ -45,6 +44,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 interface Player {
     suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null, soundsId: ClickSoundsId? = null)
@@ -73,6 +73,12 @@ class PlayerImpl @Inject constructor(
         atProgress: Double?,
         soundsId: ClickSoundsId?,
     ) = withContext(mainDispatcher) {
+        if (clickTrack.value.durationInTime == Duration.ZERO) {
+            Timber.w("Tried to play track with zero duration, exiting")
+            stop()
+            return@withContext
+        }
+
         val currentPlayback = playbackState.value
         val progress = atProgress
             ?: grabIf(clickTrack.id == currentPlayback?.clickTrack?.id) { currentPlayback?.currentProgress() }
@@ -127,7 +133,6 @@ class PlayerImpl @Inject constructor(
                     progress = ClickTrackProgress(internalPlaybackState.currentProgress()),
                 )
             }
-            .distinctUntilChanged()
     }
 
     private suspend fun ClickTrack.play(

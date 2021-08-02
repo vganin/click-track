@@ -335,7 +335,11 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
 }
 
 private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
-    return (this / totalDuration * viewWidth).toFloat()
+    return if (totalDuration == Duration.ZERO) {
+        0f
+    } else {
+        (this / totalDuration * viewWidth).toFloat()
+    }
 }
 
 private fun Modifier.clickTrackGestures(
