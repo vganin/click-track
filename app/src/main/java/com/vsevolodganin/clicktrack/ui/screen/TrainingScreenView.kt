@@ -3,7 +3,6 @@ package com.vsevolodganin.clicktrack.ui.screen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.FabPosition
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -24,6 +23,7 @@ import com.vsevolodganin.clicktrack.state.redux.action.TrainingAction
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.TrainingUiState
 import com.vsevolodganin.clicktrack.ui.widget.BpmInputField
+import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.CueDurationView
 import com.vsevolodganin.clicktrack.ui.widget.DropdownSelector
 import com.vsevolodganin.clicktrack.ui.widget.DurationPicker
@@ -41,7 +41,7 @@ fun TrainingScreenView(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             if (state.errors.isEmpty()) {
-                FloatingActionButton(
+                ClickTrackFloatingActionButton(
                     onClick = {
                         dispatch(TrainingAction.Accept)
                     },
