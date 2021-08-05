@@ -13,7 +13,7 @@
     <string name="duration_picker_seconds">s</string>
     <string name="duration_picker_minutes">m</string>
     <string name="duration_picker_hours">h</string>
-    <string name="repeat">Repeat click track?</string>
+    <string name="repeat">Loop</string>
     <string name="notification_channel_playing_now">Playing Now</string>
     <string name="notification_stop">Stop</string>
     <string name="notification_playing_now">Playing now…</string>
