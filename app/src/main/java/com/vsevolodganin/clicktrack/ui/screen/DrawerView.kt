@@ -1,7 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,50 +44,52 @@ fun DrawerView(
     state: DrawerUiState,
     dispatch: Dispatch = Dispatch {},
 ) {
-    Box(modifier = Modifier.fillMaxHeight()) {
-        Column {
-            val dispatchClosingDrawer = { action: Action ->
-                dispatch(CloseDrawer)
-                dispatch(action)
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            DrawerButton(
-                icon = ClickTrackIcons.Metronome,
-                label = stringResource(R.string.drawer_item_metronome),
-                isSelected = state.selectedItem == DrawerState.SelectedItem.METRONOME,
-                action = { dispatchClosingDrawer(NavigationAction.ToMetronomeScreen) }
-            )
-
-            DrawerButton(
-                icon = Icons.Filled.FitnessCenter,
-                label = stringResource(R.string.drawer_item_training),
-                isSelected = state.selectedItem == DrawerState.SelectedItem.TRAINING,
-                action = { dispatchClosingDrawer(ComputingNavigationAction.ToTrainingScreen) }
-            )
-
-            DrawerButton(
-                icon = Icons.Filled.Settings,
-                label = stringResource(R.string.drawer_item_settings),
-                isSelected = state.selectedItem == DrawerState.SelectedItem.SETTINGS,
-                action = { dispatchClosingDrawer(NavigationAction.ToSettingsScreen) }
-            )
-
-            DrawerButton(
-                icon = Icons.Filled.LibraryMusic,
-                label = stringResource(R.string.drawer_item_sound_library),
-                isSelected = state.selectedItem == DrawerState.SelectedItem.SOUND_LIBRARY,
-                action = { dispatchClosingDrawer(NavigationAction.ToSoundLibraryScreen) }
-            )
-
-            DrawerButton(
-                icon = Icons.Filled.ContactSupport,
-                label = stringResource(R.string.drawer_item_about),
-                isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
-                action = { dispatchClosingDrawer(NavigationAction.ToAboutScreen) }
-            )
+    Column(modifier = Modifier.fillMaxHeight()) {
+        val dispatchClosingDrawer = { action: Action ->
+            dispatch(CloseDrawer)
+            dispatch(action)
         }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        DrawerButton(
+            icon = ClickTrackIcons.Metronome,
+            label = stringResource(R.string.drawer_item_metronome),
+            isSelected = state.selectedItem == DrawerState.SelectedItem.METRONOME,
+            action = { dispatchClosingDrawer(NavigationAction.ToMetronomeScreen) }
+        )
+
+        DrawerButton(
+            icon = Icons.Filled.FitnessCenter,
+            label = stringResource(R.string.drawer_item_training),
+            isSelected = state.selectedItem == DrawerState.SelectedItem.TRAINING,
+            action = { dispatchClosingDrawer(ComputingNavigationAction.ToTrainingScreen) }
+        )
+
+        DrawerButton(
+            icon = Icons.Filled.LibraryMusic,
+            label = stringResource(R.string.drawer_item_sound_library),
+            isSelected = state.selectedItem == DrawerState.SelectedItem.SOUND_LIBRARY,
+            action = { dispatchClosingDrawer(NavigationAction.ToSoundLibraryScreen) }
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        DrawerButton(
+            icon = Icons.Filled.Settings,
+            label = stringResource(R.string.drawer_item_settings),
+            isSelected = state.selectedItem == DrawerState.SelectedItem.SETTINGS,
+            action = { dispatchClosingDrawer(NavigationAction.ToSettingsScreen) }
+        )
+
+        DrawerButton(
+            icon = Icons.Filled.ContactSupport,
+            label = stringResource(R.string.drawer_item_about),
+            isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
+            action = { dispatchClosingDrawer(NavigationAction.ToAboutScreen) }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }
 
