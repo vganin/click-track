@@ -11,7 +11,6 @@ import android.net.Uri
 import androidx.annotation.RawRes
 import androidx.media.AudioAttributesCompat
 import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
-import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
 import javax.inject.Inject
 import timber.log.Timber
@@ -21,7 +20,7 @@ import timber.log.Timber
  */
 @ApplicationScoped
 class PlayerSoundPool @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val context: Context,
     private val audioDecoder: AudioDecoder,
     private val contentResolver: ContentResolver,
     audioManager: AudioManager,

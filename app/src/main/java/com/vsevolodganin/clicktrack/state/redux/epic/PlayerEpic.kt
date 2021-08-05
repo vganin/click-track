@@ -3,7 +3,6 @@ package com.vsevolodganin.clicktrack.state.redux.epic
 import android.content.Context
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
-import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.model.metronomeClickTrack
@@ -32,7 +31,7 @@ class PlayerEpic @Inject constructor(
     private val player: Player,
     private val clickTrackRepository: ClickTrackRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
-    @ApplicationContext val context: Context,
+    private val context: Context,
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {

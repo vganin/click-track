@@ -6,7 +6,6 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.annotation.MainThread
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
-import com.vsevolodganin.clicktrack.di.module.ApplicationContext
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import javax.inject.Inject
@@ -17,7 +16,7 @@ import kotlinx.coroutines.flow.flowOf
 
 @ViewModelScoped
 class PlayerServiceAccess @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val context: Context,
 ) : Player {
 
     private val binderState = MutableStateFlow<PlayerServiceBinder?>(null)

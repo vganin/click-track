@@ -17,13 +17,13 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContactSupport
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -81,16 +81,14 @@ fun DrawerView(
                 isSelected = state.selectedItem == DrawerState.SelectedItem.SOUND_LIBRARY,
                 action = { dispatchClosingDrawer(NavigationAction.ToSoundLibraryScreen) }
             )
-        }
 
-        Text(
-            text = stringResource(R.string.drawer_version, state.displayVersion),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(16.dp)
-                .alpha(0.7f),
-            style = MaterialTheme.typography.caption
-        )
+            DrawerButton(
+                icon = Icons.Filled.ContactSupport,
+                label = stringResource(R.string.drawer_item_about),
+                isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
+                action = { dispatchClosingDrawer(NavigationAction.ToAboutScreen) }
+            )
+        }
     }
 }
 
@@ -149,7 +147,6 @@ private fun Preview() {
                 isOpened = true,
                 gesturesEnabled = true,
                 selectedItem = DrawerState.SelectedItem.METRONOME,
-                displayVersion = "6.6.6"
             ),
             dispatch = {}
         )

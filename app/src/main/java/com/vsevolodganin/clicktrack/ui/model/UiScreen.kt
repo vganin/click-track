@@ -15,4 +15,6 @@ sealed interface UiScreen {
     data class Settings(val state: SettingsUiState) : UiScreen
 
     data class SoundLibrary(val state: SoundLibraryUiState) : UiScreen
+
+    data class About(val state: AboutUiState) : UiScreen
 }

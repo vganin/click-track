@@ -14,28 +14,24 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Qualifier
 
-@Qualifier
-annotation class ApplicationContext
-
 @Module
 abstract class ApplicationScopedAndroidModule {
 
     @Binds
-    @ApplicationContext
     @ApplicationScoped
-    abstract fun provideContext(application: Application): Context
+    abstract fun provideApplicationContext(application: Application): Context
 
     companion object {
 
         @Provides
         @ApplicationScoped
-        fun provideAudioManager(@ApplicationContext context: Context): AudioManager {
+        fun provideAudioManager(context: Context): AudioManager {
             return context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         }
 
         @Provides
         @ApplicationScoped
-        fun provideContentResolver(@ApplicationContext context: Context): ContentResolver {
+        fun provideContentResolver(context: Context): ContentResolver {
             return context.contentResolver
         }
     }

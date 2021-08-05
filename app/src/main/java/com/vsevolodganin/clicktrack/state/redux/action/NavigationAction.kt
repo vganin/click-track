@@ -29,6 +29,8 @@ sealed interface NavigationAction : Action {
     object ToSettingsScreen : NavigationAction
 
     object ToSoundLibraryScreen : NavigationAction
+
+    object ToAboutScreen : NavigationAction
 }
 
 sealed interface ComputingNavigationAction : Action {

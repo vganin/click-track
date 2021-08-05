@@ -12,7 +12,7 @@ class DatabaseModule {
 
     @Provides
     @ApplicationScoped
-    fun provideDatabase(@ApplicationContext context: Context): Database {
+    fun provideDatabase(context: Context): Database {
         return Database(
             AndroidSqliteDriver(
                 schema = Database.Schema,

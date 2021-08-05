@@ -15,7 +15,7 @@ object UserPreferencesModule {
 
     @Provides
     @ApplicationScoped
-    fun provideUserPreferences(@ApplicationContext context: Context): DataStore<Preferences> {
+    fun provideUserPreferences(context: Context): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
             migrations = listOf(SharedPreferencesMigration(context, "user_preferences")),
             produceFile = { context.preferencesDataStoreFile("user_preferences") },

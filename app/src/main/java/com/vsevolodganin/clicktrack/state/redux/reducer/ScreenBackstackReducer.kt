@@ -67,5 +67,8 @@ private fun ScreenBackstack.reduce(action: NavigationAction): ScreenBackstack {
         NavigationAction.ToSoundLibraryScreen -> copy(screens = screens.pushOrReplace {
             Screen.SoundLibrary
         })
+        NavigationAction.ToAboutScreen -> copy(screens = screens.pushOrReplace {
+            Screen.About
+        })
     }
 }

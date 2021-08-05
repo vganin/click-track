@@ -16,9 +16,13 @@ fun DrawerState.reduceDrawerState(action: Action, screens: List<Screen>): Drawer
         selectedItem = screens.frontScreen()?.let { screen ->
             when (screen) {
                 is Screen.Metronome -> DrawerState.SelectedItem.METRONOME
+                is Screen.Training -> DrawerState.SelectedItem.TRAINING
                 is Screen.Settings -> DrawerState.SelectedItem.SETTINGS
                 is Screen.SoundLibrary -> DrawerState.SelectedItem.SOUND_LIBRARY
-                else -> null
+                is Screen.About -> DrawerState.SelectedItem.ABOUT
+                Screen.ClickTrackList,
+                is Screen.EditClickTrack,
+                is Screen.PlayClickTrack -> null
             }
         },
     )

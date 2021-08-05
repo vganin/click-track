@@ -9,6 +9,7 @@ import com.vsevolodganin.clicktrack.state.redux.core.DebugMiddleware
 import com.vsevolodganin.clicktrack.state.redux.core.Epic
 import com.vsevolodganin.clicktrack.state.redux.core.EpicMiddleware
 import com.vsevolodganin.clicktrack.state.redux.core.Store
+import com.vsevolodganin.clicktrack.state.redux.epic.AboutEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.ClickTrackEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.FinishAppEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.MetronomeEpic
@@ -145,4 +146,10 @@ abstract class ActivityScopedAppStateEpicModule {
     @IntoSet
     @ActivityScopedAppStateEpic
     abstract fun bindNavigationEpic(epic: NavigationEpic): Epic
+
+    @ActivityScoped
+    @Binds
+    @IntoSet
+    @ActivityScopedAppStateEpic
+    abstract fun bindAboutEpic(epic: AboutEpic): Epic
 }

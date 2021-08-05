@@ -24,6 +24,7 @@ import com.vsevolodganin.clicktrack.state.redux.action.OpenDrawer
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.AppUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
+import com.vsevolodganin.clicktrack.ui.screen.AboutScreenView
 import com.vsevolodganin.clicktrack.ui.screen.ClickTrackListScreenView
 import com.vsevolodganin.clicktrack.ui.screen.DrawerView
 import com.vsevolodganin.clicktrack.ui.screen.EditClickTrackScreenView
@@ -59,6 +60,7 @@ fun ContentView(
                     is UiScreen.Settings -> SettingsScreenView(targetScreen.state, modifier, dispatch)
                     is UiScreen.SoundLibrary -> SoundLibraryScreenView(targetScreen.state, modifier, dispatch)
                     is UiScreen.Training -> TrainingScreenView(targetScreen.state, modifier, dispatch)
+                    is UiScreen.About -> AboutScreenView(targetScreen.state, modifier, dispatch)
                 }
             }
         }
