@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
+import com.google.accompanist.insets.ProvideWindowInsets
 import com.vsevolodganin.clicktrack.state.redux.action.CloseDrawer
 import com.vsevolodganin.clicktrack.state.redux.action.OpenDrawer
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
@@ -45,22 +46,24 @@ fun ContentView(
     val drawerState = appUiState.drawerState
 
     ClickTrackTheme {
-        Scaffold(
-            scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerState.isOpened, dispatch)),
-            drawerContent = { DrawerView(drawerState, dispatch) },
-            drawerGesturesEnabled = drawerState.gesturesEnabled,
-        ) {
-            AnimationScreen(screen, position) { targetScreen ->
-                val modifier = Modifier.fillMaxSize()
-                when (targetScreen) {
-                    is UiScreen.ClickTrackList -> ClickTrackListScreenView(targetScreen.state, modifier, dispatch)
-                    is UiScreen.PlayClickTrack -> PlayClickTrackScreenView(targetScreen.state, modifier, dispatch)
-                    is UiScreen.EditClickTrack -> EditClickTrackScreenView(targetScreen.state, modifier, dispatch)
-                    is UiScreen.Metronome -> MetronomeScreenView(targetScreen.state, modifier, dispatch)
-                    is UiScreen.Settings -> SettingsScreenView(targetScreen.state, modifier, dispatch)
-                    is UiScreen.SoundLibrary -> SoundLibraryScreenView(targetScreen.state, modifier, dispatch)
-                    is UiScreen.Training -> TrainingScreenView(targetScreen.state, modifier, dispatch)
-                    is UiScreen.About -> AboutScreenView(targetScreen.state, modifier, dispatch)
+        ProvideWindowInsets {
+            Scaffold(
+                scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerState.isOpened, dispatch)),
+                drawerContent = { DrawerView(drawerState, dispatch) },
+                drawerGesturesEnabled = drawerState.gesturesEnabled,
+            ) {
+                AnimationScreen(screen, position) { targetScreen ->
+                    val modifier = Modifier.fillMaxSize()
+                    when (targetScreen) {
+                        is UiScreen.ClickTrackList -> ClickTrackListScreenView(targetScreen.state, modifier, dispatch)
+                        is UiScreen.PlayClickTrack -> PlayClickTrackScreenView(targetScreen.state, modifier, dispatch)
+                        is UiScreen.EditClickTrack -> EditClickTrackScreenView(targetScreen.state, modifier, dispatch)
+                        is UiScreen.Metronome -> MetronomeScreenView(targetScreen.state, modifier, dispatch)
+                        is UiScreen.Settings -> SettingsScreenView(targetScreen.state, modifier, dispatch)
+                        is UiScreen.SoundLibrary -> SoundLibraryScreenView(targetScreen.state, modifier, dispatch)
+                        is UiScreen.Training -> TrainingScreenView(targetScreen.state, modifier, dispatch)
+                        is UiScreen.About -> AboutScreenView(targetScreen.state, modifier, dispatch)
+                    }
                 }
             }
         }

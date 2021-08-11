@@ -10,7 +10,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -34,6 +33,7 @@ import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.PlayClickTrackUiState
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackView
+import com.vsevolodganin.clicktrack.ui.widget.InsetsAwareTopAppBar
 import com.vsevolodganin.clicktrack.ui.widget.PlayStopButton
 
 @Composable
@@ -92,13 +92,13 @@ private fun TopBar(
     state: PlayClickTrackUiState,
     dispatch: Dispatch,
 ) {
-    TopAppBar(
+    InsetsAwareTopAppBar(
+        title = { Text(text = state.clickTrack.value.name) },
         navigationIcon = {
             IconButton(onClick = { dispatch(NavigationAction.Back) }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },
-        title = { Text(text = state.clickTrack.value.name) },
         actions = {
             var editEnabled by remember { mutableStateOf(true) }
             IconButton(
@@ -156,7 +156,7 @@ private fun TopBar(
                     )
                 )
             }
-        }
+        },
     )
 }
 

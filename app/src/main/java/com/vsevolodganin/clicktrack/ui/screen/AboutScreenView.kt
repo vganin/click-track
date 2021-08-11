@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.insets.navigationBarsPadding
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.state.redux.action.AboutAction
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
@@ -76,7 +77,7 @@ private fun Content(state: AboutUiState, dispatch: Dispatch) {
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(0.5f)
+                        .fillMaxHeight(0.4f)
                         .clip(RoundedCornerShape(8.dp))
                 )
 
@@ -128,7 +129,8 @@ private fun Content(state: AboutUiState, dispatch: Dispatch) {
             text = stringResource(R.string.drawer_version, state.displayVersion),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .alpha(ContentAlpha.medium),
+                .alpha(ContentAlpha.medium)
+                .navigationBarsPadding(),
             style = MaterialTheme.typography.caption
         )
     }

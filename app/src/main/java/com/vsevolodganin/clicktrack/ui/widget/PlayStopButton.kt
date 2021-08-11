@@ -25,10 +25,12 @@ fun PlayStopButton(
     isPlaying: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
+    enableInsets: Boolean = true,
 ) {
     ClickTrackFloatingActionButton(
         onClick = onToggle,
         modifier = modifier,
+        enableInsets = enableInsets,
     ) {
         PlayStopIcon(isPlaying)
     }

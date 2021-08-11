@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.insets.systemBarsPadding
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.icons.ClickTrackIcons
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.Metronome
@@ -44,7 +45,11 @@ fun DrawerView(
     state: DrawerUiState,
     dispatch: Dispatch = Dispatch {},
 ) {
-    Column(modifier = Modifier.fillMaxHeight()) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .systemBarsPadding()
+    ) {
         val dispatchClosingDrawer = { action: Action ->
             dispatch(CloseDrawer)
             dispatch(action)

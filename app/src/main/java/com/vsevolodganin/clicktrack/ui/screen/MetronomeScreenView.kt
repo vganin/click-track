@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BackdropScaffold
+import androidx.compose.material.BackdropScaffoldDefaults
 import androidx.compose.material.BackdropScaffoldState
 import androidx.compose.material.BackdropValue
 import androidx.compose.material.Card
@@ -15,7 +16,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Tune
@@ -32,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.navigationBarsPadding
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.bpm
@@ -50,6 +52,7 @@ import com.vsevolodganin.clicktrack.ui.model.MetronomeUiState
 import com.vsevolodganin.clicktrack.ui.widget.BpmWheel
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackView
+import com.vsevolodganin.clicktrack.ui.widget.InsetsAwareTopAppBar
 import com.vsevolodganin.clicktrack.ui.widget.PlayStopButton
 import com.vsevolodganin.clicktrack.ui.widget.SubdivisionsChooser
 
@@ -59,8 +62,11 @@ fun MetronomeScreenView(
     modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
+    val insetTop = with(LocalDensity.current) {
+        LocalWindowInsets.current.statusBars.layoutInsets.top.toDp()
+    }
+
     BackdropScaffold(
-        scaffoldState = backdropState(state.areOptionsExpanded, dispatch),
         appBar = { AppBar(dispatch) },
         backLayerContent = {
             Options(state, dispatch)
@@ -69,18 +75,20 @@ fun MetronomeScreenView(
             Content(state, dispatch)
         },
         modifier = modifier,
+        scaffoldState = backdropState(state.areOptionsExpanded, dispatch),
+        peekHeight = BackdropScaffoldDefaults.PeekHeight + insetTop,
     )
 }
 
 @Composable
 private fun AppBar(dispatch: Dispatch) {
-    TopAppBar(
+    InsetsAwareTopAppBar(
+        title = { Text(text = stringResource(R.string.metronome)) },
         navigationIcon = {
             IconButton(onClick = { dispatch(NavigationAction.Back) }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },
-        title = { Text(text = stringResource(R.string.metronome)) },
         actions = {
             IconButton(onClick = { dispatch(MetronomeAction.ToggleOptions) }) {
                 Icon(imageVector = Icons.Default.Tune, contentDescription = null)
@@ -94,7 +102,11 @@ private fun Content(
     state: MetronomeUiState,
     dispatch: Dispatch,
 ) {
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+    ) {
         val (clickTrackRef, bpmText, bpmWheel, bpmMeter) = createRefs()
 
         Card(
@@ -162,6 +174,7 @@ private fun Content(
                     dispatch(action)
                 },
                 modifier = Modifier.align(Alignment.Center),
+                enableInsets = false
             )
         }
 
@@ -173,7 +186,8 @@ private fun Content(
                     centerVerticallyTo(bpmWheel)
                     start.linkTo(bpmWheel.end)
                     end.linkTo(parent.end)
-                }
+                },
+            enableInsets = false,
         ) {
             Text(
                 text = stringResource(id = R.string.bpm_meter_tap),
@@ -236,7 +250,7 @@ private fun Preview() {
             pattern = NotePattern.QUINTUPLET_X2,
             progress = ClickTrackProgress(0.1),
             isPlaying = false,
-            areOptionsExpanded = true,
+            areOptionsExpanded = false,
         )
     )
 }

@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -14,12 +13,12 @@ import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
 
 @Composable
 fun GenericTopBarWithBack(@StringRes stringRes: Int, dispatch: Dispatch) {
-    TopAppBar(
+    InsetsAwareTopAppBar(
+        title = { Text(text = stringResource(stringRes)) },
         navigationIcon = {
             IconButton(onClick = { dispatch(NavigationAction.Back) }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },
-        title = { Text(text = stringResource(stringRes)) }
     )
 }

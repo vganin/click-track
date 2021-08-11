@@ -15,7 +15,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
@@ -36,6 +35,7 @@ import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_2
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackView
+import com.vsevolodganin.clicktrack.ui.widget.InsetsAwareTopAppBar
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 
@@ -75,14 +75,14 @@ private fun Content(
 
 @Composable
 private fun TopBar(dispatch: Dispatch) {
-    TopAppBar(
+    InsetsAwareTopAppBar(
+        title = {
+            Text(text = stringResource(id = R.string.click_track_list))
+        },
         navigationIcon = {
             IconButton(onClick = { dispatch(OpenDrawer) }) {
                 Icon(imageVector = Icons.Default.Menu, contentDescription = null)
             }
-        },
-        title = {
-            Text(text = stringResource(id = R.string.click_track_list))
         },
     )
 }
