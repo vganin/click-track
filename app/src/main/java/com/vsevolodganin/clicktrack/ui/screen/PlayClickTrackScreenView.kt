@@ -52,7 +52,7 @@ fun PlayClickTrackScreenView(
                     val action = if (state.isPlaying) {
                         PlayerAction.StopPlay
                     } else {
-                        PlayerAction.StartPlay(state.clickTrack.id, progress = 0.0)
+                        PlayerAction.StartPlayClickTrack(state.clickTrack.id, progress = 0.0)
                     }
                     dispatch(action)
                 }
@@ -80,7 +80,7 @@ private fun Content(
             progress = state.progress,
             progressDragAndDropEnabled = true,
             onProgressDragStart = { dispatch(PlayerAction.PausePlay) },
-            onProgressDrop = { progress -> dispatch(PlayerAction.StartPlay(state.clickTrack.id, progress)) },
+            onProgressDrop = { progress -> dispatch(PlayerAction.StartPlayClickTrack(state.clickTrack.id, progress)) },
             viewportPanEnabled = true,
             modifier = Modifier.fillMaxSize()
         )

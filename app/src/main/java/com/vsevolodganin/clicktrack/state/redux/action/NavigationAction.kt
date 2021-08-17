@@ -31,6 +31,8 @@ sealed interface NavigationAction : Action {
     object ToSoundLibraryScreen : NavigationAction
 
     object ToAboutScreen : NavigationAction
+
+    object ToPolyrhythms : NavigationAction
 }
 
 sealed interface ComputingNavigationAction : Action {

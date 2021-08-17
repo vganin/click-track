@@ -4,19 +4,23 @@ import android.os.SystemClock
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
+import com.vsevolodganin.clicktrack.lib.AbstractPolyrhythm
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.Cue
 import com.vsevolodganin.clicktrack.lib.NoteEvent
-import com.vsevolodganin.clicktrack.lib.Polyrhythm
+import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.lib.math.Rational
 import com.vsevolodganin.clicktrack.lib.math.ZERO
 import com.vsevolodganin.clicktrack.lib.math.compareTo
 import com.vsevolodganin.clicktrack.lib.math.over
 import com.vsevolodganin.clicktrack.lib.math.times
+import com.vsevolodganin.clicktrack.lib.math.toRational
 import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
-import com.vsevolodganin.clicktrack.model.ClickTrackProgress
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.model.PlayableId
+import com.vsevolodganin.clicktrack.model.PlayableProgress
+import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
@@ -48,6 +52,7 @@ import timber.log.Timber
 
 interface Player {
     suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null, soundsId: ClickSoundsId? = null)
+    suspend fun start(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double? = null, soundsId: ClickSoundsId? = null)
     suspend fun pause()
     suspend fun stop()
 
@@ -68,11 +73,7 @@ class PlayerImpl @Inject constructor(
     private var playbackState = MutableNonConflatedStateFlow<InternalPlaybackState?>(null)
     private var pausedState = MutableNonConflatedStateFlow(false)
 
-    override suspend fun start(
-        clickTrack: ClickTrackWithId,
-        atProgress: Double?,
-        soundsId: ClickSoundsId?,
-    ) = withContext(mainDispatcher) {
+    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) = withContext(mainDispatcher) {
         if (clickTrack.value.durationInTime == Duration.ZERO) {
             Timber.w("Tried to play track with zero duration, exiting")
             stop()
@@ -81,13 +82,14 @@ class PlayerImpl @Inject constructor(
 
         val currentPlayback = playbackState.value
         val progress = atProgress
-            ?: grabIf(clickTrack.id == currentPlayback?.clickTrack?.id) { currentPlayback?.currentProgress() }
+            ?: grabIf(clickTrack.id == currentPlayback?.id) { currentPlayback?.currentProgress() }
             ?: 0.0
         val startAt = clickTrack.value.durationInTime * progress
 
         updatePlaybackState {
             InternalPlaybackState(
-                clickTrack = clickTrack,
+                id = clickTrack.id,
+                duration = clickTrack.value.durationInTime,
                 startProgress = progress,
             )
         }
@@ -101,8 +103,49 @@ class PlayerImpl @Inject constructor(
                 reportProgress = { progress ->
                     updatePlaybackState {
                         this?.copy(
-                            clickTrack = clickTrack,
                             startProgress = progress / clickTrack.value.durationInTime,
+                        )
+                    }
+                },
+                soundsSelector = soundsId?.let { { soundById(it) } }
+                    ?: ::userSelectedSounds
+            )
+
+            stop()
+        }
+    }
+
+    override suspend fun start(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) = withContext(mainDispatcher) {
+        if (twoLayerPolyrhythm.durationInTime == Duration.ZERO) {
+            Timber.w("Tried to play polyrhythm with zero duration, exiting")
+            stop()
+            return@withContext
+        }
+
+        val currentPlayback = playbackState.value
+        val progress = atProgress
+            ?: grabIf(TwoLayerPolyrhythmId == currentPlayback?.id) { currentPlayback?.currentProgress() }
+            ?: 0.0
+        val startAt = twoLayerPolyrhythm.durationInTime * progress
+
+        updatePlaybackState {
+            InternalPlaybackState(
+                id = TwoLayerPolyrhythmId,
+                duration = twoLayerPolyrhythm.durationInTime,
+                startProgress = progress,
+            )
+        }
+
+        playerJob?.cancel()
+        playerJob = launch(playerDispatcher) {
+            pausedState.setValue(false)
+
+            twoLayerPolyrhythm.play(
+                startAt = startAt,
+                reportProgress = { progress ->
+                    updatePlaybackState {
+                        this?.copy(
+                            startProgress = progress / twoLayerPolyrhythm.durationInTime,
                         )
                     }
                 },
@@ -129,8 +172,8 @@ class PlayerImpl @Inject constructor(
             .map { internalPlaybackState ->
                 internalPlaybackState ?: return@map null
                 PlaybackState(
-                    clickTrack = internalPlaybackState.clickTrack,
-                    progress = ClickTrackProgress(internalPlaybackState.currentProgress()),
+                    id = internalPlaybackState.id,
+                    progress = PlayableProgress(internalPlaybackState.currentProgress()),
                 )
             }
     }
@@ -169,14 +212,48 @@ class PlayerImpl @Inject constructor(
         )
     }
 
+    private suspend fun TwoLayerPolyrhythm.play(
+        startAt: Duration,
+        reportProgress: suspend (progress: Duration) -> Unit,
+        soundsSelector: suspend () -> ClickSounds?,
+    ) = coroutineScope {
+        @Suppress("NAME_SHADOWING") // Because that looks better
+        val startAt = if (startAt >= durationInTime) {
+            Duration.ZERO
+        } else {
+            startAt
+        }
+
+        val schedule = toPlayerSchedule(soundsSelector)
+            .reportProgress(reportProgress)
+            .loop(true)
+            .run {
+                if (startAt > Duration.ZERO) {
+                    startingAt(startAt)
+                        .reportProgress { passed -> reportProgress(startAt + passed) }
+                } else {
+                    this@run
+                }
+            }
+
+        GenericPatternPlayer.play(
+            pattern = schedule,
+            interval = { event -> event.interval },
+            play = { event -> event.play() },
+            delayMethod = GenericPatternPlayer.DelayMethod.THREAD_SLEEP
+        )
+    }
+
     private fun Cue.toPlayerSchedule(soundsSelector: suspend () -> ClickSounds?): PlayerSchedule {
-        val bpmInterval = bpm.interval
-        val polyrhythm = Polyrhythm(
-            pattern1 = listOf(NoteEvent(timeSignature.noteCount over 1, NoteEvent.Type.NOTE)),
+        val tempo = bpm
+        val polyrhythm = AbstractPolyrhythm(
+            pattern1 = listOf(NoteEvent(timeSignature.noteCount.toRational(), NoteEvent.Type.NOTE)),
             pattern2 = pattern.events,
         )
 
         return sequence {
+            val bpmInterval = tempo.interval
+
             if (polyrhythm.untilFirst > Rational.ZERO) {
                 yield(DelayEvent(bpmInterval * polyrhythm.untilFirst))
             }
@@ -200,6 +277,51 @@ class PlayerImpl @Inject constructor(
                         soundPool = soundPool,
                     )
                 )
+            }
+        }
+    }
+
+    private fun TwoLayerPolyrhythm.toPlayerSchedule(soundsSelector: suspend () -> ClickSounds?): PlayerSchedule {
+        val tempo = bpm
+        val layer1NoteLength = 1.toRational()
+        val layer2NoteLength = layer1 over layer2
+        val polyrhythm = AbstractPolyrhythm(
+            pattern1 = List(layer1) { NoteEvent(layer1NoteLength, NoteEvent.Type.NOTE) },
+            pattern2 = List(layer2) { NoteEvent(layer2NoteLength, NoteEvent.Type.NOTE) }
+        )
+
+        return sequence {
+            val bpmInterval = tempo.interval
+
+            if (polyrhythm.untilFirst > Rational.ZERO) {
+                yield(DelayEvent(bpmInterval * polyrhythm.untilFirst))
+            }
+
+            for (column in polyrhythm.columns) {
+                val soundTypes = column.indices.map { index ->
+                    when (index) {
+                        0 -> ClickSoundType.STRONG
+                        else -> ClickSoundType.WEAK
+                    }
+                }
+
+                for (soundType in soundTypes) {
+                    yield(
+                        SoundEvent(
+                            type = soundType,
+                            duration = Duration.ZERO,
+                            waitResume = {
+                                if (pausedState.value) {
+                                    pausedState.filter { false }.take(1).collect()
+                                }
+                            },
+                            selectedSounds = soundsSelector,
+                            soundPool = soundPool,
+                        )
+                    )
+                }
+
+                yield(DelayEvent(duration = bpmInterval * column.untilNext))
             }
         }
     }
@@ -267,14 +389,15 @@ class PlayerImpl @Inject constructor(
     }
 
     private data class InternalPlaybackState(
-        val clickTrack: ClickTrackWithId,
+        val id: PlayableId,
+        val duration: Duration,
         val startProgress: Double,
     ) {
         val startedAt: TimeMark = TimeSource.Monotonic.markNow()
 
         fun currentProgress(): Double {
             val elapsedSinceStart = startedAt.elapsedNow()
-            return startProgress + elapsedSinceStart / clickTrack.value.durationInTime
+            return startProgress + elapsedSinceStart / duration
         }
     }
 

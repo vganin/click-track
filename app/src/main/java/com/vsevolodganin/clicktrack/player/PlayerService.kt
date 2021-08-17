@@ -14,9 +14,10 @@ import androidx.core.app.NotificationCompat.FLAG_FOREGROUND_SERVICE
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
 import com.vsevolodganin.clicktrack.Application
+import com.vsevolodganin.clicktrack.IntentFactory
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
-import com.vsevolodganin.clicktrack.intentForLaunchAppWithClickTrack
+import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_CHANNEL_ID
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_NOTIFICATION_ID
@@ -43,10 +44,24 @@ class PlayerService : Service() {
             soundsId: ClickSoundsId?,
             keepInBackground: Boolean,
         ) {
-            val arguments = StartArguments(clickTrack, atProgress, soundsId, keepInBackground)
+            val arguments = StartClickTrackArguments(clickTrack, atProgress, soundsId, keepInBackground)
             val intent = serviceIntent(context).apply {
-                action = ACTION_START
-                putExtra(EXTRA_KEY_ARGUMENTS, arguments)
+                action = ACTION_START_CLICK_TRACK
+                putExtra(EXTRA_START_CLICK_TRACK_ARGUMENTS, arguments)
+            }
+            context.startService(intent)
+        }
+
+        fun start(
+            context: Context,
+            twoLayerPolyrhythm: TwoLayerPolyrhythm,
+            atProgress: Double?,
+            soundsId: ClickSoundsId?,
+        ) {
+            val arguments = StartPolyrhythmArguments(twoLayerPolyrhythm, atProgress, soundsId)
+            val intent = serviceIntent(context).apply {
+                action = ACTION_START_POLYRHYTHM
+                putExtra(EXTRA_START_POLYRHYTHM_ARGUMENTS, arguments)
             }
             context.startService(intent)
         }
@@ -71,17 +86,26 @@ class PlayerService : Service() {
 
         private fun serviceIntent(context: Context): Intent = Intent(context, PlayerService::class.java)
 
-        private const val EXTRA_KEY_ARGUMENTS = "arguments"
-        private const val ACTION_START = "start"
+        private const val EXTRA_START_CLICK_TRACK_ARGUMENTS = "start_click_track_arguments"
+        private const val EXTRA_START_POLYRHYTHM_ARGUMENTS = "start_polyrhythm_arguments"
+        private const val ACTION_START_CLICK_TRACK = "start_click_track"
+        private const val ACTION_START_POLYRHYTHM = "start_polyrhythm"
         private const val ACTION_STOP = "stop"
         private const val ACTION_PAUSE = "pause"
 
         @Parcelize
-        private class StartArguments(
+        private class StartClickTrackArguments(
             val clickTrack: ClickTrackWithId,
             val startAtProgress: Double?,
             val soundsId: ClickSoundsId?,
             val keepInBackground: Boolean,
+        ) : Parcelable
+
+        @Parcelize
+        private class StartPolyrhythmArguments(
+            val twoLayerPolyrhythm: TwoLayerPolyrhythm,
+            val startAtProgress: Double?,
+            val soundsId: ClickSoundsId?,
         ) : Parcelable
     }
 
@@ -91,6 +115,9 @@ class PlayerService : Service() {
     @Inject
     @MainDispatcher
     lateinit var mainDispatcher: CoroutineDispatcher
+
+    @Inject
+    lateinit var intentFactory: IntentFactory
 
     private var isNotificationDisplayed = false
 
@@ -111,17 +138,37 @@ class PlayerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return when (intent?.action) {
-            ACTION_START -> {
-                val args: StartArguments = intent.getParcelableExtra(EXTRA_KEY_ARGUMENTS)
+            ACTION_START_CLICK_TRACK -> {
+                val args: StartClickTrackArguments = intent.getParcelableExtra(EXTRA_START_CLICK_TRACK_ARGUMENTS)
                     ?: throw RuntimeException("No start arguments were supplied")
 
-                startPlayer(args.clickTrack, args.startAtProgress, args.soundsId)
+                val clickTrack = args.clickTrack
+
+                startPlayer(clickTrack, args.startAtProgress, args.soundsId)
 
                 if (args.keepInBackground) {
-                    startForeground(args.clickTrack)
+                    startForeground(
+                        contentText = clickTrack.value.name,
+                        tapIntent = intentFactory.openClickTrack(clickTrack)
+                    )
                 } else {
                     stopForeground()
                 }
+
+                START_STICKY
+            }
+            ACTION_START_POLYRHYTHM -> {
+                val args: StartPolyrhythmArguments = intent.getParcelableExtra(EXTRA_START_POLYRHYTHM_ARGUMENTS)
+                    ?: throw RuntimeException("No start arguments were supplied")
+
+                val polyrhythm = args.twoLayerPolyrhythm
+
+                startPlayer(polyrhythm, args.startAtProgress, args.soundsId)
+
+                startForeground(
+                    contentText = getString(R.string.polyrhythm_notification_title, polyrhythm.layer1, polyrhythm.layer2),
+                    tapIntent = intentFactory.openPolyrhythms()
+                )
 
                 START_STICKY
             }
@@ -160,6 +207,12 @@ class PlayerService : Service() {
         }
     }
 
+    private fun startPlayer(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) {
+        launchUndispatched {
+            player.start(twoLayerPolyrhythm, atProgress, soundsId)
+        }
+    }
+
     private fun pausePlayer() {
         launchUndispatched {
             player.pause()
@@ -172,7 +225,7 @@ class PlayerService : Service() {
         }
     }
 
-    private fun startForeground(clickTrack: ClickTrackWithId) {
+    private fun startForeground(contentText: String, tapIntent: Intent) {
         val channel = NotificationChannelCompat.Builder(PLAYING_NOW_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MIN)
             .setName(getString(R.string.notification_channel_playing_now))
             .build()
@@ -184,14 +237,14 @@ class PlayerService : Service() {
         } else {
             PendingIntent.FLAG_UPDATE_CURRENT
         }
-        val launchAppIntent = PendingIntent.getActivity(this, 0, intentForLaunchAppWithClickTrack(this, clickTrack), pendingIntentFlags)
+        val launchAppIntent = PendingIntent.getActivity(this, 0, tapIntent, pendingIntentFlags)
         val stopServiceIntent = PendingIntent.getService(this, 0, serviceIntent(this).apply { action = ACTION_STOP }, pendingIntentFlags)
 
         val notification = NotificationCompat.Builder(this, PLAYING_NOW_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ResourcesCompat.getColor(resources, R.color.secondary_dark, null))
             .setContentTitle(getString(R.string.notification_playing_now))
-            .setContentText(clickTrack.value.name)
+            .setContentText(contentText)
             .setContentIntent(launchAppIntent)
             .setDeleteIntent(stopServiceIntent)
             .setPriority(NotificationCompat.PRIORITY_MIN)

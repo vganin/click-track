@@ -4,7 +4,7 @@ import android.os.Parcelable
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import kotlinx.parcelize.Parcelize
 
-sealed interface ClickTrackId : Parcelable {
+sealed interface ClickTrackId : Parcelable, PlayableId {
 
     @Parcelize
     data class Database(val value: Long) : ClickTrackId

@@ -70,5 +70,8 @@ private fun ScreenBackstack.reduce(action: NavigationAction): ScreenBackstack {
         NavigationAction.ToAboutScreen -> copy(screens = screens.pushOrReplace {
             Screen.About
         })
+        NavigationAction.ToPolyrhythms -> copy(screens = screens.pushOrReplace {
+            Screen.Polyrhythms
+        })
     }
 }

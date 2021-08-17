@@ -15,6 +15,7 @@ import com.vsevolodganin.clicktrack.state.redux.epic.FinishAppEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.MetronomeEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.NavigationEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.PlayerEpic
+import com.vsevolodganin.clicktrack.state.redux.epic.PolyrhythmsEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.SettingsEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.SoundChooserEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.SoundLibraryEpic
@@ -121,6 +122,12 @@ abstract class ViewModelScopedAppStateEpicModule {
     @IntoSet
     @ViewModelScopedAppStateEpic
     abstract fun bindSoundLibraryEpic(epic: SoundLibraryEpic): Epic
+
+    @ViewModelScoped
+    @Binds
+    @IntoSet
+    @ViewModelScopedAppStateEpic
+    abstract fun bindPolyrhythmsEpic(epic: PolyrhythmsEpic): Epic
 }
 
 @Qualifier

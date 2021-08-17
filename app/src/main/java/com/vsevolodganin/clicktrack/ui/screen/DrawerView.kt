@@ -32,6 +32,7 @@ import com.google.accompanist.insets.systemBarsPadding
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.icons.ClickTrackIcons
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.Metronome
+import com.vsevolodganin.clicktrack.icons.clicktrackicons.Polyrhythm
 import com.vsevolodganin.clicktrack.state.redux.DrawerState
 import com.vsevolodganin.clicktrack.state.redux.action.CloseDrawer
 import com.vsevolodganin.clicktrack.state.redux.action.ComputingNavigationAction
@@ -69,6 +70,13 @@ fun DrawerView(
             label = stringResource(R.string.drawer_item_training),
             isSelected = state.selectedItem == DrawerState.SelectedItem.TRAINING,
             action = { dispatchClosingDrawer(ComputingNavigationAction.ToTrainingScreen) }
+        )
+
+        DrawerButton(
+            icon = ClickTrackIcons.Polyrhythm,
+            label = stringResource(R.string.drawer_item_polyrhythm),
+            isSelected = state.selectedItem == DrawerState.SelectedItem.POLYRHYTHMS,
+            action = { dispatchClosingDrawer(NavigationAction.ToPolyrhythms) }
         )
 
         DrawerButton(

@@ -6,6 +6,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.annotation.MainThread
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
+import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import javax.inject.Inject
@@ -41,17 +42,16 @@ class PlayerServiceAccess @Inject constructor(
         context.unbindService(serviceConnection)
     }
 
-    fun start(
-        clickTrack: ClickTrackWithId,
-        atProgress: Double?,
-        soundsId: ClickSoundsId?,
-        keepInBackground: Boolean,
-    ) {
+    fun start(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?, keepInBackground: Boolean) {
         PlayerService.start(context, clickTrack, atProgress, soundsId, keepInBackground)
     }
 
     override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) {
         start(clickTrack, atProgress, soundsId, keepInBackground = true)
+    }
+
+    override suspend fun start(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) {
+        PlayerService.start(context, twoLayerPolyrhythm, atProgress, soundsId)
     }
 
     override suspend fun pause() {

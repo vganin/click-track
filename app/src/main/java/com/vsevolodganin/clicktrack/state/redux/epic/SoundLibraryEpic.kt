@@ -82,7 +82,7 @@ class SoundLibraryEpic @Inject constructor(
 
             actions.filterIsInstance<SoundLibraryAction.StopSoundsTest>()
                 .consumeEach {
-                    val currentlyPlayingId = playerServiceAccess.playbackState().firstOrNull()?.clickTrack?.id
+                    val currentlyPlayingId = playerServiceAccess.playbackState().firstOrNull()?.id
                     if (currentlyPlayingId is ClickTrackId.Builtin.ClickSoundsTest) {
                         playerServiceAccess.stop()
                     }

@@ -9,6 +9,7 @@ import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
 import com.vsevolodganin.clicktrack.lib.CueDuration
 import com.vsevolodganin.clicktrack.lib.NotePattern
+import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
@@ -80,7 +81,7 @@ class UserPreferencesRepository @Inject constructor(
         },
     )
 
-    val trainingState: UserPropertyAccess<TrainingPersistableState> = UserPropertyAccessWithMapping<String, TrainingPersistableState>(
+    val trainingState: UserPropertyAccess<TrainingPersistableState> = UserPropertyAccessWithMapping(
         key = stringPreferencesKey("training_state"),
         defaultValue = TrainingPersistableState(
             startingTempo = 120.bpm,
@@ -88,6 +89,17 @@ class UserPreferencesRepository @Inject constructor(
             segmentLength = CueDuration.Measures(4),
             tempoChange = 5.bpm,
             ending = TrainingPersistableState.Ending.ByTempo(160.bpm),
+        ),
+        toExternal = json::decodeFromString,
+        toInternal = json::encodeToString,
+    )
+
+    val polyrhythm: UserPropertyAccess<TwoLayerPolyrhythm> = UserPropertyAccessWithMapping(
+        key = stringPreferencesKey("polyrhythm"),
+        defaultValue = TwoLayerPolyrhythm(
+            bpm = 120.bpm,
+            layer1 = 3,
+            layer2 = 2,
         ),
         toExternal = json::decodeFromString,
         toInternal = json::encodeToString,

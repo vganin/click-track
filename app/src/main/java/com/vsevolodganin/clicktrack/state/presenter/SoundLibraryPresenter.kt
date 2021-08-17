@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.state.presenter
 
 import com.vsevolodganin.clicktrack.model.ClickTrackId
+import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.player.Player
 import com.vsevolodganin.clicktrack.sounds.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
@@ -37,7 +38,7 @@ class SoundLibraryPresenter @Inject constructor(
         return combine(
             userPreferencesRepository.selectedSoundsId.flow,
             clickSoundsRepository.getAll(),
-            player.playbackState().map { it?.clickTrack?.id }.distinctUntilChanged(),
+            player.playbackState().map { it?.id }.distinctUntilChanged(),
         ) { selectedId, userItems, playingClickTrackId ->
             mutableListOf<SelectableClickSoundsItem>().apply {
                 this += BuiltinClickSounds.values().map { it.toItem(selectedId) }
@@ -53,13 +54,13 @@ class SoundLibraryPresenter @Inject constructor(
         )
     }
 
-    private fun UserClickSounds.toItem(selectedId: ClickSoundsId, playingClickTrackId: ClickTrackId?): SelectableClickSoundsItem.UserDefined {
+    private fun UserClickSounds.toItem(selectedId: ClickSoundsId, playingId: PlayableId?): SelectableClickSoundsItem.UserDefined {
         return SelectableClickSoundsItem.UserDefined(
             id = id,
             strongBeatValue = value.strongBeat.toText(),
             weakBeatValue = value.weakBeat.toText(),
             hasError = value.strongBeat.hasError() || value.weakBeat.hasError(),
-            isPlaying = playingClickTrackId?.optionalCast<ClickTrackId.Builtin.ClickSoundsTest>()?.soundsId == id,
+            isPlaying = playingId?.optionalCast<ClickTrackId.Builtin.ClickSoundsTest>()?.soundsId == id,
             selected = selectedId == id,
         )
     }

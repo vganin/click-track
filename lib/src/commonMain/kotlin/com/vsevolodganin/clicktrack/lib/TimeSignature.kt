@@ -9,8 +9,8 @@ import kotlinx.serialization.Serializable
 @AndroidParcelize
 public data class TimeSignature(
     public val noteCount: Int,
-    @SerialName("noteDuration")
-    public val noteValue: Int
+    @SerialName("noteDuration") // For backward compatibility
+    public val noteValue: Int,
 ) : AndroidParcelable {
     init {
         require(noteCount >= 0) { "Note count should be non-negative but was: $noteCount" }

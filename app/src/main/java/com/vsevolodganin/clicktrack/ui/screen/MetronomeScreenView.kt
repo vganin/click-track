@@ -38,8 +38,8 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.model.ClickTrackId
-import com.vsevolodganin.clicktrack.model.ClickTrackProgress
 import com.vsevolodganin.clicktrack.model.MetronomeTimeSignature
+import com.vsevolodganin.clicktrack.model.PlayableProgress
 import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.state.redux.action.MetronomeAction
 import com.vsevolodganin.clicktrack.state.redux.action.MetronomeAction.CloseOptions
@@ -169,7 +169,7 @@ private fun Content(
                     val action = if (state.isPlaying) {
                         PlayerAction.StopPlay
                     } else {
-                        PlayerAction.StartPlay(ClickTrackId.Builtin.Metronome)
+                        PlayerAction.StartPlayClickTrack(ClickTrackId.Builtin.Metronome)
                     }
                     dispatch(action)
                 },
@@ -248,7 +248,7 @@ private fun Preview() {
         MetronomeUiState(
             bpm = 90.bpm,
             pattern = NotePattern.QUINTUPLET_X2,
-            progress = ClickTrackProgress(0.1),
+            progress = PlayableProgress(0.1),
             isPlaying = false,
             areOptionsExpanded = false,
         )

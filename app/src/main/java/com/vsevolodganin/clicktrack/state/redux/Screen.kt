@@ -56,4 +56,9 @@ sealed interface Screen : Parcelable {
     object About : Screen {
         override fun reduce(action: Action): Screen = this
     }
+
+    @Parcelize
+    object Polyrhythms : Screen {
+        override fun reduce(action: Action): Screen = this
+    }
 }

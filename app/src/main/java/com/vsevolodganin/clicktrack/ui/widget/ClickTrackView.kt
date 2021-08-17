@@ -56,7 +56,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.interval
-import com.vsevolodganin.clicktrack.model.ClickTrackProgress
+import com.vsevolodganin.clicktrack.model.PlayableProgress
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableViewport
@@ -76,7 +76,7 @@ fun ClickTrackView(
     modifier: Modifier = Modifier,
     drawAllBeatsMarks: Boolean = false,
     drawTextMarks: Boolean = true,
-    progress: ClickTrackProgress? = null,
+    progress: PlayableProgress? = null,
     progressDragAndDropEnabled: Boolean = false,
     onProgressDragStart: () -> Unit = {},
     onProgressDrop: (Double) -> Unit = {},
@@ -216,7 +216,7 @@ fun ClickTrackView(
 
 @Composable
 private fun progressLinePosition(
-    progress: ClickTrackProgress?,
+    progress: PlayableProgress?,
     totalDuration: Duration,
     totalWidthPx: Float,
 ): AnimatableFloat? {
@@ -517,7 +517,7 @@ private fun Preview() {
     ClickTrackView(
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,
-        progress = ClickTrackProgress(0.13),
+        progress = PlayableProgress(0.13),
         modifier = Modifier.fillMaxSize()
     )
 }

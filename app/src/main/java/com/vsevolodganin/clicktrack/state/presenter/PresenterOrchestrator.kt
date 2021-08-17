@@ -35,6 +35,7 @@ class PresenterOrchestrator @Inject constructor(
     private val soundLibraryPresenter: Provider<SoundLibraryPresenter>,
     private val trainingPresenter: Provider<TrainingPresenter>,
     private val aboutPresenter: Provider<AboutPresenter>,
+    private val polyrhythmsPresenter: Provider<PolyrhythmsPresenter>,
 ) {
     fun states(): Flow<AppUiState> {
         return combine(
@@ -73,6 +74,7 @@ class PresenterOrchestrator @Inject constructor(
                                 is Screen.SoundLibrary -> soundLibraryPresenter.get().uiScreens()
                                 is Screen.Training -> trainingPresenter.get().uiScreens(screenFlow.reinterpret())
                                 is Screen.About -> aboutPresenter.get().uiScreens()
+                                is Screen.Polyrhythms -> polyrhythmsPresenter.get().uiScreens()
                             }
 
                             uiScreens.collect { uiScreen ->

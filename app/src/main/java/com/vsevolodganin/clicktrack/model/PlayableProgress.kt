@@ -10,21 +10,21 @@ import kotlin.time.toDuration
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class ClickTrackProgress(
+data class PlayableProgress(
     val value: Double,
-    val generationTimeMark: ClickTimeProgressTimeMark = ClickTimeProgressTimeSource.markNow(),
+    val generationTimeMark: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow(),
 ) : Parcelable
 
 @Parcelize
-data class ClickTimeProgressTimeMark(private val startedAt: Long) : TimeMark(), Parcelable {
+data class PlayableProgressTimeMark(private val startedAt: Long) : TimeMark(), Parcelable {
     override fun elapsedNow(): Duration {
         return (elapsedRealtimeNanos() - startedAt).toDuration(DurationUnit.NANOSECONDS)
     }
 }
 
-object ClickTimeProgressTimeSource : TimeSource {
-    override fun markNow(): ClickTimeProgressTimeMark {
-        return ClickTimeProgressTimeMark(elapsedRealtimeNanos())
+object PlayableProgressTimeSource : TimeSource {
+    override fun markNow(): PlayableProgressTimeMark {
+        return PlayableProgressTimeMark(elapsedRealtimeNanos())
     }
 }
 

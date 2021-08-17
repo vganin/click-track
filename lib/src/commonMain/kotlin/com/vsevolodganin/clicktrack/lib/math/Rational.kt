@@ -51,7 +51,9 @@ public data class Rational(
 
 public infix fun Int.over(denominator: Int): Rational = Rational(this, denominator)
 
-private val ZERO_: Rational = 0 over 1
+public fun Int.toRational(): Rational = this over 1
+
+private val ZERO_: Rational = 0.toRational()
 public val Rational.Companion.ZERO: Rational get() = ZERO_
 
 public operator fun Rational.compareTo(value: Rational): Int {

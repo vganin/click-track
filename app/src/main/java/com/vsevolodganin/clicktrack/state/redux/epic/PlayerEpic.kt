@@ -3,8 +3,11 @@ package com.vsevolodganin.clicktrack.state.redux.epic
 import android.content.Context
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
+import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.model.PlayableId
+import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.model.metronomeClickTrack
 import com.vsevolodganin.clicktrack.player.Player
 import com.vsevolodganin.clicktrack.state.redux.action.PlayerAction
@@ -37,14 +40,20 @@ class PlayerEpic @Inject constructor(
     override fun act(actions: Flow<Action>): Flow<Action> {
         return merge(
             player.playbackState()
-                .map { it?.clickTrack?.id }
+                .map { it?.id }
                 .distinctUntilChanged()
-                .consumeEachLatest(::drivePlayerViaClickTrackUpdates),
+                .consumeEachLatest(::drivePlayerByPlayableUpdates),
 
-            actions.filterIsInstance<PlayerAction.StartPlay>()
+            actions.filterIsInstance<PlayerAction.StartPlayClickTrack>()
                 .consumeEach { action ->
                     val clickTrack = clickTrackUpdates(action.id).take(1).single() ?: return@consumeEach
                     player.start(clickTrack, action.progress)
+                },
+
+            actions.filterIsInstance<PlayerAction.StartPlayPolyrhythm>()
+                .consumeEach {
+                    val polyrhythm = polyrhythmUpdates().take(1).single()
+                    player.start(polyrhythm)
                 },
 
             actions.filterIsInstance<PlayerAction.StopPlay>()
@@ -59,17 +68,23 @@ class PlayerEpic @Inject constructor(
         )
     }
 
-    private suspend fun drivePlayerViaClickTrackUpdates(id: ClickTrackId?) {
+    private suspend fun drivePlayerByPlayableUpdates(id: PlayableId?) {
         id ?: return
 
-        clickTrackUpdates(id)
-            .collect { clickTrack ->
-                if (clickTrack != null) {
-                    player.start(clickTrack)
-                } else {
-                    player.stop()
+        when (id) {
+            is ClickTrackId -> clickTrackUpdates(id)
+                .collect { clickTrack ->
+                    if (clickTrack != null) {
+                        player.start(clickTrack)
+                    } else {
+                        player.stop()
+                    }
                 }
-            }
+            TwoLayerPolyrhythmId -> polyrhythmUpdates()
+                .collect { polyrhythm ->
+                    player.start(polyrhythm)
+                }
+        }
     }
 
     private fun clickTrackUpdates(id: ClickTrackId): Flow<ClickTrackWithId?> {
@@ -91,5 +106,9 @@ class PlayerEpic @Inject constructor(
                 pattern = pattern,
             )
         }
+    }
+
+    private fun polyrhythmUpdates(): Flow<TwoLayerPolyrhythm> {
+        return userPreferencesRepository.polyrhythm.flow
     }
 }

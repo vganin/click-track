@@ -20,6 +20,7 @@ fun DrawerState.reduceDrawerState(action: Action, screens: List<Screen>): Drawer
                 is Screen.Settings -> DrawerState.SelectedItem.SETTINGS
                 is Screen.SoundLibrary -> DrawerState.SelectedItem.SOUND_LIBRARY
                 is Screen.About -> DrawerState.SelectedItem.ABOUT
+                is Screen.Polyrhythms -> DrawerState.SelectedItem.POLYRHYTHMS
                 Screen.ClickTrackList,
                 is Screen.EditClickTrack,
                 is Screen.PlayClickTrack -> null

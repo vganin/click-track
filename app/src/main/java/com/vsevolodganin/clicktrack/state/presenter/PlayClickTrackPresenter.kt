@@ -18,12 +18,12 @@ import kotlinx.coroutines.flow.map
 
 @Reusable
 class PlayClickTrackPresenter @Inject constructor(
-    private val clickTraLiRepository: ClickTrackRepository,
+    private val clickTrackRepository: ClickTrackRepository,
     private val player: Player,
 ) {
     fun uiScreens(screens: Flow<Screen.PlayClickTrack>): Flow<UiScreen.PlayClickTrack> {
         return combine(
-            screens.map { it.state }.map { it.id }.flatMapLatest(clickTraLiRepository::getById),
+            screens.map { it.state }.map { it.id }.flatMapLatest(clickTrackRepository::getById),
             player.playbackState(),
             ::uiState,
         )
@@ -34,7 +34,7 @@ class PlayClickTrackPresenter @Inject constructor(
     private fun uiState(clickTrack: ClickTrackWithDatabaseId?, playbackState: PlaybackState?): PlayClickTrackUiState? {
         clickTrack ?: return null
 
-        val isPlaying = playbackState?.clickTrack?.id == clickTrack.id
+        val isPlaying = playbackState?.id == clickTrack.id
 
         return PlayClickTrackUiState(
             clickTrack = clickTrack,

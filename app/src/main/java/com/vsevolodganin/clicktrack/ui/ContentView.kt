@@ -31,6 +31,7 @@ import com.vsevolodganin.clicktrack.ui.screen.DrawerView
 import com.vsevolodganin.clicktrack.ui.screen.EditClickTrackScreenView
 import com.vsevolodganin.clicktrack.ui.screen.MetronomeScreenView
 import com.vsevolodganin.clicktrack.ui.screen.PlayClickTrackScreenView
+import com.vsevolodganin.clicktrack.ui.screen.PolyrhythmsScreenView
 import com.vsevolodganin.clicktrack.ui.screen.SettingsScreenView
 import com.vsevolodganin.clicktrack.ui.screen.SoundLibraryScreenView
 import com.vsevolodganin.clicktrack.ui.screen.TrainingScreenView
@@ -63,6 +64,7 @@ fun ContentView(
                         is UiScreen.SoundLibrary -> SoundLibraryScreenView(targetScreen.state, modifier, dispatch)
                         is UiScreen.Training -> TrainingScreenView(targetScreen.state, modifier, dispatch)
                         is UiScreen.About -> AboutScreenView(targetScreen.state, modifier, dispatch)
+                        is UiScreen.Polyrhythms -> PolyrhythmsScreenView(targetScreen.state, modifier, dispatch)
                     }
                 }
             }

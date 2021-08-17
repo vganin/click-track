@@ -5,7 +5,9 @@ import com.vsevolodganin.clicktrack.state.redux.core.Action
 
 sealed interface PlayerAction : Action {
 
-    class StartPlay(val id: ClickTrackId, val progress: Double? = null) : PlayerAction
+    class StartPlayClickTrack(val id: ClickTrackId, val progress: Double? = null) : PlayerAction
+
+    object StartPlayPolyrhythm : PlayerAction
 
     object StopPlay : PlayerAction
 

@@ -10,6 +10,6 @@ data class DrawerState(
     val selectedItem: SelectedItem?,
 ) : Parcelable {
     enum class SelectedItem {
-        METRONOME, TRAINING, SETTINGS, SOUND_LIBRARY, ABOUT
+        METRONOME, TRAINING, SETTINGS, SOUND_LIBRARY, ABOUT, POLYRHYTHMS
     }
 }

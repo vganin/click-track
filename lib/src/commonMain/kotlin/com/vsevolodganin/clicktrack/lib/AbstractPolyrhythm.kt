@@ -12,12 +12,12 @@ import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
 /**
  * Polyrhythm is represented as a grid with the length equal to least common multiple of all input patterns.
  */
-public data class Polyrhythm internal constructor(val columns: List<Column>, val untilFirst: Rational) {
+public data class AbstractPolyrhythm internal constructor(val columns: List<Column>, val untilFirst: Rational) {
     public data class Column internal constructor(val indices: List<Int>, val untilNext: Rational)
 }
 
-public fun Polyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): Polyrhythm {
-    val resultingPattern = mutableListOf<Polyrhythm.Column>()
+public fun AbstractPolyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): AbstractPolyrhythm {
+    val resultingPattern = mutableListOf<AbstractPolyrhythm.Column>()
 
     val commonLength = lcm(pattern1.length, pattern2.length)
     val pattern1Commonized = pattern1.resize(commonLength)
@@ -35,7 +35,7 @@ public fun Polyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): Pol
         when {
             pattern1RunningLength < pattern2RunningLength -> {
                 val pattern1EventLength = pattern1NonRestLengthsIterator.next()
-                resultingPattern += Polyrhythm.Column(
+                resultingPattern += AbstractPolyrhythm.Column(
                     indices = listOf(0),
                     untilNext = min(pattern1EventLength, pattern2RunningLength - pattern1RunningLength)
                 )
@@ -43,7 +43,7 @@ public fun Polyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): Pol
             }
             pattern2RunningLength < pattern1RunningLength -> {
                 val pattern2EventLength = pattern2NonRestLengthsIterator.next()
-                resultingPattern += Polyrhythm.Column(
+                resultingPattern += AbstractPolyrhythm.Column(
                     indices = listOf(1),
                     untilNext = min(pattern2EventLength, pattern1RunningLength - pattern2RunningLength)
                 )
@@ -52,7 +52,7 @@ public fun Polyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): Pol
             else -> {
                 val pattern1EventLength = pattern1NonRestLengthsIterator.next()
                 val pattern2EventLength = pattern2NonRestLengthsIterator.next()
-                resultingPattern += Polyrhythm.Column(
+                resultingPattern += AbstractPolyrhythm.Column(
                     indices = listOf(0, 1),
                     untilNext = min(pattern1EventLength, pattern2EventLength)
                 )
@@ -62,7 +62,7 @@ public fun Polyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): Pol
         }
     }
 
-    return Polyrhythm(
+    return AbstractPolyrhythm(
         columns = resultingPattern,
         untilFirst = min(pattern1InitialRestLength, pattern2InitialRestLength)
     )
