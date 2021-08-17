@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +27,7 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.SweepGradientShader
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
@@ -39,6 +41,7 @@ import com.vsevolodganin.clicktrack.utils.compose.AngleSector
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.toRadians
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 import kotlinx.coroutines.launch
 
@@ -48,12 +51,26 @@ fun PolyrhythmCircle(
     innerDotNumber: Int,
     modifier: Modifier = Modifier,
     progressAngle: Float? = null,
+    progressVelocity: Float = 15f, // degrees per second
 ) {
     val primaryColor = MaterialTheme.colors.primary
     val secondaryColor = MaterialTheme.colors.secondary
 
     val innerDotAnimations = animatedDots(number = innerDotNumber, progressAngle = progressAngle)
     val outerDotAnimations = animatedDots(number = outerDotNumber, progressAngle = progressAngle)
+
+    val sweepAngle = remember { Animatable(0f) }
+    LaunchedEffect(progressAngle == null) {
+        if (progressAngle == null) {
+            sweepAngle.snapTo(0f)
+        } else {
+            val duration = (PROGRESS_LINE_MAX_SWEEP_ANGLE_DEGREES * 1000f / progressVelocity).roundToInt()
+            sweepAngle.animateTo(
+                PROGRESS_LINE_MAX_SWEEP_ANGLE_DEGREES,
+                tween(duration, easing = LinearEasing)
+            )
+        }
+    }
 
     Canvas(modifier = modifier.aspectRatio(1f)) {
         val outerCircleRadius = size.maxDimension / 2.0f
@@ -71,17 +88,37 @@ fun PolyrhythmCircle(
         )
 
         if (progressAngle != null) {
+            val color = secondaryColor
+            val start = center
+            val end = start + Offset(
+                x = cos(progressAngle.toRadians()) * outerCircleRadius,
+                y = sin(progressAngle.toRadians()) * outerCircleRadius
+            )
+            val strokeWidth = 2.dp.toPx()
+
             rotate(-90f) {
                 drawLine(
-                    color = secondaryColor,
-                    start = center,
-                    end = center + Offset(
-                        x = cos(progressAngle.toRadians()) * outerCircleRadius,
-                        y = sin(progressAngle.toRadians()) * outerCircleRadius
-                    ),
-                    strokeWidth = 2.dp.toPx(),
+                    color = color,
+                    start = start,
+                    end = end,
+                    strokeWidth = strokeWidth,
                     cap = StrokeCap.Round,
                 )
+
+                rotate(progressAngle - sweepAngle.value) {
+                    drawArc(
+                        brush = Brush.sweepGradient(
+                            0f to Color.Transparent,
+                            sweepAngle.value / FULL_ANGLE_DEGREES to color.copy(alpha = 0.7f)
+                        ),
+                        startAngle = 0f,
+                        sweepAngle = sweepAngle.value,
+                        useCenter = true,
+                        style = Fill,
+                        topLeft = center - Offset(outerCircleRadius, outerCircleRadius),
+                        size = Size(outerCircleRadius * 2, outerCircleRadius * 2),
+                    )
+                }
             }
         }
     }
@@ -252,6 +289,7 @@ private fun sweepGradient(widthFraction: Float, centerColor: Color, borderColor:
 
 private val STROKE_WIDTH = 8.dp
 private val DOT_RADIUS = 8.dp
+private const val PROGRESS_LINE_MAX_SWEEP_ANGLE_DEGREES = 15f
 
 @Preview
 @Composable

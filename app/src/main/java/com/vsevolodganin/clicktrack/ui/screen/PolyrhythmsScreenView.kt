@@ -40,6 +40,7 @@ import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.widthByText
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 @Composable
 fun PolyrhythmsScreenView(
@@ -145,7 +146,8 @@ private fun PolyrhythmCircleWrapper(
         outerDotNumber = layer1,
         innerDotNumber = layer2,
         modifier = modifier,
-        progressAngle = progressAngle?.value
+        progressAngle = progressAngle?.value,
+        progressVelocity = (FULL_ANGLE_DEGREES / totalDuration.toDouble(DurationUnit.SECONDS)).toFloat()
     )
 }
 
