@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -125,7 +126,15 @@ private fun Content(
         }
 
         item {
-            Card(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+            Spacer(modifier = Modifier.size(8.dp))
+        }
+
+        item {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
                 Row(modifier = Modifier.padding(8.dp)) {
                     Text(text = stringResource(R.string.repeat))
                     Spacer(modifier = Modifier.weight(1f))
