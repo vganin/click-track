@@ -1,0 +1,7 @@
+<resources>
+
+    <style name="SplashTheme" parent="BaseSplashTheme">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+    </style>
+
+</resources>

@@ -4,4 +4,5 @@
     <color name="primary_dark">@color/blue_gray700</color>
     <color name="secondary">@color/red500</color>
     <color name="secondary_dark">@color/red700</color>
+    <color name="splash_background">#0d0d0d</color>
 </resources>

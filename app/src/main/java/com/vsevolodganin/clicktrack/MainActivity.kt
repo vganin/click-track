@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -27,6 +28,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -66,8 +68,14 @@ class MainActivity : AppCompatActivity() {
 
     private val renderScope = MainScope()
 
+    private var shouldKeepSplash = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        installSplashScreen().apply {
+            setKeepVisibleCondition { shouldKeepSplash }
+        }
 
         inject()
 
@@ -78,6 +86,7 @@ class MainActivity : AppCompatActivity() {
         renderScope.launch {
             presenterOrchestrator.states()
                 .flowOn(backgroundDispatcher)
+                .onEach { shouldKeepSplash = false }
                 .collect(::render)
         }
 
