@@ -28,9 +28,10 @@ class DocumentMetadataHelper @Inject constructor(private val contentResolver: Co
         val parsedUri = Uri.parse(uri)
 
         return try {
-            contentResolver.query(parsedUri, null, null, null, null, null)?.use {
-                if (it.moveToFirst()) {
-                    return it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+            contentResolver.query(parsedUri, null, null, null, null, null)?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val columnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME).takeIf { it >= 0 } ?: return null
+                    return cursor.getString(columnIndex)
                 } else {
                     null
                 }
