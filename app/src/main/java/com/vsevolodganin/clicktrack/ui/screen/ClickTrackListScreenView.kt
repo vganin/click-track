@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,8 +36,8 @@ import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_2
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.widget.InsetsAwareTopAppBar
+import com.vsevolodganin.clicktrack.utils.compose.SwipeToDismiss
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
-import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 
 @Composable
 fun ClickTrackListScreenView(
@@ -89,13 +89,12 @@ private fun TopBar(dispatch: Dispatch) {
 
 @Composable
 private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithDatabaseId, dispatch: Dispatch) {
-    BoxWithConstraints {
+    SwipeToDismiss(
+        onDismiss = { dispatch(ClickTrackAction.Remove(clickTrack.id)) },
+        backgroundPaddingValues = PaddingValues(vertical = 8.dp)
+    ) {
         Card(
-            modifier = Modifier
-                .swipeToRemove(constraints = constraints, onDelete = {
-                    dispatch(ClickTrackAction.Remove(clickTrack.id))
-                })
-                .padding(8.dp),
+            modifier = Modifier.padding(8.dp),
             elevation = 2.dp
         ) {
             Box(modifier = Modifier.fillMaxSize()) {

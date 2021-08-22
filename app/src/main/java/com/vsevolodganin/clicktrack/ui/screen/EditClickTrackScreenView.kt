@@ -7,7 +7,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -61,9 +61,9 @@ import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.CueView
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.utils.compose.SwipeToDismiss
 import com.vsevolodganin.clicktrack.utils.compose.offset
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
-import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlinx.coroutines.android.awaitFrame
@@ -149,7 +149,11 @@ private fun Content(
         itemsIndexed(items = state.cues, key = { index, cue -> index to cue.id }) { index, cue ->
             var zIndex by remember { mutableStateOf(0f) }
 
-            BoxWithConstraints(modifier = Modifier.zIndex(zIndex)) {
+            SwipeToDismiss(
+                onDismiss = { dispatch(EditClickTrackAction.RemoveCue(index)) },
+                modifier = Modifier.zIndex(zIndex),
+                backgroundPaddingValues = PaddingValues(vertical = 8.dp)
+            ) {
                 val offset = remember { Animatable(0f) }
                 val elevation = remember { Animatable(0.dp, Dp.VectorConverter) }
 
@@ -196,10 +200,6 @@ private fun Content(
                     index = index,
                     elevation = elevation.value,
                     modifier = Modifier
-                        .swipeToRemove(
-                            constraints = constraints,
-                            onDelete = { dispatch(EditClickTrackAction.RemoveCue(index)) }
-                        )
                         .moveReorder(
                             position = index,
                             elementsCount = state.cues.size,

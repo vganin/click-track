@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -46,8 +46,8 @@ import com.vsevolodganin.clicktrack.ui.model.SoundLibraryUiState
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.ui.widget.PlayStopIcon
+import com.vsevolodganin.clicktrack.utils.compose.SwipeToDismiss
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
-import com.vsevolodganin.clicktrack.utils.compose.swipeToRemove
 
 @Composable
 fun SoundLibraryScreenView(
@@ -138,12 +138,12 @@ private fun UserDefinedSoundsItem(
     onSelect: () -> Unit,
     dispatch: Dispatch,
 ) {
-    BoxWithConstraints {
+    SwipeToDismiss(
+        onDismiss = { dispatch(SoundLibraryAction.RemoveClickSounds(item.id)) },
+        backgroundPaddingValues = PaddingValues(vertical = 8.dp),
+    ) {
         Card(
             modifier = Modifier
-                .swipeToRemove(constraints = constraints) {
-                    dispatch(SoundLibraryAction.RemoveClickSounds(item.id))
-                }
                 .fillMaxWidth()
                 .padding(8.dp)
                 .clickable(onClick = onSelect),
