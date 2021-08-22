@@ -22,3 +22,8 @@
 -keep class com.google.android.gms.** { *; }
 -dontwarn com.google.android.gms.**
 ###
+
+### Keep action class names for analytics logging
+-keepnames class com.vsevolodganin.clicktrack.state.redux.core.Action
+-keepnames class ** implements com.vsevolodganin.clicktrack.state.redux.core.Action
+###

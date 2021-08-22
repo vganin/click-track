@@ -4,6 +4,7 @@ import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.di.module.ApplicationScopedAndroidModule
 import com.vsevolodganin.clicktrack.di.module.ApplicationScopedCoroutineModule
 import com.vsevolodganin.clicktrack.di.module.DatabaseModule
+import com.vsevolodganin.clicktrack.di.module.FirebaseModule
 import com.vsevolodganin.clicktrack.di.module.SerializationModule
 import com.vsevolodganin.clicktrack.di.module.UserPreferencesModule
 import dagger.BindsInstance
@@ -20,6 +21,7 @@ typealias ApplicationScoped = Singleton
         SerializationModule::class,
         DatabaseModule::class,
         UserPreferencesModule::class,
+        FirebaseModule::class,
     ]
 )
 interface ApplicationComponent {

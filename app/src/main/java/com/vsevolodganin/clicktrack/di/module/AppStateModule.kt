@@ -2,9 +2,11 @@ package com.vsevolodganin.clicktrack.di.module
 
 import android.os.Bundle
 import androidx.lifecycle.SavedStateHandle
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.state.redux.AppState
+import com.vsevolodganin.clicktrack.state.redux.core.AnalyticsMiddleware
 import com.vsevolodganin.clicktrack.state.redux.core.DebugMiddleware
 import com.vsevolodganin.clicktrack.state.redux.core.Epic
 import com.vsevolodganin.clicktrack.state.redux.core.EpicMiddleware
@@ -42,8 +44,12 @@ class AppStateModule {
     }
 
     @Provides
-    @ViewModelScoped
     fun provideDebugMiddleware(): DebugMiddleware<AppState> = DebugMiddleware()
+
+    @Provides
+    fun provideAnalyticsMiddleware(firebaseAnalytics: FirebaseAnalytics): AnalyticsMiddleware<AppState> {
+        return AnalyticsMiddleware(firebaseAnalytics)
+    }
 
     @Provides
     @ViewModelScoped
@@ -53,6 +59,7 @@ class AppStateModule {
         @SerialBackgroundDispatcher coroutineDispatcher: CoroutineDispatcher,
         epicMiddleware: EpicMiddleware<AppState>,
         debugMiddleware: DebugMiddleware<AppState>,
+        analyticsMiddleware: AnalyticsMiddleware<AppState>,
     ): Store<AppState> {
         val initialState = savedStateHandle.get<Bundle?>(SavedStateConst.APP_STATE_BUNDLE_KEY)
             ?.getParcelable(SavedStateConst.APP_STATE_KEY)
@@ -63,7 +70,8 @@ class AppStateModule {
             AppState::reduce,
             CoroutineScope(coroutineScope.coroutineContext + coroutineDispatcher),
             epicMiddleware,
-            debugMiddleware
+            debugMiddleware,
+            analyticsMiddleware,
         )
 
         savedStateHandle.setSavedStateProvider(SavedStateConst.APP_STATE_BUNDLE_KEY) {
