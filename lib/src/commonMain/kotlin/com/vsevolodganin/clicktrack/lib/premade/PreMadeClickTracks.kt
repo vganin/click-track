@@ -4,6 +4,8 @@ import com.vsevolodganin.clicktrack.lib.ClickTrack
 
 public object PreMadeClickTracks {
     public val DATA: List<ClickTrack> = listOf(
-        RadioheadParanoidAndroid
+        RadioheadParanoidAndroid,
+        VaderRebornInFlames,
+        TupletTraining
     )
 }
