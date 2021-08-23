@@ -13,14 +13,13 @@ import androidx.compose.foundation.gestures.calculateCentroidSize
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.drag
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -46,14 +45,11 @@ import androidx.compose.ui.input.pointer.positionChangeConsumed
 import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.Constraints
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.interval
 import com.vsevolodganin.clicktrack.model.PlayableProgress
@@ -110,6 +106,7 @@ fun ClickTrackView(
         fun Float.transformXAndPixelAlign(): Float {
             return ((this + translateX) * scaleX).roundToInt().toFloat()
         }
+
         val transformedAndPixelAlignedMarks = remember(marks, translateX, scaleX) {
             marks.map { mark -> mark.copy(x = mark.x.transformXAndPixelAlign()) }
         }
@@ -168,44 +165,44 @@ fun ClickTrackView(
                 modifier = Modifier.wrapContentSize(),
                 content = {
                     for (mark in transformedAndPixelAlignedMarks) {
-                        val layoutIdModifier = Modifier.layoutId(mark)
-                        mark.briefSummary?.invoke(layoutIdModifier)
-                        mark.detailedSummary?.invoke(layoutIdModifier)
+                        mark.summary?.let { summary ->
+                            Box(modifier = Modifier.layoutId(mark)) {
+                                summary()
+                            }
+                        }
                     }
                 },
                 measurePolicy = { measurables, constraints ->
-                    val placeables = measurables.groupBy({ it.layoutId as Mark }) { measurable ->
-                        measurable.measure(constraints)
+                    val placeables = measurables.associate { measurable ->
+                        measurable.layoutId as Mark to measurable.measure(Constraints())
                     }.toSortedMap { lhs, rhs -> lhs.x.compareTo(rhs.x) }.toList()
 
                     layout(constraints.maxWidth, constraints.maxHeight) {
-                        var currentEndX = Float.NEGATIVE_INFINITY
-                        var currentEndY = 0f
+                        class Border(val x: Int, val endY: Int)
+
+                        val borderMap = sortedMapOf<Int, Border>()
 
                         placeables
-                            .forEachIndexed { index, (mark, summaries) ->
-                                val markX = mark.x
+                            .forEach { (mark, placeable) ->
+                                val x = mark.x.roundToInt()
 
-                                val firstSummary = summaries.firstOrNull() ?: return@forEachIndexed
-
-                                if (markX < currentEndX) {
-                                    currentEndY += firstSummary.height
-                                } else {
-                                    currentEndY = 0f
+                                var startY = 0
+                                var endY = placeable.height
+                                while (true) {
+                                    val menacingBorders = borderMap.subMap(startY, endY)
+                                    val menacingBorder = menacingBorders.values.maxByOrNull { it.x }
+                                    if (menacingBorder != null && menacingBorder.x >= x) {
+                                        startY = menacingBorder.endY + 1
+                                        endY = startY + placeable.height
+                                    } else {
+                                        break
+                                    }
                                 }
 
-                                val nextMarkX = transformedAndPixelAlignedMarks.getOrNull(index + 1)?.x ?: Float.POSITIVE_INFINITY
+                                placeable.placeRelative(x = x, y = startY)
 
-                                val summariesSortedByDescendingWidth = summaries.sortedByDescending(Placeable::width)
-                                val placeable = summariesSortedByDescendingWidth
-                                    .firstOrNull { placeableCandidate ->
-                                        markX + placeableCandidate.width < nextMarkX
-                                    }
-                                    ?: summariesSortedByDescendingWidth.last()
-
-                                placeable.placeRelative(x = markX.toInt(), y = currentEndY.toInt())
-
-                                currentEndX = markX + placeable.width
+                                borderMap.subMap(startY, endY).clear()
+                                borderMap[startY] = Border(x + placeable.width, endY)
                             }
                     }
                 }
@@ -280,8 +277,7 @@ private fun progressLineWidth(
 private data class Mark(
     val x: Float,
     val color: Color,
-    val briefSummary: (@Composable (modifier: Modifier) -> Unit)?,
-    val detailedSummary: (@Composable (modifier: Modifier) -> Unit)?,
+    val summary: (@Composable () -> Unit)?,
 )
 
 @Composable
@@ -299,29 +295,14 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
             result += Mark(
                 x = currentX,
                 color = primaryMarkColor,
-                briefSummary = { modifier ->
-                    CueSummaryView(cue, modifier)
-                },
-                detailedSummary = cue.name?.let { name ->
-                    { modifier ->
-                        Column(modifier) {
-                            Text(
-                                text = "\"$name\"",
-                                style = TextStyle(fontWeight = FontWeight.Bold),
-                                fontSize = 14.sp,
-                            )
-                            CueSummaryView(cue)
-                        }
-                    }
-                }
+                summary = { CueSummaryView(cue) }
             )
             if (drawAllBeatsMarks) {
                 for (i in 1 until cue.timeSignature.noteCount) {
                     result += Mark(
                         x = (currentTimestamp + cue.bpm.interval * i).toX(duration, width),
                         color = secondaryMarkColor,
-                        briefSummary = null,
-                        detailedSummary = null,
+                        summary = null,
                     )
                 }
             }

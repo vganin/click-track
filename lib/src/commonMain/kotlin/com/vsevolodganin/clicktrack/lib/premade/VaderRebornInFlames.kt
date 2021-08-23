@@ -21,7 +21,6 @@ public val PreMadeClickTracks.VaderRebornInFlames: ClickTrack
             ),
             // 9-23
             Cue(
-                name = "Intro 1",
                 bpm = 165.bpm,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(15),
@@ -35,7 +34,6 @@ public val PreMadeClickTracks.VaderRebornInFlames: ClickTrack
             ),
             // 33
             Cue(
-                name = "Intro 2",
                 bpm = 165.bpm,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(1),
@@ -112,7 +110,6 @@ public val PreMadeClickTracks.VaderRebornInFlames: ClickTrack
             ),
             // 92
             Cue(
-                name = "Break",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(1),
@@ -126,56 +123,48 @@ public val PreMadeClickTracks.VaderRebornInFlames: ClickTrack
             ),
             // 96
             Cue(
-                name = "Verse 3",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(1),
             ),
             // 93-95
             Cue(
-                name = "Verse 3",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(3),
             ),
             // 96
             Cue(
-                name = "Verse 3",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(1),
             ),
             // 93-95
             Cue(
-                name = "Verse 3",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(3),
             ),
             // 96
             Cue(
-                name = "Verse 3",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(1),
             ),
             // 93-95
             Cue(
-                name = "Verse 3",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(3),
             ),
             // 96
             Cue(
-                name = "Verse 3",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(1),
             ),
             // 97
             Cue(
-                name = "Verse 3",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(1),
@@ -189,42 +178,36 @@ public val PreMadeClickTracks.VaderRebornInFlames: ClickTrack
             ),
             // 101
             Cue(
-                name = "Solo 2",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(1),
             ),
             // 102-104
             Cue(
-                name = "Solo 2",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(3),
             ),
             // 105
             Cue(
-                name = "Solo 2",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(1),
             ),
             // 106-108
             Cue(
-                name = "Solo 2",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(3),
             ),
             // 109
             Cue(
-                name = "Solo 2",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(7, 8),
                 duration = CueDuration.Measures(1),
             ),
             // 110-113
             Cue(
-                name = "Solo 2",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(4),
@@ -245,7 +228,6 @@ public val PreMadeClickTracks.VaderRebornInFlames: ClickTrack
             ),
             // 120-121
             Cue(
-                name = "Verse 4",
                 bpm = 125.bpm,
                 timeSignature = TimeSignature(4, 4),
                 duration = CueDuration.Measures(2),
