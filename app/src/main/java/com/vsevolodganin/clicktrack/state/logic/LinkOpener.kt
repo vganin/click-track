@@ -1,6 +1,8 @@
 package com.vsevolodganin.clicktrack.state.logic
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
@@ -13,9 +15,7 @@ class LinkOpener @Inject constructor(
     fun url(url: String) {
         val uri: Uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(intent)
-        }
+        context.startActivityIfAble(intent)
     }
 
     fun email(email: String) {
@@ -23,8 +23,14 @@ class LinkOpener @Inject constructor(
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
         }
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(intent)
+        context.startActivityIfAble(intent)
+    }
+
+    private fun Context.startActivityIfAble(intent: Intent) {
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            // Ignoring
         }
     }
 }
