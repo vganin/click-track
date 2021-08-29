@@ -41,18 +41,18 @@ AudioTrack::AudioTrack(
     playbackFrameIndex_(0) {
     auto oboeAudioFormat = pcmFormatToOboeFormat(pcmEncoding);
 
-    oboe::AudioStreamBuilder audioStreamBuilder;
-    audioStreamBuilder.setDirection(oboe::Direction::Output);
-    audioStreamBuilder.setPerformanceMode(oboe::PerformanceMode::LowLatency);
-    audioStreamBuilder.setSharingMode(oboe::SharingMode::Shared);
-    audioStreamBuilder.setSampleRate(sampleRate);
-    audioStreamBuilder.setFormat(oboeAudioFormat);
-    audioStreamBuilder.setChannelCount(channelCount);
-    audioStreamBuilder.setUsage(oboe::Usage::Media);
-    audioStreamBuilder.setContentType(oboe::ContentType::Sonification);
-    audioStreamBuilder.setDataCallback(this);
+    auto result = oboe::AudioStreamBuilder()
+            .setDirection(oboe::Direction::Output)
+            ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
+            ->setSharingMode(oboe::SharingMode::Shared)
+            ->setSampleRate(sampleRate)
+            ->setFormat(oboeAudioFormat)
+            ->setChannelCount(channelCount)
+            ->setUsage(oboe::Usage::Media)
+            ->setContentType(oboe::ContentType::Sonification)
+            ->setDataCallback(this)
+            ->openStream(audioStream_);
 
-    auto result = audioStreamBuilder.openStream(audioStream_);
     if (result != oboe::Result::OK) {
         LOGE("Failed to create stream. Error: %s", oboe::convertToText(result));
     }
@@ -87,11 +87,11 @@ oboe::DataCallbackResult AudioTrack::onAudioReady(oboe::AudioStream* audioStream
 
 void AudioTrack::play() {
     stop();
-    audioStream_->requestStart();
+    audioStream_->start();
 }
 
 void AudioTrack::stop() {
-    audioStream_->requestStop();
+    audioStream_->stop();
     playbackFrameIndex_ = 0;
 }
 
