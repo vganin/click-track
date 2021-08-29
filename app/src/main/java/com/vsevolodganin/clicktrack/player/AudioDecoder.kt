@@ -6,6 +6,7 @@ import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaExtractor
 import android.media.MediaFormat
+import android.os.Build
 import java.nio.ByteBuffer
 import javax.inject.Inject
 import kotlin.math.min
@@ -97,8 +98,11 @@ class AudioDecoder @Inject constructor() {
         codec.release()
 
         return DecodingResult(
-            audioFormat = AudioFormat.ENCODING_PCM_16BIT,
-            sampleRate = trackFormat.nullableGet(MediaFormat.KEY_SAMPLE_RATE, MediaFormat::getInteger) ?: 44100,
+            audioFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                trackFormat.nullableGet(MediaFormat.KEY_PCM_ENCODING, MediaFormat::getInteger) ?: AudioFormat.ENCODING_PCM_16BIT
+            } else AudioFormat.ENCODING_PCM_16BIT,
+            sampleRate = trackFormat.nullableGet(MediaFormat.KEY_SAMPLE_RATE, MediaFormat::getInteger)
+                ?: 44100,
             channelMask = trackFormat.nullableGet(MediaFormat.KEY_CHANNEL_MASK, MediaFormat::getInteger)
                 .takeIf { it != 0 } ?: AudioFormat.CHANNEL_OUT_DEFAULT,
             bytes = ByteArray(resultByteBuffer.position()).apply {
@@ -108,18 +112,18 @@ class AudioDecoder @Inject constructor() {
             }
         )
     }
+}
 
-    private fun <T> MediaFormat.nullableGet(key: String, getter: MediaFormat.(String) -> T): T? {
-        return if (containsKey(key)) {
-            getter.invoke(this, key)
-        } else {
-            null
-        }
+private fun <T> MediaFormat.nullableGet(key: String, getter: MediaFormat.(String) -> T): T? {
+    return if (containsKey(key)) {
+        getter.invoke(this, key)
+    } else {
+        null
     }
+}
 
-    private fun Int.sizeMultipleOf(multiple: Int): Int {
-        var result = this
-        while (result % multiple != 0) ++result
-        return result
-    }
+private fun Int.sizeMultipleOf(multiple: Int): Int {
+    var result = this
+    while (result % multiple != 0) ++result
+    return result
 }
