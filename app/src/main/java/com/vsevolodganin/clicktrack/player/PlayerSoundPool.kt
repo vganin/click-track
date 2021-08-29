@@ -54,6 +54,12 @@ class PlayerSoundPool @Inject constructor(
         audioTrack.play()
     }
 
+    fun stopAll() {
+        loadedSounds.values.forEach { audioTrack ->
+            audioTrack.stop()
+        }
+    }
+
     private fun load(sound: ClickSoundSource): AudioTrack? {
         return when (sound) {
             is ClickSoundSource.Bundled -> load(sound.resId)
@@ -80,13 +86,13 @@ class PlayerSoundPool @Inject constructor(
     }
 
     private fun load(afd: AssetFileDescriptor): AudioTrack {
-        val decodingResult = audioDecoder.decodeAudioTrack(afd, Const.MAX_PCM_16BIT_MONO_LENGTH)
+        val decodingResult = audioDecoder.decodeAudioTrack(afd, Const.MAX_SECONDS)
 
         return AudioTrack(
             AUDIO_ATTRIBUTES.unwrap() as AudioAttributes,
             AudioFormat.Builder()
                 .setSampleRate(decodingResult.sampleRate)
-                .setEncoding(decodingResult.audioFormat)
+                .setEncoding(decodingResult.pcmEncoding)
                 .setChannelMask(decodingResult.channelMask)
                 .build(),
             decodingResult.bytes.size,
@@ -98,6 +104,6 @@ class PlayerSoundPool @Inject constructor(
     }
 
     private object Const {
-        const val MAX_PCM_16BIT_MONO_LENGTH = 2 * 2 * 44100 // max 2 seconds of PCM 16 BIT 44100 Hz
+        const val MAX_SECONDS = 2
     }
 }

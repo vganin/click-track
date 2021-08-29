@@ -2,6 +2,13 @@ package com.vsevolodganin.clicktrack.player
 
 import android.content.res.AssetFileDescriptor
 import android.media.AudioFormat
+import android.media.AudioFormat.CHANNEL_OUT_5POINT1
+import android.media.AudioFormat.CHANNEL_OUT_7POINT1_SURROUND
+import android.media.AudioFormat.CHANNEL_OUT_DEFAULT
+import android.media.AudioFormat.CHANNEL_OUT_FRONT_CENTER
+import android.media.AudioFormat.CHANNEL_OUT_MONO
+import android.media.AudioFormat.CHANNEL_OUT_QUAD
+import android.media.AudioFormat.CHANNEL_OUT_STEREO
 import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaExtractor
@@ -16,13 +23,13 @@ import timber.log.Timber
 class AudioDecoder @Inject constructor() {
 
     class DecodingResult(
-        val audioFormat: Int,
+        val pcmEncoding: Int,
         val sampleRate: Int,
         val channelMask: Int,
         val bytes: ByteArray,
     )
 
-    fun decodeAudioTrack(afd: AssetFileDescriptor, maxBytesCount: Int): DecodingResult {
+    fun decodeAudioTrack(afd: AssetFileDescriptor, maxSeconds: Int): DecodingResult {
         val mediaExtractor = MediaExtractor()
         try {
             mediaExtractor.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
@@ -30,7 +37,7 @@ class AudioDecoder @Inject constructor() {
                 val trackFormat = mediaExtractor.getTrackFormat(trackIndex)
                 val trackMime = requireNotNull(trackFormat.getString(MediaFormat.KEY_MIME))
                 if (trackMime.startsWith("audio/")) {
-                    return decodeAudioTrack(mediaExtractor, trackIndex, maxBytesCount)
+                    return decodeAudioTrack(mediaExtractor, trackIndex, maxSeconds)
                 }
             }
         } finally {
@@ -39,24 +46,26 @@ class AudioDecoder @Inject constructor() {
         throw IllegalArgumentException("Failed to decode")
     }
 
-    private fun decodeAudioTrack(mediaExtractor: MediaExtractor, trackIndex: Int, maxBytesCount: Int): DecodingResult {
-        var trackFormat = mediaExtractor.getTrackFormat(trackIndex)
-        val channelCount = trackFormat.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
-        val frameSize = 2 * channelCount // PCM 16 BIT multiplied on channel count
-        val resultByteBuffer = ByteBuffer.allocateDirect(maxBytesCount.sizeMultipleOf(frameSize))
-        val codecName = MediaCodecList(MediaCodecList.REGULAR_CODECS).findDecoderForFormat(trackFormat)
+    private fun decodeAudioTrack(mediaExtractor: MediaExtractor, trackIndex: Int, maxSeconds: Int): DecodingResult {
+        val inputTrackFormat = mediaExtractor.getTrackFormat(trackIndex)
+        val codecName = MediaCodecList(MediaCodecList.REGULAR_CODECS).findDecoderForFormat(inputTrackFormat)
         val codec = MediaCodec.createByCodecName(codecName)
-        codec.configure(trackFormat, null, null, 0)
+        codec.configure(inputTrackFormat, null, null, 0)
         codec.start()
-        mediaExtractor.selectTrack(trackIndex)
+
+        var outputTrackFormat = codec.outputFormat
+
+        val maxBytes = maxSeconds * outputTrackFormat.bytesPerSecond()
+        val resultByteBuffer = ByteBuffer.allocateDirect(maxBytes)
+
         var sawInputEnd = false
         var sawOutputEnd = false
-        trackFormat = codec.outputFormat
+        mediaExtractor.selectTrack(trackIndex)
         while (!sawOutputEnd) {
             if (!sawInputEnd) {
                 val inputBufferIndex = codec.dequeueInputBuffer(5000)
                 if (inputBufferIndex >= 0) {
-                    val inputBuffer = requireNotNull(codec.getInputBuffer(inputBufferIndex))
+                    val inputBuffer = codec.getInputBuffer(inputBufferIndex)!!
                     var sampleSize = mediaExtractor.readSampleData(inputBuffer, 0)
                     if (sampleSize < 0) {
                         sampleSize = 0
@@ -86,7 +95,7 @@ class AudioDecoder @Inject constructor() {
                     codec.releaseOutputBuffer(outputBufferIndex, false)
                 }
                 outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> {
-                    trackFormat = codec.outputFormat
+                    outputTrackFormat = codec.outputFormat
                 }
                 outputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER -> {
                     Timber.w("Received INFO_TRY_AGAIN_LATER")
@@ -98,13 +107,9 @@ class AudioDecoder @Inject constructor() {
         codec.release()
 
         return DecodingResult(
-            audioFormat = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                trackFormat.nullableGet(MediaFormat.KEY_PCM_ENCODING, MediaFormat::getInteger) ?: AudioFormat.ENCODING_PCM_16BIT
-            } else AudioFormat.ENCODING_PCM_16BIT,
-            sampleRate = trackFormat.nullableGet(MediaFormat.KEY_SAMPLE_RATE, MediaFormat::getInteger)
-                ?: 44100,
-            channelMask = trackFormat.nullableGet(MediaFormat.KEY_CHANNEL_MASK, MediaFormat::getInteger)
-                .takeIf { it != 0 } ?: AudioFormat.CHANNEL_OUT_DEFAULT,
+            pcmEncoding = outputTrackFormat.pcmEncoding(),
+            sampleRate = outputTrackFormat.sampleRate(),
+            channelMask = outputTrackFormat.channelMask(),
             bytes = ByteArray(resultByteBuffer.position()).apply {
                 resultByteBuffer.limit(resultByteBuffer.position())
                 resultByteBuffer.position(0)
@@ -114,16 +119,60 @@ class AudioDecoder @Inject constructor() {
     }
 }
 
-private fun <T> MediaFormat.nullableGet(key: String, getter: MediaFormat.(String) -> T): T? {
+private fun MediaFormat.pcmEncoding(): Int {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        getOptional(MediaFormat.KEY_PCM_ENCODING, MediaFormat::getInteger) ?: AudioFormat.ENCODING_PCM_16BIT
+    } else {
+        AudioFormat.ENCODING_PCM_16BIT
+    }
+}
+
+private fun MediaFormat.channelCount(): Int {
+    return getInteger(MediaFormat.KEY_CHANNEL_COUNT)
+}
+
+private fun MediaFormat.channelMask(): Int {
+    return when (channelCount()) {
+        1 -> CHANNEL_OUT_MONO
+        2 -> CHANNEL_OUT_STEREO
+        3 -> CHANNEL_OUT_STEREO or CHANNEL_OUT_FRONT_CENTER
+        4 -> CHANNEL_OUT_QUAD
+        5 -> CHANNEL_OUT_QUAD or CHANNEL_OUT_FRONT_CENTER
+        6 -> CHANNEL_OUT_5POINT1
+        8 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            CHANNEL_OUT_7POINT1_SURROUND
+        } else {
+            CHANNEL_OUT_DEFAULT
+        }
+        else -> CHANNEL_OUT_DEFAULT
+    }
+}
+
+private fun MediaFormat.sampleRate(): Int {
+    return getInteger(MediaFormat.KEY_SAMPLE_RATE)
+}
+
+private fun MediaFormat.bytesPerSample(): Int {
+    return when (val pcmEncoding = pcmEncoding()) {
+        AudioFormat.ENCODING_PCM_8BIT -> 1
+        AudioFormat.ENCODING_PCM_16BIT -> 2
+        AudioFormat.ENCODING_PCM_24BIT_PACKED -> 3
+        AudioFormat.ENCODING_PCM_32BIT,
+        AudioFormat.ENCODING_PCM_FLOAT,
+        -> 4
+        AudioFormat.ENCODING_INVALID -> throw java.lang.IllegalArgumentException("Bad audio format $pcmEncoding")
+        else -> throw java.lang.IllegalArgumentException("Bad audio format $pcmEncoding")
+    }
+}
+
+private fun MediaFormat.bytesPerSecond(): Int {
+    return sampleRate() * bytesPerSample() * channelCount()
+}
+
+private fun <T> MediaFormat.getOptional(key: String, getter: MediaFormat.(String) -> T): T? {
     return if (containsKey(key)) {
         getter.invoke(this, key)
     } else {
         null
     }
-}
-
-private fun Int.sizeMultipleOf(multiple: Int): Int {
-    var result = this
-    while (result % multiple != 0) ++result
-    return result
 }

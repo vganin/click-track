@@ -165,6 +165,9 @@ class PlayerImpl @Inject constructor(
         playerJob?.cancel()
         playerJob = null
         updatePlaybackState { null }
+        withContext(playerDispatcher) {
+            soundPool.stopAll()
+        }
     }
 
     override fun playbackState(): Flow<PlaybackState?> {
