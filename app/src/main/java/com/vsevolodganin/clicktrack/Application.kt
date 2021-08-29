@@ -26,6 +26,8 @@ class Application : android.app.Application() {
     override fun onCreate() {
         super.onCreate()
 
+        NativeLibraries.init(this)
+
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }

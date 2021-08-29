@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack
 
 import android.content.Intent
+import android.media.AudioManager
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -12,7 +13,6 @@ import androidx.lifecycle.ViewModel
 import com.vsevolodganin.clicktrack.di.module.ActivityScopedAppStateEpic
 import com.vsevolodganin.clicktrack.di.module.SerialBackgroundDispatcher
 import com.vsevolodganin.clicktrack.migration.MigrationManager
-import com.vsevolodganin.clicktrack.player.PlayerSoundPool
 import com.vsevolodganin.clicktrack.state.presenter.PresenterOrchestrator
 import com.vsevolodganin.clicktrack.state.redux.AppState
 import com.vsevolodganin.clicktrack.state.redux.action.NavigationAction
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        volumeControlStream = PlayerSoundPool.AUDIO_ATTRIBUTES.volumeControlStream
+        volumeControlStream = AudioManager.STREAM_MUSIC
     }
 
     override fun onBackPressed() {

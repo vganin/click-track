@@ -2,13 +2,6 @@ package com.vsevolodganin.clicktrack.player
 
 import android.content.res.AssetFileDescriptor
 import android.media.AudioFormat
-import android.media.AudioFormat.CHANNEL_OUT_5POINT1
-import android.media.AudioFormat.CHANNEL_OUT_7POINT1_SURROUND
-import android.media.AudioFormat.CHANNEL_OUT_DEFAULT
-import android.media.AudioFormat.CHANNEL_OUT_FRONT_CENTER
-import android.media.AudioFormat.CHANNEL_OUT_MONO
-import android.media.AudioFormat.CHANNEL_OUT_QUAD
-import android.media.AudioFormat.CHANNEL_OUT_STEREO
 import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaExtractor
@@ -25,8 +18,8 @@ class AudioDecoder @Inject constructor() {
     class DecodingResult(
         val pcmEncoding: Int,
         val sampleRate: Int,
-        val channelMask: Int,
-        val bytes: ByteArray,
+        val channelCount: Int,
+        val data: ByteBuffer,
     )
 
     fun decodeAudioTrack(afd: AssetFileDescriptor, maxSeconds: Int): DecodingResult {
@@ -109,12 +102,8 @@ class AudioDecoder @Inject constructor() {
         return DecodingResult(
             pcmEncoding = outputTrackFormat.pcmEncoding(),
             sampleRate = outputTrackFormat.sampleRate(),
-            channelMask = outputTrackFormat.channelMask(),
-            bytes = ByteArray(resultByteBuffer.position()).apply {
-                resultByteBuffer.limit(resultByteBuffer.position())
-                resultByteBuffer.position(0)
-                resultByteBuffer.get(this)
-            }
+            channelCount = outputTrackFormat.channelCount(),
+            data = resultByteBuffer,
         )
     }
 }
@@ -129,23 +118,6 @@ private fun MediaFormat.pcmEncoding(): Int {
 
 private fun MediaFormat.channelCount(): Int {
     return getInteger(MediaFormat.KEY_CHANNEL_COUNT)
-}
-
-private fun MediaFormat.channelMask(): Int {
-    return when (channelCount()) {
-        1 -> CHANNEL_OUT_MONO
-        2 -> CHANNEL_OUT_STEREO
-        3 -> CHANNEL_OUT_STEREO or CHANNEL_OUT_FRONT_CENTER
-        4 -> CHANNEL_OUT_QUAD
-        5 -> CHANNEL_OUT_QUAD or CHANNEL_OUT_FRONT_CENTER
-        6 -> CHANNEL_OUT_5POINT1
-        8 -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            CHANNEL_OUT_7POINT1_SURROUND
-        } else {
-            CHANNEL_OUT_DEFAULT
-        }
-        else -> CHANNEL_OUT_DEFAULT
-    }
 }
 
 private fun MediaFormat.sampleRate(): Int {

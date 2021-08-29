@@ -3,13 +3,8 @@ package com.vsevolodganin.clicktrack.player
 import android.content.ContentResolver
 import android.content.Context
 import android.content.res.AssetFileDescriptor
-import android.media.AudioAttributes
-import android.media.AudioFormat
-import android.media.AudioManager
-import android.media.AudioTrack
 import android.net.Uri
 import androidx.annotation.RawRes
-import androidx.media.AudioAttributesCompat
 import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
 import javax.inject.Inject
@@ -23,17 +18,7 @@ class PlayerSoundPool @Inject constructor(
     private val context: Context,
     private val audioDecoder: AudioDecoder,
     private val contentResolver: ContentResolver,
-    audioManager: AudioManager,
 ) {
-    companion object {
-        val AUDIO_ATTRIBUTES: AudioAttributesCompat = AudioAttributesCompat.Builder()
-            .setUsage(AudioAttributesCompat.USAGE_MEDIA)
-            .setContentType(AudioAttributesCompat.CONTENT_TYPE_SONIFICATION)
-            .build()
-    }
-
-    private val sessionId = audioManager.generateAudioSessionId()
-
     private val loadedSounds = mutableMapOf<ClickSoundSource, AudioTrack>()
 
     fun preload(sounds: Iterable<ClickSoundSource>) {
@@ -50,8 +35,13 @@ class PlayerSoundPool @Inject constructor(
             load(soundSource) ?: return
         }
 
-        audioTrack.stop()
         audioTrack.play()
+    }
+
+    fun stop() {
+        loadedSounds.values.forEach { audioTrack ->
+            audioTrack.stop()
+        }
     }
 
     fun stopAll() {
@@ -89,18 +79,11 @@ class PlayerSoundPool @Inject constructor(
         val decodingResult = audioDecoder.decodeAudioTrack(afd, Const.MAX_SECONDS)
 
         return AudioTrack(
-            AUDIO_ATTRIBUTES.unwrap() as AudioAttributes,
-            AudioFormat.Builder()
-                .setSampleRate(decodingResult.sampleRate)
-                .setEncoding(decodingResult.pcmEncoding)
-                .setChannelMask(decodingResult.channelMask)
-                .build(),
-            decodingResult.bytes.size,
-            AudioTrack.MODE_STATIC,
-            sessionId,
-        ).apply {
-            write(decodingResult.bytes, 0, decodingResult.bytes.size)
-        }
+            data = decodingResult.data,
+            channelCount = decodingResult.channelCount,
+            pcmEncoding = decodingResult.pcmEncoding,
+            sampleRate = decodingResult.sampleRate,
+        )
     }
 
     private object Const {
