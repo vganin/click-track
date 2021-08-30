@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.di.module
 
+import android.os.Process
 import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import dagger.Module
@@ -36,27 +37,24 @@ class ApplicationScopedCoroutineModule {
     @ApplicationScoped
     @SerialBackgroundDispatcher
     fun provideSerialBackgroundDispatcher(): CoroutineDispatcher {
-        return Executors.newSingleThreadExecutor { runnable ->
-            Thread(runnable, "ClickTrackSerialBackground").apply {
-                priority = Thread.NORM_PRIORITY
-            }
-        }.also { it.bootstrap() }.asCoroutineDispatcher()
+        return Executors.newSingleThreadExecutor { runnable -> Thread(runnable, "ClickTrackSerialBackground") }
+            .also { it.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT) }
+            .asCoroutineDispatcher()
     }
 
     @Provides
     @ApplicationScoped
     @PlayerDispatcher
     fun providePlayerDispatcher(): CoroutineDispatcher {
-        return Executors.newSingleThreadExecutor { runnable ->
-            Thread(runnable, "ClickTrackPlayer").apply {
-                priority = Thread.MAX_PRIORITY
-            }
-        }.also { it.bootstrap() }.asCoroutineDispatcher()
+        return Executors.newSingleThreadExecutor { runnable -> Thread(runnable, "ClickTrackPlayer") }
+            .also { it.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO) }
+            .asCoroutineDispatcher()
     }
 
-    private fun ExecutorService.bootstrap() {
-        // Execute empty lambda to bootstrap the thread
-        execute {  }
+    private fun ExecutorService.setThreadPriority(threadPriority: Int) {
+        execute {
+            Process.setThreadPriority(threadPriority)
+        }
     }
 }
 
