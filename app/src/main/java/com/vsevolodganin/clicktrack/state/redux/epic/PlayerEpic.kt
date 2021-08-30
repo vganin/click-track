@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
@@ -73,6 +74,7 @@ class PlayerEpic @Inject constructor(
 
         when (id) {
             is ClickTrackId -> clickTrackUpdates(id)
+                .drop(1) // Drop initial
                 .collect { clickTrack ->
                     if (clickTrack != null) {
                         player.start(clickTrack)
@@ -81,6 +83,7 @@ class PlayerEpic @Inject constructor(
                     }
                 }
             TwoLayerPolyrhythmId -> polyrhythmUpdates()
+                .drop(1) // Drop initial
                 .collect { polyrhythm ->
                     player.start(polyrhythm)
                 }
