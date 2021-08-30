@@ -10,8 +10,8 @@ suspend fun delayNanosCoroutines(timeNanos: Long) {
 suspend fun delayNanosThreadSleep(timeNanos: Long) {
     if (timeNanos <= 0) return
     runInterruptible {
-        Thread.sleep(timeNanos / NANOS_IN_SECOND, (timeNanos % NANOS_IN_SECOND).toInt())
+        Thread.sleep(timeNanos / NANOS_IN_MILLISECOND, (timeNanos % NANOS_IN_MILLISECOND).toInt())
     }
 }
 
-private const val NANOS_IN_SECOND = 1_000_000L
+private const val NANOS_IN_MILLISECOND = 1_000_000L
