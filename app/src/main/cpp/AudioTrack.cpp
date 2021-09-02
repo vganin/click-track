@@ -65,34 +65,46 @@ AudioTrack::~AudioTrack() {
 }
 
 oboe::DataCallbackResult AudioTrack::onAudioReady(oboe::AudioStream* audioStream, void* audioData, int32_t numFrames) {
+    auto playbackFrameIndex = static_cast<int32_t>(playbackFrameIndex_);
     auto bytesPerFrame = audioStream->getBytesPerFrame();
-    auto framesRemaining = totalFrames_ - playbackFrameIndex_;
+    auto framesRemaining = totalFrames_ - playbackFrameIndex;
     auto framesToPlay = std::min(framesRemaining, numFrames);
     auto framesToFillSilence = numFrames - framesToPlay;
 
     auto outputStart = static_cast<char*>(audioData);
-    auto inputStart = static_cast<char*>(data_) + playbackFrameIndex_ * bytesPerFrame;
+    auto inputStart = static_cast<char*>(data_) + playbackFrameIndex * bytesPerFrame;
 
     memcpy(outputStart, inputStart, framesToPlay * bytesPerFrame);
     memset(outputStart + framesToPlay * bytesPerFrame, 0, framesToFillSilence * bytesPerFrame);
 
     playbackFrameIndex_ += framesToPlay;
 
-    if (playbackFrameIndex_ == totalFrames_) {
-        return oboe::DataCallbackResult::Stop;
-    } else {
-        return oboe::DataCallbackResult::Continue;
-    }
+    return oboe::DataCallbackResult::Continue;
 }
 
-void AudioTrack::play() {
-    stop();
+void AudioTrack::warmup() {
+    // Play silence for warmup
+    playbackFrameIndex_ = totalFrames_;
     audioStream_->start();
 }
 
-void AudioTrack::stop() {
-    audioStream_->stop();
+void AudioTrack::play() {
+    using oboe::StreamState;
+
     playbackFrameIndex_ = 0;
+    const auto state = audioStream_->getState();
+    if (state != StreamState::Started) {
+        audioStream_->start();
+    }
+}
+
+void AudioTrack::stop() {
+    using oboe::StreamState;
+
+    const auto state = audioStream_->getState();
+    if (state != StreamState::Stopped) {
+        audioStream_->stop();
+    }
 }
 
 

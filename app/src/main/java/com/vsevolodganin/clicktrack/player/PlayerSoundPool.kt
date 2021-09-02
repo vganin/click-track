@@ -30,18 +30,20 @@ class PlayerSoundPool @Inject constructor(
             .toMap()
     }
 
+    fun warmup(soundSource: ClickSoundSource) {
+        val audioTrack = loadedSounds.getOrPut(soundSource) {
+            load(soundSource) ?: return
+        }
+
+        audioTrack.warmup()
+    }
+
     fun play(soundSource: ClickSoundSource) {
         val audioTrack = loadedSounds.getOrPut(soundSource) {
             load(soundSource) ?: return
         }
 
         audioTrack.play()
-    }
-
-    fun stop() {
-        loadedSounds.values.forEach { audioTrack ->
-            audioTrack.stop()
-        }
     }
 
     fun stopAll() {

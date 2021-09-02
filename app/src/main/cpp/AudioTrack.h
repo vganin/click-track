@@ -19,6 +19,8 @@ public:
 
     oboe::DataCallbackResult onAudioReady(oboe::AudioStream* audioStream, void* audioData, int32_t numFrames) override;
 
+    void warmup();
+
     void play();
 
     void stop();
@@ -27,7 +29,7 @@ private:
     void* data_;
     int32_t totalFrames_;
     std::shared_ptr<oboe::AudioStream> audioStream_;
-    int32_t playbackFrameIndex_;
+    std::atomic<int32_t> playbackFrameIndex_;
 };
 
 }

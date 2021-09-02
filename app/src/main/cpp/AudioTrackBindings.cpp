@@ -30,6 +30,13 @@ Java_com_vsevolodganin_clicktrack_player_AudioTrack_destroyNative(JNIEnv* env, j
 
 extern "C"
 JNIEXPORT void JNICALL
+Java_com_vsevolodganin_clicktrack_player_AudioTrack_warmup(JNIEnv* env, jobject thiz, jlong native_ptr) {
+    auto audioTrack = (clicktrack::AudioTrack*) native_ptr;
+    audioTrack->warmup();
+}
+
+extern "C"
+JNIEXPORT void JNICALL
 Java_com_vsevolodganin_clicktrack_player_AudioTrack_play(JNIEnv* env, jobject thiz, jlong native_ptr) {
     auto audioTrack = (clicktrack::AudioTrack*) native_ptr;
     audioTrack->play();

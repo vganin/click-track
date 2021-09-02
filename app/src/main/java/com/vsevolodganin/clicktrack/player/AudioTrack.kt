@@ -14,11 +14,13 @@ class AudioTrack(
 
     private val nativePtr: Long = initNative(data, data.position(), channelCount, pcmEncoding, sampleRate)
 
+    fun warmup() = warmup(nativePtr)
     fun play() = play(nativePtr)
     fun stop() = stop(nativePtr)
 
     private external fun initNative(data: ByteBuffer, dataSize: Int, channelCount: Int, pcmFormat: Int, sampleRate: Int): Long
     private external fun destroyNative(nativePtr: Long)
+    private external fun warmup(nativePtr: Long)
     private external fun play(nativePtr: Long)
     private external fun stop(nativePtr: Long)
 

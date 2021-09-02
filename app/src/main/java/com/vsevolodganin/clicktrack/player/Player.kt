@@ -26,7 +26,7 @@ import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
-import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
+import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
 import com.vsevolodganin.clicktrack.utils.coroutine.delayNanosCoroutines
 import com.vsevolodganin.clicktrack.utils.coroutine.delayNanosThreadSleep
 import com.vsevolodganin.clicktrack.utils.grabIf
@@ -35,18 +35,20 @@ import kotlin.time.Duration
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -69,12 +71,13 @@ class PlayerImpl @Inject constructor(
 ) : Player {
 
     private var playerJob: Job? = null
-    private val playbackStateMutex = Mutex()
-    private var playbackState = MutableNonConflatedStateFlow<InternalPlaybackState?>(null)
-    private var pausedState = MutableNonConflatedStateFlow(false)
+    private var playbackState = MutableStateFlow<InternalPlaybackState?>(null)
+    private var pausedState = MutableStateFlow(false)
 
     override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) = withContext(mainDispatcher) {
-        if (clickTrack.value.durationInTime == Duration.ZERO) {
+        val duration = clickTrack.value.durationInTime
+
+        if (duration == Duration.ZERO) {
             Timber.w("Tried to play track with zero duration, exiting")
             stop()
             return@withContext
@@ -84,31 +87,22 @@ class PlayerImpl @Inject constructor(
         val progress = atProgress
             ?: grabIf(clickTrack.id == currentPlayback?.id) { currentPlayback?.currentProgress() }
             ?: 0.0
-        val startAt = clickTrack.value.durationInTime * progress
-
-        updatePlaybackState {
-            InternalPlaybackState(
-                id = clickTrack.id,
-                duration = clickTrack.value.durationInTime,
-                startProgress = progress,
-            )
-        }
+        val startAt = duration * progress
 
         playerJob?.cancel()
         playerJob = launch(playerDispatcher) {
-            pausedState.setValue(false)
+            pausedState.value = false
 
             clickTrack.value.play(
                 startAt = startAt,
                 reportProgress = { progress ->
-                    updatePlaybackState {
-                        this?.copy(
-                            startProgress = progress / clickTrack.value.durationInTime,
-                        )
-                    }
+                    playbackState.value = InternalPlaybackState(
+                        id = clickTrack.id,
+                        duration = duration,
+                        progress = progress / duration,
+                    )
                 },
-                soundsSelector = soundsId?.let { { soundById(it) } }
-                    ?: ::userSelectedSounds
+                soundsSelector = soundsSelector(soundsId)
             )
 
             stop()
@@ -116,7 +110,9 @@ class PlayerImpl @Inject constructor(
     }
 
     override suspend fun start(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) = withContext(mainDispatcher) {
-        if (twoLayerPolyrhythm.durationInTime == Duration.ZERO) {
+        val duration = twoLayerPolyrhythm.durationInTime
+
+        if (duration == Duration.ZERO) {
             Timber.w("Tried to play polyrhythm with zero duration, exiting")
             stop()
             return@withContext
@@ -126,31 +122,22 @@ class PlayerImpl @Inject constructor(
         val progress = atProgress
             ?: grabIf(TwoLayerPolyrhythmId == currentPlayback?.id) { currentPlayback?.currentProgress() }
             ?: 0.0
-        val startAt = twoLayerPolyrhythm.durationInTime * progress
-
-        updatePlaybackState {
-            InternalPlaybackState(
-                id = TwoLayerPolyrhythmId,
-                duration = twoLayerPolyrhythm.durationInTime,
-                startProgress = progress,
-            )
-        }
+        val startAt = duration * progress
 
         playerJob?.cancel()
         playerJob = launch(playerDispatcher) {
-            pausedState.setValue(false)
+            pausedState.value = false
 
             twoLayerPolyrhythm.play(
                 startAt = startAt,
                 reportProgress = { progress ->
-                    updatePlaybackState {
-                        this?.copy(
-                            startProgress = progress / twoLayerPolyrhythm.durationInTime,
-                        )
-                    }
+                    playbackState.value = InternalPlaybackState(
+                        id = TwoLayerPolyrhythmId,
+                        duration = duration,
+                        progress = progress / duration,
+                    )
                 },
-                soundsSelector = soundsId?.let { { soundById(it) } }
-                    ?: ::userSelectedSounds
+                soundsSelector = soundsSelector(soundsId)
             )
 
             stop()
@@ -158,14 +145,14 @@ class PlayerImpl @Inject constructor(
     }
 
     override suspend fun pause() {
-        pausedState.setValue(true)
+        pausedState.value = true
     }
 
     override suspend fun stop(): Unit = withContext(mainDispatcher) {
         playerJob?.cancel()
         playerJob = null
-        updatePlaybackState { null }
         withContext(playerDispatcher) {
+            playbackState.value = null
             soundPool.stopAll()
         }
     }
@@ -183,8 +170,8 @@ class PlayerImpl @Inject constructor(
 
     private suspend fun ClickTrack.play(
         startAt: Duration,
-        reportProgress: suspend (progress: Duration) -> Unit,
-        soundsSelector: suspend () -> ClickSounds?,
+        reportProgress: (progress: Duration) -> Unit,
+        soundsSelector: () -> ClickSounds?,
     ) = coroutineScope {
         @Suppress("NAME_SHADOWING") // Because that looks better
         val startAt = if (startAt >= durationInTime) {
@@ -193,32 +180,33 @@ class PlayerImpl @Inject constructor(
             startAt
         }
 
-        val schedule = cues
-            .asSequence()
-            .flatMap { cue -> cue.toPlayerSchedule(soundsSelector).withDuration(cue.durationAsTime) }
-            .reportProgress(reportProgress)
+        val schedule = cues.asSequence()
+            .flatMap { cue ->
+                cue
+                    .toPlayerSchedule(soundsSelector)
+                    .withDuration(cue.durationAsTime)
+            }
+            .reportProgressAtTheBeginning(reportProgress, Duration.ZERO)
             .loop(loop)
-            .run {
+            .let {
                 if (startAt > Duration.ZERO) {
-                    startingAt(startAt)
-                        .reportProgress { passed -> reportProgress(startAt + passed) }
+                    it.startingAt(startAt).reportProgressAtTheBeginning(reportProgress, startAt)
                 } else {
-                    this@run
+                    it
                 }
             }
+            .prefetch(Const.PREFETCH_SIZE)
 
-        GenericPatternPlayer.play(
-            pattern = schedule,
-            interval = { event -> event.interval },
-            play = { event -> event.play() },
-            delayMethod = GenericPatternPlayer.DelayMethod.THREAD_SLEEP
+        PlayerScheduleSequencer.play(
+            schedule = schedule,
+            delayMethod = PlayerScheduleSequencer.DelayMethod.THREAD_SLEEP
         )
     }
 
     private suspend fun TwoLayerPolyrhythm.play(
         startAt: Duration,
-        reportProgress: suspend (progress: Duration) -> Unit,
-        soundsSelector: suspend () -> ClickSounds?,
+        reportProgress: (progress: Duration) -> Unit,
+        soundsSelector: () -> ClickSounds?,
     ) = coroutineScope {
         @Suppress("NAME_SHADOWING") // Because that looks better
         val startAt = if (startAt >= durationInTime) {
@@ -228,37 +216,36 @@ class PlayerImpl @Inject constructor(
         }
 
         val schedule = toPlayerSchedule(soundsSelector)
-            .reportProgress(reportProgress)
+            .reportProgressAtTheBeginning(reportProgress, Duration.ZERO)
+            .toList()
+            .asSequence()
             .loop(true)
-            .run {
+            .let {
                 if (startAt > Duration.ZERO) {
-                    startingAt(startAt)
-                        .reportProgress { passed -> reportProgress(startAt + passed) }
+                    it.startingAt(startAt).reportProgressAtTheBeginning(reportProgress, startAt)
                 } else {
-                    this@run
+                    it
                 }
             }
+            .prefetch(Const.PREFETCH_SIZE)
 
-        GenericPatternPlayer.play(
-            pattern = schedule,
-            interval = { event -> event.interval },
-            play = { event -> event.play() },
-            delayMethod = GenericPatternPlayer.DelayMethod.THREAD_SLEEP
+        PlayerScheduleSequencer.play(
+            schedule = schedule,
+            delayMethod = PlayerScheduleSequencer.DelayMethod.THREAD_SLEEP,
         )
     }
 
-    private fun Cue.toPlayerSchedule(soundsSelector: suspend () -> ClickSounds?): PlayerSchedule {
+    private fun Cue.toPlayerSchedule(soundsSelector: () -> ClickSounds?): PlayerSchedule {
         val tempo = bpm
         val polyrhythm = AbstractPolyrhythm(
             pattern1 = listOf(NoteEvent(timeSignature.noteCount.toRational(), NoteEvent.Type.NOTE)),
             pattern2 = pattern.events,
         )
+        val bpmInterval = tempo.interval
 
         return sequence {
-            val bpmInterval = tempo.interval
-
             if (polyrhythm.untilFirst > Rational.ZERO) {
-                yield(DelayEvent(bpmInterval * polyrhythm.untilFirst))
+                yield(delayEvent(bpmInterval * polyrhythm.untilFirst))
             }
 
             for (column in polyrhythm.columns) {
@@ -268,7 +255,7 @@ class PlayerImpl @Inject constructor(
                 }
 
                 yield(
-                    SoundEvent(
+                    soundEvent(
                         type = soundType,
                         duration = bpmInterval * column.untilNext,
                         waitResume = {
@@ -284,7 +271,7 @@ class PlayerImpl @Inject constructor(
         }
     }
 
-    private fun TwoLayerPolyrhythm.toPlayerSchedule(soundsSelector: suspend () -> ClickSounds?): PlayerSchedule {
+    private fun TwoLayerPolyrhythm.toPlayerSchedule(soundsSelector: () -> ClickSounds?): PlayerSchedule {
         val tempo = bpm
         val layer1NoteLength = 1.toRational()
         val layer2NoteLength = layer1 over layer2
@@ -297,7 +284,7 @@ class PlayerImpl @Inject constructor(
             val bpmInterval = tempo.interval
 
             if (polyrhythm.untilFirst > Rational.ZERO) {
-                yield(DelayEvent(bpmInterval * polyrhythm.untilFirst))
+                yield(delayEvent(bpmInterval * polyrhythm.untilFirst))
             }
 
             for (column in polyrhythm.columns) {
@@ -310,7 +297,7 @@ class PlayerImpl @Inject constructor(
 
                 for (soundType in soundTypes) {
                     yield(
-                        SoundEvent(
+                        soundEvent(
                             type = soundType,
                             duration = Duration.ZERO,
                             waitResume = {
@@ -324,7 +311,7 @@ class PlayerImpl @Inject constructor(
                     )
                 }
 
-                yield(DelayEvent(duration = bpmInterval * column.untilNext))
+                yield(delayEvent(duration = bpmInterval * column.untilNext))
             }
         }
     }
@@ -340,7 +327,7 @@ class PlayerImpl @Inject constructor(
 
                 if (runningDuration + Const.CLICK_MIN_DELTA >= duration) {
                     if (runningDuration != duration) {
-                        yield(next.withInterval(interval = next.interval - (runningDuration - duration)))
+                        yield(next.copy(interval = next.interval - (runningDuration - duration)))
                     } else {
                         yield(next)
                     }
@@ -364,77 +351,83 @@ class PlayerImpl @Inject constructor(
         }
 
         return sequence {
-            yield(DelayEvent((runningDuration - startAt).coerceAtLeast(Duration.ZERO)))
+            yield(delayEvent((runningDuration - startAt).coerceAtLeast(Duration.ZERO)))
             yieldAll(drop(dropCount))
         }
     }
 
-    private fun PlayerSchedule.reportProgress(reportProgress: suspend (progress: Duration) -> Unit): PlayerSchedule {
-        return sequence {
-            yield(ReportProgressEvent(TimeSource.Monotonic.markNow(), reportProgress))
-            yieldAll(this@reportProgress)
-        }
+    private fun PlayerSchedule.reportProgressAtTheBeginning(
+        reportProgress: (progress: Duration) -> Unit,
+        progress: Duration,
+    ) = sequence {
+        yield(actionEvent { reportProgress(progress) })
+        yieldAll(this@reportProgressAtTheBeginning)
     }
 
     private fun PlayerSchedule.loop(loop: Boolean): PlayerSchedule {
         return if (loop) toRoundRobin() else this
     }
 
-    private suspend fun userSelectedSounds(): ClickSounds? {
-        return soundById(userPreferencesRepository.selectedSoundsId.flow.first())
+    private suspend fun CoroutineScope.soundsSelector(soundsId: ClickSoundsId?): () -> ClickSounds? {
+        return if (soundsId != null) {
+            soundsById(soundsId)
+        } else {
+            userSelectedSounds()
+        }
+            .onEach { sounds ->
+                soundPool.stopAll()
+                sounds?.asIterable?.forEach(soundPool::warmup)
+            }
+            .stateIn(scope = this)::value
     }
 
-    private suspend fun soundById(soundsId: ClickSoundsId): ClickSounds? {
+    private fun userSelectedSounds(): Flow<ClickSounds?> {
+        return userPreferencesRepository.selectedSoundsId.flow
+            .flatMapLatest(::soundsById)
+    }
+
+    private fun soundsById(soundsId: ClickSoundsId): Flow<ClickSounds?> {
         return when (soundsId) {
-            is ClickSoundsId.Builtin -> soundsId.value.sounds
-            is ClickSoundsId.Database -> clickSoundsRepository.getById(soundsId).firstOrNull()?.value
+            is ClickSoundsId.Builtin -> flowOf(soundsId.value.sounds)
+            is ClickSoundsId.Database -> clickSoundsRepository.getById(soundsId).map { it?.value }
         }
     }
 
-    private data class InternalPlaybackState(
+    private class InternalPlaybackState(
         val id: PlayableId,
         val duration: Duration,
-        val startProgress: Double,
+        val progress: Double,
     ) {
         val startedAt: TimeMark = TimeSource.Monotonic.markNow()
 
         fun currentProgress(): Double {
             val elapsedSinceStart = startedAt.elapsedNow()
-            return startProgress + elapsedSinceStart / duration
+            return progress + elapsedSinceStart / duration
         }
-    }
-
-    private suspend fun updatePlaybackState(
-        update: InternalPlaybackState?.() -> InternalPlaybackState?,
-    ) = playbackStateMutex.withLock {
-        val previous = playbackState.value
-        playbackState.setValue(previous.update())
     }
 
     private object Const {
         val CLICK_MIN_DELTA = Duration.milliseconds(1)
+        const val PREFETCH_SIZE = 100
     }
 }
 
-private interface PlayerScheduleEvent {
-    val interval: Duration
-    suspend fun play()
-    fun withInterval(interval: Duration): PlayerScheduleEvent
-}
+private data class PlayerScheduleEvent(
+    val interval: Duration = Duration.ZERO,
+    val action: (suspend () -> Unit)? = null,
+)
 
 private typealias PlayerSchedule = Sequence<PlayerScheduleEvent>
 
-private data class SoundEvent(
-    private val type: ClickSoundType,
-    private val duration: Duration,
-    private val waitResume: suspend () -> Unit,
-    private val selectedSounds: suspend () -> ClickSounds?,
-    private val soundPool: PlayerSoundPool,
-) : PlayerScheduleEvent {
-
-    override val interval: Duration get() = duration
-
-    override suspend fun play() {
+private fun soundEvent(
+    type: ClickSoundType,
+    duration: Duration,
+    waitResume: suspend () -> Unit,
+    selectedSounds: () -> ClickSounds?,
+    soundPool: PlayerSoundPool,
+) = PlayerScheduleEvent(
+    interval = duration,
+    action = {
         waitResume()
 
         val sounds = selectedSounds()
@@ -443,82 +436,41 @@ private data class SoundEvent(
                 ClickSoundType.STRONG -> sounds.strongBeat
                 ClickSoundType.WEAK -> sounds.weakBeat
             }
-            sound?.let { soundPool.play(it) }
+            sound?.let(soundPool::play)
         }
     }
+)
 
-    override fun withInterval(interval: Duration): PlayerScheduleEvent {
-        return copy(duration = interval)
-    }
-}
+private fun delayEvent(duration: Duration) = PlayerScheduleEvent(interval = duration)
 
-private data class DelayEvent(private val duration: Duration) : PlayerScheduleEvent {
+private fun actionEvent(action: suspend () -> Unit) = PlayerScheduleEvent(action = action)
 
-    override val interval: Duration get() = duration
-
-    override suspend fun play() = Unit
-
-    override fun withInterval(interval: Duration): PlayerScheduleEvent {
-        return copy(duration = interval)
-    }
-}
-
-private data class ReportProgressEvent(
-    private val timeMark: TimeMark,
-    private val reportProgress: suspend (progress: Duration) -> Unit,
-    override val interval: Duration = Duration.ZERO,
-) : PlayerScheduleEvent {
-
-    override suspend fun play() {
-        reportProgress(timeMark.elapsedNow())
-    }
-
-    override fun withInterval(interval: Duration): PlayerScheduleEvent {
-        return copy(interval = interval)
-    }
-}
-
-private object GenericPatternPlayer {
+private object PlayerScheduleSequencer {
 
     enum class DelayMethod {
         THREAD_SLEEP, SUSPEND
     }
 
-    suspend fun <T> play(
-        pattern: Sequence<T>,
-        interval: (T) -> Duration,
-        play: suspend (element: T) -> Unit,
+    suspend fun play(
+        schedule: PlayerSchedule,
         delayMethod: DelayMethod,
     ) {
-        play(
-            pattern = pattern,
-            interval = { element -> interval(element).inWholeNanoseconds },
-            play = { element -> play(element) },
-            delay = delayMethod.asReference(),
-        )
-    }
-
-    private suspend fun <T> play(
-        pattern: Sequence<T>,
-        interval: (T) -> Long,
-        play: suspend (element: T) -> Unit,
-        delay: suspend (Long) -> Unit,
-    ) {
-        val patternIterator = pattern.iterator()
+        val delay = delayMethod.referenceToMethod()
+        val iterator = schedule.iterator()
         val startTime = nanoTime()
         var deadline = startTime
         var now: Long
-        while (patternIterator.hasNext()) {
-            val element = patternIterator.next()
-            val elementInterval = interval(element)
-            play(element)
-            deadline += elementInterval
+        while (iterator.hasNext()) {
+            val event = iterator.next()
+            event.action?.invoke()
+            val interval = event.interval
+            deadline += interval.inWholeNanoseconds
             now = nanoTime()
             delay(deadline - now)
         }
     }
 
-    private fun DelayMethod.asReference() = when (this) {
+    private fun DelayMethod.referenceToMethod() = when (this) {
         DelayMethod.THREAD_SLEEP -> ::delayNanosThreadSleep
         DelayMethod.SUSPEND -> ::delayNanosCoroutines
     }
