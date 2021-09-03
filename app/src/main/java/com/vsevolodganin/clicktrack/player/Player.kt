@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.player
 
 import android.os.SystemClock
+import androidx.compose.ui.util.fastForEach
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
@@ -34,8 +35,10 @@ import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
+import kotlin.time.measureTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -96,11 +99,13 @@ class PlayerImpl @Inject constructor(
             clickTrack.value.play(
                 startAt = startAt,
                 reportProgress = { progress ->
-                    playbackState.value = InternalPlaybackState(
-                        id = clickTrack.id,
-                        duration = duration,
-                        progress = progress / duration,
-                    )
+                    launch(Dispatchers.Main) {
+                        playbackState.value = InternalPlaybackState(
+                            id = clickTrack.id,
+                            duration = duration,
+                            progress = progress / duration,
+                        )
+                    }
                 },
                 soundsSelector = soundsSelector(soundsId)
             )
@@ -131,11 +136,13 @@ class PlayerImpl @Inject constructor(
             twoLayerPolyrhythm.play(
                 startAt = startAt,
                 reportProgress = { progress ->
-                    playbackState.value = InternalPlaybackState(
-                        id = TwoLayerPolyrhythmId,
-                        duration = duration,
-                        progress = progress / duration,
-                    )
+                    launch {
+                        playbackState.value = InternalPlaybackState(
+                            id = TwoLayerPolyrhythmId,
+                            duration = duration,
+                            progress = progress / duration,
+                        )
+                    }
                 },
                 soundsSelector = soundsSelector(soundsId)
             )
@@ -295,11 +302,10 @@ class PlayerImpl @Inject constructor(
                     }
                 }
 
-                for (soundType in soundTypes) {
-                    yield(
-                        soundEvent(
+                val action = suspend {
+                    soundTypes.fastForEach { soundType ->
+                        playSound(
                             type = soundType,
-                            duration = Duration.ZERO,
                             waitResume = {
                                 if (pausedState.value) {
                                     pausedState.filter { false }.take(1).collect()
@@ -308,10 +314,15 @@ class PlayerImpl @Inject constructor(
                             selectedSounds = soundsSelector,
                             soundPool = soundPool,
                         )
-                    )
+                    }
                 }
 
-                yield(delayEvent(duration = bpmInterval * column.untilNext))
+                yield(
+                    PlayerScheduleEvent(
+                        interval = bpmInterval * column.untilNext,
+                        action = action
+                    )
+                )
             }
         }
     }
@@ -359,9 +370,18 @@ class PlayerImpl @Inject constructor(
     private fun PlayerSchedule.reportProgressAtTheBeginning(
         reportProgress: (progress: Duration) -> Unit,
         progress: Duration,
-    ) = sequence {
-        yield(actionEvent { reportProgress(progress) })
-        yieldAll(this@reportProgressAtTheBeginning)
+    ) = mapIndexed { index, event ->
+        if (index == 0) {
+            PlayerScheduleEvent(
+                interval = event.interval,
+                action = {
+                    event.action()
+                    reportProgress(progress)
+                }
+            )
+        } else {
+            event
+        }
     }
 
     private fun PlayerSchedule.loop(loop: Boolean): PlayerSchedule {
@@ -414,7 +434,7 @@ class PlayerImpl @Inject constructor(
 
 private data class PlayerScheduleEvent(
     val interval: Duration = Duration.ZERO,
-    val action: (suspend () -> Unit)? = null,
+    val action: suspend () -> Unit = {},
 )
 
 private typealias PlayerSchedule = Sequence<PlayerScheduleEvent>
@@ -428,22 +448,34 @@ private fun soundEvent(
 ) = PlayerScheduleEvent(
     interval = duration,
     action = {
-        waitResume()
-
-        val sounds = selectedSounds()
-        if (sounds != null) {
-            val sound = when (type) {
-                ClickSoundType.STRONG -> sounds.strongBeat
-                ClickSoundType.WEAK -> sounds.weakBeat
-            }
-            sound?.let(soundPool::play)
-        }
+        playSound(
+            type = type,
+            waitResume = waitResume,
+            selectedSounds = selectedSounds,
+            soundPool = soundPool,
+        )
     }
 )
 
-private fun delayEvent(duration: Duration) = PlayerScheduleEvent(interval = duration)
+private suspend fun playSound(
+    type: ClickSoundType,
+    waitResume: suspend () -> Unit,
+    selectedSounds: () -> ClickSounds?,
+    soundPool: PlayerSoundPool,
+) {
+    waitResume()
 
-private fun actionEvent(action: suspend () -> Unit) = PlayerScheduleEvent(action = action)
+    val sounds = selectedSounds()
+    if (sounds != null) {
+        val sound = when (type) {
+            ClickSoundType.STRONG -> sounds.strongBeat
+            ClickSoundType.WEAK -> sounds.weakBeat
+        }
+        sound?.let(soundPool::play)
+    }
+}
+
+private fun delayEvent(duration: Duration) = PlayerScheduleEvent(interval = duration)
 
 private object PlayerScheduleSequencer {
 
@@ -462,10 +494,13 @@ private object PlayerScheduleSequencer {
         var now: Long
         while (iterator.hasNext()) {
             val event = iterator.next()
-            event.action?.invoke()
+            measureTime { event.action() }.also {
+                println("action took ${it}")
+            }
             val interval = event.interval
             deadline += interval.inWholeNanoseconds
             now = nanoTime()
+            println("delayaaa ${deadline - now}")
             delay(deadline - now)
         }
     }
