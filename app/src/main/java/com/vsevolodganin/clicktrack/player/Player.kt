@@ -35,7 +35,6 @@ import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
-import kotlin.time.measureTime
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -494,13 +493,10 @@ private object PlayerScheduleSequencer {
         var now: Long
         while (iterator.hasNext()) {
             val event = iterator.next()
-            measureTime { event.action() }.also {
-                println("action took ${it}")
-            }
+            event.action()
             val interval = event.interval
             deadline += interval.inWholeNanoseconds
             now = nanoTime()
-            println("delayaaa ${deadline - now}")
             delay(deadline - now)
         }
     }
