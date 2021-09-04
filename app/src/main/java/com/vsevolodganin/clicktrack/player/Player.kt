@@ -135,7 +135,7 @@ class PlayerImpl @Inject constructor(
             twoLayerPolyrhythm.play(
                 startAt = startAt,
                 reportProgress = { progress ->
-                    launch {
+                    launch(Dispatchers.Main) {
                         playbackState.value = InternalPlaybackState(
                             id = TwoLayerPolyrhythmId,
                             duration = duration,
