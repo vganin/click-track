@@ -4,6 +4,7 @@ import android.app.Activity
 import com.google.android.play.core.ktx.launchReview
 import com.google.android.play.core.ktx.requestReview
 import com.google.android.play.core.review.ReviewManager
+import com.vsevolodganin.clicktrack.analytics.AnalyticsLogger
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
 import com.vsevolodganin.clicktrack.state.redux.action.InAppReviewAction
 import com.vsevolodganin.clicktrack.state.redux.core.Action
@@ -24,6 +25,7 @@ class InAppReviewEpic @Inject constructor(
     private val reviewManagerProvider: Provider<ReviewManager>,
     private val activity: Activity,
     private val userPreferencesRepository: UserPreferencesRepository,
+    private val analyticsLogger: AnalyticsLogger,
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {
@@ -40,6 +42,7 @@ class InAppReviewEpic @Inject constructor(
                 val reviewInfo = reviewManager.requestReview()
                 reviewManager.launchReview(activity, reviewInfo)
                 userPreferencesRepository.reviewRequestTimestamp.edit { nowMilliseconds() }
+                analyticsLogger.logEvent("review_requested")
             }
         } catch (t: Throwable) {
             Timber.e(t, "Failed to request review")
