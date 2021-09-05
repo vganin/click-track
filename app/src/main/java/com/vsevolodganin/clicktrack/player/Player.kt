@@ -28,8 +28,9 @@ import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
-import com.vsevolodganin.clicktrack.utils.coroutine.delayNanosCoroutines
-import com.vsevolodganin.clicktrack.utils.coroutine.delayNanosThreadSleep
+import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingCoroutines
+import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingThreadSleep
+import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingThreadSleepAndSpinLock
 import com.vsevolodganin.clicktrack.utils.grabIf
 import javax.inject.Inject
 import kotlin.time.Duration
@@ -40,6 +41,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
@@ -205,7 +207,7 @@ class PlayerImpl @Inject constructor(
 
         PlayerScheduleSequencer.play(
             schedule = schedule,
-            delayMethod = PlayerScheduleSequencer.DelayMethod.THREAD_SLEEP
+            delayMethod = PlayerScheduleSequencer.DelayMethod.SPIN_LOCK
         )
     }
 
@@ -237,7 +239,7 @@ class PlayerImpl @Inject constructor(
 
         PlayerScheduleSequencer.play(
             schedule = schedule,
-            delayMethod = PlayerScheduleSequencer.DelayMethod.THREAD_SLEEP,
+            delayMethod = PlayerScheduleSequencer.DelayMethod.SPIN_LOCK,
         )
     }
 
@@ -479,31 +481,31 @@ private fun delayEvent(duration: Duration) = PlayerScheduleEvent(interval = dura
 private object PlayerScheduleSequencer {
 
     enum class DelayMethod {
-        THREAD_SLEEP, SUSPEND
+        THREAD_SLEEP, SUSPEND, SPIN_LOCK
     }
 
     suspend fun play(
         schedule: PlayerSchedule,
         delayMethod: DelayMethod,
     ) {
+        val thisCoroutineJob = currentCoroutineContext()[Job] ?: return
         val delay = delayMethod.referenceToMethod()
         val iterator = schedule.iterator()
         val startTime = nanoTime()
         var deadline = startTime
-        var now: Long
-        while (iterator.hasNext()) {
+        while (iterator.hasNext() && thisCoroutineJob.isActive) {
             val event = iterator.next()
             event.action()
             val interval = event.interval
             deadline += interval.inWholeNanoseconds
-            now = nanoTime()
-            delay(deadline - now)
+            delay(deadline)
         }
     }
 
     private fun DelayMethod.referenceToMethod() = when (this) {
-        DelayMethod.THREAD_SLEEP -> ::delayNanosThreadSleep
-        DelayMethod.SUSPEND -> ::delayNanosCoroutines
+        DelayMethod.THREAD_SLEEP -> ::delayTillDeadlineUsingThreadSleep
+        DelayMethod.SUSPEND -> ::delayTillDeadlineUsingCoroutines
+        DelayMethod.SPIN_LOCK -> ::delayTillDeadlineUsingThreadSleepAndSpinLock
     }
 
     private fun nanoTime() = SystemClock.elapsedRealtimeNanos()
