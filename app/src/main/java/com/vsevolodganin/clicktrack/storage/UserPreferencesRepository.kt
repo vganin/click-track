@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
@@ -15,6 +16,8 @@ import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.state.redux.TrainingMode
 import com.vsevolodganin.clicktrack.state.redux.TrainingPersistableState
+import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository.Const.NO_APP_VERSION_CODE
+import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository.Const.REVIEW_NOT_REQUESTED
 import com.vsevolodganin.clicktrack.theme.Theme
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +35,7 @@ class UserPreferencesRepository @Inject constructor(
 ) {
     object Const {
         const val NO_APP_VERSION_CODE = -1
+        const val REVIEW_NOT_REQUESTED = -1L
     }
 
     interface UserPropertyAccess<T> {
@@ -41,7 +45,12 @@ class UserPreferencesRepository @Inject constructor(
 
     val appVersionCode: UserPropertyAccess<Int> = UserPropertyAccessWithNoMapping(
         key = intPreferencesKey("app_version_code"),
-        defaultValue = Const.NO_APP_VERSION_CODE,
+        defaultValue = NO_APP_VERSION_CODE,
+    )
+
+    val reviewRequestTimestamp: UserPropertyAccess<Long> = UserPropertyAccessWithNoMapping(
+        key = longPreferencesKey("review_request_timestamp"),
+        defaultValue = REVIEW_NOT_REQUESTED
     )
 
     val metronomeBpm: UserPropertyAccess<BeatsPerMinute> = UserPropertyAccessWithMapping(
