@@ -3,6 +3,7 @@ package com.vsevolodganin.clicktrack.di.component
 import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.di.module.ActivityScopedAndroidModule
 import com.vsevolodganin.clicktrack.di.module.ActivityScopedAppStateEpicModule
+import com.vsevolodganin.clicktrack.di.module.GooglePlayModule
 import com.vsevolodganin.clicktrack.di.module.MigrationModule
 import dagger.BindsInstance
 import dagger.Subcomponent
@@ -17,6 +18,7 @@ annotation class ActivityScoped
         ActivityScopedAppStateEpicModule::class,
         ActivityScopedAndroidModule::class,
         MigrationModule::class,
+        GooglePlayModule::class,
     ]
 )
 interface ActivityComponent {

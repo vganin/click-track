@@ -14,6 +14,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.vsevolodganin.clicktrack.state.redux.action.CloseDrawer
+import com.vsevolodganin.clicktrack.state.redux.action.InAppReviewAction
 import com.vsevolodganin.clicktrack.state.redux.action.OpenDrawer
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.AppUiState
@@ -45,6 +47,12 @@ fun ContentView(
     val screen = appUiState.screen
     val position = appUiState.screenPosition
     val drawerState = appUiState.drawerState
+
+    // TODO: For testing purposes
+    DisposableEffect(Unit) {
+        dispatch(InAppReviewAction.RequestReview)
+        onDispose {}
+    }
 
     ClickTrackTheme {
         ProvideWindowInsets {

@@ -14,6 +14,7 @@ import com.vsevolodganin.clicktrack.state.redux.core.Store
 import com.vsevolodganin.clicktrack.state.redux.epic.AboutEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.ClickTrackEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.FinishAppEpic
+import com.vsevolodganin.clicktrack.state.redux.epic.InAppReviewEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.MetronomeEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.NavigationEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.PlayerEpic
@@ -167,4 +168,10 @@ abstract class ActivityScopedAppStateEpicModule {
     @IntoSet
     @ActivityScopedAppStateEpic
     abstract fun bindAboutEpic(epic: AboutEpic): Epic
+
+    @ActivityScoped
+    @Binds
+    @IntoSet
+    @ActivityScopedAppStateEpic
+    abstract fun bindInAppReviewEpic(epic: InAppReviewEpic): Epic
 }
