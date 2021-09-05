@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.di.module
 
 import android.os.Bundle
 import androidx.lifecycle.SavedStateHandle
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.vsevolodganin.clicktrack.analytics.AnalyticsLogger
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.state.redux.AppState
@@ -48,9 +48,7 @@ class AppStateModule {
     fun provideDebugMiddleware(): DebugMiddleware<AppState> = DebugMiddleware()
 
     @Provides
-    fun provideAnalyticsMiddleware(firebaseAnalytics: FirebaseAnalytics): AnalyticsMiddleware<AppState> {
-        return AnalyticsMiddleware(firebaseAnalytics)
-    }
+    fun provideAnalyticsMiddleware(analyticsLogger: AnalyticsLogger): AnalyticsMiddleware<AppState> = AnalyticsMiddleware(analyticsLogger)
 
     @Provides
     @ViewModelScoped

@@ -1,10 +1,9 @@
 package com.vsevolodganin.clicktrack.state.redux.core
 
-import android.os.Bundle
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.vsevolodganin.clicktrack.analytics.AnalyticsLogger
 
 class AnalyticsMiddleware<T>(
-    private val firebaseAnalytics: FirebaseAnalytics,
+    private val analyticsLogger: AnalyticsLogger,
 ) : Middleware<T> {
 
     override fun interfere(store: Store<T>, dispatch: SuspendDispatch): SuspendDispatch {
@@ -15,11 +14,11 @@ class AnalyticsMiddleware<T>(
     }
 
     private fun logAction(action: Action) {
-        firebaseAnalytics.logEvent(
+        analyticsLogger.logEvent(
             "redux_action",
-            Bundle().apply {
-                putString("class", action.javaClass.simpleName)
-            }
+            "class" to action.javaClass.analyticsName()
         )
     }
+
+    private fun Class<*>.analyticsName() = name.substring(name.lastIndexOf('.').coerceAtLeast(0))
 }
