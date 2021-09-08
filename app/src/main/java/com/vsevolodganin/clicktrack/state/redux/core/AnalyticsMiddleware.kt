@@ -20,5 +20,5 @@ class AnalyticsMiddleware<T>(
         )
     }
 
-    private fun Class<*>.analyticsName() = name.substring(name.lastIndexOf('.').coerceAtLeast(0))
+    private fun Class<*>.analyticsName() = name.substring((name.lastIndexOf('.') + 1).coerceAtLeast(0))
 }
