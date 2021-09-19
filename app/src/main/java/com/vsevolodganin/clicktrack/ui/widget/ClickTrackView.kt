@@ -7,12 +7,9 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.calculateCentroid
-import androidx.compose.foundation.gestures.calculateCentroidSize
-import androidx.compose.foundation.gestures.calculatePan
-import androidx.compose.foundation.gestures.calculateZoom
-import androidx.compose.foundation.gestures.drag
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +23,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -37,13 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.pointer.consumeAllChanges
-import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.input.pointer.positionChange
-import androidx.compose.ui.input.pointer.positionChangeConsumed
-import androidx.compose.ui.input.pointer.positionChanged
-import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
@@ -56,15 +46,12 @@ import com.vsevolodganin.clicktrack.model.PlayableProgress
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableViewport
-import com.vsevolodganin.clicktrack.utils.compose.awaitLongPressOrCancellation
-import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.time.Duration
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 fun ClickTrackView(
@@ -331,146 +318,96 @@ private fun Modifier.clickTrackGestures(
     onProgressDragStart: suspend (progress: AnimatableFloat) -> Unit,
     onProgressDrop: suspend (progress: AnimatableFloat) -> Unit,
 ): Modifier = composed {
-    val hapticFeedback by rememberUpdatedState(LocalHapticFeedback.current)
-    val flingCoroutineScope = rememberCoroutineScope()
+    if ((progressDragAndDropEnabled && progressPosition != null) || viewportZoomAndPanEnabled) {
+        val hapticFeedback by rememberUpdatedState(LocalHapticFeedback.current)
 
-    pointerInput(
-        viewportZoomAndPanEnabled,
-        progressDragAndDropEnabled,
-        viewportState,
-        progressPosition,
-    ) {
-        while (true) {
-            coroutineScope {
-                val currentViewportTransformations = viewportState.transformations
-
-                var dragAndDropGesture: Job? = null
-                var zoomAndPanGesture: Job? = null
-
-                if (progressDragAndDropEnabled && progressPosition != null) {
-                    dragAndDropGesture = launch {
-                        val down = awaitPointerEventScope {
-                            awaitFirstDown(requireUnconsumed = false)
-                        }
-
-                        val drag = awaitLongPressOrCancellation(down)
-
-                        if (drag != null) {
-                            try {
-                                zoomAndPanGesture?.cancel()
-
-                                // FIXME(https://issuetracker.google.com/issues/171394805): Not working if global settings disables haptic feedback
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-
-                                onProgressDragStart(progressPosition)
-
-                                awaitPointerEventScope {
-                                    drag(down.id) {
-                                        val snapTo = progressPosition.value +
-                                                it.positionChange().x / currentViewportTransformations.scaleX
-                                        it.consumePositionChange()
-                                        launch { progressPosition.snapTo(snapTo) }
+        pointerInput(
+            viewportZoomAndPanEnabled,
+            progressDragAndDropEnabled,
+            viewportState,
+            progressPosition,
+        ) {
+            while (currentCoroutineContext().isActive) {
+                coroutineScope {
+                    if (progressDragAndDropEnabled && progressPosition != null) {
+                        launch {
+                            detectDragGesturesAfterLongPress(
+                                onDragStart = {
+                                    // FIXME(https://issuetracker.google.com/issues/171394805): Not working if global settings disables haptic feedback
+                                    hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    launch {
+                                        onProgressDragStart(progressPosition)
                                     }
+                                },
+                                onDragEnd = {
+                                    launch {
+                                        onProgressDrop(progressPosition)
+                                    }
+                                },
+                                onDragCancel = {
+                                    launch {
+                                        onProgressDrop(progressPosition)
+                                    }
+                                },
+                                onDrag = { _, dragAmount ->
+                                    val currentViewportTransformations = viewportState.transformations
+                                    val snapTo = progressPosition.value + dragAmount.x / currentViewportTransformations.scaleX
+                                    launch { progressPosition.snapTo(snapTo) }
                                 }
-                            } finally {
-                                withContext(NonCancellable) {
-                                    onProgressDrop(progressPosition)
-                                }
-                            }
+                            )
                         }
                     }
-                }
 
-                if (viewportZoomAndPanEnabled) {
-                    zoomAndPanGesture = launch {
+                    if (viewportZoomAndPanEnabled) {
+                        launch {
+                            detectTapGestures(onDoubleTap = { offset ->
+                                val currentViewportTransformations = viewportState.transformations
+                                val viewport = viewportState.value
+                                val bounds = viewportState.bounds
+                                val newScale = if (currentViewportTransformations.scaleX < 4) 4 else 1
+                                val newWidth = bounds.width / newScale
+                                val newLeft = viewport.left - (newWidth - viewport.width) * (offset.x - bounds.left) / bounds.width
+
+                                launch {
+                                    viewportState.animateTo(
+                                        newLeft = newLeft,
+                                        newTop = bounds.top,
+                                        newRight = newLeft + newWidth,
+                                        newBottom = bounds.bottom
+                                    )
+                                }
+                            })
+                        }
+
                         awaitPointerEventScope {
-                            val zoomChangeEpsilon = 0.01f
-                            var zoom = 1f
-                            var pan = Offset.Zero
-                            var pastTouchSlop = false
-                            val touchSlop = viewConfiguration.touchSlop
-                            val velocityTracker = VelocityTracker()
+                            launch {
+                                detectTransformGestures { centroid, panChange, zoomChange, _ ->
+                                    val currentViewportTransformations = viewportState.transformations
+                                    val viewport = viewportState.value
+                                    val bounds = viewportState.bounds
+                                    val newWidth = viewport.width / zoomChange
+                                    val newLeft = viewport.left - (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width
 
-                            awaitFirstDown(requireUnconsumed = false)
-                            do {
-                                val event = awaitPointerEvent()
-                                val canceled = event.changes.any { it.positionChangeConsumed() }
-                                if (!canceled) {
-                                    val zoomChange = event.calculateZoom()
-                                    val panChange = event.calculatePan()
-
-                                    if (!pastTouchSlop) {
-                                        zoom *= zoomChange
-                                        pan += panChange
-
-                                        val centroidSize = event.calculateCentroidSize(useCurrent = false)
-                                        val zoomMotion = abs(1 - zoom) * centroidSize
-                                        val panMotion = pan.getDistance()
-
-                                        if (zoomMotion > touchSlop ||
-                                            panMotion > touchSlop
-                                        ) {
-                                            pastTouchSlop = true
-                                        }
-                                    }
-
-                                    if (pastTouchSlop) {
-                                        dragAndDropGesture?.cancel()
-
-                                        val centroid = event.calculateCentroid(useCurrent = false)
-                                        if (zoomChange != 1f || panChange != Offset.Zero) {
-                                            val viewport = viewportState.value
-                                            val bounds = viewportState.bounds
-
-                                            val newWidth = viewport.width / zoomChange
-                                            val newLeft = viewport.left -
-                                                    (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width
-
-                                            velocityTracker.addPosition(
-                                                timeMillis = event.changes.firstOrNull { it.pressed }?.uptimeMillis ?: 0L,
-                                                position = centroid
+                                    launch {
+                                        viewportState.apply {
+                                            snapTo(
+                                                newLeft = newLeft,
+                                                newTop = bounds.top,
+                                                newRight = newLeft + newWidth,
+                                                newBottom = bounds.bottom
                                             )
-
-                                            launch {
-                                                viewportState.apply {
-                                                    snapTo(
-                                                        newLeft = newLeft,
-                                                        newTop = viewport.top,
-                                                        newRight = newLeft + newWidth,
-                                                        newBottom = viewport.bottom
-                                                    )
-                                                    translate(-panChange.copy(y = 0f) / currentViewportTransformations.scaleX)
-                                                }
-                                            }
-                                        }
-                                        event.changes.forEach {
-                                            if (it.positionChanged()) {
-                                                it.consumeAllChanges()
-                                            }
+                                            snapTranslate(x = -panChange.x / currentViewportTransformations.scaleX)
                                         }
                                     }
-                                }
-                            } while (!canceled && event.changes.any { it.pressed })
-
-                            flingCoroutineScope.launch {
-                                if (abs(zoom - 1f) < zoomChangeEpsilon) {
-                                    val velocity = -velocityTracker.calculateVelocity().run { Offset(x, y) } /
-                                            currentViewportTransformations.scaleX
-                                    viewportState.animateDecay(velocity)
                                 }
                             }
                         }
-                    }
-                }
-
-                // FIXME(https://issuetracker.google.com/issues/180032122): The app crashes without any await
-                if (dragAndDropGesture?.isCancelled != false || zoomAndPanGesture?.isCancelled != false) {
-                    awaitPointerEventScope {
-                        awaitPointerEvent()
                     }
                 }
             }
         }
+    } else {
+        this
     }
 }
 

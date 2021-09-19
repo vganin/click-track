@@ -20,6 +20,21 @@ class AnimatableViewport(
     val value: Rect
         get() = Rect(left = left.value, top = top.value, right = right.value, bottom = bottom.value)
 
+    suspend fun animateTo(
+        newLeft: Float,
+        newTop: Float,
+        newRight: Float,
+        newBottom: Float,
+    ) {
+        allowToDeform()
+        coroutineScope {
+            launch { left.animateTo(newLeft) }
+            launch { top.animateTo(newTop) }
+            launch { right.animateTo(newRight) }
+            launch { bottom.animateTo(newBottom) }
+        }
+    }
+
     suspend fun snapTo(
         newLeft: Float,
         newTop: Float,
@@ -33,11 +48,11 @@ class AnimatableViewport(
         bottom.snapTo(newBottom)
     }
 
-    suspend fun translate(offset: Offset) {
-        translate(offset.x, offset.y)
+    suspend fun snapTranslate(offset: Offset) {
+        snapTranslate(offset.x, offset.y)
     }
 
-    suspend fun translate(x: Float, y: Float) {
+    suspend fun snapTranslate(x: Float = 0f, y: Float = 0f) {
         forbidToDeform()
         arrayOf(left, right).forEach { it.snapTo(it.value + x) }
         arrayOf(top, bottom).forEach { it.snapTo(it.value + y) }
