@@ -25,7 +25,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -61,6 +60,7 @@ import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.CueView
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDismiss
 import com.vsevolodganin.clicktrack.utils.compose.offset
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
@@ -114,9 +114,9 @@ private fun Content(
         modifier = Modifier.fillMaxSize()
     ) {
         stickyHeader {
-            TextField(
-                value = state.name,
-                onValueChange = { dispatch(EditClickTrackAction.EditName(it)) },
+            StatefulTextField(
+                initialValue = state.name,
+                onValueChanged = { dispatch(EditClickTrackAction.EditName(it)) },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(text = stringResource(R.string.click_track_name_hint)) },
                 textStyle = MaterialTheme.typography.h6,

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +21,7 @@ import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.state.redux.EditCueState
 import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
+import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
 import kotlin.time.Duration
 
 @Composable
@@ -43,9 +43,9 @@ fun CueView(
                 modifier = Modifier.align(Alignment.CenterVertically)
             )
             Spacer(modifier = Modifier.width(8.dp))
-            TextField(
-                value = value.name,
-                onValueChange = onNameChange,
+            StatefulTextField(
+                initialValue = value.name,
+                onValueChanged = onNameChange,
                 placeholder = {
                     Text(stringResource(R.string.cue_name_hint))
                 },
