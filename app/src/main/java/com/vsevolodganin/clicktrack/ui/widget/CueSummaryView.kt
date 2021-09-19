@@ -1,22 +1,25 @@
 package com.vsevolodganin.clicktrack.ui.widget
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vsevolodganin.clicktrack.lib.Cue
-import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
+import com.vsevolodganin.clicktrack.lib.CueDuration
+import com.vsevolodganin.clicktrack.lib.TimeSignature
+import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.utils.compose.widthInByText
 
 @Composable
@@ -38,21 +41,12 @@ private fun BriefSummary(cue: Cue) {
             fontSize = 12.sp
         )
         Spacer(modifier = Modifier.width(2.dp))
-        Column(Modifier.width(IntrinsicSize.Min)) {
-            @Composable
-            fun Text(text: String, modifier: Modifier) {
-                Text(
-                    text = text,
-                    modifier = modifier,
-                    fontSize = 9.sp
-                )
-            }
-
-            val textModifier = Modifier.align(Alignment.CenterHorizontally)
-
-            Text(text = cue.timeSignature.noteCount.toString(), textModifier)
-            Text(text = cue.timeSignature.noteValue.toString(), textModifier)
-        }
+        Text(
+            text = "${cue.timeSignature.noteCount}\n${cue.timeSignature.noteValue}",
+            textAlign = TextAlign.Center,
+            style = LocalTextStyle.current.copy(fontSize = 9.sp),
+            lineHeight = 7.sp
+        )
     }
 }
 
@@ -74,5 +68,9 @@ private fun DetailedSummary(title: String, cue: Cue) {
 @Preview
 @Composable
 private fun Preview() {
-    CueSummaryView(PREVIEW_CLICK_TRACK_1.value.cues[0])
+    CueSummaryView(Cue(
+        bpm = 60.bpm,
+        timeSignature = TimeSignature(3, 4),
+        duration = CueDuration.Beats(4),
+    ))
 }
