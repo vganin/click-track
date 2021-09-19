@@ -9,7 +9,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +33,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
@@ -46,6 +46,7 @@ import com.vsevolodganin.clicktrack.model.PlayableProgress
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableViewport
+import com.vsevolodganin.clicktrack.utils.compose.detectTransformGesturesWithEndCallbacks
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlinx.coroutines.coroutineScope
@@ -379,26 +380,50 @@ private fun Modifier.clickTrackGestures(
                             })
                         }
 
-                        awaitPointerEventScope {
-                            launch {
-                                detectTransformGestures { centroid, panChange, zoomChange, _ ->
-                                    val currentViewportTransformations = viewportState.transformations
-                                    val viewport = viewportState.value
-                                    val bounds = viewportState.bounds
-                                    val newWidth = viewport.width / zoomChange
-                                    val newLeft = viewport.left - (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width
+                        launch {
+                            val velocityTracker = VelocityTracker()
+                            awaitPointerEventScope {
+                                launch {
+                                    detectTransformGesturesWithEndCallbacks(
+                                        onGesture = { centroid, pan, zoom, _ ->
+                                            val currentViewportTransformations = viewportState.transformations
+                                            val viewport = viewportState.value
+                                            val bounds = viewportState.bounds
+                                            val newWidth = viewport.width / zoom
+                                            val newLeft = viewport.left - (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width
 
-                                    launch {
-                                        viewportState.apply {
-                                            snapTo(
-                                                newLeft = newLeft,
-                                                newTop = bounds.top,
-                                                newRight = newLeft + newWidth,
-                                                newBottom = bounds.bottom
-                                            )
-                                            snapTranslate(x = -panChange.x / currentViewportTransformations.scaleX)
+                                            if (zoom == 1f) {
+                                                velocityTracker.addPosition(
+                                                    timeMillis = currentEvent.changes.firstOrNull { it.pressed }?.uptimeMillis ?: 0L,
+                                                    position = centroid
+                                                )
+                                            } else {
+                                                velocityTracker.resetTracking()
+                                            }
+
+                                            launch {
+                                                viewportState.apply {
+                                                    snapTo(
+                                                        newLeft = newLeft,
+                                                        newTop = bounds.top,
+                                                        newRight = newLeft + newWidth,
+                                                        newBottom = bounds.bottom
+                                                    )
+                                                    snapTranslate(x = -pan.x / currentViewportTransformations.scaleX)
+                                                }
+                                            }
+                                        },
+                                        onGestureEnd = {
+                                            val currentViewportTransformations = viewportState.transformations
+                                            val velocity = -velocityTracker.calculateVelocity().run { Offset(x, y) } /
+                                                    currentViewportTransformations.scaleX
+                                            velocityTracker.resetTracking()
+
+                                            launch {
+                                                viewportState.animateDecay(velocity)
+                                            }
                                         }
-                                    }
+                                    )
                                 }
                             }
                         }
