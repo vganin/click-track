@@ -1,0 +1,7 @@
+ext.localProperties = new Properties()
+def localPropertiesFile = new File(rootDir, 'local.properties')
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.newDataInputStream())
+}
+
+ext.mergedProperties = System.getenv() + properties + localProperties

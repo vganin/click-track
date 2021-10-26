@@ -27,6 +27,7 @@ buildscript {
 }
 
 apply plugin: 'com.github.ben-manes.versions'
+apply from: 'properties.gradle'
 
 allprojects {
     repositories {
@@ -42,7 +43,7 @@ task clean(type: Delete) {
 allprojects {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         kotlinOptions {
-            allWarningsAsErrors = true
+            allWarningsAsErrors = (mergedProperties['allKotlinWarningsAsErrors'] ?: true).toBoolean()
         }
     }
 }
