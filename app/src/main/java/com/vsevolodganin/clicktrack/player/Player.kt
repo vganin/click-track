@@ -38,9 +38,7 @@ import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -94,13 +92,13 @@ class PlayerImpl @Inject constructor(
         val startAt = duration * progress
 
         playerJob?.cancel()
-        playerJob = launch(playerDispatcher) {
+        playerJob = launchPlayer {
             pausedState.value = false
 
             clickTrack.value.play(
                 startAt = startAt,
                 reportProgress = { progress ->
-                    launch(Dispatchers.Main) {
+                    launch(mainDispatcher) {
                         playbackState.value = InternalPlaybackState(
                             id = clickTrack.id,
                             duration = duration,
@@ -110,8 +108,6 @@ class PlayerImpl @Inject constructor(
                 },
                 soundsSelector = soundsSelector(soundsId)
             )
-
-            stop()
         }
     }
 
@@ -131,13 +127,13 @@ class PlayerImpl @Inject constructor(
         val startAt = duration * progress
 
         playerJob?.cancel()
-        playerJob = launch(playerDispatcher) {
+        playerJob = launchPlayer {
             pausedState.value = false
 
             twoLayerPolyrhythm.play(
                 startAt = startAt,
                 reportProgress = { progress ->
-                    launch(Dispatchers.Main) {
+                    launch(mainDispatcher) {
                         playbackState.value = InternalPlaybackState(
                             id = TwoLayerPolyrhythmId,
                             duration = duration,
@@ -147,8 +143,17 @@ class PlayerImpl @Inject constructor(
                 },
                 soundsSelector = soundsSelector(soundsId)
             )
+        }
+    }
 
-            stop()
+    private fun CoroutineScope.launchPlayer(block: suspend () -> Unit): Job {
+        return launch(playerDispatcher) {
+            try {
+                block()
+            } finally {
+                playbackState.value = null
+                soundPool.stopAll()
+            }
         }
     }
 
@@ -159,10 +164,6 @@ class PlayerImpl @Inject constructor(
     override suspend fun stop(): Unit = withContext(mainDispatcher) {
         playerJob?.cancel()
         playerJob = null
-        withContext(playerDispatcher) {
-            playbackState.value = null
-            soundPool.stopAll()
-        }
     }
 
     override fun playbackState(): Flow<PlaybackState?> {
@@ -180,10 +181,10 @@ class PlayerImpl @Inject constructor(
         startAt: Duration,
         reportProgress: (progress: Duration) -> Unit,
         soundsSelector: () -> ClickSounds?,
-    ) = coroutineScope {
+    ) {
         @Suppress("NAME_SHADOWING") // Because that looks better
         val startAt = if (startAt >= durationInTime) {
-            if (loop) Duration.ZERO else return@coroutineScope
+            if (loop) Duration.ZERO else return
         } else {
             startAt
         }
@@ -215,7 +216,7 @@ class PlayerImpl @Inject constructor(
         startAt: Duration,
         reportProgress: (progress: Duration) -> Unit,
         soundsSelector: () -> ClickSounds?,
-    ) = coroutineScope {
+    ) {
         @Suppress("NAME_SHADOWING") // Because that looks better
         val startAt = if (startAt >= durationInTime) {
             Duration.ZERO
