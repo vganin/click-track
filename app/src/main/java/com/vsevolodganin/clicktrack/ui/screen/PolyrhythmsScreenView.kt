@@ -19,7 +19,10 @@ import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -140,22 +143,20 @@ private fun PolyrhythmCircleWrapper(
     totalDuration: Duration,
     modifier: Modifier,
 ) {
-    val progressAngle = progressAngle(progress, totalDuration)?.asState()
+    val progressAngle = progressAngle(progress)?.asState()
+    val duration = progress?.totalDuration ?: totalDuration
 
     PolyrhythmCircle(
         outerDotNumber = layer1,
         innerDotNumber = layer2,
         modifier = modifier,
         progressAngle = progressAngle?.value,
-        progressVelocity = (FULL_ANGLE_DEGREES / totalDuration.toDouble(DurationUnit.SECONDS)).toFloat()
+        progressVelocity = (FULL_ANGLE_DEGREES / duration.toDouble(DurationUnit.SECONDS)).toFloat()
     )
 }
 
 @Composable
-private fun progressAngle(
-    progress: PlayableProgress?,
-    totalDuration: Duration,
-): AnimatableFloat? {
+private fun progressAngle(progress: PlayableProgress?): AnimatableFloat? {
     progress ?: return null
 
     val animatableProgressAngle = remember {
@@ -164,15 +165,18 @@ private fun progressAngle(
         }
     }
 
-    LaunchedEffect(progress) {
-        val progressTimePosition = totalDuration * progress.value + progress.generationTimeMark.elapsedNow()
-        val progressX = progressTimePosition.toAngle(totalDuration)
-        animatableProgressAngle.snapTo(progressX)
-    }
+    var cachedProgress by remember { mutableStateOf(progress) }
 
-    LaunchedEffect(progress, totalDuration) {
-        val currentTimePosition = totalDuration * (animatableProgressAngle.value / FULL_ANGLE_DEGREES).toDouble()
-        val animationDuration = totalDuration - currentTimePosition
+    LaunchedEffect(progress) {
+        val progressTimePosition = progress.totalDuration * progress.value + progress.generationTimeMark.elapsedNow()
+        val progressAnglePosition = progressTimePosition.toAngle(progress.totalDuration)
+        val animationDuration = progress.totalDuration - progressTimePosition
+
+        if (progress.value <= cachedProgress.value) {
+            cachedProgress = progress
+            animatableProgressAngle.snapTo(progressAnglePosition)
+        }
+
         animatableProgressAngle.animateTo(
             targetValue = FULL_ANGLE_DEGREES,
             animationSpec = tween(
