@@ -142,7 +142,7 @@ class PlayerImpl @Inject constructor(
         }
     }
 
-    private fun CoroutineScope.launchPlayer(block: suspend () -> Unit): Job {
+    private fun CoroutineScope.launchPlayer(block: suspend CoroutineScope.() -> Unit): Job {
         return launch(playerDispatcher) {
             try {
                 block()
