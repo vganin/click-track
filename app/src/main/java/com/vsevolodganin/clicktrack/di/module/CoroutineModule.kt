@@ -3,27 +3,25 @@ package com.vsevolodganin.clicktrack.di.module
 import android.os.Process
 import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
+import com.vsevolodganin.clicktrack.utils.coroutine.createSingleThreadCoroutineDispatcher
 import dagger.Module
 import dagger.Provides
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import javax.inject.Qualifier
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asCoroutineDispatcher
 
 @Qualifier
-@Retention(AnnotationRetention.BINARY)
 annotation class SerialBackgroundDispatcher
 
 @Qualifier
-@Retention(AnnotationRetention.BINARY)
 annotation class MainDispatcher
 
 @Qualifier
-@Retention(AnnotationRetention.BINARY)
 annotation class PlayerDispatcher
+
+@Qualifier
+annotation class PlayerAuxDispatcher
 
 @Module
 class ApplicationScopedCoroutineModule {
@@ -37,24 +35,21 @@ class ApplicationScopedCoroutineModule {
     @ApplicationScoped
     @SerialBackgroundDispatcher
     fun provideSerialBackgroundDispatcher(): CoroutineDispatcher {
-        return Executors.newSingleThreadExecutor { runnable -> Thread(runnable, "ClickTrackSerialBackground") }
-            .also { it.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT) }
-            .asCoroutineDispatcher()
+        return createSingleThreadCoroutineDispatcher("ClickTrackSerialBackground", Process.THREAD_PRIORITY_DEFAULT)
     }
 
     @Provides
     @ApplicationScoped
     @PlayerDispatcher
     fun providePlayerDispatcher(): CoroutineDispatcher {
-        return Executors.newSingleThreadExecutor { runnable -> Thread(runnable, "ClickTrackPlayer") }
-            .also { it.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO) }
-            .asCoroutineDispatcher()
+        return createSingleThreadCoroutineDispatcher("ClickTrackPlayer", Process.THREAD_PRIORITY_URGENT_AUDIO)
     }
 
-    private fun ExecutorService.setThreadPriority(threadPriority: Int) {
-        execute {
-            Process.setThreadPriority(threadPriority)
-        }
+    @Provides
+    @ApplicationScoped
+    @PlayerAuxDispatcher
+    fun providePlayerAuxDispatcher(): CoroutineDispatcher {
+        return createSingleThreadCoroutineDispatcher("ClickTrackPlayerAux", Process.THREAD_PRIORITY_FOREGROUND)
     }
 }
 

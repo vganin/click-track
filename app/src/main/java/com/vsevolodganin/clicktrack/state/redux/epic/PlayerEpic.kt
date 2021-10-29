@@ -25,10 +25,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.flow.take
 
 @ViewModelScoped
 class PlayerEpic @Inject constructor(
@@ -47,13 +46,13 @@ class PlayerEpic @Inject constructor(
 
             actions.filterIsInstance<PlayerAction.StartPlayClickTrack>()
                 .consumeEach { action ->
-                    val clickTrack = clickTrackUpdates(action.id).take(1).single() ?: return@consumeEach
+                    val clickTrack = clickTrackUpdates(action.id).firstOrNull() ?: return@consumeEach
                     player.start(clickTrack, action.progress)
                 },
 
             actions.filterIsInstance<PlayerAction.StartPlayPolyrhythm>()
                 .consumeEach {
-                    val polyrhythm = polyrhythmUpdates().take(1).single()
+                    val polyrhythm = polyrhythmUpdates().firstOrNull() ?: return@consumeEach
                     player.start(polyrhythm)
                 },
 

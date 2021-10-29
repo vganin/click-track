@@ -55,6 +55,7 @@ import com.vsevolodganin.clicktrack.ui.widget.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.widget.InsetsAwareTopAppBar
 import com.vsevolodganin.clicktrack.ui.widget.PlayStopButton
 import com.vsevolodganin.clicktrack.ui.widget.SubdivisionsChooser
+import kotlin.time.Duration
 
 @Composable
 fun MetronomeScreenView(
@@ -248,7 +249,7 @@ private fun Preview() {
         MetronomeUiState(
             bpm = 90.bpm,
             pattern = NotePattern.QUINTUPLET_X2,
-            progress = PlayableProgress(0.1),
+            progress = PlayableProgress(0.1, Duration.seconds(1)),
             isPlaying = false,
             areOptionsExpanded = false,
         )

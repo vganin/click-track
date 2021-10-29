@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.player
 import android.os.SystemClock
 import androidx.compose.ui.util.fastForEach
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
-import com.vsevolodganin.clicktrack.di.module.MainDispatcher
+import com.vsevolodganin.clicktrack.di.module.PlayerAuxDispatcher
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
 import com.vsevolodganin.clicktrack.lib.AbstractPolyrhythm
 import com.vsevolodganin.clicktrack.lib.ClickTrack
@@ -21,6 +21,7 @@ import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.model.PlayableProgress
+import com.vsevolodganin.clicktrack.model.PlayableProgressTimeSource
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
@@ -34,8 +35,6 @@ import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingThread
 import com.vsevolodganin.clicktrack.utils.grabIf
 import javax.inject.Inject
 import kotlin.time.Duration
-import kotlin.time.TimeMark
-import kotlin.time.TimeSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -66,8 +65,8 @@ interface Player {
 @PlayerServiceScoped
 class PlayerImpl @Inject constructor(
     private val soundPool: PlayerSoundPool,
-    @MainDispatcher private val mainDispatcher: CoroutineDispatcher,
     @PlayerDispatcher private val playerDispatcher: CoroutineDispatcher,
+    @PlayerAuxDispatcher private val playerAuxDispatcher: CoroutineDispatcher,
     private val clickSoundsRepository: ClickSoundsRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
 ) : Player {
@@ -76,7 +75,7 @@ class PlayerImpl @Inject constructor(
     private var playbackState = MutableStateFlow<InternalPlaybackState?>(null)
     private var pausedState = MutableStateFlow(false)
 
-    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) = withContext(mainDispatcher) {
+    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) = withContext(playerAuxDispatcher) {
         val duration = clickTrack.value.durationInTime
 
         if (duration == Duration.ZERO) {
@@ -86,8 +85,9 @@ class PlayerImpl @Inject constructor(
         }
 
         val currentPlayback = playbackState.value
+
         val progress = atProgress
-            ?: grabIf(clickTrack.id == currentPlayback?.id) { currentPlayback?.currentProgress() }
+            ?: grabIf(clickTrack.id == currentPlayback?.id) { currentPlayback?.calculateCurrentProgress() }
             ?: 0.0
         val startAt = duration * progress
 
@@ -98,20 +98,18 @@ class PlayerImpl @Inject constructor(
             clickTrack.value.play(
                 startAt = startAt,
                 reportProgress = { progress ->
-                    launch(mainDispatcher) {
-                        playbackState.value = InternalPlaybackState(
-                            id = clickTrack.id,
-                            duration = duration,
-                            progress = progress / duration,
-                        )
-                    }
+                    playbackState.value = InternalPlaybackState(
+                        id = clickTrack.id,
+                        duration = duration,
+                        progress = progress / duration,
+                    )
                 },
                 soundsSelector = soundsSelector(soundsId)
             )
         }
     }
 
-    override suspend fun start(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) = withContext(mainDispatcher) {
+    override suspend fun start(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) = withContext(playerAuxDispatcher) {
         val duration = twoLayerPolyrhythm.durationInTime
 
         if (duration == Duration.ZERO) {
@@ -122,7 +120,7 @@ class PlayerImpl @Inject constructor(
 
         val currentPlayback = playbackState.value
         val progress = atProgress
-            ?: grabIf(TwoLayerPolyrhythmId == currentPlayback?.id) { currentPlayback?.currentProgress() }
+            ?: grabIf(TwoLayerPolyrhythmId == currentPlayback?.id) { currentPlayback?.calculateCurrentProgress() }
             ?: 0.0
         val startAt = duration * progress
 
@@ -133,13 +131,11 @@ class PlayerImpl @Inject constructor(
             twoLayerPolyrhythm.play(
                 startAt = startAt,
                 reportProgress = { progress ->
-                    launch(mainDispatcher) {
-                        playbackState.value = InternalPlaybackState(
-                            id = TwoLayerPolyrhythmId,
-                            duration = duration,
-                            progress = progress / duration,
-                        )
-                    }
+                    playbackState.value = InternalPlaybackState(
+                        id = TwoLayerPolyrhythmId,
+                        duration = duration,
+                        progress = progress / duration,
+                    )
                 },
                 soundsSelector = soundsSelector(soundsId)
             )
@@ -150,8 +146,10 @@ class PlayerImpl @Inject constructor(
         return launch(playerDispatcher) {
             try {
                 block()
+                launch(playerAuxDispatcher) {
+                    playbackState.value = null
+                }
             } finally {
-                playbackState.value = null
                 soundPool.stopAll()
             }
         }
@@ -161,9 +159,10 @@ class PlayerImpl @Inject constructor(
         pausedState.value = true
     }
 
-    override suspend fun stop(): Unit = withContext(mainDispatcher) {
+    override suspend fun stop(): Unit = withContext(playerAuxDispatcher) {
         playerJob?.cancel()
         playerJob = null
+        playbackState.value = null
     }
 
     override fun playbackState(): Flow<PlaybackState?> {
@@ -172,7 +171,11 @@ class PlayerImpl @Inject constructor(
                 internalPlaybackState ?: return@map null
                 PlaybackState(
                     id = internalPlaybackState.id,
-                    progress = PlayableProgress(internalPlaybackState.currentProgress()),
+                    progress = PlayableProgress(
+                        value = internalPlaybackState.progress,
+                        totalDuration = internalPlaybackState.duration,
+                        generationTimeMark = internalPlaybackState.startedAt,
+                    ),
                 )
             }
     }
@@ -397,7 +400,6 @@ class PlayerImpl @Inject constructor(
             userSelectedSounds()
         }
             .onEach { sounds ->
-                soundPool.stopAll()
                 sounds?.asIterable?.forEach(soundPool::warmup)
             }
             .stateIn(scope = this)::value
@@ -420,9 +422,9 @@ class PlayerImpl @Inject constructor(
         val duration: Duration,
         val progress: Double,
     ) {
-        val startedAt: TimeMark = TimeSource.Monotonic.markNow()
+        val startedAt = PlayableProgressTimeSource.markNow()
 
-        fun currentProgress(): Double {
+        fun calculateCurrentProgress(): Double {
             val elapsedSinceStart = startedAt.elapsedNow()
             return progress + elapsedSinceStart / duration
         }

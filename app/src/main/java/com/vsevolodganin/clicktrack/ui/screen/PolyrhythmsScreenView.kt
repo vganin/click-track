@@ -204,7 +204,7 @@ private fun Preview() {
                 layer2 = 2
             ),
             isPlaying = true,
-            playableProgress = PlayableProgress(value = 0.3)
+            playableProgress = PlayableProgress(0.3, Duration.seconds(1))
         ),
     )
 }

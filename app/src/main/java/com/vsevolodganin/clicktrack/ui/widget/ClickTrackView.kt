@@ -77,7 +77,7 @@ fun ClickTrackView(
         // Progress
         var isProgressCaptured by remember { mutableStateOf(false) }
         val progressLineWidth by progressLineWidth(defaultLineWidth, isProgressCaptured)
-        val progressLinePosition = progressLinePosition(progress, clickTrack.durationInTime, widthPx)
+        val progressLinePosition = progressLinePosition(progress, widthPx)
         val progressLineColor = MaterialTheme.colors.secondaryVariant
 
         // Camera
@@ -202,7 +202,6 @@ fun ClickTrackView(
 @Composable
 private fun progressLinePosition(
     progress: PlayableProgress?,
-    totalDuration: Duration,
     totalWidthPx: Float,
 ): AnimatableFloat? {
     progress ?: return null
@@ -212,15 +211,18 @@ private fun progressLinePosition(
             updateBounds(0f, totalWidthPx)
         }
 
-    LaunchedEffect(progress) {
-        val progressTimePosition = totalDuration * progress.value + progress.generationTimeMark.elapsedNow()
-        val progressX = progressTimePosition.toX(totalDuration, totalWidthPx)
-        animatableProgressLinePosition.snapTo(progressX)
-    }
+    var cachedProgress by remember { mutableStateOf(progress) }
 
-    LaunchedEffect(progress, totalDuration, totalWidthPx) {
-        val currentTimePosition = totalDuration * (animatableProgressLinePosition.value / totalWidthPx).toDouble()
-        val animationDuration = totalDuration - currentTimePosition
+    LaunchedEffect(progress, totalWidthPx) {
+        val progressTimePosition = progress.totalDuration * progress.value + progress.generationTimeMark.elapsedNow()
+        val progressXPosition = progressTimePosition.toX(progress.totalDuration, totalWidthPx)
+        val animationDuration = progress.totalDuration - progressTimePosition
+
+        if (progress.value <= cachedProgress.value) {
+            cachedProgress = progress
+            animatableProgressLinePosition.snapTo(progressXPosition)
+        }
+
         animatableProgressLinePosition.animateTo(
             targetValue = totalWidthPx,
             animationSpec = tween(
@@ -460,7 +462,7 @@ private fun Preview() {
     ClickTrackView(
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,
-        progress = PlayableProgress(0.13),
+        progress = PlayableProgress(0.13, PREVIEW_CLICK_TRACK_1.value.durationInTime),
         modifier = Modifier.fillMaxSize()
     )
 }
