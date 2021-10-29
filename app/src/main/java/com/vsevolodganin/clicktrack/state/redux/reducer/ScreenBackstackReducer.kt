@@ -13,16 +13,18 @@ import com.vsevolodganin.clicktrack.state.redux.replaceCurrentScreen
 import com.vsevolodganin.clicktrack.state.redux.toEditState
 
 fun ScreenBackstack.reduce(action: Action): ScreenBackstack {
-    return when (action) {
-        is NavigationAction -> reduce(action)
-        else -> {
-            val screens = screens.replaceCurrentScreen { currentScreen -> currentScreen.reduce(action) }
-            ScreenBackstack(
-                screens = screens,
-                drawerState = drawerState.reduceDrawerState(action, screens)
-            )
-        }
+    var screens = if (action is NavigationAction) {
+        reduce(action).screens
+    } else {
+        screens
     }
+
+    screens = screens.replaceCurrentScreen { currentScreen -> currentScreen.reduce(action) }
+
+    return ScreenBackstack(
+        screens = screens,
+        drawerState = drawerState.reduceDrawerState(action, screens)
+    )
 }
 
 private fun ScreenBackstack.reduce(action: NavigationAction): ScreenBackstack {
