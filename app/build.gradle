@@ -147,19 +147,19 @@ sqldelight {
 dependencies {
     implementation project(':lib')
 
-    def coroutinesVersion = '1.5.1'
+    def coroutinesVersion = '1.5.2'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
 
     implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.core:core-splashscreen:1.0.0-alpha02'
-    implementation 'androidx.activity:activity-compose:1.3.1'
+    implementation 'androidx.activity:activity-compose:1.4.0'
     implementation 'androidx.fragment:fragment-ktx:1.3.6' // Essential for Activity Result APIs (as per https://developer.android.com/training/basics/intents/result)
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-rc01"
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
-    def lifecycleVersion = '2.3.1'
+    def lifecycleVersion = '2.4.0'
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycleVersion"
@@ -174,15 +174,15 @@ dependencies {
     implementation "androidx.compose.material:material-icons-core:$composeVersion"
     implementation "androidx.compose.material:material-icons-extended:$composeVersion"
 
-    def accompanistVersion = '0.16.1'
+    def accompanistVersion = '0.20.0'
     implementation "com.google.accompanist:accompanist-insets:$accompanistVersion"
     implementation "com.google.accompanist:accompanist-insets-ui:$accompanistVersion"
 
-    implementation platform('com.google.firebase:firebase-bom:28.2.1')
+    implementation platform('com.google.firebase:firebase-bom:28.4.2')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
 
-    implementation 'com.google.android.play:core:1.10.1'
+    implementation 'com.google.android.play:core:1.10.2'
     implementation 'com.google.android.play:core-ktx:1.8.1'
 
     implementation("br.com.devsrsouza.compose.icons.android:simple-icons:1.0.0")
@@ -193,11 +193,11 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinxSerializationVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion"
 
-    def daggerVersion = '2.37'
+    def daggerVersion = '2.40'
     implementation "com.google.dagger:dagger:$daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
 
-    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 
     implementation 'com.google.oboe:oboe:1.6.1'
 }
