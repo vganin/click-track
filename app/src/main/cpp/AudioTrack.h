@@ -5,7 +5,7 @@
 
 namespace clicktrack {
 
-class AudioTrack : public oboe::AudioStreamDataCallback {
+class AudioTrack : public oboe::AudioStreamDataCallback, public oboe::AudioStreamErrorCallback {
 public:
     explicit AudioTrack(
             void* data,
@@ -18,6 +18,8 @@ public:
     ~AudioTrack();
 
     oboe::DataCallbackResult onAudioReady(oboe::AudioStream* audioStream, void* audioData, int32_t numFrames) override;
+
+    bool onError(oboe::AudioStream* audioStream, oboe::Result error) override;
 
     void warmup();
 

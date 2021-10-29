@@ -51,6 +51,7 @@ AudioTrack::AudioTrack(
             ->setUsage(oboe::Usage::Media)
             ->setContentType(oboe::ContentType::Sonification)
             ->setDataCallback(this)
+            ->setErrorCallback(this)
             ->openStream(audioStream_);
 
     if (result != oboe::Result::OK) {
@@ -80,6 +81,11 @@ oboe::DataCallbackResult AudioTrack::onAudioReady(oboe::AudioStream* audioStream
     playbackFrameIndex_ += framesToPlay;
 
     return oboe::DataCallbackResult::Continue;
+}
+
+bool AudioTrack::onError(oboe::AudioStream* audioStream, oboe::Result error) {
+    LOGE("Error occurred: %s", convertToText(error));
+    return false;
 }
 
 void AudioTrack::warmup() {
