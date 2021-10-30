@@ -11,8 +11,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PlayableProgress(
-    val value: Double,
-    val totalDuration: Duration,
+    val value: Duration,
+    val duration: Duration,
     val generationTimeMark: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow(),
 ) : Parcelable
 

@@ -214,9 +214,9 @@ private fun progressLinePosition(
     var cachedProgress by remember { mutableStateOf(progress) }
 
     LaunchedEffect(progress, totalWidthPx) {
-        val progressTimePosition = progress.totalDuration * progress.value + progress.generationTimeMark.elapsedNow()
-        val progressXPosition = progressTimePosition.toX(progress.totalDuration, totalWidthPx)
-        val animationDuration = progress.totalDuration - progressTimePosition
+        val progressTimePosition = progress.value + progress.generationTimeMark.elapsedNow()
+        val progressXPosition = progressTimePosition.toX(progress.duration, totalWidthPx)
+        val animationDuration = progress.duration - progressTimePosition
 
         if (progress.value <= cachedProgress.value) {
             cachedProgress = progress
@@ -462,7 +462,7 @@ private fun Preview() {
     ClickTrackView(
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,
-        progress = PlayableProgress(0.13, PREVIEW_CLICK_TRACK_1.value.durationInTime),
+        progress = PlayableProgress(Duration.seconds(1), PREVIEW_CLICK_TRACK_1.value.durationInTime),
         modifier = Modifier.fillMaxSize()
     )
 }

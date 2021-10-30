@@ -126,7 +126,7 @@ class PlayerService : Service() {
 
         inject()
 
-        launchUndispatched {
+        launchImmediately {
             player.playbackState().drop(1).collect {
                 if (it == null) {
                     stopForeground()
@@ -202,25 +202,25 @@ class PlayerService : Service() {
     override fun onBind(intent: Intent?): IBinder = PlayerServiceBinder(player.playbackState())
 
     private fun startPlayer(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) {
-        launchUndispatched {
+        launchImmediately {
             player.start(clickTrack, atProgress, soundsId)
         }
     }
 
     private fun startPlayer(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) {
-        launchUndispatched {
+        launchImmediately {
             player.start(twoLayerPolyrhythm, atProgress, soundsId)
         }
     }
 
     private fun pausePlayer() {
-        launchUndispatched {
+        launchImmediately {
             player.pause()
         }
     }
 
     private fun stopPlayer() {
-        launchUndispatched {
+        launchImmediately {
             player.stop()
         }
     }
@@ -274,7 +274,7 @@ class PlayerService : Service() {
             .inject(this)
     }
 
-    private fun launchUndispatched(block: suspend CoroutineScope.() -> Unit) {
+    private fun launchImmediately(block: suspend CoroutineScope.() -> Unit) {
         GlobalScope.launch(
             context = Dispatchers.Unconfined,
             start = CoroutineStart.UNDISPATCHED,

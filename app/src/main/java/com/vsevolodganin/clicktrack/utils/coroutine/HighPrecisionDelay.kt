@@ -17,6 +17,11 @@ suspend fun delayTillDeadlineUsingThreadSleepAndSpinLock(deadlineNanos: Long) {
     spinTillDeadline(deadlineNanos)
 }
 
+suspend fun delayTillDeadlineUsingSuspendAndSpinLock(deadlineNanos: Long) {
+    delayTillDeadlineUsingCoroutines(deadlineNanos - MAX_NANOS_FOR_SPINLOCK)
+    spinTillDeadline(deadlineNanos)
+}
+
 private suspend fun threadSleepInterruptible(deadlineNanos: Long) {
     if (deadlineNanos - nanoTime() <= 0L) return // Avoid runInterruptible if possible
     runInterruptible {
@@ -34,4 +39,4 @@ private fun spinTillDeadline(deadlineNanos: Long) {
 private fun nanoTime() = SystemClock.elapsedRealtimeNanos()
 
 private const val NANOS_IN_MILLISECOND = 1_000_000L
-private const val MAX_NANOS_FOR_SPINLOCK = 1_000_000_000L
+private const val MAX_NANOS_FOR_SPINLOCK = 200_000_000L // 200 ms

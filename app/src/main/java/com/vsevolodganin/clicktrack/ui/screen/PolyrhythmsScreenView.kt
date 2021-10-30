@@ -144,7 +144,7 @@ private fun PolyrhythmCircleWrapper(
     modifier: Modifier,
 ) {
     val progressAngle = progressAngle(progress)?.asState()
-    val duration = progress?.totalDuration ?: totalDuration
+    val duration = progress?.duration ?: totalDuration
 
     PolyrhythmCircle(
         outerDotNumber = layer1,
@@ -168,9 +168,9 @@ private fun progressAngle(progress: PlayableProgress?): AnimatableFloat? {
     var cachedProgress by remember { mutableStateOf(progress) }
 
     LaunchedEffect(progress) {
-        val progressTimePosition = progress.totalDuration * progress.value + progress.generationTimeMark.elapsedNow()
-        val progressAnglePosition = progressTimePosition.toAngle(progress.totalDuration)
-        val animationDuration = progress.totalDuration - progressTimePosition
+        val progressTimePosition = progress.value + progress.generationTimeMark.elapsedNow()
+        val progressAnglePosition = progressTimePosition.toAngle(progress.duration)
+        val animationDuration = progress.duration - progressTimePosition
 
         if (progress.value <= cachedProgress.value) {
             cachedProgress = progress
@@ -208,7 +208,7 @@ private fun Preview() {
                 layer2 = 2
             ),
             isPlaying = true,
-            playableProgress = PlayableProgress(0.3, Duration.seconds(1))
+            playableProgress = PlayableProgress(Duration.milliseconds(100), Duration.seconds(1))
         ),
     )
 }

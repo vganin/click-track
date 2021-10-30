@@ -4,6 +4,7 @@ project("clicktrack")
 
 add_library(
         clicktrack SHARED
+
         OboeInit.cpp
         AudioTrackBindings.cpp
         AudioTrack.cpp
@@ -12,3 +13,5 @@ add_library(
 find_library(log log)
 find_package(oboe REQUIRED CONFIG)
 target_link_libraries(clicktrack ${log} oboe::oboe)
+
+include_directories(iolib)

@@ -249,7 +249,7 @@ private fun Preview() {
         MetronomeUiState(
             bpm = 90.bpm,
             pattern = NotePattern.QUINTUPLET_X2,
-            progress = PlayableProgress(0.1, Duration.seconds(1)),
+            progress = PlayableProgress(Duration.milliseconds(100), Duration.seconds(1)),
             isPlaying = false,
             areOptionsExpanded = false,
         )

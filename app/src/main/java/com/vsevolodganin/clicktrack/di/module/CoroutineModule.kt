@@ -20,9 +20,6 @@ annotation class MainDispatcher
 @Qualifier
 annotation class PlayerDispatcher
 
-@Qualifier
-annotation class PlayerAuxDispatcher
-
 @Module
 class ApplicationScopedCoroutineModule {
 
@@ -43,13 +40,6 @@ class ApplicationScopedCoroutineModule {
     @PlayerDispatcher
     fun providePlayerDispatcher(): CoroutineDispatcher {
         return createSingleThreadCoroutineDispatcher("ClickTrackPlayer", Process.THREAD_PRIORITY_URGENT_AUDIO)
-    }
-
-    @Provides
-    @ApplicationScoped
-    @PlayerAuxDispatcher
-    fun providePlayerAuxDispatcher(): CoroutineDispatcher {
-        return createSingleThreadCoroutineDispatcher("ClickTrackPlayerAux", Process.THREAD_PRIORITY_FOREGROUND)
     }
 }
 

@@ -8,11 +8,11 @@ namespace clicktrack {
 class AudioTrack : public oboe::AudioStreamDataCallback, public oboe::AudioStreamErrorCallback {
 public:
     explicit AudioTrack(
-            void* data,
-            int32_t dataSize,
-            int channelCount,
-            int pcmEncoding,
-            int32_t sampleRate
+            const void* data,
+            const int32_t dataSize,
+            const int channelCount,
+            const int pcmEncoding,
+            const int32_t sampleRate
     );
 
     ~AudioTrack();
@@ -28,10 +28,14 @@ public:
     void stop();
 
 private:
-    void* data_;
-    int32_t totalFrames_;
-    std::shared_ptr<oboe::AudioStream> audioStream_;
+    const void* const data_;
+
     std::atomic<int32_t> playbackFrameIndex_;
+    std::atomic<bool> mute_;
+
+    std::shared_ptr<oboe::AudioStream> audioStream_;
+    int32_t totalFrames_;
+    int32_t bytesPerFrame_;
 };
 
 }
