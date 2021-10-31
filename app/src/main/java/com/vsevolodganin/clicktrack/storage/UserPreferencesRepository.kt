@@ -20,9 +20,16 @@ import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository.Const.NO_A
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository.Const.REVIEW_NOT_REQUESTED
 import com.vsevolodganin.clicktrack.theme.Theme
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -120,15 +127,32 @@ class UserPreferencesRepository @Inject constructor(
         private val toExternal: (TInternal) -> TExternal,
         private val toInternal: (TExternal) -> TInternal,
     ) : UserPropertyAccess<TExternal> {
-        override val flow: Flow<TExternal> = dataStore.data
-            .map { preferences ->
-                preferences[key]?.let(toExternal) ?: defaultValue
+
+        private val stateFlow = MutableStateFlow(runBlocking {
+            dataStore.data
+                .map { preferences ->
+                    preferences[key]?.let(toExternal) ?: defaultValue
+                }
+                .first()
+        })
+
+        init {
+            GlobalScope.launch(Dispatchers.Default, CoroutineStart.UNDISPATCHED) {
+                stateFlow.drop(1).collect {
+                    dataStore.edit { preferences ->
+                        preferences[key] = toInternal(it)
+                    }
+                }
             }
+        }
+
+        override val flow: Flow<TExternal> = stateFlow
 
         override suspend fun edit(transform: (TExternal) -> TExternal) {
-            dataStore.edit { preferences ->
-                preferences[key] = toInternal(transform(preferences[key]?.let(toExternal) ?: defaultValue))
-            }
+            do {
+                val currentValue = stateFlow.value
+                val newValue = transform(currentValue ?: defaultValue)
+            } while (!stateFlow.compareAndSet(currentValue, newValue))
         }
     }
 
