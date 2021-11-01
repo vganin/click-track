@@ -156,7 +156,7 @@ dependencies {
     implementation 'androidx.core:core-splashscreen:1.0.0-alpha02'
     implementation 'androidx.activity:activity-compose:1.4.0'
     implementation 'androidx.fragment:fragment-ktx:1.3.6' // Essential for Activity Result APIs (as per https://developer.android.com/training/basics/intents/result)
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-rc01"
+    implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.0-rc01'
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
 
     def lifecycleVersion = '2.4.0'

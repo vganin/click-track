@@ -8,4 +8,5 @@
     <color name="red200">#ef9a9a</color>
     <color name="red500">#f44336</color>
     <color name="red700">#d32f2f</color>
+    <color name="signature_red">#a53030</color>
 </resources>

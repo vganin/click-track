@@ -11,6 +11,8 @@ import android.os.Parcelable
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FLAG_FOREGROUND_SERVICE
+import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
+import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
 import com.vsevolodganin.clicktrack.Application
@@ -240,24 +242,27 @@ class PlayerService : Service() {
         val launchAppIntent = PendingIntent.getActivity(this, 0, tapIntent, pendingIntentFlags)
         val stopServiceIntent = PendingIntent.getService(this, 0, serviceIntent(this).apply { action = ACTION_STOP }, pendingIntentFlags)
 
-        val notification = NotificationCompat.Builder(this, PLAYING_NOW_CHANNEL_ID)
+        val notificationBuilder = NotificationCompat.Builder(this, PLAYING_NOW_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
-            .setColor(ResourcesCompat.getColor(resources, R.color.secondary_dark, null))
+            .setColor(ResourcesCompat.getColor(resources, R.color.signature_red, null))
+            .setColorized(true)
             .setContentTitle(getString(R.string.notification_playing_now))
             .setContentText(contentText)
             .setContentIntent(launchAppIntent)
             .setDeleteIntent(stopServiceIntent)
             .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setVisibility(VISIBILITY_PUBLIC)
+            .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
             .setOngoing(true)
             .addAction(0, getString(R.string.notification_stop), stopServiceIntent)
-            .build()
-            .apply {
-                flags = flags or FLAG_FOREGROUND_SERVICE
-            }
 
         if (isNotificationDisplayed) {
+            val notification = notificationBuilder
+                .build()
+                .apply { flags = flags or FLAG_FOREGROUND_SERVICE }
             notificationManager.notify(PLAYING_NOW_NOTIFICATION_ID, notification)
         } else {
+            val notification = notificationBuilder.build()
             startForeground(PLAYING_NOW_NOTIFICATION_ID, notification)
             isNotificationDisplayed = true
         }

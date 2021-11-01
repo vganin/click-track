@@ -15,7 +15,7 @@
     <string name="duration_picker_hours">h</string>
     <string name="repeat">Loop</string>
     <string name="notification_channel_playing_now">Playing Now</string>
-    <string name="notification_stop">Stop</string>
+    <string name="notification_stop">STOP</string>
     <string name="notification_playing_now">Playing now…</string>
     <string name="metronome">Metronome</string>
     <string name="settings">Settings</string>
