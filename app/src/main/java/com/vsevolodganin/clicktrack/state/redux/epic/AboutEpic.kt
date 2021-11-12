@@ -33,7 +33,7 @@ class AboutEpic @Inject constructor(
     }
 
     private object Const {
-        const val EMAIL = "vsevolod.ganin@gmail.com"
+        const val EMAIL = "contact@vsevolodganin.com"
         const val HOME_PAGE = "https://dev.vsevolodganin.com"
         const val TWITTER = "https://twitter.com/vsevolod_ganin"
         const val ARTSTATION = "https://cacao_warrior.artstation.com/"
