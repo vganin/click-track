@@ -6,4 +6,5 @@
     <color name="secondary_dark">@color/red700</color>
     <color name="splash_background">#0d0d0d</color>
     <color name="swipe_dismiss_background">@color/secondary</color>
+    <color name="signature">@color/signature_red</color>
 </resources>
