@@ -28,7 +28,7 @@ import com.vsevolodganin.clicktrack.ui.widget.CueDurationView
 import com.vsevolodganin.clicktrack.ui.widget.DropdownSelector
 import com.vsevolodganin.clicktrack.ui.widget.DurationPicker
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun TrainingScreenView(
@@ -250,7 +250,7 @@ private fun PreviewWithTimeEnding() {
             mode = TrainingMode.INCREASE_TEMPO,
             segmentLength = CueDuration.Measures(4),
             tempoChange = 5,
-            ending = TrainingState.Ending.ByTime(Duration.minutes(5)),
+            ending = TrainingState.Ending.ByTime(5.minutes),
             errors = setOf(TrainingState.Error.STARTING_TEMPO),
         )
     )

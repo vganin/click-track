@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.CueDuration
 import com.vsevolodganin.clicktrack.state.redux.EditCueState
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun CueDurationView(
@@ -147,7 +147,7 @@ private fun Preview() {
         Column {
             CueDurationView(CueDuration.Beats(999999), {}, {})
             CueDurationView(CueDuration.Measures(999999), {}, {})
-            CueDurationView(CueDuration.Time(Duration.minutes(1)), {}, {})
+            CueDurationView(CueDuration.Time(1.minutes), {}, {})
         }
     }
 }

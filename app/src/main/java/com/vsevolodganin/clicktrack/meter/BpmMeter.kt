@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.meter
 import android.os.SystemClock
 import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
 import javax.inject.Inject
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 class BpmMeter @Inject constructor() {
 
@@ -29,7 +29,7 @@ class BpmMeter @Inject constructor() {
         val maxTime = applicableSamples.maxOrNull() ?: return null
         return BeatsPerMinute(
             beatCount = applicableSamples.size - 1,
-            timelapse = Duration.milliseconds(maxTime - minTime),
+            timelapse = (maxTime - minTime).milliseconds,
         )
     }
 

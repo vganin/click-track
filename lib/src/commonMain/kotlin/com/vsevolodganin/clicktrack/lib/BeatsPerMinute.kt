@@ -2,10 +2,11 @@ package com.vsevolodganin.clicktrack.lib
 
 import com.vsevolodganin.clicktrack.lib.android.AndroidParcelable
 import com.vsevolodganin.clicktrack.lib.android.AndroidParcelize
+import kotlinx.serialization.Serializable
 import kotlin.jvm.JvmInline
 import kotlin.math.roundToInt
 import kotlin.time.Duration
-import kotlinx.serialization.Serializable
+import kotlin.time.Duration.Companion.minutes
 
 @Serializable
 @AndroidParcelize
@@ -13,7 +14,7 @@ public data class BeatsPerMinute(
     public val value: Int,
 ) : AndroidParcelable, Comparable<BeatsPerMinute> {
 
-    public constructor(beatCount: Int, timelapse: Duration) : this((Duration.minutes(1) / timelapse * beatCount).roundToInt())
+    public constructor(beatCount: Int, timelapse: Duration) : this((1.minutes / timelapse * beatCount).roundToInt())
 
     init {
         require(value >= MIN_BPM_VALUE) { "Bpm should be equal or greater than $MIN_BPM_VALUE but was: $value" }
@@ -46,7 +47,7 @@ public fun IntRange.toBpmRange(): ClosedRange<BeatsPerMinute> = start.bpm..endIn
 
 public val BeatsPerMinute.interval: Duration
     get() {
-        return Duration.minutes(1) / value
+        return 1.minutes / value
     }
 
 private const val MIN_BPM_VALUE = 1

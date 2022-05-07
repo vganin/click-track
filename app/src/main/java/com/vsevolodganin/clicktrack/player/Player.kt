@@ -33,8 +33,6 @@ import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingSuspen
 import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingThreadSleep
 import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingThreadSleepAndSpinLock
 import com.vsevolodganin.clicktrack.utils.grabIf
-import javax.inject.Inject
-import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -54,6 +52,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 interface Player {
     suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null, soundsId: ClickSoundsId? = null)
@@ -437,7 +438,7 @@ class PlayerImpl @Inject constructor(
     }
 
     private object Const {
-        val CLICK_MIN_DELTA = Duration.milliseconds(1)
+        val CLICK_MIN_DELTA = 1.milliseconds
         const val PREFETCH_SIZE = 100
     }
 }

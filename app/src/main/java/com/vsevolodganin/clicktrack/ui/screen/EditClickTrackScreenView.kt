@@ -22,6 +22,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalMinimumTouchTargetEnforcement
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -29,12 +30,14 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -64,11 +67,11 @@ import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDismiss
 import com.vsevolodganin.clicktrack.utils.compose.offset
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
-import kotlin.math.roundToInt
-import kotlin.time.Duration
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun EditClickTrackScreenView(
@@ -136,12 +139,19 @@ private fun Content(
                     .padding(8.dp)
             ) {
                 Row(modifier = Modifier.padding(8.dp)) {
-                    Text(text = stringResource(R.string.repeat))
-                    Spacer(modifier = Modifier.weight(1f))
-                    Checkbox(
-                        checked = state.loop,
-                        onCheckedChange = { dispatch(EditClickTrackAction.EditLoop(it)) }
+                    Text(
+                        text = stringResource(R.string.repeat),
+                        modifier = Modifier.align(CenterVertically)
                     )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+                        Checkbox(
+                            checked = state.loop,
+                            onCheckedChange = { dispatch(EditClickTrackAction.EditLoop(it)) }
+                        )
+                    }
                 }
             }
         }
@@ -337,7 +347,7 @@ private fun Preview() {
                     name = "",
                     bpm = 120,
                     timeSignature = TimeSignature(5, 4),
-                    duration = CueDuration.Time(Duration.minutes(1)),
+                    duration = CueDuration.Time(1.minutes),
                     pattern = NotePattern.QUINTUPLET_X2,
                     errors = setOf(EditCueState.Error.BPM),
                 ),

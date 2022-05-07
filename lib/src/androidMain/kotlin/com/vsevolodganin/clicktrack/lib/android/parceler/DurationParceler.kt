@@ -3,12 +3,13 @@ package com.vsevolodganin.clicktrack.lib.android.parceler
 import android.os.Parcel
 import com.vsevolodganin.clicktrack.lib.android.AndroidParceler
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.DurationUnit
 
 public actual object DurationParceler : AndroidParceler<Duration> {
 
     override fun create(parcel: Parcel): Duration {
-        return Duration.nanoseconds(parcel.readDouble())
+        return parcel.readDouble().nanoseconds
     }
 
     override fun Duration.write(parcel: Parcel, flags: Int) {

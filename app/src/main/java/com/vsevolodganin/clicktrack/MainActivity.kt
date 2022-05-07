@@ -22,7 +22,6 @@ import com.vsevolodganin.clicktrack.state.redux.core.EpicMiddleware
 import com.vsevolodganin.clicktrack.state.redux.core.Store
 import com.vsevolodganin.clicktrack.ui.ContentView
 import com.vsevolodganin.clicktrack.ui.model.AppUiState
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -30,6 +29,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         installSplashScreen().apply {
-            setKeepVisibleCondition { shouldKeepSplash }
+            setKeepOnScreenCondition { shouldKeepSplash }
         }
 
         inject()

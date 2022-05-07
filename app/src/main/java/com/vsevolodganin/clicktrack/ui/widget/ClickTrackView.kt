@@ -47,12 +47,13 @@ import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableViewport
 import com.vsevolodganin.clicktrack.utils.compose.detectTransformGesturesWithEndCallbacks
-import kotlin.math.roundToInt
-import kotlin.time.Duration
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun ClickTrackView(
@@ -462,7 +463,7 @@ private fun Preview() {
     ClickTrackView(
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,
-        progress = PlayableProgress(Duration.seconds(1), PREVIEW_CLICK_TRACK_1.value.durationInTime),
+        progress = PlayableProgress(1.seconds, PREVIEW_CLICK_TRACK_1.value.durationInTime),
         modifier = Modifier.fillMaxSize()
     )
 }

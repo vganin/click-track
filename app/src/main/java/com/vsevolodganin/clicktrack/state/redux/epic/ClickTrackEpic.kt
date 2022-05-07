@@ -17,13 +17,13 @@ import com.vsevolodganin.clicktrack.state.redux.core.Store
 import com.vsevolodganin.clicktrack.state.redux.frontScreen
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.transform
+import javax.inject.Inject
 
 @ViewModelScoped
 class ClickTrackEpic @Inject constructor(
@@ -34,7 +34,7 @@ class ClickTrackEpic @Inject constructor(
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {
-        return merge(
+        return merge<Action>(
             store.state
                 .map { it.backstack.screens.frontScreen() }
                 .filterIsInstance<Screen.EditClickTrack>()

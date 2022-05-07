@@ -43,6 +43,8 @@ import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.widthByText
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 
 @Composable
@@ -208,7 +210,7 @@ private fun Preview() {
                 layer2 = 2
             ),
             isPlaying = true,
-            playableProgress = PlayableProgress(Duration.milliseconds(100), Duration.seconds(1))
+            playableProgress = PlayableProgress(100.milliseconds, 1.seconds)
         ),
     )
 }

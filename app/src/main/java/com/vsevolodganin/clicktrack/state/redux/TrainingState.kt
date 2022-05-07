@@ -9,10 +9,11 @@ import com.vsevolodganin.clicktrack.model.DefaultBeatsDuration
 import com.vsevolodganin.clicktrack.model.DefaultMeasuresDuration
 import com.vsevolodganin.clicktrack.model.DefaultTimeDuration
 import com.vsevolodganin.clicktrack.utils.optionalCast
-import kotlin.time.Duration
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
 import kotlinx.serialization.Serializable
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Serializable
 enum class TrainingMode {
@@ -82,7 +83,7 @@ data class TrainingPersistableState(
 }
 
 val DefaultEndingByTempo = TrainingState.Ending.ByTempo(160)
-val DefaultEndingByTime = TrainingState.Ending.ByTime(Duration.minutes(4))
+val DefaultEndingByTime = TrainingState.Ending.ByTime(4.minutes)
 
 fun TrainingPersistableState.Ending.toCommon(): TrainingState.Ending = when (this) {
     is TrainingPersistableState.Ending.ByTempo -> TrainingState.Ending.ByTempo(endingTempo.value)

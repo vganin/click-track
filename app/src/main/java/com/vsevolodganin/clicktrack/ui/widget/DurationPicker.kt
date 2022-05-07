@@ -54,6 +54,10 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.ui.utils.focusableBorder
 import java.text.DecimalFormat
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun DurationPicker(
@@ -95,7 +99,7 @@ fun DurationPicker(
             }
         }
 
-        return Duration.seconds(seconds)
+        return seconds.seconds
     }
 
     /** Converts Duration to String in format "hhmmss" */
@@ -207,7 +211,9 @@ fun DurationPicker(
                 }
             }
             .clickable { focusRequester.requestFocus() }
-            .onGloballyPositioned { layoutCoordinates -> focusRect = layoutCoordinates.boundsInWindow() }
+            .onGloballyPositioned { layoutCoordinates ->
+                focusRect = layoutCoordinates.boundsInWindow()
+            }
             .padding(8.dp)
     ) {
         Text(
@@ -241,7 +247,7 @@ private fun RowScope.CloseIcon(onClick: () -> Unit) {
 }
 
 private val TWO_DIGITS_FORMAT = DecimalFormat("00")
-private fun Int.twoDigits() = TWO_DIGITS_FORMAT.format(this)
+private fun Any.twoDigits() = TWO_DIGITS_FORMAT.format(this)
 
 private const val SECONDS_PER_MINUTE = 60L
 private const val MINUTES_PER_HOUR = 60L
@@ -249,12 +255,16 @@ private const val MINUTES_PER_HOUR = 60L
 @Preview
 @Composable
 private fun Preview() {
-    val sharedState = remember { mutableStateOf(Duration.hours(1) + Duration.minutes(2) + Duration.seconds(3) + Duration.milliseconds(4)) }
+    val sharedState = remember {
+        mutableStateOf(
+            1.hours + 2.minutes + 3.seconds + 4.milliseconds
+        )
+    }
     Column {
         DurationPicker(sharedState)
         DurationPicker(sharedState)
-        DurationPicker(remember { mutableStateOf(Duration.minutes(1) + Duration.seconds(2) + Duration.milliseconds(3)) })
-        DurationPicker(remember { mutableStateOf(Duration.seconds(1) + Duration.milliseconds(2)) })
-        DurationPicker(remember { mutableStateOf(Duration.milliseconds(1)) })
+        DurationPicker(remember { mutableStateOf(1.minutes + 2.seconds + 3.milliseconds) })
+        DurationPicker(remember { mutableStateOf(1.seconds + 2.milliseconds) })
+        DurationPicker(remember { mutableStateOf(1.milliseconds) })
     }
 }

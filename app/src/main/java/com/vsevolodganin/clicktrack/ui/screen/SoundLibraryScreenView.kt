@@ -1,11 +1,14 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -26,15 +29,13 @@ import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
@@ -113,19 +114,21 @@ private fun BuiltinClickSoundsItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onSelect)
-            .padding(16.dp)
+            .padding(start = 8.dp)
     ) {
         RadioButton(
             selected = item.selected,
-            modifier = Modifier.align(Alignment.CenterVertically),
+            modifier = Modifier.align(CenterVertically),
             onClick = onSelect,
         )
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(8.dp))
 
         Text(
             text = stringResource(item.data.nameStringRes),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(CenterVertically),
             textAlign = TextAlign.Start,
             style = MaterialTheme.typography.subtitle1
         )
@@ -149,94 +152,88 @@ private fun UserDefinedSoundsItem(
                 .clickable(onClick = onSelect),
             elevation = 2.dp
         ) {
-            ConstraintLayout(modifier = Modifier.padding(8.dp)) {
-                val (selected, strongBeatIcon, weakBeatIcon, strongBeatValue, weakBeatValue, playStopError) = createRefs()
-                val valuesEnd = createEndBarrier(weakBeatValue, strongBeatValue)
-
-                // FIXME(https://issuetracker.google.com/issues/181717954): Use proper barrier
-
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
                 RadioButton(
                     selected = item.selected,
-                    modifier = Modifier.constrainAs(selected) {
-                        start.linkTo(parent.start)
-                        centerVerticallyTo(parent)
-                    },
                     onClick = onSelect,
+                    Modifier.align(CenterVertically)
                 )
 
-                Icon(
-                    imageVector = Icons.Default.CenterFocusStrong,
-                    contentDescription = null,
-                    modifier = Modifier.constrainAs(strongBeatIcon) {
-                        start.linkTo(selected.end, margin = 16.dp)
-                        top.linkTo(strongBeatValue.top)
-                        bottom.linkTo(strongBeatValue.bottom)
-                    },
-                )
+                Spacer(modifier = Modifier.width(8.dp))
 
-                Icon(
-                    imageVector = Icons.Default.CenterFocusWeak,
-                    contentDescription = null,
-                    modifier = Modifier.constrainAs(weakBeatIcon) {
-                        start.linkTo(selected.end, margin = 16.dp)
-                        top.linkTo(weakBeatValue.top)
-                        bottom.linkTo(weakBeatValue.bottom)
-                    },
-                )
-
-                OutlinedButton(
-                    modifier = Modifier
-                        .constrainAs(strongBeatValue) {
-                            start.linkTo(strongBeatIcon.end, 16.dp)
-                            top.linkTo(parent.top)
-                            bottom.linkTo(weakBeatValue.top)
-                            end.linkTo(valuesEnd)
-                            width = Dimension.fillToConstraints
-                        },
-                    onClick = {
-                        dispatch(SoundLibraryAction.SelectClickSound(item.id, ClickSoundType.STRONG))
-                    },
+                Column(
+                    modifier = Modifier.weight(1f),
                 ) {
-                    Text(
-                        text = item.strongBeatValue,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                    )
+                    Row {
+                        Icon(
+                            imageVector = Icons.Default.CenterFocusStrong,
+                            contentDescription = null,
+                            modifier = Modifier.align(CenterVertically),
+                        )
+
+                        Spacer(modifier = Modifier.size(16.dp))
+
+                        OutlinedButton(
+                            onClick = {
+                                dispatch(
+                                    SoundLibraryAction.SelectClickSound(
+                                        item.id,
+                                        ClickSoundType.STRONG
+                                    )
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                text = item.strongBeatValue,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                            )
+                        }
+                    }
+
+                    Row {
+                        Icon(
+                            imageVector = Icons.Default.CenterFocusWeak,
+                            contentDescription = null,
+                            modifier = Modifier.align(CenterVertically),
+                        )
+
+                        Spacer(modifier = Modifier.size(16.dp))
+
+                        OutlinedButton(
+                            onClick = {
+                                dispatch(
+                                    SoundLibraryAction.SelectClickSound(
+                                        item.id,
+                                        ClickSoundType.WEAK
+                                    )
+                                )
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) {
+                            Text(
+                                text = item.weakBeatValue,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                            )
+                        }
+                    }
                 }
 
-                OutlinedButton(
-                    modifier = Modifier
-                        .constrainAs(weakBeatValue) {
-                            start.linkTo(strongBeatIcon.end, 16.dp)
-                            top.linkTo(strongBeatValue.bottom, 8.dp)
-                            bottom.linkTo(parent.bottom)
-                            end.linkTo(valuesEnd)
-                            width = Dimension.fillToConstraints
-                        },
-                    onClick = {
-                        dispatch(SoundLibraryAction.SelectClickSound(item.id, ClickSoundType.WEAK))
-                    },
-                ) {
-                    Text(
-                        text = item.weakBeatValue,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                    )
-                }
-
-                val playStopErrorButtonModifier = Modifier.constrainAs(playStopError) {
-                    start.linkTo(valuesEnd, 8.dp)
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                }
                 if (item.hasError) {
                     IconButton(
                         enabled = false,
                         onClick = {},
-                        modifier = playStopErrorButtonModifier
+                        modifier = Modifier.align(CenterVertically),
                     ) {
-                        Icon(imageVector = Icons.Default.Error, contentDescription = null, tint = MaterialTheme.colors.error)
+                        Icon(
+                            imageVector = Icons.Default.Error,
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.error
+                        )
                     }
                 } else {
                     IconButton(
@@ -247,7 +244,7 @@ private fun UserDefinedSoundsItem(
                                 dispatch(SoundLibraryAction.StartSoundsTest(item.id))
                             }
                         },
-                        modifier = playStopErrorButtonModifier
+                        modifier = Modifier.align(CenterVertically),
                     ) {
                         PlayStopIcon(isPlaying = item.isPlaying)
                     }
@@ -278,7 +275,7 @@ private fun Preview() {
                 SelectableClickSoundsItem.UserDefined(
                     id = ClickSoundsId.Database(1L),
                     strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
-                    weakBeatValue = "/Downloads/no_access.mp3",
+                    weakBeatValue = "no_access.mp3",
                     hasError = true,
                     isPlaying = false,
                     selected = false

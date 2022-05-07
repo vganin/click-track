@@ -12,13 +12,14 @@ import com.vsevolodganin.clicktrack.state.redux.core.Epic
 import com.vsevolodganin.clicktrack.state.redux.epic.InAppReviewEpic.Const.REVIEW_REQUEST_PERIOD
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
-import javax.inject.Inject
-import javax.inject.Provider
-import kotlin.time.Duration
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Provider
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.milliseconds
 
 @ActivityScoped
 class InAppReviewEpic @Inject constructor(
@@ -58,12 +59,12 @@ class InAppReviewEpic @Inject constructor(
             return false
         }
 
-        return Duration.milliseconds(now - reviewRequestTimestamp) >= REVIEW_REQUEST_PERIOD
+        return (now - reviewRequestTimestamp).milliseconds >= REVIEW_REQUEST_PERIOD
     }
 
     private fun nowMilliseconds(): Long = System.currentTimeMillis()
 
     private object Const {
-        val REVIEW_REQUEST_PERIOD = Duration.days(7)
+        val REVIEW_REQUEST_PERIOD = 7.days
     }
 }

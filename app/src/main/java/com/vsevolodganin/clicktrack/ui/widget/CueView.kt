@@ -22,7 +22,7 @@ import com.vsevolodganin.clicktrack.lib.TimeSignature
 import com.vsevolodganin.clicktrack.state.redux.EditCueState
 import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
 import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
-import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun CueView(
@@ -106,7 +106,7 @@ private fun Preview() {
             name = "",
             bpm = 999,
             timeSignature = TimeSignature(3, 4),
-            duration = CueDuration.Time(Duration.minutes(1)),
+            duration = CueDuration.Time(1.minutes),
             pattern = NotePattern.STRAIGHT_X1,
             errors = setOf(EditCueState.Error.BPM)
         ),
