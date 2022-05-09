@@ -124,6 +124,9 @@ class PlayerService : Service() {
     @Inject
     lateinit var intentFactory: IntentFactory
 
+    @Inject
+    lateinit var audioFocusManager: AudioFocusManager
+
     private var isNotificationDisplayed = false
 
     private lateinit var mediaSessionPlaybackStateBuilder: PlaybackStateCompat.Builder
@@ -138,9 +141,14 @@ class PlayerService : Service() {
         launchImmediately {
             player.playbackState().drop(1).collect {
                 if (it == null) {
-                    stopForeground()
-                    stopSelf()
+                    stop(this@PlayerService)
                 }
+            }
+        }
+
+        launchImmediately {
+            audioFocusManager.focusLossFlow().collect {
+                stop(this@PlayerService)
             }
         }
 
@@ -236,21 +244,9 @@ class PlayerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder = PlayerServiceBinder(player.playbackState())
 
-    private fun startPlayer(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) {
-        mediaSession.setPlaybackState(
-            mediaSessionPlaybackStateBuilder
-                .setState(PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
-                .build()
-        )
-
-        launchImmediately {
-            player.start(clickTrack, atProgress, soundsId)
-        }
-    }
-
-    private fun startPlayer(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) {
-        launchImmediately {
-            player.start(twoLayerPolyrhythm, atProgress, soundsId)
+    private fun startPlayer(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) = launchImmediately {
+        if (!audioFocusManager.requestAudioFocus()) {
+            return@launchImmediately
         }
 
         mediaSession.setPlaybackState(
@@ -258,12 +254,26 @@ class PlayerService : Service() {
                 .setState(PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
                 .build()
         )
+
+        player.start(clickTrack, atProgress, soundsId)
     }
 
-    private fun pausePlayer() {
-        launchImmediately {
-            player.pause()
+    private fun startPlayer(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) = launchImmediately {
+        if (!audioFocusManager.requestAudioFocus()) {
+            return@launchImmediately
         }
+
+        mediaSession.setPlaybackState(
+            mediaSessionPlaybackStateBuilder
+                .setState(PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
+                .build()
+        )
+
+        player.start(twoLayerPolyrhythm, atProgress, soundsId)
+    }
+
+    private fun pausePlayer() = launchImmediately {
+        player.pause()
 
         mediaSession.setPlaybackState(
             mediaSessionPlaybackStateBuilder
@@ -272,10 +282,10 @@ class PlayerService : Service() {
         )
     }
 
-    private fun stopPlayer() {
-        launchImmediately {
-            player.stop()
-        }
+    private fun stopPlayer() = launchImmediately {
+        player.stop()
+
+        audioFocusManager.releaseAudioFocus()
 
         mediaSession.setPlaybackState(
             mediaSessionPlaybackStateBuilder
