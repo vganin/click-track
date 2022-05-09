@@ -8,6 +8,8 @@ import android.content.ServiceConnection
 import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FLAG_FOREGROUND_SERVICE
@@ -25,7 +27,6 @@ import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYI
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_NOTIFICATION_ID
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.utils.cast
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -35,6 +36,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import timber.log.Timber
+import javax.inject.Inject
 
 class PlayerService : Service() {
 
@@ -123,6 +126,10 @@ class PlayerService : Service() {
 
     private var isNotificationDisplayed = false
 
+    private lateinit var mediaSessionPlaybackStateBuilder: PlaybackStateCompat.Builder
+    private lateinit var mediaSessionCallback: MediaSessionCompat.Callback
+    private lateinit var mediaSession: MediaSessionCompat
+
     override fun onCreate() {
         super.onCreate()
 
@@ -135,6 +142,31 @@ class PlayerService : Service() {
                     stopSelf()
                 }
             }
+        }
+
+        mediaSessionPlaybackStateBuilder = PlaybackStateCompat.Builder()
+            .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_STOP)
+        mediaSessionCallback = object : MediaSessionCompat.Callback() {
+            override fun onPlay() {
+                Timber.d("onPlay")
+                // TODO: Support resuming
+            }
+
+            override fun onPause() {
+                Timber.d("onPause")
+                // TODO: Support pausing properly first
+                stop(this@PlayerService)
+            }
+
+            override fun onStop() {
+                Timber.d("onStop")
+                stop(this@PlayerService)
+            }
+        }
+        mediaSession = MediaSessionCompat(this, "ClickTrackMediaSession").apply {
+            setPlaybackState(mediaSessionPlaybackStateBuilder.build())
+            setCallback(mediaSessionCallback)
+            isActive = true
         }
     }
 
@@ -198,12 +230,19 @@ class PlayerService : Service() {
 
     override fun onDestroy() {
         stopPlayer()
+        mediaSession.release()
         super.onDestroy()
     }
 
     override fun onBind(intent: Intent?): IBinder = PlayerServiceBinder(player.playbackState())
 
     private fun startPlayer(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) {
+        mediaSession.setPlaybackState(
+            mediaSessionPlaybackStateBuilder
+                .setState(PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
+                .build()
+        )
+
         launchImmediately {
             player.start(clickTrack, atProgress, soundsId)
         }
@@ -213,18 +252,36 @@ class PlayerService : Service() {
         launchImmediately {
             player.start(twoLayerPolyrhythm, atProgress, soundsId)
         }
+
+        mediaSession.setPlaybackState(
+            mediaSessionPlaybackStateBuilder
+                .setState(PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
+                .build()
+        )
     }
 
     private fun pausePlayer() {
         launchImmediately {
             player.pause()
         }
+
+        mediaSession.setPlaybackState(
+            mediaSessionPlaybackStateBuilder
+                .setState(PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0f)
+                .build()
+        )
     }
 
     private fun stopPlayer() {
         launchImmediately {
             player.stop()
         }
+
+        mediaSession.setPlaybackState(
+            mediaSessionPlaybackStateBuilder
+                .setState(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0f)
+                .build()
+        )
     }
 
     private fun startForeground(contentText: String, tapIntent: Intent) {
@@ -244,7 +301,7 @@ class PlayerService : Service() {
 
         val notificationBuilder = NotificationCompat.Builder(this, PLAYING_NOW_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
-            .setColor(ResourcesCompat.getColor(resources, R.color.signature_red, null))
+            .setColor(ResourcesCompat.getColor(resources, R.color.signature, null))
             .setColorized(true)
             .setContentTitle(getString(R.string.notification_playing_now))
             .setContentText(contentText)
