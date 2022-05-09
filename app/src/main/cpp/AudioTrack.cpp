@@ -37,33 +37,16 @@ AudioTrack::AudioTrack(
         const int channelCount,
         const int pcmEncoding,
         const int32_t sampleRate
-) : audioStream_(),
-    data_(data),
+) : data_(data),
+    dataSize_(dataSize),
+    channelCount_(channelCount),
+    pcmEncoding_(pcmEncoding),
+    sampleRate_(sampleRate),
     playbackFrameIndex_(0),
-    mute_(false) {
-
-    const auto oboeAudioFormat = pcmFormatToOboeFormat(pcmEncoding);
-
-    const auto result = oboe::AudioStreamBuilder()
-            .setDirection(oboe::Direction::Output)
-            ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
-            ->setSharingMode(oboe::SharingMode::Shared)
-            ->setSampleRate(sampleRate)
-            ->setFormat(oboeAudioFormat)
-            ->setChannelCount(channelCount)
-            ->setUsage(oboe::Usage::Media)
-            ->setContentType(oboe::ContentType::Sonification)
-            ->setDataCallback(this)
-            ->setErrorCallback(this)
-            ->openStream(audioStream_);
-
-    if (result != oboe::Result::OK) {
-        LOGE("Failed to open stream: %s", oboe::convertToText(result));
-        return;
-    }
-
-    bytesPerFrame_ = audioStream_->getBytesPerFrame();
-    totalFrames_ = dataSize / bytesPerFrame_;
+    mute_(false),
+    shouldResetStream_(false),
+    audioStream_() {
+    internalInit();
 }
 
 AudioTrack::~AudioTrack() {
@@ -85,23 +68,36 @@ oboe::DataCallbackResult AudioTrack::onAudioReady(oboe::AudioStream* audioStream
     return oboe::DataCallbackResult::Continue;
 }
 
-bool AudioTrack::onError(oboe::AudioStream* audioStream, oboe::Result error) {
+void AudioTrack::onErrorAfterClose(oboe::AudioStream* stream, oboe::Result error) {
     LOGE("Error occurred: %s", convertToText(error));
-    return false;
+    if (error == oboe::Result::ErrorDisconnected) {
+        LOGE("Restarting audio stream after disconnect");
+        shouldResetStream_ = true;
+    }
+}
+
+void AudioTrack::resetStream() {
+    audioStream_->stop();
+    audioStream_->close();
+    internalInit();
 }
 
 void AudioTrack::warmup() {
+    internalResetStreamIfNeeded();
+
     // Play silence for warmup
     mute_ = true;
     audioStream_->requestStart();
 }
 
 void AudioTrack::play() {
-    using oboe::StreamState;
+    internalResetStreamIfNeeded();
 
     mute_ = false;
     playbackFrameIndex_ = 0;
     const auto state = audioStream_->getState();
+
+    using oboe::StreamState;
     if (state != StreamState::Starting && state != StreamState::Started) {
         audioStream_->requestStart();
     }
@@ -114,6 +110,38 @@ void AudioTrack::stop() {
     if (state != StreamState::Stopping && state != StreamState::Stopped) {
         audioStream_->requestStop();
     }
+}
+
+void AudioTrack::internalResetStreamIfNeeded() {
+    if (shouldResetStream_) {
+        shouldResetStream_ = false;
+        internalInit();
+    }
+}
+
+void AudioTrack::internalInit() {
+    const auto oboeAudioFormat = pcmFormatToOboeFormat(pcmEncoding_);
+
+    const auto result = oboe::AudioStreamBuilder()
+            .setDirection(oboe::Direction::Output)
+            ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
+            ->setSharingMode(oboe::SharingMode::Shared)
+            ->setSampleRate(sampleRate_)
+            ->setFormat(oboeAudioFormat)
+            ->setChannelCount(channelCount_)
+            ->setUsage(oboe::Usage::Media)
+            ->setContentType(oboe::ContentType::Sonification)
+            ->setDataCallback(this)
+            ->setErrorCallback(this)
+            ->openStream(audioStream_);
+
+    if (result != oboe::Result::OK) {
+        LOGE("Failed to open stream: %s", oboe::convertToText(result));
+        return;
+    }
+
+    bytesPerFrame_ = audioStream_->getBytesPerFrame();
+    totalFrames_ = dataSize_ / bytesPerFrame_;
 }
 
 }

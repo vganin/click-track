@@ -19,7 +19,9 @@ public:
 
     oboe::DataCallbackResult onAudioReady(oboe::AudioStream* audioStream, void* audioData, int32_t numFrames) override;
 
-    bool onError(oboe::AudioStream* audioStream, oboe::Result error) override;
+    void onErrorAfterClose(oboe::AudioStream* stream, oboe::Result result) override;
+
+    void resetStream();
 
     void warmup();
 
@@ -29,13 +31,21 @@ public:
 
 private:
     const void* const data_;
+    const int32_t dataSize_;
+    const int channelCount_;
+    const int pcmEncoding_;
+    const int32_t sampleRate_;
 
     std::atomic<int32_t> playbackFrameIndex_;
     std::atomic<bool> mute_;
+    std::atomic<bool> shouldResetStream_;
 
     std::shared_ptr<oboe::AudioStream> audioStream_;
     int32_t totalFrames_;
     int32_t bytesPerFrame_;
+
+    void internalResetStreamIfNeeded();
+    void internalInit();
 };
 
 }
