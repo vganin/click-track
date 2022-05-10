@@ -18,8 +18,8 @@ import com.vsevolodganin.clicktrack.lib.math.times
 import com.vsevolodganin.clicktrack.lib.math.toRational
 import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.PlayableId
-import com.vsevolodganin.clicktrack.model.PlayableProgress
 import com.vsevolodganin.clicktrack.model.PlayableProgressTimeSource
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
@@ -35,6 +35,7 @@ import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingThread
 import com.vsevolodganin.clicktrack.utils.grabIf
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
@@ -42,12 +43,17 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
@@ -76,6 +82,7 @@ class PlayerImpl @Inject constructor(
     private var playerJob: Job? = null
     private val playbackState = MutableStateFlow<InternalPlaybackState?>(null)
     private val pausedState = MutableStateFlow(false)
+    private val latencyState = MutableStateFlow(Duration.ZERO)
 
     override suspend fun start(
         clickTrack: ClickTrackWithId,
@@ -108,6 +115,7 @@ class PlayerImpl @Inject constructor(
                         progress = it,
                     )
                 },
+                reportLatency = latencyState::tryEmit,
                 soundsSelector = soundsSelector(soundsId)
             )
         }
@@ -144,6 +152,7 @@ class PlayerImpl @Inject constructor(
                         progress = it,
                     )
                 },
+                reportLatency = latencyState::tryEmit,
                 soundsSelector = soundsSelector(soundsId)
             )
         }
@@ -178,24 +187,39 @@ class PlayerImpl @Inject constructor(
         }
     }
 
-    override fun playbackState(): Flow<PlaybackState?> {
-        return playbackState
-            .map { internalPlaybackState ->
-                internalPlaybackState ?: return@map null
-                PlaybackState(
-                    id = internalPlaybackState.id,
-                    progress = PlayableProgress(
-                        value = internalPlaybackState.progress,
-                        duration = internalPlaybackState.duration,
-                        generationTimeMark = internalPlaybackState.startedAt,
-                    ),
-                )
+    override fun playbackState(): Flow<PlaybackState?> = externalPlaybackState
+
+    private val externalPlaybackState = combine(
+        playbackState,
+        latencyState
+            .map { Const.LATENCY_RESOLUTION * (it / Const.LATENCY_RESOLUTION).toInt() }
+            .distinctUntilChanged()
+    ) { internalPlaybackState, latency -> internalPlaybackState to latency }
+        .mapLatest { (internalPlaybackState, latency) ->
+            internalPlaybackState ?: return@mapLatest null
+
+            val emissionTime = internalPlaybackState.creationTime + latency
+
+            // If sound will be emitted in the future due to high latency (soundEmissionTime.elapsedNow() < 0)
+            // then wait for it to actually happen
+            if (emissionTime.elapsedNow().isNegative()) {
+                delay(emissionTime.elapsedNow().absoluteValue)
             }
-    }
+
+            PlaybackState(
+                id = internalPlaybackState.id,
+                progress = PlayProgress(
+                    position = internalPlaybackState.progress,
+                    emissionTime = emissionTime,
+                ),
+            )
+        }
+        .shareIn(GlobalScope, SharingStarted.Eagerly, 1)
 
     private suspend fun ClickTrack.play(
         startAt: Duration,
-        reportProgress: (progress: Duration) -> Unit,
+        reportProgress: (Duration) -> Unit,
+        reportLatency: (Duration) -> Unit,
         soundsSelector: () -> ClickSounds?,
     ) {
         @Suppress("NAME_SHADOWING") // Because that looks better
@@ -208,7 +232,7 @@ class PlayerImpl @Inject constructor(
         val schedule = cues.asSequence()
             .flatMap { cue ->
                 cue
-                    .toPlayerSchedule(soundsSelector)
+                    .toPlayerSchedule(soundsSelector, reportLatency)
                     .withDuration(cue.durationAsTime)
             }
             .reportProgressAtTheBeginning(reportProgress, Duration.ZERO)
@@ -227,7 +251,8 @@ class PlayerImpl @Inject constructor(
 
     private suspend fun TwoLayerPolyrhythm.play(
         startAt: Duration,
-        reportProgress: (progress: Duration) -> Unit,
+        reportProgress: (Duration) -> Unit,
+        reportLatency: (Duration) -> Unit,
         soundsSelector: () -> ClickSounds?,
     ) {
         @Suppress("NAME_SHADOWING") // Because that looks better
@@ -237,7 +262,7 @@ class PlayerImpl @Inject constructor(
             startAt
         }
 
-        val schedule = toPlayerSchedule(soundsSelector)
+        val schedule = toPlayerSchedule(soundsSelector, reportLatency)
             .reportProgressAtTheBeginning(reportProgress, Duration.ZERO)
             .toList()
             .asSequence()
@@ -254,7 +279,10 @@ class PlayerImpl @Inject constructor(
         PlayerScheduleSequencer.play(schedule)
     }
 
-    private fun Cue.toPlayerSchedule(soundsSelector: () -> ClickSounds?): PlayerSchedule {
+    private fun Cue.toPlayerSchedule(
+        soundsSelector: () -> ClickSounds?,
+        reportLatency: (Duration) -> Unit,
+    ): PlayerSchedule {
         val tempo = bpm
         val polyrhythm = AbstractPolyrhythm(
             pattern1 = listOf(NoteEvent(timeSignature.noteCount.toRational(), NoteEvent.Type.NOTE)),
@@ -283,6 +311,7 @@ class PlayerImpl @Inject constructor(
                             }
                         },
                         selectedSounds = soundsSelector,
+                        reportLatency = reportLatency,
                         soundPool = soundPool,
                     )
                 )
@@ -290,7 +319,10 @@ class PlayerImpl @Inject constructor(
         }
     }
 
-    private fun TwoLayerPolyrhythm.toPlayerSchedule(soundsSelector: () -> ClickSounds?): PlayerSchedule {
+    private fun TwoLayerPolyrhythm.toPlayerSchedule(
+        soundsSelector: () -> ClickSounds?,
+        reportLatency: (Duration) -> Unit,
+    ): PlayerSchedule {
         val tempo = bpm
         val layer1NoteLength = 1.toRational()
         val layer2NoteLength = layer1 over layer2
@@ -324,6 +356,7 @@ class PlayerImpl @Inject constructor(
                                 }
                             },
                             selectedSounds = soundsSelector,
+                            reportLatency = reportLatency,
                             soundPool = soundPool,
                         )
                     }
@@ -380,7 +413,7 @@ class PlayerImpl @Inject constructor(
     }
 
     private fun PlayerSchedule.reportProgressAtTheBeginning(
-        reportProgress: (progress: Duration) -> Unit,
+        reportProgress: (Duration) -> Unit,
         progress: Duration,
     ) = mapIndexed { index, event ->
         if (index == 0) {
@@ -429,17 +462,22 @@ class PlayerImpl @Inject constructor(
         val duration: Duration,
         val progress: Duration,
     ) {
-        val startedAt = PlayableProgressTimeSource.markNow()
+        val creationTime = PlayableProgressTimeSource.markNow()
 
         fun calculateCurrentProgress(): Double {
-            val elapsedSinceStart = startedAt.elapsedNow()
-            return (progress + elapsedSinceStart) / duration
+            val elapsedSinceCreation = creationTime.elapsedNow()
+            return (progress + elapsedSinceCreation) / duration
         }
     }
 
     private object Const {
         val CLICK_MIN_DELTA = 1.milliseconds
+
         const val PREFETCH_SIZE = 100
+
+        // Higher means lower precision when correcting UI for latency
+        // Lower means higher precision but more progress bar jumps due to more frequent updates
+        val LATENCY_RESOLUTION = 50.milliseconds
     }
 }
 
@@ -455,6 +493,7 @@ private fun soundEvent(
     duration: Duration,
     waitResume: suspend () -> Unit,
     selectedSounds: () -> ClickSounds?,
+    reportLatency: (Duration) -> Unit,
     soundPool: PlayerSoundPool,
 ) = PlayerScheduleEvent(
     interval = duration,
@@ -463,6 +502,7 @@ private fun soundEvent(
             type = type,
             waitResume = waitResume,
             selectedSounds = selectedSounds,
+            reportLatency = reportLatency,
             soundPool = soundPool,
         )
     }
@@ -472,6 +512,7 @@ private suspend fun playSound(
     type: ClickSoundType,
     waitResume: suspend () -> Unit,
     selectedSounds: () -> ClickSounds?,
+    reportLatency: (Duration) -> Unit,
     soundPool: PlayerSoundPool,
 ) {
     waitResume()
@@ -482,7 +523,7 @@ private suspend fun playSound(
             ClickSoundType.STRONG -> sounds.strongBeat
             ClickSoundType.WEAK -> sounds.weakBeat
         }
-        sound?.let(soundPool::play)
+        reportLatency(sound?.let(soundPool::play) ?: Duration.ZERO)
     }
 }
 

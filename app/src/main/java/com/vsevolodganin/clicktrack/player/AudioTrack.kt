@@ -18,6 +18,7 @@ class AudioTrack(
     fun resetStream() = resetStream(nativePtr)
     fun play() = play(nativePtr)
     fun stop() = stop(nativePtr)
+    fun getLatencyMs() = getLatencyMs(nativePtr)
 
     private external fun initNative(data: ByteBuffer, dataSize: Int, channelCount: Int, pcmFormat: Int, sampleRate: Int): Long
     private external fun destroyNative(nativePtr: Long)
@@ -25,6 +26,7 @@ class AudioTrack(
     private external fun warmup(nativePtr: Long)
     private external fun play(nativePtr: Long)
     private external fun stop(nativePtr: Long)
+    private external fun getLatencyMs(nativePtr: Long): Long
 
     protected fun finalize() {
         destroyNative(nativePtr)

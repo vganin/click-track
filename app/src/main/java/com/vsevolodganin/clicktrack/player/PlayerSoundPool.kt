@@ -17,6 +17,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Thread-unsafe, should be accessed from a single thread (see [com.vsevolodganin.clicktrack.di.module.PlayerDispatcher]).
@@ -62,12 +64,14 @@ class PlayerSoundPool @Inject constructor(
         audioTrack.warmup()
     }
 
-    fun play(soundSource: ClickSoundSource) {
+    fun play(soundSource: ClickSoundSource): Duration {
         val audioTrack = loadedSounds.getOrPut(soundSource) {
-            load(soundSource) ?: return
+            load(soundSource) ?: return Duration.ZERO
         }
 
         audioTrack.play()
+
+        return audioTrack.getLatencyMs().milliseconds
     }
 
     fun stopAll() {

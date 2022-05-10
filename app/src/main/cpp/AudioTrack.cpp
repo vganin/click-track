@@ -4,6 +4,7 @@
 
 #include <oboe/Oboe.h>
 #include <media/NdkMediaFormat.h>
+#include <cmath>
 
 namespace clicktrack {
 
@@ -91,13 +92,13 @@ void AudioTrack::warmup() {
 }
 
 void AudioTrack::play() {
+    using oboe::StreamState;
+
     internalResetStreamIfNeeded();
 
     mute_ = false;
     playbackFrameIndex_ = 0;
     const auto state = audioStream_->getState();
-
-    using oboe::StreamState;
     if (state != StreamState::Starting && state != StreamState::Started) {
         audioStream_->requestStart();
     }
@@ -109,6 +110,18 @@ void AudioTrack::stop() {
     const auto state = audioStream_->getState();
     if (state != StreamState::Stopping && state != StreamState::Stopped) {
         audioStream_->requestStop();
+    }
+}
+
+int64_t AudioTrack::getLatencyMs() {
+    using oboe::StreamState;
+
+    const auto result = audioStream_->calculateLatencyMillis();
+    if (result) {
+        return static_cast<int64_t>(std::round(result.value()));
+    } else {
+        LOGE("Failed to calculate latency: %s", oboe::convertToText(result.error()));
+        return 0;
     }
 }
 
@@ -127,8 +140,11 @@ void AudioTrack::internalInit() {
             ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
             ->setSharingMode(oboe::SharingMode::Shared)
             ->setSampleRate(sampleRate_)
+            ->setSampleRateConversionQuality(oboe::SampleRateConversionQuality::Fastest)
             ->setFormat(oboeAudioFormat)
+            ->setFormatConversionAllowed(true)
             ->setChannelCount(channelCount_)
+            ->setChannelConversionAllowed(true)
             ->setUsage(oboe::Usage::Media)
             ->setContentType(oboe::ContentType::Sonification)
             ->setDataCallback(this)

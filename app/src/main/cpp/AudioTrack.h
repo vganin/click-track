@@ -29,6 +29,8 @@ public:
 
     void stop();
 
+    int64_t getLatencyMs();
+
 private:
     const void* const data_;
     const int32_t dataSize_;

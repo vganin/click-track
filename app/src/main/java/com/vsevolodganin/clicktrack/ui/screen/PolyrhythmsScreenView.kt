@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.lib.bpm
-import com.vsevolodganin.clicktrack.model.PlayableProgress
+import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.state.redux.action.PlayerAction
 import com.vsevolodganin.clicktrack.state.redux.action.PolyrhythmsAction
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
@@ -44,7 +44,6 @@ import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.widthByText
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 
 @Composable
@@ -141,24 +140,26 @@ private fun NumberChooser(
 private fun PolyrhythmCircleWrapper(
     layer1: Int,
     layer2: Int,
-    progress: PlayableProgress?,
+    progress: PlayProgress?,
     totalDuration: Duration,
     modifier: Modifier,
 ) {
-    val progressAngle = progressAngle(progress)?.asState()
-    val duration = progress?.duration ?: totalDuration
+    val progressAngle = progressAngle(progress, totalDuration)?.asState()
 
     PolyrhythmCircle(
         outerDotNumber = layer1,
         innerDotNumber = layer2,
         modifier = modifier,
         progressAngle = progressAngle?.value,
-        progressVelocity = (FULL_ANGLE_DEGREES / duration.toDouble(DurationUnit.SECONDS)).toFloat()
+        progressVelocity = (FULL_ANGLE_DEGREES / totalDuration.toDouble(DurationUnit.SECONDS)).toFloat()
     )
 }
 
 @Composable
-private fun progressAngle(progress: PlayableProgress?): AnimatableFloat? {
+private fun progressAngle(
+    progress: PlayProgress?,
+    totalDuration: Duration,
+): AnimatableFloat? {
     progress ?: return null
 
     val animatableProgressAngle = remember {
@@ -170,11 +171,11 @@ private fun progressAngle(progress: PlayableProgress?): AnimatableFloat? {
     var cachedProgress by remember { mutableStateOf(progress) }
 
     LaunchedEffect(progress) {
-        val progressTimePosition = progress.value + progress.generationTimeMark.elapsedNow()
-        val progressAnglePosition = progressTimePosition.toAngle(progress.duration)
-        val animationDuration = progress.duration - progressTimePosition
+        val progressTimePosition = progress.position + progress.emissionTime.elapsedNow()
+        val progressAnglePosition = progressTimePosition.toAngle(totalDuration)
+        val animationDuration = totalDuration - progressTimePosition
 
-        if (progress.value <= cachedProgress.value) {
+        if (progress.position <= cachedProgress.position) {
             cachedProgress = progress
             animatableProgressAngle.snapTo(progressAnglePosition)
         }
@@ -210,7 +211,7 @@ private fun Preview() {
                 layer2 = 2
             ),
             isPlaying = true,
-            playableProgress = PlayableProgress(100.milliseconds, 1.seconds)
+            playableProgress = PlayProgress(100.milliseconds)
         ),
     )
 }

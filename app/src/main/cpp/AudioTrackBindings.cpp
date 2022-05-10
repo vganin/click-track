@@ -55,3 +55,10 @@ Java_com_vsevolodganin_clicktrack_player_AudioTrack_stop(JNIEnv* env, jobject th
     auto audioTrack = (clicktrack::AudioTrack*) native_ptr;
     audioTrack->stop();
 }
+
+extern "C"
+JNIEXPORT jlong JNICALL
+Java_com_vsevolodganin_clicktrack_player_AudioTrack_getLatencyMs(JNIEnv* env, jobject thiz, jlong native_ptr) {
+    auto audioTrack = (clicktrack::AudioTrack*) native_ptr;
+    return audioTrack->getLatencyMs();
+}
