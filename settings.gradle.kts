@@ -1,4 +1,4 @@
 rootProject.name = "ClickTrack"
 
-include ':app'
-include ':lib'
+include(":app")
+include(":lib")
