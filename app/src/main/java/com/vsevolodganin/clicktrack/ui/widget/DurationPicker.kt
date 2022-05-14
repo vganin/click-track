@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
@@ -19,25 +21,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.key.Key.Companion.Backspace
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.key.utf16CodePoint
-import androidx.compose.ui.layout.boundsInWindow
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.BackspaceCommand
@@ -155,9 +152,9 @@ fun DurationPicker(
     val inputService = LocalTextInputService.current!!
     val textInputSession: MutableState<TextInputSession?> = remember { mutableStateOf(null) }
     val focusRequester = remember { FocusRequester() }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused = interactionSource.collectIsFocusedAsState().value
-    var focusRect: Rect? by remember { mutableStateOf(null) }
 
     if (isFocused && textInputSession.value == null) {
         textInputSession.value = inputService.startInput(
@@ -187,13 +184,11 @@ fun DurationPicker(
         textInputSession.value = null
     }
 
-    DisposableEffect(focusRect, textInputSession.value) {
-        val focusRectValue = focusRect
+    LaunchedEffect(textInputSession.value) {
         val textInputSessionValue = textInputSession.value
-        if (focusRectValue != null && textInputSessionValue != null) {
-            textInputSessionValue.notifyFocusedRect(focusRectValue)
+        if (textInputSessionValue != null) {
+            bringIntoViewRequester.bringIntoView()
         }
-        onDispose {}
     }
 
     Row(
@@ -201,6 +196,7 @@ fun DurationPicker(
             .focusableBorder()
             .focusRequester(focusRequester)
             .focusable(interactionSource = interactionSource)
+            .bringIntoViewRequester(bringIntoViewRequester)
             .onKeyEvent {
                 // FIXME(https://issuetracker.google.com/issues/188119984): Should keep only onEditCommand
                 if (it.type != KeyEventType.KeyDown) return@onKeyEvent false
@@ -210,9 +206,12 @@ fun DurationPicker(
                     enterDigit(it.utf16CodePoint.toChar())
                 }
             }
-            .clickable { focusRequester.requestFocus() }
-            .onGloballyPositioned { layoutCoordinates ->
-                focusRect = layoutCoordinates.boundsInWindow()
+            .clickable {
+                if (!isFocused) {
+                    focusRequester.requestFocus()
+                } else {
+                    textInputSession.value?.showSoftwareKeyboard()
+                }
             }
             .padding(8.dp)
     ) {

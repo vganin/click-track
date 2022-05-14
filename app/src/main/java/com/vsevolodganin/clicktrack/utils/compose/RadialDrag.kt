@@ -3,7 +3,6 @@ package com.vsevolodganin.clicktrack.utils.compose
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerInputScope
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import kotlin.math.atan2
 
 suspend fun PointerInputScope.detectRadialDragGesture(
@@ -12,7 +11,7 @@ suspend fun PointerInputScope.detectRadialDragGesture(
 ) {
     detectDragGestures(
         onDrag = { change, _ ->
-            change.consumeAllChanges()
+            change.consume()
             val angleDiff = angleBetween(change.previousPosition - center, change.position - center)
             onRadialDrag.invoke(angleDiff)
         },

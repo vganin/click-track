@@ -8,9 +8,8 @@ import androidx.compose.foundation.gestures.calculateRotation
 import androidx.compose.foundation.gestures.calculateZoom
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerInputScope
-import androidx.compose.ui.input.pointer.consumeAllChanges
-import androidx.compose.ui.input.pointer.positionChangeConsumed
 import androidx.compose.ui.input.pointer.positionChanged
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
@@ -36,7 +35,7 @@ suspend fun PointerInputScope.detectTransformGesturesWithEndCallbacks(
             awaitFirstDown(requireUnconsumed = false)
             do {
                 val event = awaitPointerEvent()
-                canceled = event.changes.fastAny { it.positionChangeConsumed() }
+                canceled = event.changes.fastAny(PointerInputChange::isConsumed)
                 if (!canceled) {
                     val zoomChange = event.calculateZoom()
                     val rotationChange = event.calculateRotation()
@@ -72,7 +71,7 @@ suspend fun PointerInputScope.detectTransformGesturesWithEndCallbacks(
                         }
                         event.changes.fastForEach {
                             if (it.positionChanged()) {
-                                it.consumeAllChanges()
+                                it.consume()
                             }
                         }
                     }

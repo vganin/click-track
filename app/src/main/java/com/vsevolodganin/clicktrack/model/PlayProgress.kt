@@ -2,7 +2,9 @@ package com.vsevolodganin.clicktrack.model
 
 import android.os.Parcelable
 import android.os.SystemClock
+import com.vsevolodganin.clicktrack.lib.android.parceler.DurationParceler
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.WriteWith
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.TimeMark
@@ -11,7 +13,7 @@ import kotlin.time.toDuration
 
 @Parcelize
 data class PlayProgress(
-    val position: Duration,
+    val position: @WriteWith<DurationParceler>() Duration,
     val emissionTime: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow(),
 ) : Parcelable
 

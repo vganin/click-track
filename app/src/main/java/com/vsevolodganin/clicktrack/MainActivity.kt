@@ -25,7 +25,6 @@ import com.vsevolodganin.clicktrack.ui.model.AppUiState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -35,7 +34,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels {
         object : AbstractSavedStateViewModelFactory(this@MainActivity, null) {
-            override fun <T : ViewModel?> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T {
+            override fun <T : ViewModel> create(key: String, modelClass: Class<T>, handle: SavedStateHandle): T {
                 require(modelClass == MainViewModel::class.java)
                 @Suppress("UNCHECKED_CAST") // Checked earlier
                 return MainViewModel(application as Application, handle) as T

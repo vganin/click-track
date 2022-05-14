@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFontLoader
+import androidx.compose.ui.platform.LocalFontFamilyResolver
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.MultiParagraphIntrinsics
 import androidx.compose.ui.text.TextStyle
@@ -39,7 +39,7 @@ private fun dpByText(
         style = style,
         placeholders = emptyList(),
         density = LocalDensity.current,
-        resourceLoader = LocalFontLoader.current
+        fontFamilyResolver = LocalFontFamilyResolver.current
     )
 
     return with(LocalDensity.current) {
