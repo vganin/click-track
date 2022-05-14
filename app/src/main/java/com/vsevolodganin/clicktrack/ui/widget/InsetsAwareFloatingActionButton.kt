@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.ui.widget
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.FloatingActionButtonDefaults
@@ -12,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import com.google.accompanist.insets.navigationBarsPadding
 
 @Composable
 fun InsetsAwareFloatingActionButton(

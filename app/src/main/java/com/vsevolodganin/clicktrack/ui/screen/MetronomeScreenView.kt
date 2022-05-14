@@ -1,11 +1,15 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.BackdropScaffold
 import androidx.compose.material.BackdropScaffoldDefaults
 import androidx.compose.material.BackdropScaffoldState
@@ -32,8 +36,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsPadding
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.lib.NotePattern
 import com.vsevolodganin.clicktrack.lib.bpm
@@ -63,10 +65,7 @@ fun MetronomeScreenView(
     modifier: Modifier = Modifier,
     dispatch: Dispatch = Dispatch {},
 ) {
-    val insetTop = with(LocalDensity.current) {
-        LocalWindowInsets.current.statusBars.layoutInsets.top.toDp()
-    }
-
+    val insetTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     BackdropScaffold(
         appBar = { AppBar(dispatch) },
         backLayerContent = {

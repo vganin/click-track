@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.with
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberDrawerState
@@ -20,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
-import com.google.accompanist.insets.ProvideWindowInsets
 import com.vsevolodganin.clicktrack.state.redux.action.CloseDrawer
 import com.vsevolodganin.clicktrack.state.redux.action.InAppReviewAction
 import com.vsevolodganin.clicktrack.state.redux.action.OpenDrawer
@@ -55,25 +55,23 @@ fun ContentView(
     }
 
     ClickTrackTheme {
-        ProvideWindowInsets {
-            Scaffold(
-                scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerState.isOpened, dispatch)),
-                drawerContent = { DrawerView(drawerState, dispatch) },
-                drawerGesturesEnabled = drawerState.gesturesEnabled,
-            ) {
-                AnimationScreen(screen, position) { targetScreen ->
-                    val modifier = Modifier.fillMaxSize()
-                    when (targetScreen) {
-                        is UiScreen.ClickTrackList -> ClickTrackListScreenView(targetScreen.state, modifier, dispatch)
-                        is UiScreen.PlayClickTrack -> PlayClickTrackScreenView(targetScreen.state, modifier, dispatch)
-                        is UiScreen.EditClickTrack -> EditClickTrackScreenView(targetScreen.state, modifier, dispatch)
-                        is UiScreen.Metronome -> MetronomeScreenView(targetScreen.state, modifier, dispatch)
-                        is UiScreen.Settings -> SettingsScreenView(targetScreen.state, modifier, dispatch)
-                        is UiScreen.SoundLibrary -> SoundLibraryScreenView(targetScreen.state, modifier, dispatch)
-                        is UiScreen.Training -> TrainingScreenView(targetScreen.state, modifier, dispatch)
-                        is UiScreen.About -> AboutScreenView(targetScreen.state, modifier, dispatch)
-                        is UiScreen.Polyrhythms -> PolyrhythmsScreenView(targetScreen.state, modifier, dispatch)
-                    }
+        Scaffold(
+            scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerState.isOpened, dispatch)),
+            drawerContent = { DrawerView(drawerState, dispatch) },
+            drawerGesturesEnabled = drawerState.gesturesEnabled,
+        ) {
+            AnimationScreen(screen, position, Modifier.padding(it)) { targetScreen ->
+                val modifier = Modifier.fillMaxSize()
+                when (targetScreen) {
+                    is UiScreen.ClickTrackList -> ClickTrackListScreenView(targetScreen.state, modifier, dispatch)
+                    is UiScreen.PlayClickTrack -> PlayClickTrackScreenView(targetScreen.state, modifier, dispatch)
+                    is UiScreen.EditClickTrack -> EditClickTrackScreenView(targetScreen.state, modifier, dispatch)
+                    is UiScreen.Metronome -> MetronomeScreenView(targetScreen.state, modifier, dispatch)
+                    is UiScreen.Settings -> SettingsScreenView(targetScreen.state, modifier, dispatch)
+                    is UiScreen.SoundLibrary -> SoundLibraryScreenView(targetScreen.state, modifier, dispatch)
+                    is UiScreen.Training -> TrainingScreenView(targetScreen.state, modifier, dispatch)
+                    is UiScreen.About -> AboutScreenView(targetScreen.state, modifier, dispatch)
+                    is UiScreen.Polyrhythms -> PolyrhythmsScreenView(targetScreen.state, modifier, dispatch)
                 }
             }
         }
@@ -84,6 +82,7 @@ fun ContentView(
 private fun AnimationScreen(
     screen: UiScreen,
     position: Int,
+    modifier: Modifier,
     content: @Composable (screen: UiScreen) -> Unit,
 ) {
     val isPush = remember { mutableStateOf(true) }
@@ -103,6 +102,7 @@ private fun AnimationScreen(
     }
 
     transition.AnimatedContent(
+        modifier = modifier,
         transitionSpec = {
             val animationSpec = if (DEBUG_TRANSITIONS) {
                 tween(durationMillis = 5000, easing = LinearEasing)

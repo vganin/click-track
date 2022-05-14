@@ -1,6 +1,11 @@
 package com.vsevolodganin.clicktrack.ui.widget
 
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.contentColorFor
@@ -9,8 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.ui.TopAppBar
 
 @Composable
@@ -26,17 +29,11 @@ fun InsetsAwareTopAppBar(
     TopAppBar(
         title = title,
         modifier = modifier,
-        contentPadding = rememberInsetsPaddingValues(
-            insets = LocalWindowInsets.current.statusBars,
-            applyStart = true,
-            applyTop = true,
-            applyEnd = true,
-        ),
+        contentPadding = WindowInsets.statusBars.only(WindowInsetsSides.Top).asPaddingValues(),
         navigationIcon = navigationIcon,
         actions = actions,
         backgroundColor = backgroundColor,
         contentColor = contentColor,
         elevation = elevation
-
     )
 }

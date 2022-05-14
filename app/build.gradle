@@ -135,6 +135,9 @@ android {
                 "TimberArgTypes",
                 "TimberTagLength",
                 "TimberExceptionLogging"
+
+        // Not used on purpose
+        disable 'UnusedMaterialScaffoldPaddingParameter'
     }
 }
 
@@ -158,7 +161,8 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.core:core-splashscreen:1.0.0-beta02'
     implementation 'androidx.activity:activity-compose:1.4.0'
-    implementation 'androidx.fragment:fragment-ktx:1.4.1' // Essential for Activity Result APIs (as per https://developer.android.com/training/basics/intents/result)
+    implementation 'androidx.fragment:fragment-ktx:1.4.1'
+    // Essential for Activity Result APIs (as per https://developer.android.com/training/basics/intents/result)
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.0'
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
     implementation 'androidx.media:media:1.6.0'
@@ -177,8 +181,7 @@ dependencies {
     implementation "androidx.compose.material:material-icons-core:$composeVersion"
     implementation "androidx.compose.material:material-icons-extended:$composeVersion"
 
-    def accompanistVersion = '0.23.1'
-    implementation "com.google.accompanist:accompanist-insets:$accompanistVersion"
+    def accompanistVersion = '0.24.8-beta'
     implementation "com.google.accompanist:accompanist-insets-ui:$accompanistVersion"
 
     def daggerVersion = '2.42'
