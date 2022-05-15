@@ -3,7 +3,6 @@ package com.vsevolodganin.clicktrack.ui.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,7 +46,7 @@ import com.vsevolodganin.clicktrack.ui.model.SoundLibraryUiState
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.ui.widget.PlayStopIcon
-import com.vsevolodganin.clicktrack.utils.compose.SwipeToDismiss
+import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 
 @Composable
@@ -141,14 +140,16 @@ private fun UserDefinedSoundsItem(
     onSelect: () -> Unit,
     dispatch: Dispatch,
 ) {
-    SwipeToDismiss(
-        onDismiss = { dispatch(SoundLibraryAction.RemoveClickSounds(item.id)) },
-        backgroundPaddingValues = PaddingValues(vertical = 8.dp),
+    val contentPadding = 8.dp
+
+    SwipeToDelete(
+        onDeleted = { dispatch(SoundLibraryAction.RemoveClickSounds(item.id)) },
+        contentPadding = contentPadding,
     ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
+                .padding(contentPadding)
                 .clickable(onClick = onSelect),
             elevation = 2.dp
         ) {

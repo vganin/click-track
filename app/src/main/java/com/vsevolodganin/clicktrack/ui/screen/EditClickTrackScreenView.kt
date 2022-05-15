@@ -7,7 +7,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -63,7 +62,7 @@ import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
 import com.vsevolodganin.clicktrack.ui.widget.CueView
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
-import com.vsevolodganin.clicktrack.utils.compose.SwipeToDismiss
+import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.offset
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import kotlinx.coroutines.android.awaitFrame
@@ -111,6 +110,8 @@ private fun Content(
     var moveReorderTargetIndex by remember { mutableStateOf<Int?>(null) }
     var reorderHeight by remember { mutableStateOf(0f) }
 
+    val contentPadding = 8.dp
+
     LazyColumn(
         state = lazyListState,
         modifier = Modifier.fillMaxSize()
@@ -135,7 +136,7 @@ private fun Content(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(contentPadding)
             ) {
                 Row(modifier = Modifier.padding(8.dp)) {
                     Text(
@@ -158,10 +159,10 @@ private fun Content(
         itemsIndexed(items = state.cues, key = { index, cue -> index to cue.id }) { index, cue ->
             var zIndex by remember { mutableStateOf(0f) }
 
-            SwipeToDismiss(
-                onDismiss = { dispatch(EditClickTrackAction.RemoveCue(index)) },
+            SwipeToDelete(
+                onDeleted = { dispatch(EditClickTrackAction.RemoveCue(index)) },
                 modifier = Modifier.zIndex(zIndex),
-                backgroundPaddingValues = PaddingValues(vertical = 8.dp)
+                contentPadding = contentPadding,
             ) {
                 val offset = remember { Animatable(0f) }
                 val elevation = remember { Animatable(0.dp, Dp.VectorConverter) }
