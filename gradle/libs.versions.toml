@@ -1,6 +1,6 @@
 [versions]
-accompanist = "0.24.8-beta"
-androidx-compose = "1.2.0-beta01"
+accompanist = "0.24.11-rc"
+androidx-compose = "1.2.0-rc01"
 androidx-lifecycle = "2.4.1"
 dagger = "2.42"
 kotlin = "1.6.21"
