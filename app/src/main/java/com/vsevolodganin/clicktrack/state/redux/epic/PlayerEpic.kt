@@ -17,9 +17,7 @@ import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
 import com.vsevolodganin.clicktrack.utils.flow.consumeEachLatest
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
@@ -28,6 +26,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import javax.inject.Inject
 
 @ViewModelScoped
 class PlayerEpic @Inject constructor(
@@ -99,8 +98,8 @@ class PlayerEpic @Inject constructor(
 
     private fun metronomeClickTrackUpdates(): Flow<ClickTrackWithId> {
         return combine(
-            userPreferencesRepository.metronomeBpm.flow,
-            userPreferencesRepository.metronomePattern.flow,
+            userPreferencesRepository.metronomeBpm.stateFlow,
+            userPreferencesRepository.metronomePattern.stateFlow,
         ) { bpm, pattern ->
             metronomeClickTrack(
                 name = context.getString(R.string.metronome),
@@ -111,6 +110,6 @@ class PlayerEpic @Inject constructor(
     }
 
     private fun polyrhythmUpdates(): Flow<TwoLayerPolyrhythm> {
-        return userPreferencesRepository.polyrhythm.flow
+        return userPreferencesRepository.polyrhythm.stateFlow
     }
 }

@@ -1,15 +1,15 @@
 package com.vsevolodganin.clicktrack.di.module
 
 import android.os.Process
-import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.utils.coroutine.createSingleThreadCoroutineDispatcher
 import dagger.Module
 import dagger.Provides
-import javax.inject.Qualifier
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import javax.inject.Qualifier
+import javax.inject.Singleton
 
 @Qualifier
 annotation class SerialBackgroundDispatcher
@@ -24,19 +24,19 @@ annotation class PlayerDispatcher
 class ApplicationScopedCoroutineModule {
 
     @Provides
-    @ApplicationScoped
+    @Singleton
     @MainDispatcher
     fun provideMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
 
     @Provides
-    @ApplicationScoped
+    @Singleton
     @SerialBackgroundDispatcher
     fun provideSerialBackgroundDispatcher(): CoroutineDispatcher {
         return createSingleThreadCoroutineDispatcher("ClickTrackSerialBackground", Process.THREAD_PRIORITY_DEFAULT)
     }
 
     @Provides
-    @ApplicationScoped
+    @Singleton
     @PlayerDispatcher
     fun providePlayerDispatcher(): CoroutineDispatcher {
         return createSingleThreadCoroutineDispatcher("ClickTrackPlayer", Process.THREAD_PRIORITY_URGENT_AUDIO)

@@ -52,7 +52,7 @@ class InAppReviewEpic @Inject constructor(
 
     private suspend fun mayRequestReview(): Boolean {
         val now = nowMilliseconds()
-        val reviewRequestTimestamp = userPreferencesRepository.reviewRequestTimestamp.flow.first()
+        val reviewRequestTimestamp = userPreferencesRepository.reviewRequestTimestamp.stateFlow.first()
 
         if (reviewRequestTimestamp == UserPreferencesRepository.Const.REVIEW_NOT_REQUESTED) {
             userPreferencesRepository.reviewRequestTimestamp.edit { now }

@@ -1,12 +1,12 @@
 package com.vsevolodganin.clicktrack
 
 import com.vsevolodganin.clicktrack.di.component.DaggerApplicationComponent
-import com.vsevolodganin.clicktrack.sounds.AllClickSoundsPreloader
+import com.vsevolodganin.clicktrack.sounds.SoundPreloader
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.storage.blockingValue
 import com.vsevolodganin.clicktrack.theme.ThemeManager
-import javax.inject.Inject
 import timber.log.Timber
+import javax.inject.Inject
 
 class Application : android.app.Application() {
 
@@ -21,7 +21,7 @@ class Application : android.app.Application() {
     lateinit var themeManager: ThemeManager
 
     @Inject
-    lateinit var soundsPreloader: AllClickSoundsPreloader
+    lateinit var soundsPreloader: SoundPreloader
 
     override fun onCreate() {
         super.onCreate()

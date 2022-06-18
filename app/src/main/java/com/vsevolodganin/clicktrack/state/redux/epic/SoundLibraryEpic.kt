@@ -19,13 +19,13 @@ import com.vsevolodganin.clicktrack.state.redux.core.Epic
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.transform
+import javax.inject.Inject
 
 @ViewModelScoped
 class SoundLibraryEpic @Inject constructor(
@@ -65,7 +65,7 @@ class SoundLibraryEpic @Inject constructor(
 
             actions.filterIsInstance<SoundLibraryAction.RemoveClickSounds>()
                 .transform { action ->
-                    if (action.id == userPreferences.selectedSoundsId.flow.first()) {
+                    if (action.id == userPreferences.selectedSoundsId.stateFlow.first()) {
                         emit(SoundLibraryAction.SelectClickSounds(fallbackClickSoundsId()))
                     }
                 },

@@ -3,15 +3,15 @@ package com.vsevolodganin.clicktrack.di.module
 import android.content.Context
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.vsevolodganin.clicktrack.Database
-import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 class DatabaseModule {
 
     @Provides
-    @ApplicationScoped
+    @Singleton
     fun provideDatabase(context: Context): Database {
         return Database(
             AndroidSqliteDriver(

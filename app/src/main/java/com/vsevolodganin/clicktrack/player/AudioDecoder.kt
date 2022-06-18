@@ -1,150 +1,115 @@
 package com.vsevolodganin.clicktrack.player
 
 import android.content.res.AssetFileDescriptor
-import android.media.AudioFormat
 import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaExtractor
 import android.media.MediaFormat
-import android.os.Build
+import com.vsevolodganin.clicktrack.sounds.model.Pcm16Data
+import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
+import com.vsevolodganin.clicktrack.utils.media.channelCount
+import com.vsevolodganin.clicktrack.utils.media.sampleRate
+import timber.log.Timber
 import java.nio.ByteBuffer
 import javax.inject.Inject
 import kotlin.math.min
-import timber.log.Timber
 
-// Implementation is loosely based on https://android.googlesource.com/platform/frameworks/base/+/master/media/jni/soundpool/Sound.cpp#48
 class AudioDecoder @Inject constructor() {
-
-    class DecodingResult(
-        val pcmEncoding: Int,
-        val sampleRate: Int,
-        val channelCount: Int,
-        val data: ByteBuffer,
-    )
-
-    fun decodeAudioTrack(afd: AssetFileDescriptor, maxSeconds: Int): DecodingResult {
+    fun extractPcm(afd: AssetFileDescriptor, maxSeconds: Int): Pcm16Data? {
         val mediaExtractor = MediaExtractor()
+
         try {
             mediaExtractor.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
             for (trackIndex in 0 until mediaExtractor.trackCount) {
                 val trackFormat = mediaExtractor.getTrackFormat(trackIndex)
-                val trackMime = requireNotNull(trackFormat.getString(MediaFormat.KEY_MIME))
+                val trackMime = trackFormat.getString(MediaFormat.KEY_MIME)!!
                 if (trackMime.startsWith("audio/")) {
-                    return decodeAudioTrack(mediaExtractor, trackIndex, maxSeconds)
+                    return extractPcm(mediaExtractor, trackIndex, trackFormat, maxSeconds)
                 }
             }
+        } catch (t: Throwable) {
+            Timber.e(t, "Failed to extract PCM")
         } finally {
             mediaExtractor.release()
         }
-        throw IllegalArgumentException("Failed to decode")
+
+        return null
     }
 
-    private fun decodeAudioTrack(mediaExtractor: MediaExtractor, trackIndex: Int, maxSeconds: Int): DecodingResult {
-        val inputTrackFormat = mediaExtractor.getTrackFormat(trackIndex)
-        val codecName = MediaCodecList(MediaCodecList.REGULAR_CODECS).findDecoderForFormat(inputTrackFormat)
-        val codec = MediaCodec.createByCodecName(codecName)
-        codec.configure(inputTrackFormat, null, null, 0)
-        codec.start()
+    private fun extractPcm(mediaExtractor: MediaExtractor, trackIndex: Int, trackFormat: MediaFormat, maxSeconds: Int): Pcm16Data? {
+        var codec: MediaCodec? = null
 
-        var outputTrackFormat = codec.outputFormat
+        return try {
+            val codecName = MediaCodecList(MediaCodecList.REGULAR_CODECS).findDecoderForFormat(trackFormat)
+            codec = MediaCodec.createByCodecName(codecName).apply {
+                configure(trackFormat, null, null, 0)
+                start()
+            }
 
-        val maxBytes = maxSeconds * outputTrackFormat.bytesPerSecond()
-        val resultByteBuffer = ByteBuffer.allocateDirect(maxBytes)
+            val outputTrackFormat = codec.outputFormat
+            val maxBytes = maxSeconds * outputTrackFormat.bytesPerSecond()
+            val resultByteBuffer = ByteBuffer.allocateDirect(maxBytes)
+            var endOfInput = false
+            var endOfOutput = false
 
-        var sawInputEnd = false
-        var sawOutputEnd = false
-        mediaExtractor.selectTrack(trackIndex)
-        while (!sawOutputEnd) {
-            if (!sawInputEnd) {
-                val inputBufferIndex = codec.dequeueInputBuffer(5000)
-                if (inputBufferIndex >= 0) {
-                    val inputBuffer = codec.getInputBuffer(inputBufferIndex)!!
-                    var sampleSize = mediaExtractor.readSampleData(inputBuffer, 0)
-                    if (sampleSize < 0) {
-                        sampleSize = 0
-                        sawInputEnd = true
+            mediaExtractor.selectTrack(trackIndex)
+
+            while (!endOfInput || !endOfOutput) {
+                if (!endOfInput) {
+                    val inputBufferIndex = codec.dequeueInputBuffer(0L)
+
+                    if (inputBufferIndex >= 0) {
+                        val inputBuffer = codec.getInputBuffer(inputBufferIndex)!!
+                        var sampleSize = mediaExtractor.readSampleData(inputBuffer, 0)
+                        if (sampleSize < 0) {
+                            sampleSize = 0
+                            endOfInput = true
+                        }
+                        codec.queueInputBuffer(
+                            inputBufferIndex,
+                            0,
+                            sampleSize,
+                            mediaExtractor.sampleTime,
+                            if (endOfInput) MediaCodec.BUFFER_FLAG_END_OF_STREAM else 0
+                        )
+                        mediaExtractor.advance()
                     }
-                    val presentationTimeUs = mediaExtractor.sampleTime
-                    codec.queueInputBuffer(inputBufferIndex, 0, sampleSize, presentationTimeUs,
-                        if (sawInputEnd) MediaCodec.BUFFER_FLAG_END_OF_STREAM else 0)
-                    mediaExtractor.advance()
+                }
+
+                if (!endOfOutput) {
+                    val bufferInfo = MediaCodec.BufferInfo()
+                    val outputBufferIndex = codec.dequeueOutputBuffer(bufferInfo, 0L)
+
+                    if (outputBufferIndex >= 0) {
+                        if (bufferInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0 ||
+                            resultByteBuffer.remaining() == 0
+                        ) {
+                            endOfOutput = true
+                        }
+
+                        val sizeToWrite = min(resultByteBuffer.remaining(), bufferInfo.size)
+                        val outputBuffer = codec.getOutputBuffer(outputBufferIndex)!!
+
+                        repeat(sizeToWrite) {
+                            resultByteBuffer.put(outputBuffer.get())
+                        }
+
+                        codec.releaseOutputBuffer(outputBufferIndex, false)
+                    }
                 }
             }
-            val outputBufferInfo = MediaCodec.BufferInfo()
-            val outputBufferIndex = codec.dequeueOutputBuffer(outputBufferInfo, 1)
-            when {
-                outputBufferIndex >= 0 -> {
-                    if (outputBufferInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0 ||
-                        resultByteBuffer.remaining() == 0
-                    ) {
-                        sawOutputEnd = true
-                    }
-                    val sizeToWrite = min(resultByteBuffer.remaining(), outputBufferInfo.size)
-                    val outputBuffer = requireNotNull(codec.getOutputBuffer(outputBufferIndex))
-                    resultByteBuffer.put(outputBuffer.duplicate().apply {
-                        position(outputBufferInfo.offset)
-                        limit(outputBufferInfo.offset + sizeToWrite)
-                    })
-                    codec.releaseOutputBuffer(outputBufferIndex, false)
-                }
-                outputBufferIndex == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED -> {
-                    outputTrackFormat = codec.outputFormat
-                }
-                outputBufferIndex == MediaCodec.INFO_TRY_AGAIN_LATER -> {
-                    Timber.w("Received INFO_TRY_AGAIN_LATER")
-                }
+
+            Pcm16Data(
+                sampleRate = outputTrackFormat.sampleRate(),
+                channelCount = outputTrackFormat.channelCount(),
+                data = resultByteBuffer.array().copyOf(resultByteBuffer.position()),
+            )
+        } finally {
+            try {
+                codec?.stop()
+            } finally {
+                codec?.release()
             }
         }
-
-        codec.stop()
-        codec.release()
-
-        return DecodingResult(
-            pcmEncoding = outputTrackFormat.pcmEncoding(),
-            sampleRate = outputTrackFormat.sampleRate(),
-            channelCount = outputTrackFormat.channelCount(),
-            data = resultByteBuffer,
-        )
-    }
-}
-
-private fun MediaFormat.pcmEncoding(): Int {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        getOptional(MediaFormat.KEY_PCM_ENCODING, MediaFormat::getInteger) ?: AudioFormat.ENCODING_PCM_16BIT
-    } else {
-        AudioFormat.ENCODING_PCM_16BIT
-    }
-}
-
-private fun MediaFormat.channelCount(): Int {
-    return getInteger(MediaFormat.KEY_CHANNEL_COUNT)
-}
-
-private fun MediaFormat.sampleRate(): Int {
-    return getInteger(MediaFormat.KEY_SAMPLE_RATE)
-}
-
-private fun MediaFormat.bytesPerSample(): Int {
-    return when (val pcmEncoding = pcmEncoding()) {
-        AudioFormat.ENCODING_PCM_8BIT -> 1
-        AudioFormat.ENCODING_PCM_16BIT -> 2
-        AudioFormat.ENCODING_PCM_24BIT_PACKED -> 3
-        AudioFormat.ENCODING_PCM_32BIT,
-        AudioFormat.ENCODING_PCM_FLOAT,
-        -> 4
-        AudioFormat.ENCODING_INVALID -> throw java.lang.IllegalArgumentException("Bad audio format $pcmEncoding")
-        else -> throw java.lang.IllegalArgumentException("Bad audio format $pcmEncoding")
-    }
-}
-
-private fun MediaFormat.bytesPerSecond(): Int {
-    return sampleRate() * bytesPerSample() * channelCount()
-}
-
-private fun <T> MediaFormat.getOptional(key: String, getter: MediaFormat.(String) -> T): T? {
-    return if (containsKey(key)) {
-        getter.invoke(this, key)
-    } else {
-        null
     }
 }

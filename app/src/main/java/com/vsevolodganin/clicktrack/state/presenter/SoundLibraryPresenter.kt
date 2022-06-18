@@ -15,11 +15,11 @@ import com.vsevolodganin.clicktrack.ui.model.SoundLibraryUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
 import com.vsevolodganin.clicktrack.utils.optionalCast
 import dagger.Reusable
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @Reusable
 class SoundLibraryPresenter @Inject constructor(
@@ -36,7 +36,7 @@ class SoundLibraryPresenter @Inject constructor(
 
     private fun items(): Flow<List<SelectableClickSoundsItem>> {
         return combine(
-            userPreferencesRepository.selectedSoundsId.flow,
+            userPreferencesRepository.selectedSoundsId.stateFlow,
             clickSoundsRepository.getAll(),
             player.playbackState().map { it?.id }.distinctUntilChanged(),
         ) { selectedId, userItems, playingClickTrackId ->

@@ -2,19 +2,24 @@
 
 #include "AudioTrack.h"
 
+#include <cstdlib>
+
 extern "C"
 JNIEXPORT jlong JNICALL
 Java_com_vsevolodganin_clicktrack_player_AudioTrack_initNative(
         JNIEnv* env,
         jobject thiz,
-        jobject data,
+        jbyteArray data,
         jint dataSize,
         jint channelCount,
         jint pcmEncoding,
         jint sampleRate
 ) {
+    void* dataCopy = std::malloc(dataSize);
+    env->GetByteArrayRegion(data, 0, dataSize, static_cast<jbyte*>(dataCopy));
+
     return (jlong) new clicktrack::AudioTrack(
-            env->GetDirectBufferAddress(env->NewGlobalRef(data)), // TODO: Should release global ref at some point
+            dataCopy,
             dataSize,
             channelCount,
             pcmEncoding,

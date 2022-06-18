@@ -4,16 +4,16 @@ import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.ui.model.SettingsUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
 import dagger.Reusable
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @Reusable
 class SettingsPresenter @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
 ) {
     fun uiScreens(): Flow<UiScreen.Settings> {
-        return userPreferencesRepository.theme.flow
+        return userPreferencesRepository.theme.stateFlow
             .map { theme -> SettingsUiState(theme = theme) }
             .map(UiScreen::Settings)
     }

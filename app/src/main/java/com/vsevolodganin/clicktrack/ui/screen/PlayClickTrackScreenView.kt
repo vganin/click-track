@@ -1,8 +1,13 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -14,21 +19,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.state.redux.action.ClickTrackAction
+import com.vsevolodganin.clicktrack.state.redux.action.ExportAction
 import com.vsevolodganin.clicktrack.state.redux.action.NavigationAction
 import com.vsevolodganin.clicktrack.state.redux.action.PlayerAction
+import com.vsevolodganin.clicktrack.state.redux.core.Action
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.PlayClickTrackUiState
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
@@ -77,7 +85,7 @@ private fun Content(
         ClickTrackView(
             clickTrack = state.clickTrack.value,
             drawTextMarks = true,
-            progress = state.progress,
+            progress = state.playProgress,
             progressDragAndDropEnabled = true,
             onProgressDragStart = { dispatch(PlayerAction.PausePlay) },
             onProgressDrop = { progress -> dispatch(PlayerAction.StartPlayClickTrack(state.clickTrack.id, progress)) },
@@ -120,6 +128,8 @@ private fun TopBar(
                 Icon(imageVector = Icons.Default.Delete, contentDescription = null)
             }
 
+            OverflowMenu(state, dispatch)
+
             if (showDeleteConfirmation) {
                 val dismiss: () -> Unit = remember {
                     { showDeleteConfirmation = false }
@@ -151,13 +161,59 @@ private fun TopBar(
                             Text(text = stringResource(id = android.R.string.cancel).uppercase())
                         }
                     },
-                    properties = DialogProperties(
-                        usePlatformDefaultWidth = true
-                    )
                 )
             }
         },
     )
+}
+
+@Composable
+private fun OverflowMenu(state: PlayClickTrackUiState, dispatch: Dispatch) {
+    var showDropdown by remember { mutableStateOf(false) }
+    val dispatchAndHideDropdown = remember {
+        { action: Action ->
+            showDropdown = false
+            dispatch(action)
+        }
+    }
+
+    IconButton(onClick = { showDropdown = !showDropdown }) {
+        Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+    }
+
+    DropdownMenu(expanded = showDropdown, onDismissRequest = { showDropdown = false }) {
+        DropdownMenuItem(onClick = { dispatchAndHideDropdown(ExportAction.Start(state.clickTrack.value)) }) {
+            Text(stringResource(R.string.export_to_audio_file))
+        }
+    }
+
+    if (state.exportProgress != null) {
+        val dismiss: () -> Unit = remember {
+            {
+                dispatch(ExportAction.Stop)
+            }
+        }
+        AlertDialog(
+            onDismissRequest = dismiss,
+            text = {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    CircularProgressIndicator(
+                        progress = state.exportProgress,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+            },
+            confirmButton = {},
+            dismissButton = {
+                TextButton(
+                    onClick = dismiss,
+                    shape = RectangleShape
+                ) {
+                    Text(text = stringResource(id = android.R.string.cancel).uppercase())
+                }
+            },
+        )
+    }
 }
 
 @Preview
@@ -166,8 +222,9 @@ private fun Preview() {
     PlayClickTrackScreenView(
         PlayClickTrackUiState(
             clickTrack = PREVIEW_CLICK_TRACK_1,
-            progress = null,
+            playProgress = null,
             isPlaying = false,
+            exportProgress = null,
         )
     )
 }

@@ -11,9 +11,7 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
-typealias ApplicationScoped = Singleton
-
-@ApplicationScoped
+@Singleton
 @Component(
     modules = [
         ApplicationScopedCoroutineModule::class,

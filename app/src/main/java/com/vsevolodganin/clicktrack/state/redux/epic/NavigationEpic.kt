@@ -7,12 +7,12 @@ import com.vsevolodganin.clicktrack.state.redux.core.Action
 import com.vsevolodganin.clicktrack.state.redux.core.Epic
 import com.vsevolodganin.clicktrack.state.redux.toCommon
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import javax.inject.Inject
 
 @ActivityScoped
 class NavigationEpic @Inject constructor(
@@ -23,7 +23,7 @@ class NavigationEpic @Inject constructor(
         return merge(
             actions.filterIsInstance<ComputingNavigationAction.ToTrainingScreen>()
                 .map {
-                    val persistableState = userPreferencesRepository.trainingState.flow.first()
+                    val persistableState = userPreferencesRepository.trainingState.stateFlow.first()
                     NavigationAction.ToTrainingScreen(
                         state = persistableState.toCommon()
                     )

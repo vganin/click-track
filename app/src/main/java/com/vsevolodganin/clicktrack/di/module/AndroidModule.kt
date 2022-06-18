@@ -8,29 +8,29 @@ import androidx.appcompat.app.AppCompatActivity
 import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
-import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Qualifier
+import javax.inject.Singleton
 
 @Module
 abstract class ApplicationScopedAndroidModule {
 
     @Binds
-    @ApplicationScoped
+    @Singleton
     abstract fun provideApplicationContext(application: Application): Context
 
     companion object {
 
         @Provides
-        @ApplicationScoped
+        @Singleton
         fun provideAudioManager(context: Context): AudioManager {
             return context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         }
 
         @Provides
-        @ApplicationScoped
+        @Singleton
         fun provideContentResolver(context: Context): ContentResolver {
             return context.contentResolver
         }

@@ -15,13 +15,13 @@ import com.vsevolodganin.clicktrack.state.redux.epic.TrainingEpic.Const.NEW_TRAI
 import com.vsevolodganin.clicktrack.state.redux.frontScreen
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
+import javax.inject.Inject
 
 @ViewModelScoped
 class TrainingEpic @Inject constructor(
@@ -53,7 +53,7 @@ class TrainingEpic @Inject constructor(
 
             actions.filterIsInstance<TrainingAction.Accept>()
                 .map {
-                    val trainingState = userPreferencesRepository.trainingState.flow.first()
+                    val trainingState = userPreferencesRepository.trainingState.stateFlow.first()
                     val suggestedName = newClickTrackNameSuggester.suggest(NEW_TRAINING_CLICK_TRACK_NAME)
                     val newClickTrack = trainingClickTrackGenerator.generate(trainingState, suggestedName)
                     val newClickTrackId = clickTrackRepository.insert(newClickTrack)

@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.vsevolodganin.clicktrack.di.component.ApplicationScoped
 import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
 import com.vsevolodganin.clicktrack.lib.CueDuration
 import com.vsevolodganin.clicktrack.lib.NotePattern
@@ -19,13 +18,11 @@ import com.vsevolodganin.clicktrack.state.redux.TrainingPersistableState
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository.Const.NO_APP_VERSION_CODE
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository.Const.REVIEW_NOT_REQUESTED
 import com.vsevolodganin.clicktrack.theme.Theme
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -34,8 +31,10 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
+import javax.inject.Singleton
 
-@ApplicationScoped
+@Singleton
 class UserPreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>,
     private val json: Json,
@@ -46,7 +45,7 @@ class UserPreferencesRepository @Inject constructor(
     }
 
     interface UserPropertyAccess<T> {
-        val flow: Flow<T>
+        val stateFlow: StateFlow<T>
         suspend fun edit(transform: (T) -> T)
     }
 
@@ -128,7 +127,7 @@ class UserPreferencesRepository @Inject constructor(
         private val toInternal: (TExternal) -> TInternal,
     ) : UserPropertyAccess<TExternal> {
 
-        private val stateFlow = MutableStateFlow(runBlocking {
+        private val _stateFlow = MutableStateFlow(runBlocking {
             dataStore.data
                 .map { preferences ->
                     preferences[key]?.let(toExternal) ?: defaultValue
@@ -138,7 +137,7 @@ class UserPreferencesRepository @Inject constructor(
 
         init {
             GlobalScope.launch(Dispatchers.Default, CoroutineStart.UNDISPATCHED) {
-                stateFlow.drop(1).collect {
+                _stateFlow.drop(1).collect {
                     dataStore.edit { preferences ->
                         preferences[key] = toInternal(it)
                     }
@@ -146,13 +145,13 @@ class UserPreferencesRepository @Inject constructor(
             }
         }
 
-        override val flow: Flow<TExternal> = stateFlow
+        override val stateFlow: StateFlow<TExternal> = _stateFlow
 
         override suspend fun edit(transform: (TExternal) -> TExternal) {
             do {
                 val currentValue = stateFlow.value
                 val newValue = transform(currentValue ?: defaultValue)
-            } while (!stateFlow.compareAndSet(currentValue, newValue))
+            } while (!_stateFlow.compareAndSet(currentValue, newValue))
         }
     }
 
@@ -169,5 +168,5 @@ class UserPreferencesRepository @Inject constructor(
 
 val <T> UserPreferencesRepository.UserPropertyAccess<T>.blockingValue: T
     get() {
-        return runBlocking { flow.first() }
+        return runBlocking { stateFlow.first() }
     }

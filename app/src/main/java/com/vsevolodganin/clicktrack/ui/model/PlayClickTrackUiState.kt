@@ -6,5 +6,6 @@ import com.vsevolodganin.clicktrack.model.PlayProgress
 data class PlayClickTrackUiState(
     val clickTrack: ClickTrackWithDatabaseId,
     val isPlaying: Boolean,
-    val progress: PlayProgress?,
+    val playProgress: PlayProgress?,
+    val exportProgress: Float?,
 )

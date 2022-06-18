@@ -12,10 +12,10 @@ import com.vsevolodganin.clicktrack.ui.model.MetronomeUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
 import com.vsevolodganin.clicktrack.utils.grabIf
 import dagger.Reusable
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 @Reusable
 class MetronomePresenter @Inject constructor(
@@ -25,8 +25,8 @@ class MetronomePresenter @Inject constructor(
     fun uiScreens(screens: Flow<Screen.Metronome>): Flow<UiScreen.Metronome> {
         return combine(
             screens.map { it.state },
-            userPreferencesRepository.metronomeBpm.flow,
-            userPreferencesRepository.metronomePattern.flow,
+            userPreferencesRepository.metronomeBpm.stateFlow,
+            userPreferencesRepository.metronomePattern.stateFlow,
             player.playbackState(),
             ::uiState,
         ).map(UiScreen::Metronome)

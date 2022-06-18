@@ -5,6 +5,7 @@
 #include <oboe/Oboe.h>
 #include <media/NdkMediaFormat.h>
 #include <cmath>
+#include <cstdlib>
 
 namespace clicktrack {
 
@@ -33,7 +34,7 @@ oboe::AudioFormat pcmFormatToOboeFormat(int pcmEncoding) {
 }
 
 AudioTrack::AudioTrack(
-        const void* data,
+        void* const data,
         const int32_t dataSize,
         const int channelCount,
         const int pcmEncoding,
@@ -52,6 +53,7 @@ AudioTrack::AudioTrack(
 
 AudioTrack::~AudioTrack() {
     audioStream_->close();
+    std::free(data_);
 }
 
 oboe::DataCallbackResult AudioTrack::onAudioReady(oboe::AudioStream* audioStream, void* audioData, int32_t numFrames) {

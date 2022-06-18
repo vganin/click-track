@@ -8,11 +8,11 @@ import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.ui.model.PolyrhythmsUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
 import com.vsevolodganin.clicktrack.utils.grabIf
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class PolyrhythmsPresenter @Inject constructor(
     private val userPreferencesRepository: UserPreferencesRepository,
@@ -21,7 +21,7 @@ class PolyrhythmsPresenter @Inject constructor(
 
     fun uiScreens(): Flow<UiScreen.Polyrhythms> {
         return combine(
-            userPreferencesRepository.polyrhythm.flow,
+            userPreferencesRepository.polyrhythm.stateFlow,
             player.playbackState(),
             ::uiState,
         )

@@ -13,6 +13,7 @@ import com.vsevolodganin.clicktrack.state.redux.core.EpicMiddleware
 import com.vsevolodganin.clicktrack.state.redux.core.Store
 import com.vsevolodganin.clicktrack.state.redux.epic.AboutEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.ClickTrackEpic
+import com.vsevolodganin.clicktrack.state.redux.epic.ExportEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.FinishAppEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.InAppReviewEpic
 import com.vsevolodganin.clicktrack.state.redux.epic.MetronomeEpic
@@ -28,9 +29,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
-import javax.inject.Qualifier
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import javax.inject.Qualifier
 
 @Module
 class AppStateModule {
@@ -135,6 +136,12 @@ abstract class ViewModelScopedAppStateEpicModule {
     @IntoSet
     @ViewModelScopedAppStateEpic
     abstract fun bindPolyrhythmsEpic(epic: PolyrhythmsEpic): Epic
+
+    @ViewModelScoped
+    @Binds
+    @IntoSet
+    @ViewModelScopedAppStateEpic
+    abstract fun bindExportEpic(epic: ExportEpic): Epic
 }
 
 @Qualifier

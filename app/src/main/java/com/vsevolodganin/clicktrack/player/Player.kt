@@ -1,32 +1,21 @@
 package com.vsevolodganin.clicktrack.player
 
 import android.os.SystemClock
-import androidx.compose.ui.util.fastForEach
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
-import com.vsevolodganin.clicktrack.lib.AbstractPolyrhythm
 import com.vsevolodganin.clicktrack.lib.ClickTrack
-import com.vsevolodganin.clicktrack.lib.Cue
-import com.vsevolodganin.clicktrack.lib.NoteEvent
 import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
-import com.vsevolodganin.clicktrack.lib.interval
-import com.vsevolodganin.clicktrack.lib.math.Rational
-import com.vsevolodganin.clicktrack.lib.math.ZERO
-import com.vsevolodganin.clicktrack.lib.math.compareTo
-import com.vsevolodganin.clicktrack.lib.math.over
-import com.vsevolodganin.clicktrack.lib.math.times
-import com.vsevolodganin.clicktrack.lib.math.toRational
 import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.model.PlayableProgressTimeSource
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
+import com.vsevolodganin.clicktrack.sounds.UserSelectedSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
-import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
 import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingCoroutines
 import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingSuspendAndSpinLock
@@ -48,7 +37,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
@@ -76,7 +64,7 @@ class PlayerImpl @Inject constructor(
     private val soundPool: PlayerSoundPool,
     @PlayerDispatcher private val playerDispatcher: CoroutineDispatcher,
     private val clickSoundsRepository: ClickSoundsRepository,
-    private val userPreferencesRepository: UserPreferencesRepository,
+    private val userSelectedSounds: UserSelectedSounds,
 ) : Player {
 
     private var playerJob: Job? = null
@@ -229,24 +217,31 @@ class PlayerImpl @Inject constructor(
             startAt
         }
 
-        val schedule = cues.asSequence()
-            .flatMap { cue ->
-                cue
-                    .toPlayerSchedule(soundsSelector, reportLatency)
-                    .withDuration(cue.durationAsTime)
+        val schedule = toPlayerEvents()
+            .toActions(
+                waitResume = {
+                    if (pausedState.value) {
+                        pausedState.filter { false }.take(1).collect()
+                    }
+                },
+                selectedSounds = soundsSelector,
+                reportLatency = reportLatency,
+                soundPool = soundPool,
+            )
+            .withSideEffect(atIndex = 0) {
+                reportProgress(Duration.ZERO)
             }
-            .reportProgressAtTheBeginning(reportProgress, Duration.ZERO)
             .loop(loop)
             .let {
                 if (startAt > Duration.ZERO) {
-                    it.startingAt(startAt).reportProgressAtTheBeginning(reportProgress, startAt)
+                    it.startingAt(startAt).withSideEffect(atIndex = 0) { reportProgress(startAt) }
                 } else {
                     it
                 }
             }
             .prefetch(Const.PREFETCH_SIZE)
 
-        PlayerScheduleSequencer.play(schedule)
+        PlayerSequencer.play(schedule)
     }
 
     private suspend fun TwoLayerPolyrhythm.play(
@@ -262,192 +257,39 @@ class PlayerImpl @Inject constructor(
             startAt
         }
 
-        val schedule = toPlayerSchedule(soundsSelector, reportLatency)
-            .reportProgressAtTheBeginning(reportProgress, Duration.ZERO)
+        val schedule = toPlayerEvents()
+            .toActions(
+                waitResume = {
+                    if (pausedState.value) {
+                        pausedState.filter { false }.take(1).collect()
+                    }
+                },
+                selectedSounds = soundsSelector,
+                reportLatency = reportLatency,
+                soundPool = soundPool,
+            )
+            .withSideEffect(atIndex = 0) { reportProgress(Duration.ZERO) }
             .toList()
             .asSequence()
             .loop(true)
             .let {
                 if (startAt > Duration.ZERO) {
-                    it.startingAt(startAt).reportProgressAtTheBeginning(reportProgress, startAt)
+                    it.startingAt(startAt).withSideEffect(atIndex = 0) { reportProgress(startAt) }
                 } else {
                     it
                 }
             }
             .prefetch(Const.PREFETCH_SIZE)
 
-        PlayerScheduleSequencer.play(schedule)
-    }
-
-    private fun Cue.toPlayerSchedule(
-        soundsSelector: () -> ClickSounds?,
-        reportLatency: (Duration) -> Unit,
-    ): PlayerSchedule {
-        val tempo = bpm
-        val polyrhythm = AbstractPolyrhythm(
-            pattern1 = listOf(NoteEvent(timeSignature.noteCount.toRational(), NoteEvent.Type.NOTE)),
-            pattern2 = pattern.events,
-        )
-        val bpmInterval = tempo.interval
-
-        return sequence {
-            if (polyrhythm.untilFirst > Rational.ZERO) {
-                yield(delayEvent(bpmInterval * polyrhythm.untilFirst))
-            }
-
-            for (column in polyrhythm.columns) {
-                val soundType = when {
-                    column.indices.contains(0) -> ClickSoundType.STRONG
-                    else -> ClickSoundType.WEAK
-                }
-
-                yield(
-                    soundEvent(
-                        type = soundType,
-                        duration = bpmInterval * column.untilNext,
-                        waitResume = {
-                            if (pausedState.value) {
-                                pausedState.filter { false }.take(1).collect()
-                            }
-                        },
-                        selectedSounds = soundsSelector,
-                        reportLatency = reportLatency,
-                        soundPool = soundPool,
-                    )
-                )
-            }
-        }
-    }
-
-    private fun TwoLayerPolyrhythm.toPlayerSchedule(
-        soundsSelector: () -> ClickSounds?,
-        reportLatency: (Duration) -> Unit,
-    ): PlayerSchedule {
-        val tempo = bpm
-        val layer1NoteLength = 1.toRational()
-        val layer2NoteLength = layer1 over layer2
-        val polyrhythm = AbstractPolyrhythm(
-            pattern1 = List(layer1) { NoteEvent(layer1NoteLength, NoteEvent.Type.NOTE) },
-            pattern2 = List(layer2) { NoteEvent(layer2NoteLength, NoteEvent.Type.NOTE) }
-        )
-
-        return sequence {
-            val bpmInterval = tempo.interval
-
-            if (polyrhythm.untilFirst > Rational.ZERO) {
-                yield(delayEvent(bpmInterval * polyrhythm.untilFirst))
-            }
-
-            for (column in polyrhythm.columns) {
-                val soundTypes = column.indices.map { index ->
-                    when (index) {
-                        0 -> ClickSoundType.STRONG
-                        else -> ClickSoundType.WEAK
-                    }
-                }
-
-                val action = suspend {
-                    soundTypes.fastForEach { soundType ->
-                        playSound(
-                            type = soundType,
-                            waitResume = {
-                                if (pausedState.value) {
-                                    pausedState.filter { false }.take(1).collect()
-                                }
-                            },
-                            selectedSounds = soundsSelector,
-                            reportLatency = reportLatency,
-                            soundPool = soundPool,
-                        )
-                    }
-                }
-
-                yield(
-                    PlayerScheduleEvent(
-                        interval = bpmInterval * column.untilNext,
-                        action = action
-                    )
-                )
-            }
-        }
-    }
-
-    private fun PlayerSchedule.withDuration(duration: Duration): PlayerSchedule {
-        return sequence {
-            val soundEventsCycledIterator = toRoundRobin().iterator()
-
-            var runningDuration = Duration.ZERO
-            while (true) {
-                val next = soundEventsCycledIterator.next()
-                runningDuration += next.interval
-
-                if (runningDuration + Const.CLICK_MIN_DELTA >= duration) {
-                    if (runningDuration != duration) {
-                        yield(next.copy(interval = next.interval - (runningDuration - duration)))
-                    } else {
-                        yield(next)
-                    }
-                    return@sequence
-                } else {
-                    yield(next)
-                }
-            }
-        }
-    }
-
-    private fun PlayerSchedule.startingAt(startAt: Duration): PlayerSchedule {
-        var runningDuration = Duration.ZERO
-        var dropCount = 0
-        for (event in this) {
-            if (runningDuration >= startAt) {
-                break
-            }
-            dropCount += 1
-            runningDuration += event.interval
-        }
-
-        return sequence {
-            yield(delayEvent((runningDuration - startAt).coerceAtLeast(Duration.ZERO)))
-            yieldAll(drop(dropCount))
-        }
-    }
-
-    private fun PlayerSchedule.reportProgressAtTheBeginning(
-        reportProgress: (Duration) -> Unit,
-        progress: Duration,
-    ) = mapIndexed { index, event ->
-        if (index == 0) {
-            PlayerScheduleEvent(
-                interval = event.interval,
-                action = {
-                    event.action()
-                    reportProgress(progress)
-                }
-            )
-        } else {
-            event
-        }
-    }
-
-    private fun PlayerSchedule.loop(loop: Boolean): PlayerSchedule {
-        return if (loop) toRoundRobin() else this
+        PlayerSequencer.play(schedule)
     }
 
     private suspend fun CoroutineScope.soundsSelector(soundsId: ClickSoundsId?): () -> ClickSounds? {
-        return if (soundsId != null) {
-            soundsById(soundsId)
-        } else {
-            userSelectedSounds()
-        }
+        return (if (soundsId != null) soundsById(soundsId) else userSelectedSounds.get())
             .onEach { sounds ->
                 sounds?.asIterable?.forEach(soundPool::warmup)
             }
             .stateIn(scope = this)::value
-    }
-
-    private fun userSelectedSounds(): Flow<ClickSounds?> {
-        return userPreferencesRepository.selectedSoundsId.flow
-            .flatMapLatest(::soundsById)
     }
 
     private fun soundsById(soundsId: ClickSoundsId): Flow<ClickSounds?> {
@@ -471,8 +313,6 @@ class PlayerImpl @Inject constructor(
     }
 
     private object Const {
-        val CLICK_MIN_DELTA = 1.milliseconds
-
         const val PREFETCH_SIZE = 100
 
         // Higher means lower precision when correcting UI for latency
@@ -481,62 +321,102 @@ class PlayerImpl @Inject constructor(
     }
 }
 
-private data class PlayerScheduleEvent(
-    val interval: Duration = Duration.ZERO,
-    val action: suspend () -> Unit = {},
+private class PlayerAction(
+    val interval: Duration,
+    val action: suspend () -> Unit,
 )
 
-private typealias PlayerSchedule = Sequence<PlayerScheduleEvent>
-
-private fun soundEvent(
-    type: ClickSoundType,
-    duration: Duration,
+private fun Sequence<PlayerEvent>.toActions(
     waitResume: suspend () -> Unit,
     selectedSounds: () -> ClickSounds?,
     reportLatency: (Duration) -> Unit,
     soundPool: PlayerSoundPool,
-) = PlayerScheduleEvent(
+) = map {
+    it.toAction(
+        waitResume = waitResume,
+        selectedSounds = selectedSounds,
+        reportLatency = reportLatency,
+        soundPool = soundPool,
+    )
+}
+
+private fun PlayerEvent.toAction(
+    waitResume: suspend () -> Unit,
+    selectedSounds: () -> ClickSounds?,
+    reportLatency: (Duration) -> Unit,
+    soundPool: PlayerSoundPool,
+) = PlayerAction(
     interval = duration,
     action = {
-        playSound(
-            type = type,
-            waitResume = waitResume,
-            selectedSounds = selectedSounds,
-            reportLatency = reportLatency,
-            soundPool = soundPool,
-        )
+        waitResume()
+
+        val soundsSources = selectedSounds()
+        if (soundsSources != null) {
+            this.sounds.forEach { sound ->
+                val soundSource = when (sound) {
+                    ClickSoundType.STRONG -> soundsSources.strongBeat
+                    ClickSoundType.WEAK -> soundsSources.weakBeat
+                }
+
+                soundSource?.let(soundPool::play)
+
+                reportLatency(soundSource?.let(soundPool::latency) ?: Duration.ZERO)
+            }
+        }
     }
 )
 
-private suspend fun playSound(
-    type: ClickSoundType,
-    waitResume: suspend () -> Unit,
-    selectedSounds: () -> ClickSounds?,
-    reportLatency: (Duration) -> Unit,
-    soundPool: PlayerSoundPool,
-) {
-    waitResume()
-
-    val sounds = selectedSounds()
-    if (sounds != null) {
-        val sound = when (type) {
-            ClickSoundType.STRONG -> sounds.strongBeat
-            ClickSoundType.WEAK -> sounds.weakBeat
-        }
-        reportLatency(sound?.let(soundPool::play) ?: Duration.ZERO)
+private fun Sequence<PlayerAction>.withSideEffect(
+    atIndex: Int,
+    action: () -> Unit
+) = mapIndexed { index, event ->
+    if (index == atIndex) {
+        PlayerAction(
+            interval = event.interval,
+            action = {
+                event.action()
+                action()
+            }
+        )
+    } else {
+        event
     }
 }
 
-private fun delayEvent(duration: Duration) = PlayerScheduleEvent(interval = duration)
+private fun Sequence<PlayerAction>.startingAt(startAt: Duration): Sequence<PlayerAction> {
+    var runningDuration = Duration.ZERO
+    var dropCount = 0
+    for (event in this) {
+        if (runningDuration >= startAt) {
+            break
+        }
+        dropCount += 1
+        runningDuration += event.interval
+    }
 
-private object PlayerScheduleSequencer {
+    return sequence {
+        yield(
+            PlayerAction(
+                interval = (runningDuration - startAt).coerceAtLeast(Duration.ZERO),
+                action = {},
+            )
+        )
+        yieldAll(drop(dropCount))
+    }
+}
+
+private fun Sequence<PlayerAction>.loop(loop: Boolean): Sequence<PlayerAction> {
+    return if (loop) toRoundRobin() else this
+}
+
+private object PlayerSequencer {
 
     enum class DelayMethod {
         THREAD_SLEEP, SUSPEND, THREAD_SLEEP_SPIN_LOCK, SUSPEND_SPIN_LOCK
     }
 
     suspend fun play(
-        schedule: PlayerSchedule,
+        schedule: Sequence<PlayerAction>,
         delayMethod: DelayMethod = DelayMethod.THREAD_SLEEP_SPIN_LOCK,
     ) {
         val thisCoroutineJob = currentCoroutineContext()[Job] ?: return
