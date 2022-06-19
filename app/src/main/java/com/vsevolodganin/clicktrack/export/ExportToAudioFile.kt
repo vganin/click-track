@@ -19,7 +19,6 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import timber.log.Timber
 import java.io.File
-import java.nio.ByteBuffer
 import javax.inject.Inject
 import kotlin.time.DurationUnit
 
@@ -58,9 +57,9 @@ class ExportToAudioFile @Inject constructor(
                 start()
             }
 
-            val trackRawData = clickTrack.render(strongSound, weakSound)
-            val trackBuffer = ByteBuffer.wrap(trackRawData)
-            val bytesToWrite = trackRawData.size
+            val trackByteSequence = clickTrack.render(strongSound, weakSound)
+            val trackByteIterator = trackByteSequence.iterator()
+            val bytesToWrite = trackByteSequence.count()
             val bufferInfo = MediaCodec.BufferInfo()
 
             var bytesWritten = 0L
@@ -76,14 +75,14 @@ class ExportToAudioFile @Inject constructor(
                         val inputBuffer = codec.getInputBuffer(inputBufferIndex)!!
                         val presentationTimeUs = (bytesWritten.toDouble() / outputFormat.bytesPerSecond() * 1_000_000L).toLong()
 
-                        while (trackBuffer.hasRemaining() && inputBuffer.hasRemaining()) {
-                            inputBuffer.put(trackBuffer.get())
+                        while (trackByteIterator.hasNext() && inputBuffer.hasRemaining()) {
+                            inputBuffer.put(trackByteIterator.next())
                             ++bytesWritten
                         }
 
                         onProgress(bytesWritten.toFloat() / bytesToWrite)
 
-                        endOfInput = !trackBuffer.hasRemaining()
+                        endOfInput = !trackByteIterator.hasNext()
 
                         codec.queueInputBuffer(
                             inputBufferIndex,
@@ -143,28 +142,27 @@ class ExportToAudioFile @Inject constructor(
         }
     }
 
-    private fun ClickTrack.render(strongSound: Pcm16Data, weakSound: Pcm16Data): ByteArray {
-        val result = mutableListOf<Byte>()
-
-        for (event in toPlayerEvents()) {
-            // TODO: Should resample and mix sounds
-            val sound = event.sounds.firstOrNull()
-                ?.let {
-                    when (it) {
-                        ClickSoundType.STRONG -> strongSound
-                        ClickSoundType.WEAK -> weakSound
+    private fun ClickTrack.render(strongSound: Pcm16Data, weakSound: Pcm16Data): Sequence<Byte> {
+        val playerEvents = toPlayerEvents()
+        return sequence {
+            for (event in playerEvents) {
+                // TODO: Should resample and mix sounds
+                val sound = event.sounds.firstOrNull()
+                    ?.let {
+                        when (it) {
+                            ClickSoundType.STRONG -> strongSound
+                            ClickSoundType.WEAK -> weakSound
+                        }
                     }
-                }
-                ?: continue
+                    ?: continue
 
-            val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * sound.framesPerSecond).toInt()
-            val framesOfSound = (sound.data.size / sound.bytesPerFrame).coerceAtMost(maxFramesCount)
-            val framesOfSilence = maxFramesCount - framesOfSound
+                val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * sound.framesPerSecond).toInt()
+                val framesOfSound = (sound.data.size / sound.bytesPerFrame).coerceAtMost(maxFramesCount)
+                val framesOfSilence = maxFramesCount - framesOfSound
 
-            result += sound.data.slice(0 until framesOfSound * sound.bytesPerFrame)
-            result += ByteArray(framesOfSilence * sound.bytesPerFrame).asIterable()
+                yieldAll(sound.data.asSequence().take(framesOfSound * sound.bytesPerFrame))
+                yieldAll(sequence { repeat(framesOfSilence * sound.bytesPerFrame) { yield(0) } })
+            }
         }
-
-        return result.toByteArray()
     }
 }
