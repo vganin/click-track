@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.state.redux.epic
 
-import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
+import com.vsevolodganin.clicktrack.di.component.ActivityScoped
 import com.vsevolodganin.clicktrack.state.logic.ClickTrackExporter
 import com.vsevolodganin.clicktrack.state.redux.action.ExportAction
 import com.vsevolodganin.clicktrack.state.redux.core.Action
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.merge
 import javax.inject.Inject
 
-@ViewModelScoped
+@ActivityScoped
 class ExportEpic @Inject constructor(
     private val exporter: ClickTrackExporter
 ) : Epic {

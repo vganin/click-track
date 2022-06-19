@@ -10,24 +10,22 @@ import android.provider.DocumentsContract
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 
 @ActivityScoped
-class SafAudioChooser @Inject constructor(
-    private val activity: AppCompatActivity,
-) {
+class SafAudioChooser @Inject constructor(private val activity: AppCompatActivity) {
     private val resultChannel = Channel<Uri?>()
-    private val intentLauncher = activity.registerForActivityResult(OpenAudio(), resultChannel::trySend)
+    private val launcher = activity.registerForActivityResult(OpenAudio(), resultChannel::trySend)
 
     suspend fun chooseAudio(initialUri: String?): Uri? = coroutineScope {
         val resultAsync = async(start = CoroutineStart.UNDISPATCHED) {
             resultChannel.receive()
         }
-        intentLauncher.launch(initialUri)
+        launcher.launch(initialUri)
         resultAsync.await()?.also {
             obtainPersistentPermissions(it)
         }

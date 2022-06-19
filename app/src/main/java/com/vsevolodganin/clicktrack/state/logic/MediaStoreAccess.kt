@@ -8,11 +8,10 @@ import android.provider.MediaStore
 import java.io.File
 import javax.inject.Inject
 
-@Suppress("DEPRECATION") // Using DATA column to access file path because MediaMuxer can't work with FileDescriptor on earlier Androids
 class MediaStoreAccess @Inject constructor(
     private val resolver: ContentResolver,
 ) {
-    fun addFile(file: File) {
+    fun addAudioFile(file: File) {
         val audioCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
         } else {
@@ -23,6 +22,10 @@ class MediaStoreAccess @Inject constructor(
             put(MediaStore.Audio.Media.DISPLAY_NAME, file.name)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Audio.Media.RELATIVE_PATH, "${Environment.DIRECTORY_MUSIC}${File.separator}$CATEGORY_NAME")
+            } else {
+                // Workarounds NullPointerException in MediaProvider on some older Androids: https://stackoverflow.com/a/72678037/4707823
+                val targetFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), file.name)
+                put(MediaStore.Audio.Media.DATA, targetFile.absolutePath)
             }
         }
 

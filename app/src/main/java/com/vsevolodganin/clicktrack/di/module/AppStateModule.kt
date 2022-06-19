@@ -136,12 +136,6 @@ abstract class ViewModelScopedAppStateEpicModule {
     @IntoSet
     @ViewModelScopedAppStateEpic
     abstract fun bindPolyrhythmsEpic(epic: PolyrhythmsEpic): Epic
-
-    @ViewModelScoped
-    @Binds
-    @IntoSet
-    @ViewModelScopedAppStateEpic
-    abstract fun bindExportEpic(epic: ExportEpic): Epic
 }
 
 @Qualifier
@@ -179,4 +173,10 @@ abstract class ActivityScopedAppStateEpicModule {
     @IntoSet
     @ActivityScopedAppStateEpic
     abstract fun bindInAppReviewEpic(epic: InAppReviewEpic): Epic
+
+    @ActivityScoped
+    @Binds
+    @IntoSet
+    @ActivityScopedAppStateEpic
+    abstract fun bindExportEpic(epic: ExportEpic): Epic
 }

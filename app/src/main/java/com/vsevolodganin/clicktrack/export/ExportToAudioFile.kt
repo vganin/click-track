@@ -13,6 +13,7 @@ import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.Pcm16Data
 import com.vsevolodganin.clicktrack.sounds.model.bytesPerFrame
 import com.vsevolodganin.clicktrack.sounds.model.framesPerSecond
+import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
 import dagger.Reusable
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
@@ -73,6 +74,7 @@ class ExportToAudioFile @Inject constructor(
                     val inputBufferIndex = codec.dequeueInputBuffer(0L)
                     if (inputBufferIndex >= 0) {
                         val inputBuffer = codec.getInputBuffer(inputBufferIndex)!!
+                        val presentationTimeUs = (bytesWritten.toDouble() / outputFormat.bytesPerSecond() * 1_000_000L).toLong()
 
                         while (trackBuffer.hasRemaining() && inputBuffer.hasRemaining()) {
                             inputBuffer.put(trackBuffer.get())
@@ -87,7 +89,7 @@ class ExportToAudioFile @Inject constructor(
                             inputBufferIndex,
                             0,
                             inputBuffer.position(),
-                            0L,
+                            presentationTimeUs,
                             if (endOfInput) MediaCodec.BUFFER_FLAG_END_OF_STREAM else 0
                         )
                     }
