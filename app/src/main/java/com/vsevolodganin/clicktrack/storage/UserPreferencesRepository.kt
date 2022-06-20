@@ -165,8 +165,3 @@ class UserPreferencesRepository @Inject constructor(
         toInternal = { it },
     )
 }
-
-val <T> UserPreferencesRepository.UserPropertyAccess<T>.blockingValue: T
-    get() {
-        return runBlocking { stateFlow.first() }
-    }

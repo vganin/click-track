@@ -3,7 +3,6 @@ package com.vsevolodganin.clicktrack
 import com.vsevolodganin.clicktrack.di.component.DaggerApplicationComponent
 import com.vsevolodganin.clicktrack.sounds.SoundPreloader
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
-import com.vsevolodganin.clicktrack.storage.blockingValue
 import com.vsevolodganin.clicktrack.theme.ThemeManager
 import timber.log.Timber
 import javax.inject.Inject
@@ -34,7 +33,7 @@ class Application : android.app.Application() {
 
         daggerComponent.inject(this)
 
-        themeManager.setTheme(userPreferences.theme.blockingValue)
+        themeManager.setTheme(userPreferences.theme.stateFlow.value)
 
         soundsPreloader.preload()
     }
