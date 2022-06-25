@@ -1,17 +1,21 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.state.redux.action.SettingsAction
 import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.ui.model.SettingsUiState
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.widget.settings.BooleanChooser
 import com.vsevolodganin.clicktrack.ui.widget.settings.ListChooser
 import com.vsevolodganin.clicktrack.ui.widget.settings.ListChooserItem
 
@@ -47,6 +51,13 @@ private fun Content(
             },
             onChoose = { theme -> dispatch(SettingsAction.ChangeTheme(theme)) },
         )
+        Divider(modifier = Modifier.padding(start = 16.dp))
+        BooleanChooser(
+            title = stringResource(R.string.settings_ignore_audio_focus),
+            value = state.ignoreAudioFocus,
+            onCheckedChange = { ignoreAudioFocus -> dispatch(SettingsAction.ChangeIgnoreAudioFocus(ignoreAudioFocus)) },
+            description = stringResource(R.string.settings_ignore_audio_focus_description)
+        )
     }
 }
 
@@ -71,7 +82,8 @@ private fun Theme.description(): String? = when (this) {
 private fun Preview() {
     SettingsScreenView(
         SettingsUiState(
-            theme = Theme.SYSTEM
+            theme = Theme.SYSTEM,
+            ignoreAudioFocus = false,
         )
     )
 }

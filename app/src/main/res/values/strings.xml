@@ -34,6 +34,8 @@
     <string name="settings_theme_system_description">Use the system\'s Dark Theme setting</string>
     <string name="settings_theme_auto">Auto</string>
     <string name="settings_theme_auto_description">Use a Dark Theme when the system\'s \'Battery Saver\' feature is enabled, otherwise use a Light Theme. This mode can help the device to decrease power usage, depending on the display technology in the device.</string>
+    <string name="settings_ignore_audio_focus">Play with other audio</string>
+    <string name="settings_ignore_audio_focus_description">Turn off to automatically stop click track playback when other audio starts.</string>
     <string name="sound_library">Sound Library</string>
     <string name="builtin_sounds_beep">Beep</string>
     <string name="builtin_sounds_claves">Claves</string>

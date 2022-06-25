@@ -26,13 +26,17 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_CHANNEL_ID
 import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_NOTIFICATION_ID
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
+import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.cast
+import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
@@ -126,6 +130,9 @@ class PlayerService : Service() {
     @Inject
     lateinit var audioFocusManager: AudioFocusManager
 
+    @Inject
+    lateinit var userPreferences: UserPreferencesRepository
+
     private var isNotificationDisplayed = false
 
     private lateinit var mediaSessionPlaybackStateBuilder: PlaybackStateCompat.Builder
@@ -142,12 +149,6 @@ class PlayerService : Service() {
                 if (it == null) {
                     stop(this@PlayerService)
                 }
-            }
-        }
-
-        launchImmediately {
-            audioFocusManager.focusLossFlow().collect {
-                stop(this@PlayerService)
             }
         }
 
@@ -183,18 +184,7 @@ class PlayerService : Service() {
                 val args: StartClickTrackArguments = intent.getParcelableExtra(EXTRA_START_CLICK_TRACK_ARGUMENTS)
                     ?: throw RuntimeException("No start arguments were supplied")
 
-                val clickTrack = args.clickTrack
-
-                startPlayer(clickTrack, args.startAtProgress, args.soundsId)
-
-                if (args.keepInBackground) {
-                    startForeground(
-                        contentText = clickTrack.value.name,
-                        tapIntent = intentFactory.openClickTrack(clickTrack)
-                    )
-                } else {
-                    stopForeground()
-                }
+                startPlayer(args.clickTrack, args.startAtProgress, args.soundsId, args.keepInBackground)
 
                 START_STICKY
             }
@@ -202,20 +192,12 @@ class PlayerService : Service() {
                 val args: StartPolyrhythmArguments = intent.getParcelableExtra(EXTRA_START_POLYRHYTHM_ARGUMENTS)
                     ?: throw RuntimeException("No start arguments were supplied")
 
-                val polyrhythm = args.twoLayerPolyrhythm
-
-                startPlayer(polyrhythm, args.startAtProgress, args.soundsId)
-
-                startForeground(
-                    contentText = getString(R.string.polyrhythm_notification_title, polyrhythm.layer1, polyrhythm.layer2),
-                    tapIntent = intentFactory.openPolyrhythms()
-                )
+                startPlayer(args.twoLayerPolyrhythm, args.startAtProgress, args.soundsId)
 
                 START_STICKY
             }
             ACTION_STOP -> {
                 stopPlayer()
-                stopForeground()
                 stopSelf()
 
                 START_NOT_STICKY
@@ -227,7 +209,6 @@ class PlayerService : Service() {
             }
             else -> { // The service was recreated with no intent so just stop everything
                 stopPlayer()
-                stopForeground()
                 stopSelf()
 
                 START_NOT_STICKY
@@ -243,24 +224,42 @@ class PlayerService : Service() {
 
     override fun onBind(intent: Intent?): IBinder = PlayerServiceBinder(player.playbackState())
 
-    private fun startPlayer(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) = launchImmediately {
-        if (!audioFocusManager.requestAudioFocus()) {
+    private fun startPlayer(
+        clickTrack: ClickTrackWithId,
+        atProgress: Double?,
+        soundsId: ClickSoundsId?,
+        keepInBackground: Boolean,
+    ) = launchImmediately {
+        if (!isAllowedToPlay()) {
             return@launchImmediately
         }
+
+        trackFocusUntilPlayerStops()
 
         mediaSession.setPlaybackState(
             mediaSessionPlaybackStateBuilder
                 .setState(PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
                 .build()
         )
+
+        if (keepInBackground) {
+            startForeground(
+                contentText = clickTrack.value.name,
+                tapIntent = intentFactory.openClickTrack(clickTrack)
+            )
+        } else {
+            stopForeground()
+        }
 
         player.start(clickTrack, atProgress, soundsId)
     }
 
-    private fun startPlayer(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) = launchImmediately {
-        if (!audioFocusManager.requestAudioFocus()) {
+    private fun startPlayer(polyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) = launchImmediately {
+        if (!isAllowedToPlay()) {
             return@launchImmediately
         }
+
+        trackFocusUntilPlayerStops()
 
         mediaSession.setPlaybackState(
             mediaSessionPlaybackStateBuilder
@@ -268,22 +267,25 @@ class PlayerService : Service() {
                 .build()
         )
 
-        player.start(twoLayerPolyrhythm, atProgress, soundsId)
+        startForeground(
+            contentText = getString(R.string.polyrhythm_notification_title, polyrhythm.layer1, polyrhythm.layer2),
+            tapIntent = intentFactory.openPolyrhythms()
+        )
+
+        player.start(polyrhythm, atProgress, soundsId)
     }
 
     private fun pausePlayer() = launchImmediately {
-        player.pause()
-
         mediaSession.setPlaybackState(
             mediaSessionPlaybackStateBuilder
                 .setState(PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0f)
                 .build()
         )
+
+        player.pause()
     }
 
     private fun stopPlayer() = launchImmediately {
-        player.stop()
-
         audioFocusManager.releaseAudioFocus()
 
         mediaSession.setPlaybackState(
@@ -291,6 +293,10 @@ class PlayerService : Service() {
                 .setState(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0f)
                 .build()
         )
+
+        stopForeground()
+
+        player.stop()
     }
 
     private fun startForeground(contentText: String, tapIntent: Intent) {
@@ -339,6 +345,24 @@ class PlayerService : Service() {
         isNotificationDisplayed = false
     }
 
+    private fun trackFocusUntilPlayerStops() = launchImmediately {
+        combine(
+            userPreferences.ignoreAudioFocus.stateFlow,
+            audioFocusManager.hasFocus()
+        ) { ignoreAudioFocus, hasFocus -> ignoreAudioFocus || hasFocus }
+            .takeUntilSignal(player.playbackState().drop(1).filter { it == null })
+            .collect { isAllowedToPlay ->
+                if (!isAllowedToPlay) {
+                    stop(this@PlayerService)
+                }
+            }
+    }
+
+
+    private fun isAllowedToPlay(): Boolean {
+        return userPreferences.ignoreAudioFocus.stateFlow.value || audioFocusManager.requestAudioFocus()
+    }
+
     private fun inject() {
         application.cast<Application>().daggerComponent.playerServiceComponentBuilder()
             .build()
@@ -347,7 +371,7 @@ class PlayerService : Service() {
 
     private fun launchImmediately(block: suspend CoroutineScope.() -> Unit) {
         GlobalScope.launch(
-            context = Dispatchers.Unconfined,
+            context = Dispatchers.Main.immediate,
             start = CoroutineStart.UNDISPATCHED,
             block = block
         )

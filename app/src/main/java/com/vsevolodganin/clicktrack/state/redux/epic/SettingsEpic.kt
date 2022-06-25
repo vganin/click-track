@@ -8,12 +8,12 @@ import com.vsevolodganin.clicktrack.state.redux.core.Epic
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.ThemeManager
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @ViewModelScoped
 class SettingsEpic @Inject constructor(
@@ -31,6 +31,13 @@ class SettingsEpic @Inject constructor(
                     }
                     withContext(mainDispatcher) {
                         themeManager.setTheme(action.value)
+                    }
+                },
+
+            actions.filterIsInstance<SettingsAction.ChangeIgnoreAudioFocus>()
+                .consumeEach { action ->
+                    userPreferencesRepository.ignoreAudioFocus.edit {
+                        action.value
                     }
                 }
         )

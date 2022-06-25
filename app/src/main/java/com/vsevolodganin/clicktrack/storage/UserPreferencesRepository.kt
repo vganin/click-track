@@ -2,6 +2,7 @@ package com.vsevolodganin.clicktrack.storage
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
@@ -118,6 +119,11 @@ class UserPreferencesRepository @Inject constructor(
         ),
         toExternal = json::decodeFromString,
         toInternal = json::encodeToString,
+    )
+
+    val ignoreAudioFocus: UserPropertyAccess<Boolean> = UserPropertyAccessWithNoMapping(
+        key = booleanPreferencesKey("ignore_audio_focus"),
+        defaultValue = false,
     )
 
     private open inner class UserPropertyAccessWithMapping<TInternal, TExternal>(
