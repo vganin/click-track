@@ -22,13 +22,14 @@ androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling
 androidx-compose-ui-util = { module = "androidx.compose.ui:ui-util", version.ref = "androidx-compose" }
 androidx-constraintLayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version = "1.0.0" }
 androidx-core = { module = "androidx.core:core-ktx", version = "1.7.0" }
-androidx-splashScreen = { module = "androidx.core:core-splashscreen", version = "1.0.0-beta02" }
 androidx-dataStore = { module = "androidx.datastore:datastore-preferences", version = "1.0.0" }
 androidx-fragment = { module = "androidx.fragment:fragment-ktx", version = "1.4.1" }
 androidx-lifecycle-commonJava8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewModel = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewModel-savedState = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidx-lifecycle" }
 androidx-media = { module = "androidx.media:media", version = "1.6.0" }
+androidx-splashScreen = { module = "androidx.core:core-splashscreen", version = "1.0.0-beta02" }
+androidx-workmanager = { module = "androidx.work:work-runtime-ktx", version = "2.7.1" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
@@ -52,7 +53,7 @@ sqlDelight-gradlePlugin = { module = "com.squareup.sqldelight:gradle-plugin", ve
 timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
 
 [bundles]
-androidx-compose = ["androidx-compose-foundation", "androidx-compose-material-iconsExtended", "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-compose-ui-util", "androidx-compose-ui", "androidx-activity-compose", "androidx-constraintLayout-compose" ]
+androidx-compose = ["androidx-compose-foundation", "androidx-compose-material-iconsExtended", "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-compose-ui-util", "androidx-compose-ui", "androidx-activity-compose", "androidx-constraintLayout-compose"]
 androidx-lifecycle = ["androidx-lifecycle-commonJava8", "androidx-lifecycle-viewModel", "androidx-lifecycle-viewModel-savedState"]
 kotlin-coroutines = ["kotlin-coroutines-core", "kotlin-coroutines-android"]
 kotlin-serialization = ["kotlin-serialization-core", "kotlin-serialization-json"]

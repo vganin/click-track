@@ -2,21 +2,21 @@ package com.vsevolodganin.clicktrack.storage
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.vsevolodganin.clicktrack.Database
-import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.lib.ClickTrack
 import com.vsevolodganin.clicktrack.lib.premade.PreMadeClickTracks
 import com.vsevolodganin.clicktrack.migration.CanMigrate
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.vsevolodganin.clicktrack.storage.ClickTrack as StorageClickTrack
 
-@ViewModelScoped
+@Singleton
 class ClickTrackRepository @Inject constructor(
     private val database: Database,
     private val json: Json,

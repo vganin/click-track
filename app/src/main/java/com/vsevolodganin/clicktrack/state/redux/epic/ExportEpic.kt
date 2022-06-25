@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.state.redux.epic
 
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
-import com.vsevolodganin.clicktrack.state.logic.ClickTrackExporter
+import com.vsevolodganin.clicktrack.export.ExportWorkLauncher
 import com.vsevolodganin.clicktrack.state.redux.action.ExportAction
 import com.vsevolodganin.clicktrack.state.redux.core.Action
 import com.vsevolodganin.clicktrack.state.redux.core.Epic
@@ -13,18 +13,18 @@ import javax.inject.Inject
 
 @ActivityScoped
 class ExportEpic @Inject constructor(
-    private val exporter: ClickTrackExporter
+    private val exportWorkLauncher: ExportWorkLauncher,
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {
         return merge(
             actions.filterIsInstance<ExportAction.Start>()
                 .consumeEach {
-                    exporter.start(it.clickTrack)
+                    exportWorkLauncher.launchExportToAudioFile(it.clickTrackId)
                 },
             actions.filterIsInstance<ExportAction.Stop>()
                 .consumeEach {
-                    exporter.cancel()
+                    exportWorkLauncher.stopExportToAudioFile(it.clickTrackId)
                 },
         )
     }

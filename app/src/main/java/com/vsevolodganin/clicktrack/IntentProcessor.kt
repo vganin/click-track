@@ -5,12 +5,11 @@ import android.content.Intent
 import android.os.Parcelable
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
 import com.vsevolodganin.clicktrack.model.ClickTrackId
-import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.state.redux.AppState
 import com.vsevolodganin.clicktrack.state.redux.action.NavigationAction
 import com.vsevolodganin.clicktrack.state.redux.core.Store
-import javax.inject.Inject
 import kotlinx.parcelize.Parcelize
+import javax.inject.Inject
 
 @ActivityScoped
 class IntentProcessor @Inject constructor(
@@ -20,7 +19,8 @@ class IntentProcessor @Inject constructor(
         when (intent.action) {
             Action.NAVIGATE -> {
                 val navigateAction = when (intent.getParcelableExtra<NavigationDestination>(Extras.NAVIGATION_DESTINATION)) {
-                    NavigationDestination.CLICK_TRACK -> when (val clickTrackId = intent.getParcelableExtra<ClickTrackId>(Extras.CLICK_TRACK_ID)) {
+                    NavigationDestination.CLICK_TRACK -> when (val clickTrackId =
+                        intent.getParcelableExtra<ClickTrackId>(Extras.CLICK_TRACK_ID)) {
                         is ClickTrackId.Database -> NavigationAction.ToClickTrackScreen(clickTrackId)
                         ClickTrackId.Builtin.Metronome -> NavigationAction.ToMetronomeScreen
                         is ClickTrackId.Builtin.ClickSoundsTest,
@@ -37,11 +37,11 @@ class IntentProcessor @Inject constructor(
 
 class IntentFactory @Inject constructor(private val context: Context) {
 
-    fun openClickTrack(clickTrack: ClickTrackWithId): Intent {
+    fun openClickTrack(clickTrackId: ClickTrackId): Intent {
         return Intent(context, MainActivity::class.java).apply {
             action = Action.NAVIGATE
             putExtra(Extras.NAVIGATION_DESTINATION, NavigationDestination.CLICK_TRACK as Parcelable)
-            putExtra(Extras.CLICK_TRACK_ID, clickTrack.id)
+            putExtra(Extras.CLICK_TRACK_ID, clickTrackId)
         }
     }
 

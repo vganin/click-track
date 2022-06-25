@@ -28,7 +28,7 @@ class ExportToAudioFile @Inject constructor(
     private val soundBank: SoundBank,
     private val userSelectedSounds: UserSelectedSounds,
 ) {
-    suspend fun export(clickTrack: ClickTrack, onProgress: (Float) -> Unit, onFinished: () -> Unit): File? {
+    suspend fun export(clickTrack: ClickTrack, onProgress: suspend (Float) -> Unit): File? {
         val selectedSounds = userSelectedSounds.get().value ?: return null
         val strongSound = selectedSounds.strongBeat?.let(soundBank::get) ?: return null
         val weakSound = selectedSounds.weakBeat?.let(soundBank::get) ?: return null
@@ -137,8 +137,6 @@ class ExportToAudioFile @Inject constructor(
             } finally {
                 muxer?.release()
             }
-
-            onFinished()
         }
     }
 

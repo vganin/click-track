@@ -5,6 +5,8 @@ import android.content.ContentResolver
 import android.content.Context
 import android.media.AudioManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationManagerCompat
+import androidx.work.WorkManager
 import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
@@ -33,6 +35,18 @@ abstract class ApplicationScopedAndroidModule {
         @Singleton
         fun provideContentResolver(context: Context): ContentResolver {
             return context.contentResolver
+        }
+
+        @Provides
+        @Singleton
+        fun provideWorkManager(context: Context): WorkManager {
+            return WorkManager.getInstance(context)
+        }
+
+        @Provides
+        @Singleton
+        fun provideNotificationManager(context: Context): NotificationManagerCompat {
+            return NotificationManagerCompat.from(context)
         }
     }
 }

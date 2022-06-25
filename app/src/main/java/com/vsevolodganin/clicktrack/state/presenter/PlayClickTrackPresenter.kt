@@ -1,10 +1,8 @@
 package com.vsevolodganin.clicktrack.state.presenter
 
-import com.vsevolodganin.clicktrack.export.ExportState
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.player.PlaybackState
 import com.vsevolodganin.clicktrack.player.Player
-import com.vsevolodganin.clicktrack.state.logic.ClickTrackExporter
 import com.vsevolodganin.clicktrack.state.redux.Screen
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.ui.model.PlayClickTrackUiState
@@ -22,13 +20,11 @@ import javax.inject.Inject
 class PlayClickTrackPresenter @Inject constructor(
     private val clickTrackRepository: ClickTrackRepository,
     private val player: Player,
-    private val exporter: ClickTrackExporter,
 ) {
     fun uiScreens(screens: Flow<Screen.PlayClickTrack>): Flow<UiScreen.PlayClickTrack> {
         return combine(
             screens.map { it.state }.map { it.id }.flatMapLatest(clickTrackRepository::getById),
             player.playbackState(),
-            exporter.state(),
             ::uiState,
         )
             .filterNotNull()
@@ -38,7 +34,6 @@ class PlayClickTrackPresenter @Inject constructor(
     private fun uiState(
         clickTrack: ClickTrackWithDatabaseId?,
         playbackState: PlaybackState?,
-        exportState: ExportState?,
     ): PlayClickTrackUiState? {
         clickTrack ?: return null
 
@@ -48,7 +43,6 @@ class PlayClickTrackPresenter @Inject constructor(
             clickTrack = clickTrack,
             isPlaying = isPlaying,
             playProgress = grabIf(isPlaying) { playbackState?.progress },
-            exportProgress = exportState?.let(ExportState::progress)
         )
     }
 }

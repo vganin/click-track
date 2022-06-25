@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.vsevolodganin.clicktrack">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -38,6 +39,11 @@
         <service
             android:name=".player.PlayerService"
             android:exported="false" />
+
+        <service
+            android:name="androidx.work.impl.foreground.SystemForegroundService"
+            android:foregroundServiceType="dataSync"
+            tools:node="merge" />
 
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"

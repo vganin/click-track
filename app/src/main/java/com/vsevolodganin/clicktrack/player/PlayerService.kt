@@ -10,7 +10,6 @@ import android.os.IBinder
 import android.os.Parcelable
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FLAG_FOREGROUND_SERVICE
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
@@ -23,8 +22,7 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
 import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_CHANNEL_ID
-import com.vsevolodganin.clicktrack.player.PlayerService.NotificationConst.PLAYING_NOW_NOTIFICATION_ID
+import com.vsevolodganin.clicktrack.notification.NotificationChannels
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.cast
@@ -126,6 +124,12 @@ class PlayerService : Service() {
 
     @Inject
     lateinit var intentFactory: IntentFactory
+
+    @Inject
+    lateinit var notificationManager: NotificationManagerCompat
+
+    @Inject
+    lateinit var notificationChannels: NotificationChannels
 
     @Inject
     lateinit var audioFocusManager: AudioFocusManager
@@ -245,7 +249,7 @@ class PlayerService : Service() {
         if (keepInBackground) {
             startForeground(
                 contentText = clickTrack.value.name,
-                tapIntent = intentFactory.openClickTrack(clickTrack)
+                tapIntent = intentFactory.openClickTrack(clickTrack.id)
             )
         } else {
             stopForeground()
@@ -300,12 +304,6 @@ class PlayerService : Service() {
     }
 
     private fun startForeground(contentText: String, tapIntent: Intent) {
-        val channel = NotificationChannelCompat.Builder(PLAYING_NOW_CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MIN)
-            .setName(getString(R.string.notification_channel_playing_now))
-            .build()
-        val notificationManager = NotificationManagerCompat.from(this)
-        notificationManager.createNotificationChannel(channel)
-
         val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         } else {
@@ -314,7 +312,7 @@ class PlayerService : Service() {
         val launchAppIntent = PendingIntent.getActivity(this, 0, tapIntent, pendingIntentFlags)
         val stopServiceIntent = PendingIntent.getService(this, 0, serviceIntent(this).apply { action = ACTION_STOP }, pendingIntentFlags)
 
-        val notificationBuilder = NotificationCompat.Builder(this, PLAYING_NOW_CHANNEL_ID)
+        val notificationBuilder = NotificationCompat.Builder(this, notificationChannels.playingNow)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ResourcesCompat.getColor(resources, R.color.signature, null))
             .setColorized(true)
@@ -332,10 +330,10 @@ class PlayerService : Service() {
             val notification = notificationBuilder
                 .build()
                 .apply { flags = flags or FLAG_FOREGROUND_SERVICE }
-            notificationManager.notify(PLAYING_NOW_NOTIFICATION_ID, notification)
+            notificationManager.notify(R.id.notification_playing_now, notification)
         } else {
             val notification = notificationBuilder.build()
-            startForeground(PLAYING_NOW_NOTIFICATION_ID, notification)
+            startForeground(R.id.notification_playing_now, notification)
             isNotificationDisplayed = true
         }
     }
@@ -375,10 +373,5 @@ class PlayerService : Service() {
             start = CoroutineStart.UNDISPATCHED,
             block = block
         )
-    }
-
-    private object NotificationConst {
-        const val PLAYING_NOW_CHANNEL_ID = "playing_now"
-        const val PLAYING_NOW_NOTIFICATION_ID = 1
     }
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="notification_playing_now" type="id" />
+    <item name="notification_exporting" type="id" />
+    <item name="notification_export_finished" type="id" />
+</resources>

@@ -7,6 +7,7 @@ import com.vsevolodganin.clicktrack.di.module.DatabaseModule
 import com.vsevolodganin.clicktrack.di.module.FirebaseModule
 import com.vsevolodganin.clicktrack.di.module.SerializationModule
 import com.vsevolodganin.clicktrack.di.module.UserPreferencesModule
+import com.vsevolodganin.clicktrack.export.ExportWorker
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -24,6 +25,7 @@ import javax.inject.Singleton
 )
 interface ApplicationComponent {
     fun inject(application: Application)
+    fun inject(worker: ExportWorker)
 
     fun viewModelComponentBuilder(): ViewModelComponent.Builder
     fun playerServiceComponentBuilder(): PlayerServiceComponent.Builder

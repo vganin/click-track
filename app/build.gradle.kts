@@ -157,6 +157,7 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.dataStore)
     implementation(libs.androidx.media)
+    implementation(libs.androidx.workmanager)
     implementation(libs.bundles.androidx.lifecycle)
     implementation(libs.bundles.androidx.compose)
     implementation(libs.accompanist)

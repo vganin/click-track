@@ -14,6 +14,7 @@
     <string name="duration_picker_minutes">m</string>
     <string name="duration_picker_hours">h</string>
     <string name="repeat">Loop</string>
+    <string name="notification_channel_export">Export</string>
     <string name="notification_channel_playing_now">Playing Now</string>
     <string name="notification_stop">STOP</string>
     <string name="notification_playing_now">Playing now…</string>
@@ -57,5 +58,9 @@
     <string name="about_logo_developer_name">Varvara Roganova</string>
     <string name="polyrhythms_title">Polyrhythms</string>
     <string name="polyrhythm_notification_title">Polyrhythm %1$d over %2$d</string>
-    <string name="export_to_audio_file">Export as audio file…</string>
+    <string name="export_to_audio_file">Export as audio file</string>
+    <string name="started_export">Started exporting \"%1$s\"</string>
+    <string name="exporting">Exporting \"%1$s\"…</string>
+    <string name="export_finished">Finished exporting \"%1$s\"</string>
+    <string name="export_open">Tap to open</string>
 </resources>
