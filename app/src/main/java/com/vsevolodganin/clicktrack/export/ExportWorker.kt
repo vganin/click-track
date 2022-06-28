@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequest
@@ -118,6 +119,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
             NotificationCompat.Builder(appContext, notificationChannels.export)
                 .setContentTitle(appContext.getString(R.string.exporting, clickTrack.value.name))
                 .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ResourcesCompat.getColor(appContext.resources, R.color.signature, null))
                 .setOngoing(true)
                 .setContentIntent(PendingIntent.getActivity(appContext, 0, tapIntent, pendingIntentFlags))
                 .addAction(
@@ -157,6 +159,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
                 .setContentTitle(appContext.getString(R.string.export_finished, clickTrack.name))
                 .setContentText(appContext.getString(R.string.export_open))
                 .setSmallIcon(R.drawable.ic_notification)
+                .setColor(ResourcesCompat.getColor(appContext.resources, R.color.signature, null))
                 .setContentIntent(PendingIntent.getActivity(appContext, 0, tapIntent, pendingIntentFlags))
                 .setGroup(NotificationGroups.EXPORT_FINISHED)
                 .build()
