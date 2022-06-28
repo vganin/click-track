@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.sounds.model
 
-import com.vsevolodganin.clicktrack.lib.android.AndroidParcelable
+import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 data class ClickSounds(
     val strongBeat: ClickSoundSource?,
     val weakBeat: ClickSoundSource?,
-) : AndroidParcelable {
+) : Parcelable {
 
     val asIterable: Iterable<ClickSoundSource> get() = listOfNotNull(strongBeat, weakBeat)
 

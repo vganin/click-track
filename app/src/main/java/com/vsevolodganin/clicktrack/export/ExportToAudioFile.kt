@@ -5,7 +5,7 @@ import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaFormat
 import android.media.MediaMuxer
-import com.vsevolodganin.clicktrack.lib.ClickTrack
+import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.player.toPlayerEvents
 import com.vsevolodganin.clicktrack.sounds.SoundBank
 import com.vsevolodganin.clicktrack.sounds.UserSelectedSounds

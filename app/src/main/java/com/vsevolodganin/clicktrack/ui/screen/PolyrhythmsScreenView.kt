@@ -29,12 +29,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
-import com.vsevolodganin.clicktrack.lib.bpm
 import com.vsevolodganin.clicktrack.model.PlayProgress
-import com.vsevolodganin.clicktrack.state.redux.action.PlayerAction
-import com.vsevolodganin.clicktrack.state.redux.action.PolyrhythmsAction
-import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
+import com.vsevolodganin.clicktrack.model.bpm
+import com.vsevolodganin.clicktrack.redux.action.PlayerAction
+import com.vsevolodganin.clicktrack.redux.action.PolyrhythmsAction
+import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.PolyrhythmsUiState
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.ui.widget.PlayStopButton

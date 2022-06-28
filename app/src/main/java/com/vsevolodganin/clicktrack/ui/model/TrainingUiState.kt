@@ -1,8 +1,8 @@
 package com.vsevolodganin.clicktrack.ui.model
 
-import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.state.redux.TrainingMode
-import com.vsevolodganin.clicktrack.state.redux.TrainingState
+import com.vsevolodganin.clicktrack.model.CueDuration
+import com.vsevolodganin.clicktrack.redux.TrainingMode
+import com.vsevolodganin.clicktrack.redux.TrainingState
 
 data class TrainingUiState(
     val startingTempo: Int,

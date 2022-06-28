@@ -1,10 +1,10 @@
 package com.vsevolodganin.clicktrack.ui.model
 
-import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.lib.NotePattern
-import com.vsevolodganin.clicktrack.lib.TimeSignature
-import com.vsevolodganin.clicktrack.state.redux.EditClickTrackState
-import com.vsevolodganin.clicktrack.state.redux.EditCueState
+import com.vsevolodganin.clicktrack.model.CueDuration
+import com.vsevolodganin.clicktrack.model.NotePattern
+import com.vsevolodganin.clicktrack.model.TimeSignature
+import com.vsevolodganin.clicktrack.redux.EditClickTrackState
+import com.vsevolodganin.clicktrack.redux.EditCueState
 import java.util.UUID
 
 data class EditClickTrackUiState(

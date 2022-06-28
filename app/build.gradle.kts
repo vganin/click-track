@@ -148,7 +148,6 @@ sqldelight {
 }
 
 dependencies {
-    implementation(project(":lib"))
     implementation(libs.bundles.kotlin.coroutines)
     implementation(libs.bundles.kotlin.serialization)
     implementation(libs.androidx.core)

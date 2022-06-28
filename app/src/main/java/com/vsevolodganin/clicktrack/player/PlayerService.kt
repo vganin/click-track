@@ -20,8 +20,8 @@ import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.IntentFactory
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.module.MainDispatcher
-import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.notification.NotificationChannels
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository

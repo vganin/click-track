@@ -1,10 +1,10 @@
 package com.vsevolodganin.clicktrack.utils.coroutine
 
 import android.os.Process
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 fun createSingleThreadCoroutineDispatcher(
     linuxThreadName: String,

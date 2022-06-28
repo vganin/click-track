@@ -5,9 +5,9 @@ import android.content.Intent
 import android.os.Parcelable
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
 import com.vsevolodganin.clicktrack.model.ClickTrackId
-import com.vsevolodganin.clicktrack.state.redux.AppState
-import com.vsevolodganin.clicktrack.state.redux.action.NavigationAction
-import com.vsevolodganin.clicktrack.state.redux.core.Store
+import com.vsevolodganin.clicktrack.redux.AppState
+import com.vsevolodganin.clicktrack.redux.action.NavigationAction
+import com.vsevolodganin.clicktrack.redux.core.Store
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 

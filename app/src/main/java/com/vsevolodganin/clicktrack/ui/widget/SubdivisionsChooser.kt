@@ -62,9 +62,9 @@ import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.ThirtySecondQuin
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.ThirtySecondSeptuplet
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.ThirtySecondTriplet
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.Whole
-import com.vsevolodganin.clicktrack.lib.NotePattern
-import com.vsevolodganin.clicktrack.lib.NotePatternGroup
-import com.vsevolodganin.clicktrack.lib.TimeSignature
+import com.vsevolodganin.clicktrack.model.NotePattern
+import com.vsevolodganin.clicktrack.model.NotePatternGroup
+import com.vsevolodganin.clicktrack.model.TimeSignature
 
 @Composable
 fun SubdivisionsChooser(

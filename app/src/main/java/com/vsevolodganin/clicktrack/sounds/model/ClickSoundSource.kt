@@ -1,12 +1,12 @@
 package com.vsevolodganin.clicktrack.sounds.model
 
+import android.os.Parcelable
 import androidx.annotation.RawRes
-import com.vsevolodganin.clicktrack.lib.android.AndroidParcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class ClickSoundSource : AndroidParcelable {
+sealed class ClickSoundSource : Parcelable {
 
     // Shouldn't be Serializable since persisting resId for long time has no sense
     @Parcelize

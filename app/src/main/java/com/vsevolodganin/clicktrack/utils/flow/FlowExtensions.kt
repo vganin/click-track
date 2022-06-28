@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.utils.flow
 
-import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -11,6 +10,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 fun <T> Flow<*>.ignoreElements(): Flow<T> {
     @Suppress("UNCHECKED_CAST") // Consumer should not receive any items

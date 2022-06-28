@@ -40,10 +40,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
-import com.vsevolodganin.clicktrack.lib.ClickTrack
-import com.vsevolodganin.clicktrack.lib.interval
+import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.PlayProgress
-import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
+import com.vsevolodganin.clicktrack.model.interval
+import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableViewport
 import com.vsevolodganin.clicktrack.utils.compose.detectTransformGesturesWithEndCallbacks

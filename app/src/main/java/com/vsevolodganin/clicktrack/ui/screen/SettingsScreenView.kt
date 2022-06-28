@@ -10,8 +10,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.state.redux.action.SettingsAction
-import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.redux.action.SettingsAction
+import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.ui.model.SettingsUiState
 import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack

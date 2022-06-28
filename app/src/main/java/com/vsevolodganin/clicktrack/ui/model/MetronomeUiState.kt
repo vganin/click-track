@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.ui.model
 
-import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
-import com.vsevolodganin.clicktrack.lib.NotePattern
+import com.vsevolodganin.clicktrack.model.BeatsPerMinute
+import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.PlayProgress
 
 data class MetronomeUiState(

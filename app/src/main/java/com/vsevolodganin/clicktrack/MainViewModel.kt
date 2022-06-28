@@ -4,12 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.vsevolodganin.clicktrack.di.module.ViewModelScopedAppStateEpic
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
-import com.vsevolodganin.clicktrack.state.redux.AppState
-import com.vsevolodganin.clicktrack.state.redux.core.Epic
-import com.vsevolodganin.clicktrack.state.redux.core.EpicMiddleware
-import javax.inject.Inject
+import com.vsevolodganin.clicktrack.redux.AppState
+import com.vsevolodganin.clicktrack.redux.core.Epic
+import com.vsevolodganin.clicktrack.redux.core.EpicMiddleware
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
+import javax.inject.Inject
 
 class MainViewModel(
     application: Application,

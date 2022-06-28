@@ -33,12 +33,12 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.icons.ClickTrackIcons
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.Metronome
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.Polyrhythm
-import com.vsevolodganin.clicktrack.state.redux.DrawerState
-import com.vsevolodganin.clicktrack.state.redux.action.CloseDrawer
-import com.vsevolodganin.clicktrack.state.redux.action.ComputingNavigationAction
-import com.vsevolodganin.clicktrack.state.redux.action.NavigationAction
-import com.vsevolodganin.clicktrack.state.redux.core.Action
-import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.redux.DrawerState
+import com.vsevolodganin.clicktrack.redux.action.CloseDrawer
+import com.vsevolodganin.clicktrack.redux.action.ComputingNavigationAction
+import com.vsevolodganin.clicktrack.redux.action.NavigationAction
+import com.vsevolodganin.clicktrack.redux.core.Action
+import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.DrawerUiState
 
 @Composable

@@ -19,11 +19,11 @@ import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.BuildConfig
 import com.vsevolodganin.clicktrack.IntentFactory
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.lib.ClickTrack
+import com.vsevolodganin.clicktrack.common.MediaStoreAccess
+import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.notification.NotificationChannels
-import com.vsevolodganin.clicktrack.state.logic.MediaStoreAccess
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.utils.cast
 import kotlinx.coroutines.flow.firstOrNull

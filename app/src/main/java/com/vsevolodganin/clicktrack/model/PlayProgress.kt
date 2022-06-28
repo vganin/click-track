@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.model
 
 import android.os.Parcelable
 import android.os.SystemClock
-import com.vsevolodganin.clicktrack.lib.android.parceler.DurationParceler
+import com.vsevolodganin.clicktrack.utils.time.DurationParceler
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.WriteWith
 import kotlin.time.Duration

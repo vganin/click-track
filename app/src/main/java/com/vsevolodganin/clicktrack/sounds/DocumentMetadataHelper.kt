@@ -3,8 +3,8 @@ package com.vsevolodganin.clicktrack.sounds
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
-import javax.inject.Inject
 import timber.log.Timber
+import javax.inject.Inject
 
 class DocumentMetadataHelper @Inject constructor(private val contentResolver: ContentResolver) {
 

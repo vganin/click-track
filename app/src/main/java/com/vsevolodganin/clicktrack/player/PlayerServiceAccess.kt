@@ -6,14 +6,14 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.annotation.MainThread
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
-import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import javax.inject.Inject
 
 @ViewModelScoped
 class PlayerServiceAccess @Inject constructor(

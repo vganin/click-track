@@ -1,19 +1,19 @@
 package com.vsevolodganin.clicktrack.player
 
-import com.vsevolodganin.clicktrack.lib.AbstractPolyrhythm
-import com.vsevolodganin.clicktrack.lib.ClickTrack
-import com.vsevolodganin.clicktrack.lib.Cue
-import com.vsevolodganin.clicktrack.lib.NoteEvent
-import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
-import com.vsevolodganin.clicktrack.lib.interval
-import com.vsevolodganin.clicktrack.lib.math.Rational
-import com.vsevolodganin.clicktrack.lib.math.ZERO
-import com.vsevolodganin.clicktrack.lib.math.compareTo
-import com.vsevolodganin.clicktrack.lib.math.over
-import com.vsevolodganin.clicktrack.lib.math.times
-import com.vsevolodganin.clicktrack.lib.math.toRational
-import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
+import com.vsevolodganin.clicktrack.model.AbstractPolyrhythm
+import com.vsevolodganin.clicktrack.model.ClickTrack
+import com.vsevolodganin.clicktrack.model.Cue
+import com.vsevolodganin.clicktrack.model.NoteEvent
+import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
+import com.vsevolodganin.clicktrack.model.interval
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
+import com.vsevolodganin.clicktrack.utils.collection.toRoundRobin
+import com.vsevolodganin.clicktrack.utils.math.Rational
+import com.vsevolodganin.clicktrack.utils.math.ZERO
+import com.vsevolodganin.clicktrack.utils.math.compareTo
+import com.vsevolodganin.clicktrack.utils.math.over
+import com.vsevolodganin.clicktrack.utils.math.times
+import com.vsevolodganin.clicktrack.utils.math.toRational
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 

@@ -24,6 +24,6 @@
 ###
 
 ### Keep action class names for analytics logging
--keepnames class com.vsevolodganin.clicktrack.state.redux.core.Action
--keepnames class ** implements com.vsevolodganin.clicktrack.state.redux.core.Action
+-keepnames class com.vsevolodganin.clicktrack.redux.core.Action
+-keepnames class ** implements com.vsevolodganin.clicktrack.redux.core.Action
 ###

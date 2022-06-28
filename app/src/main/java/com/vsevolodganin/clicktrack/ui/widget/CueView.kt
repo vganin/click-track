@@ -16,10 +16,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.lib.NotePattern
-import com.vsevolodganin.clicktrack.lib.TimeSignature
-import com.vsevolodganin.clicktrack.state.redux.EditCueState
+import com.vsevolodganin.clicktrack.model.CueDuration
+import com.vsevolodganin.clicktrack.model.NotePattern
+import com.vsevolodganin.clicktrack.model.TimeSignature
+import com.vsevolodganin.clicktrack.redux.EditCueState
 import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
 import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
 import kotlin.time.Duration.Companion.minutes

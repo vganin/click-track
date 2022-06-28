@@ -36,11 +36,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.redux.action.SoundLibraryAction
+import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
-import com.vsevolodganin.clicktrack.state.redux.action.SoundLibraryAction
-import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.ui.model.SoundLibraryUiState
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton

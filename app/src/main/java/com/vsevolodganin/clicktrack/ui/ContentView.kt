@@ -21,10 +21,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
-import com.vsevolodganin.clicktrack.state.redux.action.CloseDrawer
-import com.vsevolodganin.clicktrack.state.redux.action.InAppReviewAction
-import com.vsevolodganin.clicktrack.state.redux.action.OpenDrawer
-import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.redux.action.CloseDrawer
+import com.vsevolodganin.clicktrack.redux.action.InAppReviewAction
+import com.vsevolodganin.clicktrack.redux.action.OpenDrawer
+import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.AppUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
 import com.vsevolodganin.clicktrack.ui.screen.AboutScreenView

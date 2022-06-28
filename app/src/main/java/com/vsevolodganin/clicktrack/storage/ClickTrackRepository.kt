@@ -2,11 +2,11 @@ package com.vsevolodganin.clicktrack.storage
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.vsevolodganin.clicktrack.Database
-import com.vsevolodganin.clicktrack.lib.ClickTrack
-import com.vsevolodganin.clicktrack.lib.premade.PreMadeClickTracks
 import com.vsevolodganin.clicktrack.migration.CanMigrate
+import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
+import com.vsevolodganin.clicktrack.premade.PreMadeClickTracks
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString

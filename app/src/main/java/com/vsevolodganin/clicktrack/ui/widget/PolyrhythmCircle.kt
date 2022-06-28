@@ -40,10 +40,10 @@ import com.vsevolodganin.clicktrack.utils.compose.Angle
 import com.vsevolodganin.clicktrack.utils.compose.AngleSector
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.toRadians
+import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin
-import kotlinx.coroutines.launch
 
 @Composable
 fun PolyrhythmCircle(

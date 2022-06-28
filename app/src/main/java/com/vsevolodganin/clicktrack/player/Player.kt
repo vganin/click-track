@@ -3,13 +3,12 @@ package com.vsevolodganin.clicktrack.player
 import android.os.SystemClock
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
-import com.vsevolodganin.clicktrack.lib.ClickTrack
-import com.vsevolodganin.clicktrack.lib.TwoLayerPolyrhythm
-import com.vsevolodganin.clicktrack.lib.utils.collection.toRoundRobin
+import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.model.PlayableProgressTimeSource
+import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.sounds.UserSelectedSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
@@ -17,6 +16,7 @@ import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
+import com.vsevolodganin.clicktrack.utils.collection.toRoundRobin
 import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingCoroutines
 import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingSuspendAndSpinLock
 import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingThreadSleep

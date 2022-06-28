@@ -26,10 +26,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.lib.BeatsPerMinute
-import com.vsevolodganin.clicktrack.lib.BeatsPerMinuteDiff
-import com.vsevolodganin.clicktrack.lib.applyDiff
-import com.vsevolodganin.clicktrack.lib.bpm
+import com.vsevolodganin.clicktrack.model.BeatsPerMinute
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
+import com.vsevolodganin.clicktrack.model.applyDiff
+import com.vsevolodganin.clicktrack.model.bpm
 import com.vsevolodganin.clicktrack.utils.compose.detectRadialDragGesture
 import com.vsevolodganin.clicktrack.utils.compose.toRadians
 import kotlin.math.cos

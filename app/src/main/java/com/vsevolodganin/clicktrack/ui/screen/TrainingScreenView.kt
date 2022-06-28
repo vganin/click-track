@@ -16,11 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.lib.CueDuration
-import com.vsevolodganin.clicktrack.state.redux.TrainingMode
-import com.vsevolodganin.clicktrack.state.redux.TrainingState
-import com.vsevolodganin.clicktrack.state.redux.action.TrainingAction
-import com.vsevolodganin.clicktrack.state.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.model.CueDuration
+import com.vsevolodganin.clicktrack.redux.TrainingMode
+import com.vsevolodganin.clicktrack.redux.TrainingState
+import com.vsevolodganin.clicktrack.redux.action.TrainingAction
+import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.TrainingUiState
 import com.vsevolodganin.clicktrack.ui.widget.BpmInputField
 import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
