@@ -6,4 +6,5 @@ import com.vsevolodganin.clicktrack.theme.Theme
 sealed interface SettingsAction : Action {
     class ChangeTheme(val value: Theme) : SettingsAction
     class ChangeIgnoreAudioFocus(val value: Boolean) : SettingsAction
+    class ChangePlayTrackingMode(val value: Boolean) : SettingsAction
 }

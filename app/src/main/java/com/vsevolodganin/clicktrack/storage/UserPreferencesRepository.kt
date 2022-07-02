@@ -126,6 +126,11 @@ class UserPreferencesRepository @Inject constructor(
         defaultValue = false,
     )
 
+    val playTrackingMode: UserPropertyAccess<Boolean> = UserPropertyAccessWithNoMapping(
+        key = booleanPreferencesKey("play_tracking_mode"),
+        defaultValue = true,
+    )
+
     private open inner class UserPropertyAccessWithMapping<TInternal, TExternal>(
         private val key: Preferences.Key<TInternal>,
         private val defaultValue: TExternal,

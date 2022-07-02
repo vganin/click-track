@@ -7,4 +7,5 @@ data class PlayClickTrackUiState(
     val clickTrack: ClickTrackWithDatabaseId,
     val isPlaying: Boolean,
     val playProgress: PlayProgress?,
+    val playTrackingMode: Boolean,
 )

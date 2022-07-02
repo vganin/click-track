@@ -63,4 +63,5 @@
     <string name="exporting">Exporting \"%1$s\"…</string>
     <string name="export_finished">Finished exporting \"%1$s\"</string>
     <string name="export_open">Tap to open</string>
+    <string name="play_tracking_mode">Play tracking</string>
 </resources>

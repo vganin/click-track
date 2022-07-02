@@ -5,6 +5,7 @@ import com.vsevolodganin.clicktrack.player.PlaybackState
 import com.vsevolodganin.clicktrack.player.Player
 import com.vsevolodganin.clicktrack.redux.Screen
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
+import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.ui.model.PlayClickTrackUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
 import com.vsevolodganin.clicktrack.utils.grabIf
@@ -18,10 +19,12 @@ import javax.inject.Inject
 class PlayClickTrackPresenter @Inject constructor(
     private val clickTrackRepository: ClickTrackRepository,
     private val player: Player,
+    private val userPreferences: UserPreferencesRepository,
 ) {
     fun uiScreens(screens: Flow<Screen.PlayClickTrack>): Flow<UiScreen.PlayClickTrack> {
         return combine(
             screens.map { it.state }.map { it.id }.flatMapLatest(clickTrackRepository::getById),
+            userPreferences.playTrackingMode.stateFlow,
             player.playbackState(),
             ::uiState,
         )
@@ -31,6 +34,7 @@ class PlayClickTrackPresenter @Inject constructor(
 
     private fun uiState(
         clickTrack: ClickTrackWithDatabaseId?,
+        playTrackingMode: Boolean,
         playbackState: PlaybackState?,
     ): PlayClickTrackUiState? {
         clickTrack ?: return null
@@ -41,6 +45,7 @@ class PlayClickTrackPresenter @Inject constructor(
             clickTrack = clickTrack,
             isPlaying = isPlaying,
             playProgress = grabIf(isPlaying) { playbackState?.progress },
+            playTrackingMode = playTrackingMode,
         )
     }
 }

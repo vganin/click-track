@@ -1,11 +1,19 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.Checkbox
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.FabPosition
+import androidx.compose.material.FilterChip
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -27,16 +35,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.redux.action.ClickTrackAction
 import com.vsevolodganin.clicktrack.redux.action.ExportAction
 import com.vsevolodganin.clicktrack.redux.action.NavigationAction
 import com.vsevolodganin.clicktrack.redux.action.PlayerAction
+import com.vsevolodganin.clicktrack.redux.action.SettingsAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.model.PlayClickTrackUiState
@@ -56,19 +67,7 @@ fun PlayClickTrackScreenView(
         scaffoldState = scaffoldState,
         topBar = { TopBar(state, dispatch, scaffoldState.snackbarHostState) },
         floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
-            PlayStopButton(
-                isPlaying = state.isPlaying,
-                onToggle = {
-                    val action = if (state.isPlaying) {
-                        PlayerAction.StopPlay
-                    } else {
-                        PlayerAction.StartPlayClickTrack(state.clickTrack.id, progress = 0.0)
-                    }
-                    dispatch(action)
-                }
-            )
-        },
+        floatingActionButton = { BottomBar(state, dispatch) },
         modifier = modifier,
     ) {
         Content(state, dispatch)
@@ -87,6 +86,7 @@ private fun Content(
     ) {
         ClickTrackView(
             clickTrack = state.clickTrack.value,
+            playTrackingMode = state.playTrackingMode,
             drawTextMarks = true,
             progress = state.playProgress,
             progressDragAndDropEnabled = true,
@@ -203,6 +203,45 @@ private fun OverflowMenu(state: PlayClickTrackUiState, dispatch: Dispatch, snack
     }
 }
 
+@Composable
+private fun BottomBar(state: PlayClickTrackUiState, dispatch: Dispatch) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+    ) {
+        PlayStopButton(
+            isPlaying = state.isPlaying,
+            onToggle = {
+                val action = if (state.isPlaying) {
+                    PlayerAction.StopPlay
+                } else {
+                    PlayerAction.StartPlayClickTrack(state.clickTrack.id, progress = 0.0)
+                }
+                dispatch(action)
+            },
+            modifier = Modifier.align(Alignment.Center),
+            enableInsets = false,
+        )
+
+        val togglePlayTrackingMode = {
+            dispatch(SettingsAction.ChangePlayTrackingMode(!state.playTrackingMode))
+        }
+
+        FilterChip(
+            selected = state.playTrackingMode,
+            onClick = togglePlayTrackingMode,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .padding(start = 8.dp)
+        ) {
+            Checkbox(checked = state.playTrackingMode, onCheckedChange = null)
+            Spacer(Modifier.width(8.dp))
+            Text(text = stringResource(R.string.play_tracking_mode))
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun Preview() {
@@ -211,6 +250,7 @@ private fun Preview() {
             clickTrack = PREVIEW_CLICK_TRACK_1,
             playProgress = null,
             isPlaying = false,
+            playTrackingMode = true,
         )
     )
 }

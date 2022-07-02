@@ -33,13 +33,18 @@ class SettingsEpic @Inject constructor(
                         themeManager.setTheme(action.value)
                     }
                 },
-
             actions.filterIsInstance<SettingsAction.ChangeIgnoreAudioFocus>()
                 .consumeEach { action ->
                     userPreferencesRepository.ignoreAudioFocus.edit {
                         action.value
                     }
-                }
+                },
+            actions.filterIsInstance<SettingsAction.ChangePlayTrackingMode>()
+                .consumeEach { action ->
+                    userPreferencesRepository.playTrackingMode.edit {
+                        action.value
+                    }
+                },
         )
     }
 }
