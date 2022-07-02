@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
+import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.VectorConverter
@@ -39,10 +40,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -245,7 +245,7 @@ private fun Modifier.moveReorder(
     onMove: (targetIndex: Int, height: Float) -> Unit,
     onDrop: (targetIndex: Int) -> Unit,
 ): Modifier = composed {
-    val hapticFeedback = LocalHapticFeedback.current
+    val view = LocalView.current
 
     var height by remember { mutableStateOf(0f) }
     var targetPosition by remember { mutableStateOf(position) }
@@ -259,8 +259,10 @@ private fun Modifier.moveReorder(
             coroutineScope {
                 detectDragGesturesAfterLongPress(
                     onDragStart = {
-                        // FIXME(https://issuetracker.google.com/issues/171394805): Not working if global settings disables haptic feedback
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                        view.performHapticFeedback(
+                            HapticFeedbackConstants.LONG_PRESS,
+                            HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
+                        )
 
                         onBegin()
                     },
