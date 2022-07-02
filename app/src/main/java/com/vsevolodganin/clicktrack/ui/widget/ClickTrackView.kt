@@ -50,6 +50,7 @@ import com.vsevolodganin.clicktrack.model.interval
 import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableRect
+import com.vsevolodganin.clicktrack.utils.compose.KeepScreenOn
 import com.vsevolodganin.clicktrack.utils.compose.detectTransformGesturesWithEndCallbacks
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
@@ -113,6 +114,11 @@ fun ClickTrackView(
 
         val transformedAndPixelAlignedMarks = remember(marks, translateX, scaleX) {
             marks.map { mark -> mark.copy(x = mark.x.transformXAndPixelAlign()) }
+        }
+
+        // Wakelock on playing
+        if (progress != null) {
+            KeepScreenOn()
         }
 
         Canvas(
