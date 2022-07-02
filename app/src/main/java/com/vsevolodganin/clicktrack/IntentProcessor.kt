@@ -31,6 +31,9 @@ class IntentProcessor @Inject constructor(
                 }
                 store.dispatch(navigateAction)
             }
+            Action.NAVIGATE_METRONOME -> {
+                store.dispatch(NavigationAction.ToMetronomeScreen)
+            }
         }
     }
 }
@@ -55,6 +58,7 @@ class IntentFactory @Inject constructor(private val context: Context) {
 
 private object Action {
     const val NAVIGATE = "navigate"
+    const val NAVIGATE_METRONOME = "navigate_metronome"
 }
 
 private object Extras {

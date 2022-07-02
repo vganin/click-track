@@ -9,6 +9,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("de.timfreiheit.resourceplaceholders")
 }
 
 apply(from = "generate_icons.gradle.kts")
@@ -145,6 +146,10 @@ sqldelight {
     database("Database") {
         schemaOutputDirectory = file("src/test/sqldelight/schema")
     }
+}
+
+resourcePlaceholders {
+    files = listOf("xml/shortcuts.xml")
 }
 
 dependencies {

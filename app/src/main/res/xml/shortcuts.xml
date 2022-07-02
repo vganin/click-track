@@ -1,0 +1,14 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/metronome"
+        android:shortcutId="metronome"
+        android:shortcutShortLabel="@string/metronome"
+        tools:ignore="UnusedAttribute">
+        <intent
+            android:action="navigate_metronome"
+            android:targetClass="com.vsevolodganin.clicktrack.MainActivity"
+            android:targetPackage="${applicationId}" />
+    </shortcut>
+</shortcuts>

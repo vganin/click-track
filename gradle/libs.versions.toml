@@ -46,6 +46,7 @@ kotlin-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serializat
 kotlin-serialization-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
 oboe = { module = "com.google.oboe:oboe", version = "1.6.1" }
+resourceplaceholders = { module = "de.timfreiheit.resourceplaceholders:placeholders", version = "0.4" }
 simpleIcons = { module = "br.com.devsrsouza.compose.icons.android:simple-icons", version = "1.0.0" }
 sqlDelight-androidDriver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
 sqlDelight-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions-jvm", version.ref = "sqlDelight" }

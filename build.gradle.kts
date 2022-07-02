@@ -15,6 +15,7 @@ buildscript {
         classpath(libs.gms.gradlePlugin)
         classpath(libs.firebase.crashlytics.gradlePlugin)
         classpath(libs.gradleVersionsPlugin)
+        classpath(libs.resourceplaceholders)
     }
 }
 
