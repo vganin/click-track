@@ -234,7 +234,7 @@ class PlayerService : Service() {
         soundsId: ClickSoundsId?,
         keepInBackground: Boolean,
     ) = launchImmediately {
-        if (!isAllowedToPlay()) {
+        if (clickTrack.value.cues.isEmpty() || !isAllowedToPlay()) {
             return@launchImmediately
         }
 
