@@ -44,8 +44,8 @@ allprojects {
 
 tasks.withType<DependencyUpdatesTask> {
     fun isNotStable(version: String): Boolean {
-        val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-        return regex.matches(version)
+        val regex = "^[0-9,.v-]+(-rc[0-9]*)?$".toRegex()
+        return !regex.matches(version)
     }
 
     rejectVersionIf {

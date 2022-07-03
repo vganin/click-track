@@ -18,7 +18,7 @@ data class PlayProgress(
 ) : Parcelable
 
 @Parcelize
-data class PlayableProgressTimeMark(private val startedAtNanos: Long) : TimeMark(), Parcelable {
+data class PlayableProgressTimeMark(private val startedAtNanos: Long) : TimeMark, Parcelable {
     override fun elapsedNow(): Duration {
         return (elapsedRealtimeNanos() - startedAtNanos).toDuration(DurationUnit.NANOSECONDS)
     }
