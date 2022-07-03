@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,7 +41,10 @@ fun CueView(
         Row {
             Text(
                 text = stringResource(R.string.cue_position, displayPosition),
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(8.dp),
+                style = MaterialTheme.typography.h5
             )
             Spacer(modifier = Modifier.width(8.dp))
             StatefulTextField(
