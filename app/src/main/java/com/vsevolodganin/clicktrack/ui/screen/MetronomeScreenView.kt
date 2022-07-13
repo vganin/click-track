@@ -43,11 +43,11 @@ import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.bpm
 import com.vsevolodganin.clicktrack.model.metronomeClickTrack
+import com.vsevolodganin.clicktrack.redux.action.BackAction
 import com.vsevolodganin.clicktrack.redux.action.MetronomeAction
 import com.vsevolodganin.clicktrack.redux.action.MetronomeAction.CloseOptions
 import com.vsevolodganin.clicktrack.redux.action.MetronomeAction.OpenOptions
 import com.vsevolodganin.clicktrack.redux.action.MetronomeAction.SetPattern
-import com.vsevolodganin.clicktrack.redux.action.NavigationAction
 import com.vsevolodganin.clicktrack.redux.action.PlayerAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.MetronomeUiState
@@ -85,7 +85,7 @@ private fun AppBar(dispatch: Dispatch) {
     InsetsAwareTopAppBar(
         title = { Text(text = stringResource(R.string.metronome)) },
         navigationIcon = {
-            IconButton(onClick = { dispatch(NavigationAction.Back) }) {
+            IconButton(onClick = { dispatch(BackAction) }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },

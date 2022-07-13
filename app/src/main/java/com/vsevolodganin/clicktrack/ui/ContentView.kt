@@ -21,9 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
-import com.vsevolodganin.clicktrack.redux.action.CloseDrawer
+import com.vsevolodganin.clicktrack.redux.action.DrawerAction
 import com.vsevolodganin.clicktrack.redux.action.InAppReviewAction
-import com.vsevolodganin.clicktrack.redux.action.OpenDrawer
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.AppUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
@@ -48,7 +47,6 @@ fun ContentView(
     val position = appUiState.screenPosition
     val drawerState = appUiState.drawerState
 
-    // TODO: For testing purposes
     DisposableEffect(Unit) {
         dispatch(InAppReviewAction.RequestReview)
         onDispose {}
@@ -58,7 +56,6 @@ fun ContentView(
         Scaffold(
             scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerState.isOpened, dispatch)),
             drawerContent = { DrawerView(drawerState, dispatch) },
-            drawerGesturesEnabled = drawerState.gesturesEnabled,
         ) {
             AnimationScreen(screen, position, Modifier.padding(it)) { targetScreen ->
                 val modifier = Modifier.fillMaxSize()
@@ -131,8 +128,8 @@ private fun drawerState(isOpened: Boolean, dispatch: Dispatch): ComposeDrawerSta
         confirmStateChange = remember {
             { newDrawerValue ->
                 when (newDrawerValue) {
-                    DrawerValue.Closed -> dispatch(CloseDrawer)
-                    DrawerValue.Open -> dispatch(OpenDrawer)
+                    DrawerValue.Closed -> dispatch(DrawerAction.Close)
+                    DrawerValue.Open -> dispatch(DrawerAction.Open)
                 }
                 true
             }

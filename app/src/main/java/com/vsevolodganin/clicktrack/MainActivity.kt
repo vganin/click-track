@@ -15,7 +15,7 @@ import com.vsevolodganin.clicktrack.di.module.SerialBackgroundDispatcher
 import com.vsevolodganin.clicktrack.migration.MigrationManager
 import com.vsevolodganin.clicktrack.presenter.PresenterOrchestrator
 import com.vsevolodganin.clicktrack.redux.AppState
-import com.vsevolodganin.clicktrack.redux.action.NavigationAction
+import com.vsevolodganin.clicktrack.redux.action.BackAction
 import com.vsevolodganin.clicktrack.redux.core.Action
 import com.vsevolodganin.clicktrack.redux.core.Epic
 import com.vsevolodganin.clicktrack.redux.core.EpicMiddleware
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        appStateStore.dispatch(NavigationAction.Back)
+        appStateStore.dispatch(BackAction)
     }
 
     private fun inject() {

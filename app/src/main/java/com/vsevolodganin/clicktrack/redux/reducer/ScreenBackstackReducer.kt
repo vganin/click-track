@@ -4,76 +4,98 @@ import com.vsevolodganin.clicktrack.redux.MetronomeState
 import com.vsevolodganin.clicktrack.redux.PlayClickTrackState
 import com.vsevolodganin.clicktrack.redux.Screen
 import com.vsevolodganin.clicktrack.redux.ScreenBackstack
-import com.vsevolodganin.clicktrack.redux.action.NavigationAction
+import com.vsevolodganin.clicktrack.redux.action.BackstackAction
 import com.vsevolodganin.clicktrack.redux.core.Action
-import com.vsevolodganin.clicktrack.redux.pop
-import com.vsevolodganin.clicktrack.redux.pushOrIgnore
-import com.vsevolodganin.clicktrack.redux.pushOrReplace
-import com.vsevolodganin.clicktrack.redux.replaceCurrentScreen
 import com.vsevolodganin.clicktrack.redux.toEditState
+import com.vsevolodganin.clicktrack.utils.grabIf
 
 fun ScreenBackstack.reduce(action: Action): ScreenBackstack {
-    var screens = if (action is NavigationAction) {
-        reduce(action).screens
-    } else {
-        screens
-    }
-
-    screens = screens.replaceCurrentScreen { currentScreen -> currentScreen.reduce(action) }
-
-    return ScreenBackstack(
-        screens = screens,
-        drawerState = drawerState.reduceDrawerState(action, screens)
-    )
+    return reduceFrontScreen(action).reduceNavigation(action)
 }
 
-private fun ScreenBackstack.reduce(action: NavigationAction): ScreenBackstack {
+private fun ScreenBackstack.reduceFrontScreen(action: Action): ScreenBackstack {
+    return copy(frontScreen = frontScreen.reduce(action))
+}
+
+private fun ScreenBackstack.reduceNavigation(action: Action): ScreenBackstack {
     return when (action) {
-        NavigationAction.Back -> {
-            if (drawerState.isOpened) {
-                copy(drawerState = drawerState.copy(isOpened = false))
+        is BackstackAction.Pop -> {
+            if (restScreens.isEmpty()) {
+                this
             } else {
-                copy(screens = screens.pop())
+                copy(
+                    frontScreen = restScreens.last(),
+                    restScreens = restScreens.dropLast(1),
+                )
             }
         }
-        is NavigationAction.ToClickTrackListScreen -> copy(screens = screens.pushOrReplace(
-            Screen.ClickTrackList
-        ))
-        is NavigationAction.ToClickTrackScreen -> copy(screens = screens.pushOrReplace {
-            Screen.PlayClickTrack(
+        is BackstackAction.ToClickTrackListScreen -> copy(
+            frontScreen = Screen.ClickTrackList,
+            restScreens = emptyList(),
+        )
+        is BackstackAction.ToClickTrackScreen -> copy(
+            frontScreen = Screen.PlayClickTrack(
                 state = PlayClickTrackState(
                     id = action.id
                 )
-            )
-        })
-        is NavigationAction.ToEditClickTrackScreen -> copy(screens = screens.pushOrReplace(
-            Screen.EditClickTrack(
-                state = action.clickTrack.toEditState()
-            )
-        ))
-        NavigationAction.ToMetronomeScreen -> copy(screens = screens.pushOrIgnore {
-            Screen.Metronome(
+            ),
+            restScreens = listOf(
+                Screen.ClickTrackList,
+            ),
+        )
+        is BackstackAction.ToEditClickTrackScreen -> copy(
+            frontScreen = Screen.EditClickTrack(
+                state = action.clickTrack.toEditState(isInitialEdit = action.isInitialEdit)
+            ),
+            restScreens = listOfNotNull(
+                Screen.ClickTrackList,
+                grabIf(!action.isInitialEdit) {
+                    Screen.PlayClickTrack(
+                        state = PlayClickTrackState(
+                            id = action.clickTrack.id
+                        )
+                    )
+                },
+            ),
+        )
+        BackstackAction.ToMetronomeScreen -> copy(
+            frontScreen = Screen.Metronome(
                 state = MetronomeState(
                     areOptionsExpanded = false
                 )
-            )
-        })
-        is NavigationAction.ToTrainingScreen -> copy(screens = screens.pushOrIgnore {
-            Screen.Training(
+            ),
+            restScreens = listOf(
+                Screen.ClickTrackList,
+            ),
+        )
+        is BackstackAction.ToTrainingScreen -> copy(
+            frontScreen = Screen.Training(
                 state = action.state
+            ),
+            restScreens = listOf(
+                Screen.ClickTrackList,
+            ),
+        )
+        BackstackAction.ToSettingsScreen -> copy(
+            frontScreen = Screen.Settings, restScreens = listOf(
+                Screen.ClickTrackList,
             )
-        })
-        NavigationAction.ToSettingsScreen -> copy(screens = screens.pushOrReplace {
-            Screen.Settings
-        })
-        NavigationAction.ToSoundLibraryScreen -> copy(screens = screens.pushOrReplace {
-            Screen.SoundLibrary
-        })
-        NavigationAction.ToAboutScreen -> copy(screens = screens.pushOrReplace {
-            Screen.About
-        })
-        NavigationAction.ToPolyrhythms -> copy(screens = screens.pushOrReplace {
-            Screen.Polyrhythms
-        })
+        )
+        BackstackAction.ToSoundLibraryScreen -> copy(
+            frontScreen = Screen.SoundLibrary, restScreens = listOf(
+                Screen.ClickTrackList,
+            )
+        )
+        BackstackAction.ToAboutScreen -> copy(
+            frontScreen = Screen.About, restScreens = listOf(
+                Screen.ClickTrackList,
+            )
+        )
+        BackstackAction.ToPolyrhythms -> copy(
+            frontScreen = Screen.Polyrhythms, restScreens = listOf(
+                Screen.ClickTrackList,
+            )
+        )
+        else -> this
     }
 }

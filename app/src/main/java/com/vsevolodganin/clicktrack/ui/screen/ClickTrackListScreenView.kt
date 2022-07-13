@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.redux.action.BackstackAction
 import com.vsevolodganin.clicktrack.redux.action.ClickTrackAction
-import com.vsevolodganin.clicktrack.redux.action.NavigationAction
-import com.vsevolodganin.clicktrack.redux.action.OpenDrawer
+import com.vsevolodganin.clicktrack.redux.action.DrawerAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.ClickTrackListUiState
 import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
@@ -79,7 +79,7 @@ private fun TopBar(dispatch: Dispatch) {
             Text(text = stringResource(id = R.string.click_track_list))
         },
         navigationIcon = {
-            IconButton(onClick = { dispatch(OpenDrawer) }) {
+            IconButton(onClick = { dispatch(DrawerAction.Open) }) {
                 Icon(imageVector = Icons.Default.Menu, contentDescription = null)
             }
         },
@@ -106,7 +106,7 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithDatabaseI
                         .fillParentMaxWidth()
                         .height(100.dp)
                         .clickable(onClick = {
-                            dispatch(NavigationAction.ToClickTrackScreen(clickTrack.id))
+                            dispatch(BackstackAction.ToClickTrackScreen(clickTrack.id))
                         }),
                 )
                 Text(

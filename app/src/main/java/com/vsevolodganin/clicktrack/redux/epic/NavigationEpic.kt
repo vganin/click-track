@@ -1,8 +1,8 @@
 package com.vsevolodganin.clicktrack.redux.epic
 
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
+import com.vsevolodganin.clicktrack.redux.action.BackstackAction
 import com.vsevolodganin.clicktrack.redux.action.ComputingNavigationAction
-import com.vsevolodganin.clicktrack.redux.action.NavigationAction
 import com.vsevolodganin.clicktrack.redux.core.Action
 import com.vsevolodganin.clicktrack.redux.core.Epic
 import com.vsevolodganin.clicktrack.redux.toCommon
@@ -24,7 +24,7 @@ class NavigationEpic @Inject constructor(
             actions.filterIsInstance<ComputingNavigationAction.ToTrainingScreen>()
                 .map {
                     val persistableState = userPreferencesRepository.trainingState.stateFlow.first()
-                    NavigationAction.ToTrainingScreen(
+                    BackstackAction.ToTrainingScreen(
                         state = persistableState.toCommon()
                     )
                 }

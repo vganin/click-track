@@ -34,9 +34,9 @@ import com.vsevolodganin.clicktrack.icons.ClickTrackIcons
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.Metronome
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.Polyrhythm
 import com.vsevolodganin.clicktrack.redux.DrawerState
-import com.vsevolodganin.clicktrack.redux.action.CloseDrawer
+import com.vsevolodganin.clicktrack.redux.action.BackstackAction
 import com.vsevolodganin.clicktrack.redux.action.ComputingNavigationAction
-import com.vsevolodganin.clicktrack.redux.action.NavigationAction
+import com.vsevolodganin.clicktrack.redux.action.DrawerAction
 import com.vsevolodganin.clicktrack.redux.core.Action
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.DrawerUiState
@@ -52,7 +52,7 @@ fun DrawerView(
             .systemBarsPadding()
     ) {
         val dispatchClosingDrawer = { action: Action ->
-            dispatch(CloseDrawer)
+            dispatch(DrawerAction.Close)
             dispatch(action)
         }
 
@@ -62,7 +62,7 @@ fun DrawerView(
             icon = ClickTrackIcons.Metronome,
             label = stringResource(R.string.drawer_item_metronome),
             isSelected = state.selectedItem == DrawerState.SelectedItem.METRONOME,
-            action = { dispatchClosingDrawer(NavigationAction.ToMetronomeScreen) }
+            action = { dispatchClosingDrawer(BackstackAction.ToMetronomeScreen) }
         )
 
         DrawerButton(
@@ -76,14 +76,14 @@ fun DrawerView(
             icon = ClickTrackIcons.Polyrhythm,
             label = stringResource(R.string.drawer_item_polyrhythm),
             isSelected = state.selectedItem == DrawerState.SelectedItem.POLYRHYTHMS,
-            action = { dispatchClosingDrawer(NavigationAction.ToPolyrhythms) }
+            action = { dispatchClosingDrawer(BackstackAction.ToPolyrhythms) }
         )
 
         DrawerButton(
             icon = Icons.Filled.LibraryMusic,
             label = stringResource(R.string.drawer_item_sound_library),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SOUND_LIBRARY,
-            action = { dispatchClosingDrawer(NavigationAction.ToSoundLibraryScreen) }
+            action = { dispatchClosingDrawer(BackstackAction.ToSoundLibraryScreen) }
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -92,14 +92,14 @@ fun DrawerView(
             icon = Icons.Filled.Settings,
             label = stringResource(R.string.drawer_item_settings),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SETTINGS,
-            action = { dispatchClosingDrawer(NavigationAction.ToSettingsScreen) }
+            action = { dispatchClosingDrawer(BackstackAction.ToSettingsScreen) }
         )
 
         DrawerButton(
             icon = Icons.Filled.ContactSupport,
             label = stringResource(R.string.drawer_item_about),
             isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
-            action = { dispatchClosingDrawer(NavigationAction.ToAboutScreen) }
+            action = { dispatchClosingDrawer(BackstackAction.ToAboutScreen) }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -159,7 +159,6 @@ private fun Preview() {
         DrawerView(
             state = DrawerUiState(
                 isOpened = true,
-                gesturesEnabled = true,
                 selectedItem = DrawerState.SelectedItem.METRONOME,
             ),
             dispatch = {}

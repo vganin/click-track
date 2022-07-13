@@ -21,6 +21,7 @@ data class EditClickTrackState(
     val loop: Boolean,
     val cues: List<EditCueState>,
     val errors: Set<Error>,
+    val isInitialEdit: Boolean,
 ) : Parcelable {
     enum class Error {
         NAME
@@ -51,12 +52,13 @@ data class EditCueState(
     }
 }
 
-fun ClickTrackWithDatabaseId.toEditState() = EditClickTrackState(
+fun ClickTrackWithDatabaseId.toEditState(isInitialEdit: Boolean) = EditClickTrackState(
     id = id,
     name = value.name,
     loop = value.loop,
     cues = value.cues.map { it.toEditState() },
-    errors = emptySet()
+    errors = emptySet(),
+    isInitialEdit = isInitialEdit
 )
 
 fun Cue.toEditState() = EditCueState(

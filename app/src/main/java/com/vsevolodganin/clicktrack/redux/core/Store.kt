@@ -30,7 +30,7 @@ class Store<T>(
 
     init {
         val initialDispatch = SuspendDispatch { action ->
-            _state.setValue(reducer(_state.value, action))
+            _state.value = reducer(_state.value, action)
         }
         val dispatch = middlewares.fold(initialDispatch) { dispatch, middleware ->
             middleware.interfere(this@Store, dispatch)

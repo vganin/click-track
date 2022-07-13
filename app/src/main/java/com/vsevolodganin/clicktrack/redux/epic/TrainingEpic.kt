@@ -6,13 +6,12 @@ import com.vsevolodganin.clicktrack.common.TrainingStateValidator
 import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
 import com.vsevolodganin.clicktrack.redux.AppState
 import com.vsevolodganin.clicktrack.redux.Screen
-import com.vsevolodganin.clicktrack.redux.action.NavigationAction
+import com.vsevolodganin.clicktrack.redux.action.BackstackAction
 import com.vsevolodganin.clicktrack.redux.action.TrainingAction
 import com.vsevolodganin.clicktrack.redux.core.Action
 import com.vsevolodganin.clicktrack.redux.core.Epic
 import com.vsevolodganin.clicktrack.redux.core.Store
 import com.vsevolodganin.clicktrack.redux.epic.TrainingEpic.Const.NEW_TRAINING_CLICK_TRACK_NAME
-import com.vsevolodganin.clicktrack.redux.frontScreen
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +35,7 @@ class TrainingEpic @Inject constructor(
     override fun act(actions: Flow<Action>): Flow<Action> {
         return merge(
             store.state
-                .map { it.backstack.screens.frontScreen() }
+                .map { it.backstack.frontScreen }
                 .filterIsInstance<Screen.Training>()
                 .map { it.state }
                 .distinctUntilChanged()
@@ -57,7 +56,7 @@ class TrainingEpic @Inject constructor(
                     val suggestedName = newClickTrackNameSuggester.suggest(NEW_TRAINING_CLICK_TRACK_NAME)
                     val newClickTrack = trainingClickTrackGenerator.generate(trainingState, suggestedName)
                     val newClickTrackId = clickTrackRepository.insert(newClickTrack)
-                    NavigationAction.ToClickTrackScreen(newClickTrackId)
+                    BackstackAction.ToClickTrackScreen(newClickTrackId)
                 }
         )
     }

@@ -4,8 +4,6 @@ import com.vsevolodganin.clicktrack.redux.AppState
 import com.vsevolodganin.clicktrack.redux.Screen
 import com.vsevolodganin.clicktrack.redux.ScreenBackstack
 import com.vsevolodganin.clicktrack.redux.core.Store
-import com.vsevolodganin.clicktrack.redux.frontScreen
-import com.vsevolodganin.clicktrack.redux.frontScreenPosition
 import com.vsevolodganin.clicktrack.ui.model.AppUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
 import kotlinx.coroutines.CoroutineStart
@@ -39,7 +37,7 @@ class PresenterOrchestrator @Inject constructor(
             store.state.map { it.backstack }
                 .distinctUntilChanged()
                 .frontUiScreens(),
-            store.state.map { it.backstack.drawerState.let(drawerPresenter::uiState) }
+            store.state.map { it.drawerState.let(drawerPresenter::uiState) }
                 .distinctUntilChanged(),
         ) { (screen, screenPosition), drawerState ->
             AppUiState(screen, screenPosition, drawerState)
@@ -53,35 +51,33 @@ class PresenterOrchestrator @Inject constructor(
             var uiScreensCollection: Job? = null
 
             collect { backstack ->
-                val screen = backstack.screens.frontScreen()
-                val screenPosition = backstack.screens.frontScreenPosition()
+                val screen = backstack.frontScreen
+                val screenPosition = backstack.restScreens.size
 
-                if (activeScreenType != screen?.javaClass) {
-                    activeScreenType = screen?.javaClass
+                if (activeScreenType != screen.javaClass) {
+                    activeScreenType = screen.javaClass
                     uiScreensCollection?.cancel()
 
-                    if (screen != null) {
-                        uiScreensCollection = launch(context = Dispatchers.Unconfined, start = CoroutineStart.UNDISPATCHED) {
-                            val uiScreens = when (screen) {
-                                is Screen.ClickTrackList -> clickTrackListPresenter.get().uiScreens()
-                                is Screen.PlayClickTrack -> playClickTrackPresenter.get().uiScreens(screenFlow.reinterpret())
-                                is Screen.EditClickTrack -> editClickTrackPresenter.get().uiScreens(screenFlow.reinterpret())
-                                is Screen.Metronome -> metronomePresenter.get().uiScreens(screenFlow.reinterpret())
-                                is Screen.Settings -> settingsPresenter.get().uiScreens()
-                                is Screen.SoundLibrary -> soundLibraryPresenter.get().uiScreens()
-                                is Screen.Training -> trainingPresenter.get().uiScreens(screenFlow.reinterpret())
-                                is Screen.About -> aboutPresenter.get().uiScreens()
-                                is Screen.Polyrhythms -> polyrhythmsPresenter.get().uiScreens()
-                            }
+                    uiScreensCollection = launch(context = Dispatchers.Unconfined, start = CoroutineStart.UNDISPATCHED) {
+                        val uiScreens = when (screen) {
+                            is Screen.ClickTrackList -> clickTrackListPresenter.get().uiScreens()
+                            is Screen.PlayClickTrack -> playClickTrackPresenter.get().uiScreens(screenFlow.reinterpret())
+                            is Screen.EditClickTrack -> editClickTrackPresenter.get().uiScreens(screenFlow.reinterpret())
+                            is Screen.Metronome -> metronomePresenter.get().uiScreens(screenFlow.reinterpret())
+                            is Screen.Settings -> settingsPresenter.get().uiScreens()
+                            is Screen.SoundLibrary -> soundLibraryPresenter.get().uiScreens()
+                            is Screen.Training -> trainingPresenter.get().uiScreens(screenFlow.reinterpret())
+                            is Screen.About -> aboutPresenter.get().uiScreens()
+                            is Screen.Polyrhythms -> polyrhythmsPresenter.get().uiScreens()
+                        }
 
-                            uiScreens.collect { uiScreen ->
-                                channel.send(
-                                    ScreenToPosition(
-                                        screen = uiScreen,
-                                        position = screenPosition,
-                                    )
+                        uiScreens.collect { uiScreen ->
+                            channel.send(
+                                ScreenToPosition(
+                                    screen = uiScreen,
+                                    position = screenPosition,
                                 )
-                            }
+                            )
                         }
                     }
                 }

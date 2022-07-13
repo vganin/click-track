@@ -12,7 +12,9 @@ import com.vsevolodganin.clicktrack.redux.core.Epic
 import com.vsevolodganin.clicktrack.redux.core.EpicMiddleware
 import com.vsevolodganin.clicktrack.redux.core.Store
 import com.vsevolodganin.clicktrack.redux.epic.AboutEpic
+import com.vsevolodganin.clicktrack.redux.epic.BackEpic
 import com.vsevolodganin.clicktrack.redux.epic.ClickTrackEpic
+import com.vsevolodganin.clicktrack.redux.epic.DrawerEpic
 import com.vsevolodganin.clicktrack.redux.epic.ExportEpic
 import com.vsevolodganin.clicktrack.redux.epic.FinishAppEpic
 import com.vsevolodganin.clicktrack.redux.epic.InAppReviewEpic
@@ -179,4 +181,16 @@ abstract class ActivityScopedAppStateEpicModule {
     @IntoSet
     @ActivityScopedAppStateEpic
     abstract fun bindExportEpic(epic: ExportEpic): Epic
+
+    @ActivityScoped
+    @Binds
+    @IntoSet
+    @ActivityScopedAppStateEpic
+    abstract fun bindBackEpic(epic: BackEpic): Epic
+
+    @ActivityScoped
+    @Binds
+    @IntoSet
+    @ActivityScopedAppStateEpic
+    abstract fun bindDrawerEpic(epic: DrawerEpic): Epic
 }

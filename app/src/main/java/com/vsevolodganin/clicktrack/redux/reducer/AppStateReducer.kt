@@ -4,8 +4,8 @@ import com.vsevolodganin.clicktrack.redux.AppState
 import com.vsevolodganin.clicktrack.redux.core.Action
 
 fun AppState.reduce(action: Action): AppState {
-    val backstack = backstack.reduce(action)
     return AppState(
-        backstack = backstack,
+        backstack = backstack.reduce(action),
+        drawerState = drawerState.reduce(action)
     )
 }

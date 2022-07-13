@@ -8,13 +8,12 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.model.DefaultCue
 import com.vsevolodganin.clicktrack.redux.AppState
 import com.vsevolodganin.clicktrack.redux.Screen
+import com.vsevolodganin.clicktrack.redux.action.BackstackAction
 import com.vsevolodganin.clicktrack.redux.action.ClickTrackAction
 import com.vsevolodganin.clicktrack.redux.action.EditClickTrackAction
-import com.vsevolodganin.clicktrack.redux.action.NavigationAction
 import com.vsevolodganin.clicktrack.redux.core.Action
 import com.vsevolodganin.clicktrack.redux.core.Epic
 import com.vsevolodganin.clicktrack.redux.core.Store
-import com.vsevolodganin.clicktrack.redux.frontScreen
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.utils.flow.consumeEach
 import kotlinx.coroutines.flow.Flow
@@ -36,13 +35,13 @@ class ClickTrackEpic @Inject constructor(
     override fun act(actions: Flow<Action>): Flow<Action> {
         return merge<Action>(
             store.state
-                .map { it.backstack.screens.frontScreen() }
+                .map { it.backstack.frontScreen }
                 .filterIsInstance<Screen.EditClickTrack>()
                 .map { it.state }
                 .distinctUntilChanged()
                 .transform { editClickTrackState ->
                     val validationResult = clickTrackValidator.validate(editClickTrackState)
-                    
+
                     clickTrackRepository.update(editClickTrackState.id, validationResult.validClickTrack)
 
                     emit(EditClickTrackAction.SetErrors(validationResult.errors))
@@ -58,7 +57,10 @@ class ClickTrackEpic @Inject constructor(
                     val suggestedNewClickTrackName = newClickTrackNameSuggester.suggest()
                     val newClickTrack = defaultNewClickTrack(suggestedNewClickTrackName)
                     val newClickTrackId = clickTrackRepository.insert(newClickTrack)
-                    NavigationAction.ToEditClickTrackScreen(ClickTrackWithDatabaseId(newClickTrackId, newClickTrack))
+                    BackstackAction.ToEditClickTrackScreen(
+                        clickTrack = ClickTrackWithDatabaseId(newClickTrackId, newClickTrack),
+                        isInitialEdit = true,
+                    )
                 },
 
             actions

@@ -7,7 +7,9 @@ import com.vsevolodganin.clicktrack.redux.action.TrainingAction
 import com.vsevolodganin.clicktrack.redux.core.Action
 
 fun Screen.Training.reduceTraining(action: Action): Screen {
-    return copy(state = state.reduce(action))
+    return copy(
+        state = state.reduce(action)
+    )
 }
 
 private fun TrainingState.reduce(action: Action): TrainingState {

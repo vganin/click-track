@@ -9,7 +9,6 @@ class DrawerPresenter @Inject constructor() {
     fun uiState(drawerState: DrawerState): DrawerUiState {
         return DrawerUiState(
             isOpened = drawerState.isOpened,
-            gesturesEnabled = drawerState.gesturesEnabled,
             selectedItem = drawerState.selectedItem,
         )
     }

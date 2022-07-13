@@ -6,7 +6,7 @@ import android.os.Parcelable
 import com.vsevolodganin.clicktrack.di.component.ActivityScoped
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.redux.AppState
-import com.vsevolodganin.clicktrack.redux.action.NavigationAction
+import com.vsevolodganin.clicktrack.redux.action.BackstackAction
 import com.vsevolodganin.clicktrack.redux.core.Store
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
@@ -21,18 +21,18 @@ class IntentProcessor @Inject constructor(
                 val navigateAction = when (intent.getParcelableExtra<NavigationDestination>(Extras.NAVIGATION_DESTINATION)) {
                     NavigationDestination.CLICK_TRACK -> when (val clickTrackId =
                         intent.getParcelableExtra<ClickTrackId>(Extras.CLICK_TRACK_ID)) {
-                        is ClickTrackId.Database -> NavigationAction.ToClickTrackScreen(clickTrackId)
-                        ClickTrackId.Builtin.Metronome -> NavigationAction.ToMetronomeScreen
+                        is ClickTrackId.Database -> BackstackAction.ToClickTrackScreen(clickTrackId)
+                        ClickTrackId.Builtin.Metronome -> BackstackAction.ToMetronomeScreen
                         is ClickTrackId.Builtin.ClickSoundsTest,
                         null -> return
                     }
-                    NavigationDestination.POLYRHYTHMS -> NavigationAction.ToPolyrhythms
+                    NavigationDestination.POLYRHYTHMS -> BackstackAction.ToPolyrhythms
                     null -> return
                 }
                 store.dispatch(navigateAction)
             }
             Action.NAVIGATE_METRONOME -> {
-                store.dispatch(NavigationAction.ToMetronomeScreen)
+                store.dispatch(BackstackAction.ToMetronomeScreen)
             }
         }
     }

@@ -16,10 +16,12 @@ class EditClickTrackPresenter @Inject constructor() {
             .map { it.state }
             .map { state ->
                 EditClickTrackUiState(
+                    id = state.id,
                     name = state.name,
                     loop = state.loop,
                     cues = state.cues.map { it.toUiState() },
                     errors = state.errors,
+                    showForwardButton = state.isInitialEdit,
                 )
             }
             .map(UiScreen::EditClickTrack)

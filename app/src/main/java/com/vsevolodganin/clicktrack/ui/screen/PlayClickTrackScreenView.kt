@@ -43,9 +43,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.redux.action.BackAction
+import com.vsevolodganin.clicktrack.redux.action.BackstackAction
 import com.vsevolodganin.clicktrack.redux.action.ClickTrackAction
 import com.vsevolodganin.clicktrack.redux.action.ExportAction
-import com.vsevolodganin.clicktrack.redux.action.NavigationAction
 import com.vsevolodganin.clicktrack.redux.action.PlayerAction
 import com.vsevolodganin.clicktrack.redux.action.SettingsAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
@@ -107,7 +108,7 @@ private fun TopBar(
     InsetsAwareTopAppBar(
         title = { Text(text = state.clickTrack.value.name) },
         navigationIcon = {
-            IconButton(onClick = { dispatch(NavigationAction.Back) }) {
+            IconButton(onClick = { dispatch(BackAction) }) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },
@@ -115,7 +116,7 @@ private fun TopBar(
             var editEnabled by remember { mutableStateOf(true) }
             IconButton(
                 onClick = {
-                    dispatch(NavigationAction.ToEditClickTrackScreen(state.clickTrack))
+                    dispatch(BackstackAction.ToEditClickTrackScreen(clickTrack = state.clickTrack, isInitialEdit = false))
                     editEnabled = false
                 },
                 enabled = editEnabled
@@ -141,7 +142,7 @@ private fun TopBar(
                 val confirm: () -> Unit = remember {
                     lambda@{
                         dispatch(ClickTrackAction.Remove(state.clickTrack.id))
-                        dispatch(NavigationAction.Back)
+                        dispatch(BackAction)
                     }
                 }
                 AlertDialog(

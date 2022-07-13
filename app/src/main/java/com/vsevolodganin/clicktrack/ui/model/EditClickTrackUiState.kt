@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.model
 
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
@@ -8,10 +9,12 @@ import com.vsevolodganin.clicktrack.redux.EditCueState
 import java.util.UUID
 
 data class EditClickTrackUiState(
+    val id: ClickTrackId.Database,
     val name: String,
     val loop: Boolean,
     val cues: List<EditCueUiState>,
     val errors: Set<EditClickTrackState.Error>,
+    val showForwardButton: Boolean,
 )
 
 data class EditCueUiState(

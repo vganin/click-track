@@ -6,17 +6,18 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class AppState(
     val backstack: ScreenBackstack,
+    val drawerState: DrawerState
 ) : Parcelable {
 
     companion object {
         val INITIAL = AppState(
             backstack = ScreenBackstack(
-                screens = listOf(Screen.ClickTrackList),
-                drawerState = DrawerState(
-                    isOpened = false,
-                    gesturesEnabled = true,
-                    selectedItem = null,
-                ),
+                frontScreen = Screen.ClickTrackList,
+                restScreens = emptyList(),
+            ),
+            drawerState = DrawerState(
+                isOpened = false,
+                selectedItem = null,
             ),
         )
     }

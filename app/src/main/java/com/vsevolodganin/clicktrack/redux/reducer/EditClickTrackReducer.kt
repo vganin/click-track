@@ -13,7 +13,7 @@ import com.vsevolodganin.clicktrack.utils.collection.immutable.remove
 import com.vsevolodganin.clicktrack.utils.collection.immutable.replace
 
 fun Screen.EditClickTrack.reduceEditClickTrack(action: Action): Screen {
-    return Screen.EditClickTrack(
+    return copy(
         state = state.reduce(action)
     )
 }

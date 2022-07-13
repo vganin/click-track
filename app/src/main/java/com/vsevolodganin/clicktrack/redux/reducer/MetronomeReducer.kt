@@ -6,7 +6,7 @@ import com.vsevolodganin.clicktrack.redux.action.MetronomeAction
 import com.vsevolodganin.clicktrack.redux.core.Action
 
 fun Screen.Metronome.reduceMetronome(action: Action): Screen {
-    return Screen.Metronome(
+    return copy(
         state = state.reduce(action)
     )
 }
