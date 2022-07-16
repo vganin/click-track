@@ -77,22 +77,26 @@ private fun ScreenBackstack.reduceNavigation(action: Action): ScreenBackstack {
             ),
         )
         BackstackAction.ToSettingsScreen -> copy(
-            frontScreen = Screen.Settings, restScreens = listOf(
+            frontScreen = Screen.Settings,
+            restScreens = listOf(
                 Screen.ClickTrackList,
             )
         )
         BackstackAction.ToSoundLibraryScreen -> copy(
-            frontScreen = Screen.SoundLibrary, restScreens = listOf(
+            frontScreen = Screen.SoundLibrary,
+            restScreens = listOf(
                 Screen.ClickTrackList,
             )
         )
         BackstackAction.ToAboutScreen -> copy(
-            frontScreen = Screen.About, restScreens = listOf(
+            frontScreen = Screen.About,
+            restScreens = listOf(
                 Screen.ClickTrackList,
             )
         )
         BackstackAction.ToPolyrhythms -> copy(
-            frontScreen = Screen.Polyrhythms, restScreens = listOf(
+            frontScreen = Screen.Polyrhythms,
+            restScreens = listOf(
                 Screen.ClickTrackList,
             )
         )
