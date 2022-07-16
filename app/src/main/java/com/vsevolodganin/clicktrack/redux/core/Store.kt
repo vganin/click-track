@@ -1,11 +1,11 @@
 package com.vsevolodganin.clicktrack.redux.core
 
-import com.vsevolodganin.clicktrack.utils.coroutine.MutableNonConflatedStateFlow
-import com.vsevolodganin.clicktrack.utils.coroutine.NonConflatedStateFlow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
@@ -23,8 +23,8 @@ class Store<T>(
     coroutineScope: CoroutineScope,
     vararg middlewares: Middleware<T>,
 ) {
-    private val _state = MutableNonConflatedStateFlow(initialState)
-    val state: NonConflatedStateFlow<T> = _state
+    private val _state = MutableStateFlow(initialState)
+    val state: StateFlow<T> = _state
 
     private val actions = Channel<Action>(UNLIMITED)
 
