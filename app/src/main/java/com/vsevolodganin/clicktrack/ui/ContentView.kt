@@ -17,7 +17,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntOffset
@@ -43,12 +42,10 @@ fun ContentView(
     appUiState: AppUiState,
     dispatch: Dispatch,
 ) {
-    val screen = appUiState.screen
-    val position = appUiState.screenPosition
     val drawerState = appUiState.drawerState
 
     DisposableEffect(Unit) {
-        dispatch(InAppReviewAction.RequestReview)
+        dispatch(InAppReviewAction.TryRequestReview)
         onDispose {}
     }
 
@@ -57,7 +54,7 @@ fun ContentView(
             scaffoldState = rememberScaffoldState(drawerState = drawerState(drawerState.isOpened, dispatch)),
             drawerContent = { DrawerView(drawerState, dispatch) },
         ) {
-            AnimationScreen(screen, position, Modifier.padding(it)) { targetScreen ->
+            AnimatedScreen(appUiState, Modifier.padding(it)) { targetScreen ->
                 val modifier = Modifier.fillMaxSize()
                 when (targetScreen) {
                     is UiScreen.ClickTrackList -> ClickTrackListScreenView(targetScreen.state, modifier, dispatch)
@@ -76,29 +73,12 @@ fun ContentView(
 }
 
 @Composable
-private fun AnimationScreen(
-    screen: UiScreen,
-    position: Int,
+private fun AnimatedScreen(
+    state: AppUiState,
     modifier: Modifier,
     content: @Composable (screen: UiScreen) -> Unit,
 ) {
-    val isPush = remember { mutableStateOf(true) }
-    val previousPosition = remember { mutableStateOf(position) }
-    val keyToScreen = remember { mutableStateOf(mapOf(position to screen)) }
-
-    if (position != previousPosition.value) {
-        isPush.value = position > previousPosition.value
-        previousPosition.value = position
-        keyToScreen.value += position to screen
-    }
-
-    val transition = updateTransition(targetState = position, label = "AnimatedScreen")
-
-    if (transition.targetState == transition.currentState) {
-        keyToScreen.value = mapOf(position to screen)
-    }
-
-    transition.AnimatedContent(
+    updateTransition(targetState = state, label = "AnimatedScreen").AnimatedContent(
         modifier = modifier,
         transitionSpec = {
             val animationSpec = if (DEBUG_TRANSITIONS) {
@@ -107,16 +87,19 @@ private fun AnimationScreen(
                 spring(visibilityThreshold = IntOffset.VisibilityThreshold)
             }
 
-            if (isPush.value) {
+            val isPush = targetState.screenPosition >= initialState.screenPosition
+
+            if (isPush) {
                 slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec) with
                         slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec)
             } else {
                 slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = animationSpec) with
                         slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = animationSpec)
             }
-        }
-    ) { targetState ->
-        keyToScreen.value[targetState]?.let { content(it) }
+        },
+        contentKey = { it.screenPosition to it.screen.key }
+    ) { transitionState ->
+        content(transitionState.screen)
     }
 }
 

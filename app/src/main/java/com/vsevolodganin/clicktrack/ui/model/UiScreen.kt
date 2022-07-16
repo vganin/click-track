@@ -2,11 +2,17 @@ package com.vsevolodganin.clicktrack.ui.model
 
 sealed interface UiScreen {
 
+    val key: Any get() = javaClass
+
     data class ClickTrackList(val state: ClickTrackListUiState) : UiScreen
 
-    data class PlayClickTrack(val state: PlayClickTrackUiState) : UiScreen
+    data class PlayClickTrack(val state: PlayClickTrackUiState) : UiScreen {
+        override val key: Any get() = super.key to state.clickTrack.id
+    }
 
-    data class EditClickTrack(val state: EditClickTrackUiState) : UiScreen
+    data class EditClickTrack(val state: EditClickTrackUiState) : UiScreen {
+        override val key: Any get() = super.key to state.id
+    }
 
     data class Metronome(val state: MetronomeUiState) : UiScreen
 

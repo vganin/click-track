@@ -30,13 +30,13 @@ class InAppReviewEpic @Inject constructor(
 ) : Epic {
 
     override fun act(actions: Flow<Action>): Flow<Action> {
-        return actions.filterIsInstance<InAppReviewAction.RequestReview>()
+        return actions.filterIsInstance<InAppReviewAction.TryRequestReview>()
             .consumeEach {
-                requestReview()
+                tryRequestReview()
             }
     }
 
-    private suspend fun requestReview() {
+    private suspend fun tryRequestReview() {
         try {
             if (mayRequestReview()) {
                 val reviewManager = reviewManagerProvider.get()
