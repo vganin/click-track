@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/metronome"
+        android:icon="@drawable/shortcut_metronome"
         android:shortcutId="metronome"
         android:shortcutShortLabel="@string/metronome"
         tools:ignore="UnusedAttribute">

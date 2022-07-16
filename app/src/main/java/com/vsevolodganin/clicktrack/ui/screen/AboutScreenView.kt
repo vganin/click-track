@@ -40,7 +40,7 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.redux.action.AboutAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.AboutUiState
-import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Artstation
 import compose.icons.simpleicons.Twitter

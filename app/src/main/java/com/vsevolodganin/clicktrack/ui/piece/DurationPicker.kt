@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget
+package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -48,7 +48,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.ui.utils.focusableBorder
 import java.text.DecimalFormat
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours

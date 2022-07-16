@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget
+package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize

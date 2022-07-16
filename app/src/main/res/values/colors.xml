@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/blue_gray500</color>
-    <color name="primary_dark">@color/blue_gray700</color>
-    <color name="secondary">@color/red500</color>
-    <color name="secondary_dark">@color/red700</color>
+    <color name="signature">#a53030</color>
+    <color name="signature_dark">#982D2D</color>
+    <color name="debug_signature">@color/signature</color>
     <color name="splash_background">#0d0d0d</color>
-    <color name="delete">@color/secondary</color>
-    <color name="signature">@color/signature_red</color>
+    <color name="delete">#AA3030</color>
+    <color name="dark_app_bar">#262525</color>
+    <color name="on_dark_app_bar">@android:color/white</color>
 </resources>

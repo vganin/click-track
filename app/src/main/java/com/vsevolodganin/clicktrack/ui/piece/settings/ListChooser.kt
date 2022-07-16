@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget.settings
+package com.vsevolodganin.clicktrack.ui.piece.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

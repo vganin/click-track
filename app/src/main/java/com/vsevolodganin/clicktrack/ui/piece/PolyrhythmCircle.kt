@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget
+package com.vsevolodganin.clicktrack.ui.piece
 
 import android.annotation.SuppressLint
 import android.graphics.Matrix

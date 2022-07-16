@@ -22,12 +22,12 @@ import com.vsevolodganin.clicktrack.redux.TrainingState
 import com.vsevolodganin.clicktrack.redux.action.TrainingAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.TrainingUiState
-import com.vsevolodganin.clicktrack.ui.widget.BpmInputField
-import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
-import com.vsevolodganin.clicktrack.ui.widget.CueDurationView
-import com.vsevolodganin.clicktrack.ui.widget.DropdownSelector
-import com.vsevolodganin.clicktrack.ui.widget.DurationPicker
-import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.BpmInputField
+import com.vsevolodganin.clicktrack.ui.piece.CueDurationView
+import com.vsevolodganin.clicktrack.ui.piece.DropdownSelector
+import com.vsevolodganin.clicktrack.ui.piece.DurationPicker
+import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
+import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
@@ -41,11 +41,9 @@ fun TrainingScreenView(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             if (state.errors.isEmpty()) {
-                ClickTrackFloatingActionButton(
-                    onClick = {
-                        dispatch(TrainingAction.Accept)
-                    },
-                ) {
+                FloatingActionButton(onClick = {
+                    dispatch(TrainingAction.Accept)
+                }) {
                     Icon(Icons.Default.Check, contentDescription = null)
                 }
             }
@@ -124,10 +122,12 @@ private fun Content(state: TrainingUiState, dispatch: Dispatch) {
         )
 
         Text(
-            text = stringResource(when (state.mode) {
-                TrainingMode.INCREASE_TEMPO -> R.string.training_increase_by
-                TrainingMode.DECREASE_TEMPO -> R.string.training_decrease_by
-            }),
+            text = stringResource(
+                when (state.mode) {
+                    TrainingMode.INCREASE_TEMPO -> R.string.training_increase_by
+                    TrainingMode.DECREASE_TEMPO -> R.string.training_decrease_by
+                }
+            ),
             modifier = Modifier
                 .constrainAs(tempoChangeLabel) {
                     start.linkTo(parent.start)
@@ -206,21 +206,25 @@ private fun Content(state: TrainingUiState, dispatch: Dispatch) {
 
 @Composable
 private fun TrainingMode.stringResource(): String {
-    return stringResource(when (this) {
-        TrainingMode.INCREASE_TEMPO -> R.string.training_increase_every
-        TrainingMode.DECREASE_TEMPO -> R.string.training_decrease_every
-    })
+    return stringResource(
+        when (this) {
+            TrainingMode.INCREASE_TEMPO -> R.string.training_increase_every
+            TrainingMode.DECREASE_TEMPO -> R.string.training_decrease_every
+        }
+    )
 }
 
 @Composable
 private fun TrainingState.EndingKind.stringResource(mode: TrainingMode): String {
-    return stringResource(when (this) {
-        TrainingState.EndingKind.BY_TEMPO -> when (mode) {
-            TrainingMode.INCREASE_TEMPO -> R.string.training_max_tempo
-            TrainingMode.DECREASE_TEMPO -> R.string.training_min_tempo
+    return stringResource(
+        when (this) {
+            TrainingState.EndingKind.BY_TEMPO -> when (mode) {
+                TrainingMode.INCREASE_TEMPO -> R.string.training_max_tempo
+                TrainingMode.DECREASE_TEMPO -> R.string.training_min_tempo
+            }
+            TrainingState.EndingKind.BY_TIME -> R.string.training_play_for
         }
-        TrainingState.EndingKind.BY_TIME -> R.string.training_play_for
-    })
+    )
 }
 
 @Preview

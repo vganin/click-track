@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
-import androidx.compose.material.Checkbox
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalMinimumTouchTargetEnforcement
@@ -46,9 +45,10 @@ import com.vsevolodganin.clicktrack.redux.action.EditClickTrackAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.EditClickTrackUiState
 import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
-import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
-import com.vsevolodganin.clicktrack.ui.widget.CueView
-import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.Checkbox
+import com.vsevolodganin.clicktrack.ui.piece.CueView
+import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
+import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
@@ -70,7 +70,7 @@ fun EditClickTrackScreenView(
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             Box(modifier = Modifier.fillMaxWidth()) {
-                ClickTrackFloatingActionButton(
+                FloatingActionButton(
                     onClick = {
                         dispatch(EditClickTrackAction.AddNewCue)
                         coroutineScope.launch {
@@ -84,7 +84,7 @@ fun EditClickTrackScreenView(
                 }
 
                 if (state.showForwardButton) {
-                    ClickTrackFloatingActionButton(
+                    FloatingActionButton(
                         onClick = {
                             dispatch(BackstackAction.ToClickTrackScreen(state.id))
                         },

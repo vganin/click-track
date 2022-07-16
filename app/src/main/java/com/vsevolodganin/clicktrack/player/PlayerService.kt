@@ -314,7 +314,7 @@ class PlayerService : Service() {
 
         val notificationBuilder = NotificationCompat.Builder(this, notificationChannels.playingNow)
             .setSmallIcon(R.drawable.ic_notification)
-            .setColor(ResourcesCompat.getColor(resources, R.color.signature, null))
+            .setColor(ResourcesCompat.getColor(resources, R.color.debug_signature, null))
             .setColorized(true)
             .setContentTitle(getString(R.string.notification_playing_now))
             .setContentText(contentText)

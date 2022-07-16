@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget
+package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Icon
@@ -12,10 +12,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathBuilder
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.ui.widget.ArrowDirection.DOWN
-import com.vsevolodganin.clicktrack.ui.widget.ArrowDirection.LEFT
-import com.vsevolodganin.clicktrack.ui.widget.ArrowDirection.RIGHT
-import com.vsevolodganin.clicktrack.ui.widget.ArrowDirection.UP
+import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.DOWN
+import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.LEFT
+import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.RIGHT
+import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.UP
 
 enum class ArrowDirection {
     UP, DOWN, LEFT, RIGHT

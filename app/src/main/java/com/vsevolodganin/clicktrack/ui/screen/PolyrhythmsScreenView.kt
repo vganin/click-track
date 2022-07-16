@@ -36,9 +36,9 @@ import com.vsevolodganin.clicktrack.redux.action.PlayerAction
 import com.vsevolodganin.clicktrack.redux.action.PolyrhythmsAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.PolyrhythmsUiState
-import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
-import com.vsevolodganin.clicktrack.ui.widget.PlayStopButton
-import com.vsevolodganin.clicktrack.ui.widget.PolyrhythmCircle
+import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
+import com.vsevolodganin.clicktrack.ui.piece.PolyrhythmCircle
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.widthByText

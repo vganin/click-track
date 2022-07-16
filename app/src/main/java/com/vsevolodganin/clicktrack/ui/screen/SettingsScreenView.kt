@@ -14,10 +14,10 @@ import com.vsevolodganin.clicktrack.redux.action.SettingsAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.ui.model.SettingsUiState
-import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
-import com.vsevolodganin.clicktrack.ui.widget.settings.BooleanChooser
-import com.vsevolodganin.clicktrack.ui.widget.settings.ListChooser
-import com.vsevolodganin.clicktrack.ui.widget.settings.ListChooserItem
+import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.settings.BooleanChooser
+import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooser
+import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooserItem
 
 @Composable
 fun SettingsScreenView(

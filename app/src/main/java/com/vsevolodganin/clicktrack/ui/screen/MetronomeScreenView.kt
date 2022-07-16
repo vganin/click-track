@@ -51,12 +51,14 @@ import com.vsevolodganin.clicktrack.redux.action.MetronomeAction.SetPattern
 import com.vsevolodganin.clicktrack.redux.action.PlayerAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.MetronomeUiState
-import com.vsevolodganin.clicktrack.ui.widget.BpmWheel
-import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
-import com.vsevolodganin.clicktrack.ui.widget.ClickTrackView
-import com.vsevolodganin.clicktrack.ui.widget.InsetsAwareTopAppBar
-import com.vsevolodganin.clicktrack.ui.widget.PlayStopButton
-import com.vsevolodganin.clicktrack.ui.widget.SubdivisionsChooser
+import com.vsevolodganin.clicktrack.ui.piece.BpmWheel
+import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
+import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
+import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
+import com.vsevolodganin.clicktrack.ui.piece.SubdivisionsChooser
+import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
+import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
+import com.vsevolodganin.clicktrack.ui.piece.onDarkAppBarSurface
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -77,12 +79,14 @@ fun MetronomeScreenView(
         modifier = modifier,
         scaffoldState = backdropState(state.areOptionsExpanded, dispatch),
         peekHeight = BackdropScaffoldDefaults.PeekHeight + insetTop,
+        backLayerBackgroundColor = MaterialTheme.colors.darkAppBar,
+        backLayerContentColor = MaterialTheme.colors.onDarkAppBarSurface,
     )
 }
 
 @Composable
 private fun AppBar(dispatch: Dispatch) {
-    InsetsAwareTopAppBar(
+    TopAppBar(
         title = { Text(text = stringResource(R.string.metronome)) },
         navigationIcon = {
             IconButton(onClick = { dispatch(BackAction) }) {
@@ -178,7 +182,7 @@ private fun Content(
             )
         }
 
-        ClickTrackFloatingActionButton(
+        FloatingActionButton(
             onClick = { dispatch(MetronomeAction.BpmMeterTap) },
             modifier = Modifier
                 .size(64.dp)

@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget
+package com.vsevolodganin.clicktrack.ui.piece
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.Animatable

@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget
+package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.Transition
@@ -17,8 +17,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathBuilder
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.ui.widget.PlayStopIconState.PLAY
-import com.vsevolodganin.clicktrack.ui.widget.PlayStopIconState.STOP
+import com.vsevolodganin.clicktrack.ui.piece.PlayStopIconState.PLAY
+import com.vsevolodganin.clicktrack.ui.piece.PlayStopIconState.STOP
 
 @Composable
 fun PlayStopButton(
@@ -27,7 +27,7 @@ fun PlayStopButton(
     modifier: Modifier = Modifier,
     enableInsets: Boolean = true,
 ) {
-    ClickTrackFloatingActionButton(
+    FloatingActionButton(
         onClick = onToggle,
         modifier = modifier,
         enableInsets = enableInsets,

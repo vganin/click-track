@@ -164,7 +164,7 @@ dependencies {
     implementation(libs.androidx.workmanager)
     implementation(libs.bundles.androidx.lifecycle)
     implementation(libs.bundles.androidx.compose)
-    implementation(libs.accompanist)
+    implementation(libs.bundles.accompanist)
     implementation(libs.dagger)
     kapt(libs.dagger.compiler)
     implementation(libs.oboe)

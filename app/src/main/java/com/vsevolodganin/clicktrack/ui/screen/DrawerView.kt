@@ -115,8 +115,8 @@ private fun DrawerButton(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colors
-    val textAndIconColor = if (isSelected) colors.primary else colors.onSurface.copy(alpha = 0.9f)
-    val backgroundColor = if (isSelected) colors.primary.copy(alpha = 0.12f) else Color.Transparent
+    val textAndIconColor = if (isSelected) colors.secondary else colors.onSurface.copy(alpha = 0.9f)
+    val backgroundColor = if (isSelected) colors.secondary.copy(alpha = 0.12f) else Color.Transparent
 
     Surface(
         modifier = modifier

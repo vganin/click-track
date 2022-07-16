@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget
+package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,11 +20,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -912,15 +909,7 @@ private fun RowScope.SubdivisionItem(
             .weight(1f)
             .height(50.dp)
             .padding(2.dp)
-            .border(
-                width = 2.dp,
-                color = if (isSelected) {
-                    MaterialTheme.colors.secondary
-                } else {
-                    MaterialTheme.colors.primary
-                },
-                shape = RoundedCornerShape(8.dp)
-            )
+            .selectableBorder(isSelected)
             .clickable(onClick = onClick)
             .padding(8.dp),
     ) {
@@ -943,9 +932,10 @@ private fun RowAnimatedVisibility(visible: Boolean, content: @Composable Animate
 @Preview
 @Composable
 private fun Preview() {
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .verticalScroll(rememberScrollState())
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
     ) {
         for (noteDuration in arrayOf(1, 2, 4, 8, 16, 32)) {
             var pattern by remember { mutableStateOf(NotePattern.STRAIGHT_X1) }

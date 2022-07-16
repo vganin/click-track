@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.Checkbox
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.FabPosition
@@ -52,9 +51,10 @@ import com.vsevolodganin.clicktrack.redux.action.SettingsAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.model.PlayClickTrackUiState
-import com.vsevolodganin.clicktrack.ui.widget.ClickTrackView
-import com.vsevolodganin.clicktrack.ui.widget.InsetsAwareTopAppBar
-import com.vsevolodganin.clicktrack.ui.widget.PlayStopButton
+import com.vsevolodganin.clicktrack.ui.piece.Checkbox
+import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
+import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
+import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
 import kotlinx.coroutines.launch
 
 @Composable
@@ -105,7 +105,7 @@ private fun TopBar(
     dispatch: Dispatch,
     snackbarHostState: SnackbarHostState,
 ) {
-    InsetsAwareTopAppBar(
+    TopAppBar(
         title = { Text(text = state.clickTrack.value.name) },
         navigationIcon = {
             IconButton(onClick = { dispatch(BackAction) }) {

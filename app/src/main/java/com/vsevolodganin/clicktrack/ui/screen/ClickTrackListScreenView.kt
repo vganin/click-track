@@ -32,9 +32,9 @@ import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.ClickTrackListUiState
 import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_2
-import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
-import com.vsevolodganin.clicktrack.ui.widget.ClickTrackView
-import com.vsevolodganin.clicktrack.ui.widget.InsetsAwareTopAppBar
+import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
+import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
+import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 
@@ -48,7 +48,7 @@ fun ClickTrackListScreenView(
         topBar = { TopBar(dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            ClickTrackFloatingActionButton(onClick = { dispatch(ClickTrackAction.AddNew) }) {
+            FloatingActionButton(onClick = { dispatch(ClickTrackAction.AddNew) }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
@@ -74,7 +74,7 @@ private fun Content(
 
 @Composable
 private fun TopBar(dispatch: Dispatch) {
-    InsetsAwareTopAppBar(
+    TopAppBar(
         title = {
             Text(text = stringResource(id = R.string.click_track_list))
         },
@@ -120,7 +120,7 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithDatabaseI
 
 @Preview
 @Composable
-private fun Preview() {
+fun ClickTrackListPreview() {
     ClickTrackListScreenView(
         ClickTrackListUiState(
             listOf(

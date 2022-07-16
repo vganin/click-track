@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget.settings
+package com.vsevolodganin.clicktrack.ui.piece.settings
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable

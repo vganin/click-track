@@ -1,9 +1,8 @@
-package com.vsevolodganin.clicktrack.ui.widget
+package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.FloatingActionButtonDefaults
 import androidx.compose.material.FloatingActionButtonElevation
 import androidx.compose.material.MaterialTheme
@@ -15,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 
 @Composable
-fun InsetsAwareFloatingActionButton(
+fun FloatingActionButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enableInsets: Boolean = true,
@@ -26,7 +25,7 @@ fun InsetsAwareFloatingActionButton(
     elevation: FloatingActionButtonElevation = FloatingActionButtonDefaults.elevation(),
     content: @Composable () -> Unit,
 ) {
-    FloatingActionButton(
+    androidx.compose.material.FloatingActionButton(
         onClick = onClick,
         modifier = modifier.run {
             if (enableInsets) {

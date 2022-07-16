@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
@@ -43,9 +44,9 @@ import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.ui.model.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.ui.model.SoundLibraryUiState
-import com.vsevolodganin.clicktrack.ui.widget.ClickTrackFloatingActionButton
-import com.vsevolodganin.clicktrack.ui.widget.GenericTopBarWithBack
-import com.vsevolodganin.clicktrack.ui.widget.PlayStopIcon
+import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
+import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.PlayStopIcon
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 
@@ -59,7 +60,7 @@ fun SoundLibraryScreenView(
         topBar = { GenericTopBarWithBack(R.string.sound_library, dispatch) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            ClickTrackFloatingActionButton(onClick = { dispatch(SoundLibraryAction.AddNewClickSounds) }) {
+            FloatingActionButton(onClick = { dispatch(SoundLibraryAction.AddNewClickSounds) }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
@@ -186,6 +187,7 @@ private fun UserDefinedSoundsItem(
                                 )
                             },
                             modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.secondary)
                         ) {
                             Text(
                                 text = item.strongBeatValue,
@@ -214,6 +216,7 @@ private fun UserDefinedSoundsItem(
                                 )
                             },
                             modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.secondary)
                         ) {
                             Text(
                                 text = item.weakBeatValue,

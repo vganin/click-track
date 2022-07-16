@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget
+package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -95,15 +95,14 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
                         localOnAngleChange(angleDiff)
                     }
                 },
-            elevation = 4.dp,
             shape = CircleShape,
             color = Color.Transparent
         ) {
             val wheelWidth = width * WHEEL_WIDTH_MULTIPLIER
             val wheelWidthPx = with(density) { wheelWidth.toPx() }
 
-            val wheelColor = MaterialTheme.colors.primary
-            val controllerButtonColor = MaterialTheme.colors.onPrimary
+            val wheelColor = MaterialTheme.colors.secondary
+            val controllerButtonColor = MaterialTheme.colors.onSecondary
 
             Canvas(
                 modifier = Modifier

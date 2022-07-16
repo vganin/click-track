@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.widget
+package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.annotation.StringRes
 import androidx.compose.material.Icon
@@ -13,7 +13,7 @@ import com.vsevolodganin.clicktrack.redux.core.Dispatch
 
 @Composable
 fun GenericTopBarWithBack(@StringRes stringRes: Int, dispatch: Dispatch) {
-    InsetsAwareTopAppBar(
+    TopAppBar(
         title = { Text(text = stringResource(stringRes)) },
         navigationIcon = {
             IconButton(onClick = { dispatch(BackAction) }) {
