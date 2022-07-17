@@ -14,8 +14,10 @@ import com.vsevolodganin.clicktrack.sounds.model.bytesPerFrame
 import com.vsevolodganin.clicktrack.sounds.model.framesPerSecond
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
 import dagger.Reusable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -45,7 +47,9 @@ class ExportToAudioFile @Inject constructor(
                     setInteger(MediaFormat.KEY_BIT_RATE, 96 * 1024)
                 }
 
-            outputFile = File.createTempFile("click_track_export", ".m4a", context.cacheDir)
+            outputFile = withContext(Dispatchers.IO) {
+                File.createTempFile("click_track_export", ".m4a", context.cacheDir)
+            }
 
             muxer = MediaMuxer(outputFile.path, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
 
