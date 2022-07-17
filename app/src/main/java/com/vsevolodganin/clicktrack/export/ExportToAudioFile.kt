@@ -8,9 +8,8 @@ import android.media.MediaMuxer
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.player.toPlayerEvents
 import com.vsevolodganin.clicktrack.sounds.SoundBank
+import com.vsevolodganin.clicktrack.sounds.SoundSourceProvider
 import com.vsevolodganin.clicktrack.sounds.UserSelectedSounds
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
-import com.vsevolodganin.clicktrack.sounds.model.Pcm16Data
 import com.vsevolodganin.clicktrack.sounds.model.bytesPerFrame
 import com.vsevolodganin.clicktrack.sounds.model.framesPerSecond
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
@@ -29,12 +28,10 @@ class ExportToAudioFile @Inject constructor(
     private val userSelectedSounds: UserSelectedSounds,
 ) {
     suspend fun export(clickTrack: ClickTrack, onProgress: suspend (Float) -> Unit): File? {
-        val selectedSounds = userSelectedSounds.get().value ?: return null
-        val strongSound = selectedSounds.strongBeat?.let(soundBank::get) ?: return null
-        val weakSound = selectedSounds.weakBeat?.let(soundBank::get) ?: return null
-        val alternativeStrongSound = selectedSounds.strongBeatAlternative?.let(soundBank::get) ?: return null
+        val soundSourceProvider = SoundSourceProvider(userSelectedSounds.get())
 
         // TODO: Should resample sounds to user desired sample rate and channel count
+        val strongSound = userSelectedSounds.get().value?.strongBeat?.let(soundBank::get) ?: return null
         val targetSampleRate = strongSound.sampleRate
         val targetChannelCount = strongSound.channelCount
 
@@ -58,7 +55,7 @@ class ExportToAudioFile @Inject constructor(
                 start()
             }
 
-            val trackByteSequence = clickTrack.render(strongSound, weakSound, alternativeStrongSound)
+            val trackByteSequence = clickTrack.render(soundSourceProvider)
             val trackByteIterator = trackByteSequence.iterator()
             val bytesToWrite = trackByteSequence.count()
             val bufferInfo = MediaCodec.BufferInfo()
@@ -141,22 +138,14 @@ class ExportToAudioFile @Inject constructor(
         }
     }
 
-    private fun ClickTrack.render(strongSound: Pcm16Data, weakSound: Pcm16Data, alternativeStrongSound: Pcm16Data): Sequence<Byte> {
+    private fun ClickTrack.render(soundSourceProvider: SoundSourceProvider): Sequence<Byte> {
         val playerEvents = toPlayerEvents()
         return sequence {
-            var alternateStrongBeat = false
             for (event in playerEvents) {
                 // TODO: Should resample and mix sounds
                 val soundData = event.soundTypes.firstOrNull()
-                    ?.let { soundType ->
-                        when (soundType) {
-                            ClickSoundType.STRONG -> when (alternateStrongBeat) {
-                                true -> alternativeStrongSound
-                                false -> strongSound
-                            }.also { alternateStrongBeat = !alternateStrongBeat }
-                            ClickSoundType.WEAK -> weakSound
-                        }
-                    }
+                    ?.let(soundSourceProvider::provide)
+                    ?.let(soundBank::get)
                     ?: continue
 
                 val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * soundData.framesPerSecond).toInt()
