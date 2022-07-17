@@ -19,14 +19,14 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class PlayerEvent(
     val duration: Duration,
-    val sounds: List<ClickSoundType>
+    val soundTypes: List<ClickSoundType>
 ) {
     fun copy(
         duration: Duration = this.duration,
-        sounds: List<ClickSoundType> = this.sounds
+        soundTypes: List<ClickSoundType> = this.soundTypes
     ) = PlayerEvent(
         duration = duration,
-        sounds = sounds
+        soundTypes = soundTypes
     )
 }
 
@@ -48,7 +48,7 @@ fun Cue.toPlayerEvents(): Sequence<PlayerEvent> {
         }
 
         for (column in polyrhythm.columns) {
-            val sound = when {
+            val soundType = when {
                 column.indices.contains(0) -> ClickSoundType.STRONG
                 else -> ClickSoundType.WEAK
             }
@@ -56,7 +56,7 @@ fun Cue.toPlayerEvents(): Sequence<PlayerEvent> {
             yield(
                 singleSoundEvent(
                     duration = bpmInterval * column.untilNext,
-                    sound = sound,
+                    soundType = soundType,
                 )
             )
         }
@@ -80,7 +80,7 @@ fun TwoLayerPolyrhythm.toPlayerEvents(): Sequence<PlayerEvent> {
         }
 
         for (column in polyrhythm.columns) {
-            val sounds = column.indices.map { index ->
+            val soundTypes = column.indices.map { index ->
                 when (index) {
                     0 -> ClickSoundType.STRONG
                     else -> ClickSoundType.WEAK
@@ -90,7 +90,7 @@ fun TwoLayerPolyrhythm.toPlayerEvents(): Sequence<PlayerEvent> {
             yield(
                 multipleSoundsEvent(
                     duration = bpmInterval * column.untilNext,
-                    sounds = sounds,
+                    soundTypes = soundTypes,
                 )
             )
         }
@@ -120,8 +120,8 @@ private fun Sequence<PlayerEvent>.withDuration(duration: Duration): Sequence<Pla
     }
 }
 
-private fun singleSoundEvent(duration: Duration, sound: ClickSoundType) = PlayerEvent(duration, listOf(sound))
-private fun multipleSoundsEvent(duration: Duration, sounds: List<ClickSoundType>) = PlayerEvent(duration, sounds)
+private fun singleSoundEvent(duration: Duration, soundType: ClickSoundType) = PlayerEvent(duration, listOf(soundType))
+private fun multipleSoundsEvent(duration: Duration, soundTypes: List<ClickSoundType>) = PlayerEvent(duration, soundTypes)
 private fun delayEvent(duration: Duration) = PlayerEvent(duration, emptyList())
 
 private object Const {

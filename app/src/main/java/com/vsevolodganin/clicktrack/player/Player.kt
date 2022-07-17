@@ -11,6 +11,7 @@ import com.vsevolodganin.clicktrack.model.PlayableProgressTimeSource
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.sounds.UserSelectedSounds
+import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
 import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
@@ -104,7 +105,7 @@ class PlayerImpl @Inject constructor(
                     )
                 },
                 reportLatency = latencyState::tryEmit,
-                soundsSelector = soundsSelector(soundsId)
+                getSoundSource = soundSourceFactory(soundsId)
             )
         }
     }
@@ -141,7 +142,7 @@ class PlayerImpl @Inject constructor(
                     )
                 },
                 reportLatency = latencyState::tryEmit,
-                soundsSelector = soundsSelector(soundsId)
+                getSoundSource = soundSourceFactory(soundsId)
             )
         }
     }
@@ -208,7 +209,7 @@ class PlayerImpl @Inject constructor(
         startAt: Duration,
         reportProgress: (Duration) -> Unit,
         reportLatency: (Duration) -> Unit,
-        soundsSelector: () -> ClickSounds?,
+        getSoundSource: (ClickSoundType) -> ClickSoundSource?,
     ) {
         @Suppress("NAME_SHADOWING") // Because that looks better
         val startAt = if (startAt >= durationInTime) {
@@ -224,7 +225,7 @@ class PlayerImpl @Inject constructor(
                         pausedState.filter { false }.take(1).collect()
                     }
                 },
-                selectedSounds = soundsSelector,
+                getSoundSource = getSoundSource,
                 reportLatency = reportLatency,
                 soundPool = soundPool,
             )
@@ -248,7 +249,7 @@ class PlayerImpl @Inject constructor(
         startAt: Duration,
         reportProgress: (Duration) -> Unit,
         reportLatency: (Duration) -> Unit,
-        soundsSelector: () -> ClickSounds?,
+        getSoundSource: (ClickSoundType) -> ClickSoundSource?,
     ) {
         @Suppress("NAME_SHADOWING") // Because that looks better
         val startAt = if (startAt >= durationInTime) {
@@ -264,7 +265,7 @@ class PlayerImpl @Inject constructor(
                         pausedState.filter { false }.take(1).collect()
                     }
                 },
-                selectedSounds = soundsSelector,
+                getSoundSource = getSoundSource,
                 reportLatency = reportLatency,
                 soundPool = soundPool,
             )
@@ -284,12 +285,22 @@ class PlayerImpl @Inject constructor(
         PlayerSequencer.play(schedule)
     }
 
-    private suspend fun CoroutineScope.soundsSelector(soundsId: ClickSoundsId?): () -> ClickSounds? {
-        return (if (soundsId != null) soundsById(soundsId) else userSelectedSounds.get())
-            .onEach { sounds ->
-                sounds?.asIterable?.forEach(soundPool::warmup)
+    private suspend fun CoroutineScope.soundSourceFactory(soundsId: ClickSoundsId?): (ClickSoundType) -> ClickSoundSource? {
+        val soundsFlow = if (soundsId != null) soundsById(soundsId) else userSelectedSounds.get()
+        val soundsState = soundsFlow
+            .onEach { sounds -> sounds?.asIterable?.forEach(soundPool::warmup) }
+            .stateIn(scope = this)
+        var alternateStrongBeat = false
+        return lambda@{ soundType: ClickSoundType ->
+            val sounds = soundsState.value ?: return@lambda null
+            when (soundType) {
+                ClickSoundType.STRONG -> when (alternateStrongBeat) {
+                    true -> sounds.strongBeatAlternative
+                    false -> sounds.strongBeat
+                }.also { alternateStrongBeat = !alternateStrongBeat }
+                ClickSoundType.WEAK -> sounds.weakBeat
             }
-            .stateIn(scope = this)::value
+        }
     }
 
     private fun soundsById(soundsId: ClickSoundsId): Flow<ClickSounds?> {
@@ -328,13 +339,13 @@ private class PlayerAction(
 
 private fun Sequence<PlayerEvent>.toActions(
     waitResume: suspend () -> Unit,
-    selectedSounds: () -> ClickSounds?,
+    getSoundSource: (ClickSoundType) -> ClickSoundSource?,
     reportLatency: (Duration) -> Unit,
     soundPool: PlayerSoundPool,
 ) = map {
     it.toAction(
         waitResume = waitResume,
-        selectedSounds = selectedSounds,
+        getSoundSource = getSoundSource,
         reportLatency = reportLatency,
         soundPool = soundPool,
     )
@@ -342,26 +353,17 @@ private fun Sequence<PlayerEvent>.toActions(
 
 private fun PlayerEvent.toAction(
     waitResume: suspend () -> Unit,
-    selectedSounds: () -> ClickSounds?,
+    getSoundSource: (ClickSoundType) -> ClickSoundSource?,
     reportLatency: (Duration) -> Unit,
     soundPool: PlayerSoundPool,
 ) = PlayerAction(
     interval = duration,
     action = {
         waitResume()
-
-        val soundsSources = selectedSounds()
-        if (soundsSources != null) {
-            this.sounds.forEach { sound ->
-                val soundSource = when (sound) {
-                    ClickSoundType.STRONG -> soundsSources.strongBeat
-                    ClickSoundType.WEAK -> soundsSources.weakBeat
-                }
-
-                soundSource?.let(soundPool::play)
-
-                reportLatency(soundSource?.let(soundPool::latency) ?: Duration.ZERO)
-            }
+        soundTypes.forEach { soundType ->
+            val soundSource = getSoundSource(soundType)
+            soundSource?.let(soundPool::play)
+            reportLatency(soundSource?.let(soundPool::latency) ?: Duration.ZERO)
         }
     }
 )

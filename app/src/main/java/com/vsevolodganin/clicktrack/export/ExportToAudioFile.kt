@@ -32,6 +32,7 @@ class ExportToAudioFile @Inject constructor(
         val selectedSounds = userSelectedSounds.get().value ?: return null
         val strongSound = selectedSounds.strongBeat?.let(soundBank::get) ?: return null
         val weakSound = selectedSounds.weakBeat?.let(soundBank::get) ?: return null
+        val alternativeStrongSound = selectedSounds.strongBeatAlternative?.let(soundBank::get) ?: return null
 
         // TODO: Should resample sounds to user desired sample rate and channel count
         val targetSampleRate = strongSound.sampleRate
@@ -57,7 +58,7 @@ class ExportToAudioFile @Inject constructor(
                 start()
             }
 
-            val trackByteSequence = clickTrack.render(strongSound, weakSound)
+            val trackByteSequence = clickTrack.render(strongSound, weakSound, alternativeStrongSound)
             val trackByteIterator = trackByteSequence.iterator()
             val bytesToWrite = trackByteSequence.count()
             val bufferInfo = MediaCodec.BufferInfo()
@@ -140,26 +141,30 @@ class ExportToAudioFile @Inject constructor(
         }
     }
 
-    private fun ClickTrack.render(strongSound: Pcm16Data, weakSound: Pcm16Data): Sequence<Byte> {
+    private fun ClickTrack.render(strongSound: Pcm16Data, weakSound: Pcm16Data, alternativeStrongSound: Pcm16Data): Sequence<Byte> {
         val playerEvents = toPlayerEvents()
         return sequence {
+            var alternateStrongBeat = false
             for (event in playerEvents) {
                 // TODO: Should resample and mix sounds
-                val sound = event.sounds.firstOrNull()
-                    ?.let {
-                        when (it) {
-                            ClickSoundType.STRONG -> strongSound
+                val soundData = event.soundTypes.firstOrNull()
+                    ?.let { soundType ->
+                        when (soundType) {
+                            ClickSoundType.STRONG -> when (alternateStrongBeat) {
+                                true -> alternativeStrongSound
+                                false -> strongSound
+                            }.also { alternateStrongBeat = !alternateStrongBeat }
                             ClickSoundType.WEAK -> weakSound
                         }
                     }
                     ?: continue
 
-                val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * sound.framesPerSecond).toInt()
-                val framesOfSound = (sound.data.size / sound.bytesPerFrame).coerceAtMost(maxFramesCount)
+                val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * soundData.framesPerSecond).toInt()
+                val framesOfSound = (soundData.data.size / soundData.bytesPerFrame).coerceAtMost(maxFramesCount)
                 val framesOfSilence = maxFramesCount - framesOfSound
 
-                yieldAll(sound.data.asSequence().take(framesOfSound * sound.bytesPerFrame))
-                yieldAll(sequence { repeat(framesOfSilence * sound.bytesPerFrame) { yield(0) } })
+                yieldAll(soundData.data.asSequence().take(framesOfSound * soundData.bytesPerFrame))
+                yieldAll(sequence { repeat(framesOfSilence * soundData.bytesPerFrame) { yield(0) } })
             }
         }
     }

@@ -9,9 +9,10 @@ import kotlinx.serialization.Serializable
 data class ClickSounds(
     val strongBeat: ClickSoundSource?,
     val weakBeat: ClickSoundSource?,
+    val strongBeatAlternative: ClickSoundSource? = null,
 ) : Parcelable {
 
-    val asIterable: Iterable<ClickSoundSource> get() = listOfNotNull(strongBeat, weakBeat)
+    val asIterable: Iterable<ClickSoundSource> get() = listOfNotNull(strongBeat, weakBeat, strongBeatAlternative)
 
     fun beatByType(type: ClickSoundType) = when (type) {
         ClickSoundType.STRONG -> strongBeat
