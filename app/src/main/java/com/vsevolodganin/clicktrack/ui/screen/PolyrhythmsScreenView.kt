@@ -26,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.PlayProgress
@@ -35,6 +34,7 @@ import com.vsevolodganin.clicktrack.model.bpm
 import com.vsevolodganin.clicktrack.redux.action.PlayerAction
 import com.vsevolodganin.clicktrack.redux.action.PolyrhythmsAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.PolyrhythmsUiState
 import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
@@ -200,9 +200,9 @@ private fun Duration.toAngle(totalDuration: Duration): Float {
     }
 }
 
-@Preview
+@ScreenPreviews
 @Composable
-private fun Preview() {
+private fun Preview() = ClickTrackTheme {
     PolyrhythmsScreenView(
         state = PolyrhythmsUiState(
             twoLayerPolyrhythm = TwoLayerPolyrhythm(

@@ -11,7 +11,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -21,6 +20,7 @@ import com.vsevolodganin.clicktrack.redux.TrainingMode
 import com.vsevolodganin.clicktrack.redux.TrainingState
 import com.vsevolodganin.clicktrack.redux.action.TrainingAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.TrainingUiState
 import com.vsevolodganin.clicktrack.ui.piece.BpmInputField
 import com.vsevolodganin.clicktrack.ui.piece.CueDurationView
@@ -28,7 +28,6 @@ import com.vsevolodganin.clicktrack.ui.piece.DropdownSelector
 import com.vsevolodganin.clicktrack.ui.piece.DurationPicker
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
-import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun TrainingScreenView(
@@ -227,9 +226,12 @@ private fun TrainingState.EndingKind.stringResource(mode: TrainingMode): String 
     )
 }
 
-@Preview
+private val LEFT_COLUMN_WIDTH = 160.dp
+private val RIGHT_COLUMN_WIDTH = 140.dp
+
+@ScreenPreviews
 @Composable
-private fun PreviewWithTempoEnding() {
+private fun Preview() = ClickTrackTheme {
     TrainingScreenView(
         state = TrainingUiState(
             startingTempo = 120,
@@ -237,25 +239,7 @@ private fun PreviewWithTempoEnding() {
             segmentLength = CueDuration.Measures(4),
             tempoChange = 5,
             ending = TrainingState.Ending.ByTempo(160),
-            errors = setOf(TrainingState.Error.STARTING_TEMPO),
-        )
-    )
-}
-
-private val LEFT_COLUMN_WIDTH = 160.dp
-private val RIGHT_COLUMN_WIDTH = 140.dp
-
-@Preview
-@Composable
-private fun PreviewWithTimeEnding() {
-    TrainingScreenView(
-        state = TrainingUiState(
-            startingTempo = 120,
-            mode = TrainingMode.INCREASE_TEMPO,
-            segmentLength = CueDuration.Measures(4),
-            tempoChange = 5,
-            ending = TrainingState.Ending.ByTime(5.minutes),
-            errors = setOf(TrainingState.Error.STARTING_TEMPO),
+            errors = emptySet(),
         )
     )
 }

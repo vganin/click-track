@@ -32,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -50,6 +49,7 @@ import com.vsevolodganin.clicktrack.redux.action.MetronomeAction.OpenOptions
 import com.vsevolodganin.clicktrack.redux.action.MetronomeAction.SetPattern
 import com.vsevolodganin.clicktrack.redux.action.PlayerAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.MetronomeUiState
 import com.vsevolodganin.clicktrack.ui.piece.BpmWheel
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
@@ -245,9 +245,9 @@ private fun backdropState(areOptionsExpanded: Boolean, dispatch: Dispatch): Back
     }
 }
 
-@Preview
+@ScreenPreviews
 @Composable
-private fun Preview() {
+private fun Preview() = ClickTrackTheme {
     MetronomeScreenView(
         MetronomeUiState(
             bpm = 90.bpm,

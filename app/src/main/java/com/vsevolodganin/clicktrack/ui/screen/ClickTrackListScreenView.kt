@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
@@ -29,6 +28,7 @@ import com.vsevolodganin.clicktrack.redux.action.BackstackAction
 import com.vsevolodganin.clicktrack.redux.action.ClickTrackAction
 import com.vsevolodganin.clicktrack.redux.action.DrawerAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.ClickTrackListUiState
 import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_2
@@ -118,9 +118,9 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithDatabaseI
     }
 }
 
-@Preview
+@ScreenPreviews
 @Composable
-fun ClickTrackListPreview() {
+fun ClickTrackListPreview() = ClickTrackTheme {
     ClickTrackListScreenView(
         ClickTrackListUiState(
             listOf(

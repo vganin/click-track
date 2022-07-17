@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
@@ -49,6 +48,7 @@ import com.vsevolodganin.clicktrack.redux.action.ExportAction
 import com.vsevolodganin.clicktrack.redux.action.PlayerAction
 import com.vsevolodganin.clicktrack.redux.action.SettingsAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.model.PlayClickTrackUiState
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
@@ -243,9 +243,9 @@ private fun BottomBar(state: PlayClickTrackUiState, dispatch: Dispatch) {
     }
 }
 
-@Preview
+@ScreenPreviews
 @Composable
-private fun Preview() {
+private fun Preview() = ClickTrackTheme {
     PlayClickTrackScreenView(
         PlayClickTrackUiState(
             clickTrack = PREVIEW_CLICK_TRACK_1,

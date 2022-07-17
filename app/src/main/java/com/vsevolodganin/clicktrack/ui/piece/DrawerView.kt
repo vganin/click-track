@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui.screen
+package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,6 +39,7 @@ import com.vsevolodganin.clicktrack.redux.action.ComputingNavigationAction
 import com.vsevolodganin.clicktrack.redux.action.DrawerAction
 import com.vsevolodganin.clicktrack.redux.core.Action
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.DrawerUiState
 
 @Composable
@@ -154,7 +155,7 @@ private fun DrawerButton(
 
 @Preview
 @Composable
-private fun Preview() {
+private fun Preview() = ClickTrackTheme {
     Column {
         DrawerView(
             state = DrawerUiState(

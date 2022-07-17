@@ -25,9 +25,9 @@ import com.vsevolodganin.clicktrack.redux.action.InAppReviewAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.model.AppUiState
 import com.vsevolodganin.clicktrack.ui.model.UiScreen
+import com.vsevolodganin.clicktrack.ui.piece.DrawerView
 import com.vsevolodganin.clicktrack.ui.screen.AboutScreenView
 import com.vsevolodganin.clicktrack.ui.screen.ClickTrackListScreenView
-import com.vsevolodganin.clicktrack.ui.screen.DrawerView
 import com.vsevolodganin.clicktrack.ui.screen.EditClickTrackScreenView
 import com.vsevolodganin.clicktrack.ui.screen.MetronomeScreenView
 import com.vsevolodganin.clicktrack.ui.screen.PlayClickTrackScreenView

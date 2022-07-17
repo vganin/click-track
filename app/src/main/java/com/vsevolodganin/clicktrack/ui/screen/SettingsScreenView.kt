@@ -7,12 +7,12 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.redux.action.SettingsAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.theme.Theme
+import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.SettingsUiState
 import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.settings.BooleanChooser
@@ -77,9 +77,9 @@ private fun Theme.description(): String? = when (this) {
     Theme.AUTO -> R.string.settings_theme_auto_description
 }?.let { stringResource(it) }
 
-@Preview
+@ScreenPreviews
 @Composable
-private fun Preview() {
+private fun Preview() = ClickTrackTheme {
     SettingsScreenView(
         SettingsUiState(
             theme = Theme.SYSTEM,

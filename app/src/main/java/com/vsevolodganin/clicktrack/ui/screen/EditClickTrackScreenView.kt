@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
@@ -43,6 +42,7 @@ import com.vsevolodganin.clicktrack.redux.EditCueState
 import com.vsevolodganin.clicktrack.redux.action.BackstackAction
 import com.vsevolodganin.clicktrack.redux.action.EditClickTrackAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.EditClickTrackUiState
 import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
@@ -200,9 +200,9 @@ private fun CueListItem(
     }
 }
 
-@Preview
+@ScreenPreviews
 @Composable
-private fun Preview() {
+private fun Preview() = ClickTrackTheme {
     EditClickTrackScreenView(
         state = EditClickTrackUiState(
             id = ClickTrackId.Database(value = 0),
