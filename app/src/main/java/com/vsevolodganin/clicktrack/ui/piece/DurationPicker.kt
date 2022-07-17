@@ -35,6 +35,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.key.utf16CodePoint
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.BackspaceCommand
@@ -150,6 +151,7 @@ fun DurationPicker(
 
     val inputService = LocalTextInputService.current!!
     val textInputSession: MutableState<TextInputSession?> = remember { mutableStateOf(null) }
+    val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val interactionSource = remember { MutableInteractionSource() }
@@ -174,7 +176,7 @@ fun DurationPicker(
             },
             onImeActionPerformed = { action ->
                 if (action == ImeAction.Done) {
-                    focusRequester.freeFocus()
+                    focusManager.clearFocus()
                 }
             }
         )
