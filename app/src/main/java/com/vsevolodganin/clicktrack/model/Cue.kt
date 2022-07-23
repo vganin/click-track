@@ -15,8 +15,7 @@ data class Cue(
     val pattern: NotePattern = NotePattern.STRAIGHT_X1,
 ) : Parcelable {
 
-    val durationAsTime: Duration
-        get() {
-            return duration.asTimeGiven(bpm, timeSignature)
-        }
+    fun durationAsTimeWithBpmOffset(offset: BeatsPerMinuteDiff): Duration {
+        return duration.asTimeGiven(bpm.applyDiff(offset), timeSignature)
+    }
 }

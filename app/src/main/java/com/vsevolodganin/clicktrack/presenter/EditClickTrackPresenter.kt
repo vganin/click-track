@@ -19,6 +19,7 @@ class EditClickTrackPresenter @Inject constructor() {
                     id = state.id,
                     name = state.name,
                     loop = state.loop,
+                    tempoDiff = state.tempoDiff,
                     cues = state.cues.map { it.toUiState() },
                     errors = state.errors,
                     showForwardButton = state.isInitialEdit,

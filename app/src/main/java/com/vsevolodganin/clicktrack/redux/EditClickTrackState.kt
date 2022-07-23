@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.redux
 
 import android.os.Parcelable
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.model.Cue
@@ -19,6 +20,7 @@ data class EditClickTrackState(
     val id: ClickTrackId.Database,
     val name: String,
     val loop: Boolean,
+    val tempoDiff: BeatsPerMinuteDiff,
     val cues: List<EditCueState>,
     val errors: Set<Error>,
     val isInitialEdit: Boolean,
@@ -56,6 +58,7 @@ fun ClickTrackWithDatabaseId.toEditState(isInitialEdit: Boolean) = EditClickTrac
     id = id,
     name = value.name,
     loop = value.loop,
+    tempoDiff = value.tempoDiff,
     cues = value.cues.map { it.toEditState() },
     errors = emptySet(),
     isInitialEdit = isInitialEdit

@@ -32,21 +32,10 @@ data class BeatsPerMinute(
     }
 }
 
-@JvmInline
-value class BeatsPerMinuteDiff(
-    val value: Int,
-)
-
-fun BeatsPerMinute.applyDiff(diff: BeatsPerMinuteDiff): BeatsPerMinute =
-    BeatsPerMinute((value + diff.value).coerceAtLeast(MIN_BPM_VALUE))
-
 val Int.bpm: BeatsPerMinute get() = BeatsPerMinute(this)
 
 fun IntRange.toBpmRange(): ClosedRange<BeatsPerMinute> = start.bpm..endInclusive.bpm
 
-val BeatsPerMinute.interval: Duration
-    get() {
-        return 1.minutes / value
-    }
+val BeatsPerMinute.interval: Duration get() = 1.minutes / value
 
-private const val MIN_BPM_VALUE = 1
+const val MIN_BPM_VALUE = 1

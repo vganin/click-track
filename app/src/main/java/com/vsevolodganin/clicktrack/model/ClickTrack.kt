@@ -12,10 +12,13 @@ data class ClickTrack(
     val name: String,
     val cues: List<Cue>,
     val loop: Boolean,
+    val tempoDiff: BeatsPerMinuteDiff = BeatsPerMinuteDiff.ZERO,
 ) : Parcelable {
 
     @IgnoredOnParcel
     val durationInTime: Duration by lazy {
-        cues.map(Cue::durationAsTime).reduceOrNull { acc, duration -> acc + duration } ?: Duration.ZERO
+        cues.map { it.durationAsTimeWithBpmOffset(tempoDiff) }
+            .reduceOrNull { acc, duration -> acc + duration }
+            ?: Duration.ZERO
     }
 }

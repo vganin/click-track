@@ -17,6 +17,9 @@ sealed interface EditClickTrackAction : Action {
         val loop: Boolean,
     ) : EditClickTrackAction
 
+    object IncrementTempoDiff : EditClickTrackAction
+    object DecrementTempoDiff : EditClickTrackAction
+
     object AddNewCue : EditClickTrackAction
 
     class MoveCue(

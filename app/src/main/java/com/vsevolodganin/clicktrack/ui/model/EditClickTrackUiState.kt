@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.model
 
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
@@ -12,6 +13,7 @@ data class EditClickTrackUiState(
     val id: ClickTrackId.Database,
     val name: String,
     val loop: Boolean,
+    val tempoDiff: BeatsPerMinuteDiff,
     val cues: List<EditCueUiState>,
     val errors: Set<EditClickTrackState.Error>,
     val showForwardButton: Boolean,

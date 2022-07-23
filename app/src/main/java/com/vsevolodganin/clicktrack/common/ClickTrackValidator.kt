@@ -33,6 +33,7 @@ class ClickTrackValidator @Inject constructor(
             validClickTrack = ClickTrack(
                 name = name,
                 loop = editClickTrackState.loop,
+                tempoDiff = editClickTrackState.tempoDiff,
                 cues = cueValidationResults.map(CueValidationResult::validCue),
             ),
             errors = errors,

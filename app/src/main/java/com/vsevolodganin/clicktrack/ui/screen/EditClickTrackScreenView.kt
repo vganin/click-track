@@ -1,20 +1,30 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement.SpaceBetween
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
+import androidx.compose.material.ContentAlpha
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
-import androidx.compose.material.LocalMinimumTouchTargetEnforcement
+import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -22,9 +32,15 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -33,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
@@ -47,6 +64,7 @@ import com.vsevolodganin.clicktrack.ui.model.EditClickTrackUiState
 import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
 import com.vsevolodganin.clicktrack.ui.piece.CueView
+import com.vsevolodganin.clicktrack.ui.piece.ExpandableChevron
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
@@ -54,6 +72,7 @@ import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
@@ -131,27 +150,12 @@ private fun Content(
         }
 
         item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(contentPadding)
-            ) {
-                Row(modifier = Modifier.padding(8.dp)) {
-                    Text(
-                        text = stringResource(R.string.repeat),
-                        modifier = Modifier.align(CenterVertically)
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
-                        Checkbox(
-                            checked = state.loop,
-                            onCheckedChange = { dispatch(EditClickTrackAction.EditLoop(it)) }
-                        )
-                    }
-                }
-            }
+            OptionsItem(
+                loop = state.loop,
+                tempoDiff = state.tempoDiff,
+                contentPadding = contentPadding,
+                dispatch = dispatch,
+            )
         }
 
         itemsIndexed(items = state.cues, key = { _, cue -> cue.id }) { index, cue ->
@@ -166,6 +170,112 @@ private fun Content(
 
         padWithFabSpace()
     }
+}
+
+@Composable
+private fun OptionsItem(
+    loop: Boolean,
+    tempoDiff: BeatsPerMinuteDiff,
+    contentPadding: Dp,
+    dispatch: Dispatch
+) {
+    var optionsExpanded by rememberSaveable { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(contentPadding)
+    ) {
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = CenterVertically,
+            ) {
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = stringResource(R.string.click_track_options),
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                IconButton(
+                    onClick = { optionsExpanded = !optionsExpanded },
+                ) {
+                    ExpandableChevron(isExpanded = optionsExpanded)
+                }
+            }
+
+            AnimatedVisibility(
+                visible = optionsExpanded,
+                enter = fadeIn() + expandVertically(expandFrom = Bottom),
+                exit = fadeOut() + shrinkVertically(shrinkTowards = Bottom),
+            ) {
+                Column {
+                    LoopItem(loop, dispatch)
+                    TempoDiffItem(tempoDiff, dispatch)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoopItem(
+    loop: Boolean,
+    dispatch: Dispatch
+) {
+    Row {
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Text(
+            text = stringResource(R.string.repeat),
+            modifier = Modifier.align(CenterVertically)
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Checkbox(
+            checked = loop,
+            onCheckedChange = { dispatch(EditClickTrackAction.EditLoop(it)) }
+        )
+    }
+}
+
+@Composable
+private fun TempoDiffItem(
+    tempoDiff: BeatsPerMinuteDiff,
+    dispatch: Dispatch,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(), horizontalArrangement = SpaceBetween, verticalAlignment = CenterVertically
+    ) {
+        IconButton(onClick = { dispatch(EditClickTrackAction.DecrementTempoDiff) }) {
+            Icon(imageVector = Icons.Default.Remove, contentDescription = null)
+        }
+
+        Text(
+            text = tempoDiffText(tempoDiff),
+            modifier = Modifier.align(CenterVertically),
+            color = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
+        )
+
+        IconButton(onClick = { dispatch(EditClickTrackAction.IncrementTempoDiff) }) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = null)
+        }
+    }
+}
+
+@Composable
+private fun tempoDiffText(tempoDiff: BeatsPerMinuteDiff): String {
+    val sign = remember(tempoDiff) {
+        when {
+            tempoDiff.value < 0 -> "-"
+            else -> "+"
+        }
+    }
+    val number = remember(tempoDiff) { tempoDiff.value.absoluteValue }
+    return stringResource(id = R.string.click_track_tempo_diff, sign, number)
 }
 
 @Composable
@@ -208,6 +318,7 @@ private fun Preview() = ClickTrackTheme {
             id = ClickTrackId.Database(value = 0),
             name = "Good click track",
             loop = true,
+            tempoDiff = BeatsPerMinuteDiff(-3),
             cues = listOf(
                 EditCueUiState(
                     name = "",

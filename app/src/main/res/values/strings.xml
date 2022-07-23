@@ -4,6 +4,8 @@
     <string name="edit_click_track">Edit click track…</string>
     <string name="delete_click_track_confirmation">Do you really want to delete this click track?</string>
     <string name="click_track_name_hint">Name your click track…</string>
+    <string name="click_track_options">Options</string>
+    <string name="click_track_tempo_diff">%1$s%2$d bpm</string>
     <string name="cue_duration_beats">Beats</string>
     <string name="cue_duration_measures">Measures</string>
     <string name="cue_duration_time">Time</string>

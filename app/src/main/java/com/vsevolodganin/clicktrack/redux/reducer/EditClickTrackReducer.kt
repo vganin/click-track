@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.redux.reducer
 
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.DefaultCue
 import com.vsevolodganin.clicktrack.redux.EditClickTrackState
@@ -22,6 +23,8 @@ private fun EditClickTrackState.reduce(action: Action): EditClickTrackState {
     return when (action) {
         is EditClickTrackAction.EditName -> copy(name = action.name)
         is EditClickTrackAction.EditLoop -> copy(loop = action.loop)
+        is EditClickTrackAction.IncrementTempoDiff -> copy(tempoDiff = BeatsPerMinuteDiff(tempoDiff.value + 1))
+        is EditClickTrackAction.DecrementTempoDiff -> copy(tempoDiff = BeatsPerMinuteDiff(tempoDiff.value - 1))
         is EditClickTrackAction.AddNewCue -> copy(cues = cues + DefaultCue.toEditState())
         is EditClickTrackAction.MoveCue -> copy(cues = cues.move(action.fromIndex, action.toIndex))
         is EditClickTrackAction.RemoveCue -> copy(cues = cues.remove(action.index))
