@@ -21,14 +21,14 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class PlayerEvent(
     val duration: Duration,
-    val soundTypes: List<ClickSoundType>
+    val soundType: ClickSoundType?
 ) {
     fun copy(
         duration: Duration = this.duration,
-        soundTypes: List<ClickSoundType> = this.soundTypes
+        soundType: ClickSoundType? = this.soundType
     ) = PlayerEvent(
         duration = duration,
-        soundTypes = soundTypes
+        soundType = soundType
     )
 }
 
@@ -56,7 +56,7 @@ fun Cue.toPlayerEvents(tempoOffset: BeatsPerMinuteDiff): Sequence<PlayerEvent> {
             }
 
             yield(
-                singleSoundEvent(
+                soundEvent(
                     duration = bpmInterval * column.untilNext,
                     soundType = soundType,
                 )
@@ -82,17 +82,15 @@ fun TwoLayerPolyrhythm.toPlayerEvents(): Sequence<PlayerEvent> {
         }
 
         for (column in polyrhythm.columns) {
-            val soundTypes = column.indices.map { index ->
-                when (index) {
-                    0 -> ClickSoundType.STRONG
-                    else -> ClickSoundType.WEAK
-                }
+            val soundType = when {
+                column.indices.contains(0) -> ClickSoundType.STRONG
+                else -> ClickSoundType.WEAK
             }
 
             yield(
-                multipleSoundsEvent(
+                soundEvent(
                     duration = bpmInterval * column.untilNext,
-                    soundTypes = soundTypes,
+                    soundType = soundType,
                 )
             )
         }
@@ -122,9 +120,8 @@ private fun Sequence<PlayerEvent>.withDuration(duration: Duration): Sequence<Pla
     }
 }
 
-private fun singleSoundEvent(duration: Duration, soundType: ClickSoundType) = PlayerEvent(duration, listOf(soundType))
-private fun multipleSoundsEvent(duration: Duration, soundTypes: List<ClickSoundType>) = PlayerEvent(duration, soundTypes)
-private fun delayEvent(duration: Duration) = PlayerEvent(duration, emptyList())
+private fun soundEvent(duration: Duration, soundType: ClickSoundType) = PlayerEvent(duration, soundType)
+private fun delayEvent(duration: Duration) = PlayerEvent(duration, null)
 
 private object Const {
     val CLICK_MIN_DELTA = 1.milliseconds

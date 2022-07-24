@@ -349,7 +349,7 @@ private fun PlayerEvent.toAction(
     interval = duration,
     action = {
         waitResume()
-        soundTypes.forEach { soundType ->
+        if (soundType != null) {
             val soundSource = soundSourceProvider.provide(soundType)
             soundSource?.let(soundPool::play)
             reportLatency(soundSource?.let(soundPool::latency) ?: Duration.ZERO)

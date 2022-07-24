@@ -146,8 +146,8 @@ class ExportToAudioFile @Inject constructor(
         val playerEvents = toPlayerEvents()
         return sequence {
             for (event in playerEvents) {
-                // TODO: Should resample and mix sounds
-                val soundData = event.soundTypes.firstOrNull()
+                // TODO: Should resample?
+                val soundData = event.soundType
                     ?.let(soundSourceProvider::provide)
                     ?.let(soundBank::get)
                     ?: continue
