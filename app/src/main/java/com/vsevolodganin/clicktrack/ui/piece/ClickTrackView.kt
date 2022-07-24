@@ -25,6 +25,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -52,6 +53,7 @@ import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableRect
 import com.vsevolodganin.clicktrack.utils.compose.KeepScreenOn
 import com.vsevolodganin.clicktrack.utils.compose.detectTransformGesturesWithEndCallbacks
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
@@ -454,11 +456,12 @@ private fun PlayTrackingModeImpl(
 ) {
     if (playTrackingMode && !isProgressCaptured && !isGestureInProcess && progressLinePosition != null) {
         val trackingModePadding = with(LocalDensity.current) { TRACKING_MODE_PADDING.toPx() }
-        LaunchedEffect(Any()) {
-            val bounds = viewportState.bounds
-            val newWidth = bounds.width / DETAILED_SCALE
-            val newLeft = progressLinePosition.value - trackingModePadding
-            val newRight = newLeft + newWidth
+        val coroutineScope = rememberCoroutineScope()
+        val bounds = viewportState.bounds
+        val newWidth = bounds.width / DETAILED_SCALE
+        val newLeft = progressLinePosition.value - trackingModePadding
+        val newRight = newLeft + newWidth
+        coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
             viewportState.animateTo(
                 newLeft = newLeft.coerceIn(bounds.left, bounds.right - newWidth),
                 newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
