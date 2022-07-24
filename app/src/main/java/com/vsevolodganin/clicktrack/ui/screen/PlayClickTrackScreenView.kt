@@ -9,12 +9,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.Chip
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.FabPosition
-import androidx.compose.material.FilterChip
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalMinimumTouchTargetEnforcement
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarDuration
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -225,20 +227,19 @@ private fun BottomBar(state: PlayClickTrackUiState, dispatch: Dispatch) {
             enableInsets = false,
         )
 
-        val togglePlayTrackingMode = {
-            dispatch(SettingsAction.ChangePlayTrackingMode(!state.playTrackingMode))
-        }
-
-        FilterChip(
-            selected = state.playTrackingMode,
-            onClick = togglePlayTrackingMode,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 8.dp)
-        ) {
-            Checkbox(checked = state.playTrackingMode, onCheckedChange = null)
-            Spacer(Modifier.width(8.dp))
-            Text(text = stringResource(R.string.play_tracking_mode))
+        CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
+            Chip(
+                onClick = {
+                    dispatch(SettingsAction.ChangePlayTrackingMode(!state.playTrackingMode))
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 8.dp)
+            ) {
+                Checkbox(checked = state.playTrackingMode, onCheckedChange = null)
+                Spacer(Modifier.width(8.dp))
+                Text(text = stringResource(R.string.play_tracking_mode))
+            }
         }
     }
 }
