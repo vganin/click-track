@@ -89,7 +89,9 @@ class MainActivity : AppCompatActivity() {
                 .collect(::render)
         }
 
-        intentProcessor.process(intent)
+        if (savedInstanceState == null) {
+            intentProcessor.process(intent)
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
