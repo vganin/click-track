@@ -456,18 +456,26 @@ private fun PlayTrackingModeImpl(
     isProgressCaptured: Boolean,
     isGestureInProcess: Boolean,
 ) {
+    // Sync camera position with progress position
     if (playTrackingMode && !isProgressCaptured && !isGestureInProcess && progressLinePosition != null) {
         val trackingModePadding = with(LocalDensity.current) { TRACKING_MODE_PADDING.toPx() }
         val coroutineScope = rememberCoroutineScope()
-        val bounds = viewportState.bounds
-        val newWidth = bounds.width / DETAILED_SCALE
-        val newLeft = progressLinePosition.value - trackingModePadding
-        val newRight = newLeft + newWidth
         coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
-            viewportState.animateTo(
-                newLeft = newLeft.coerceIn(bounds.left, bounds.right - newWidth),
-                newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
-            )
+            viewportState.animateTo(left = progressLinePosition.value - trackingModePadding, scale = DETAILED_SCALE)
+        }
+    }
+
+    // Zoom out if tracking mode is disabled
+    LaunchedEffect(playTrackingMode) {
+        if (!playTrackingMode) {
+            viewportState.animateTo(left = 0f, scale = BASE_SCALE)
+        }
+    }
+
+    // Zoom out if tracking mode is enabled but the track stopped
+    LaunchedEffect(playTrackingMode, progressLinePosition) {
+        if (playTrackingMode && progressLinePosition == null) {
+            viewportState.animateTo(left = 0f, scale = BASE_SCALE)
         }
     }
 }
@@ -487,6 +495,15 @@ private val AnimatableRect.transformations
             translateY = -rect.top
         }
     }
+
+private suspend fun AnimatableRect.animateTo(left: Float, scale: Float) {
+    val newWidth = bounds.width / scale
+    val newRight = left + newWidth
+    animateTo(
+        newLeft = left.coerceIn(bounds.left, bounds.right - newWidth),
+        newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
+    )
+}
 
 private const val PROGRESS_LINE_WIDTH_CAPTURED = 10f
 private const val BASE_SCALE = 1f
