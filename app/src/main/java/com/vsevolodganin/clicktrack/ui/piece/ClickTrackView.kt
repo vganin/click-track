@@ -447,7 +447,7 @@ private fun Modifier.clickTrackGestures(
     }
 }
 
-@SuppressLint("CoroutineCreationDuringComposition") // FIXME: This is hacky but achieves most pleasurable result
+@SuppressLint("CoroutineCreationDuringComposition") // FIXME: This is hacky but achieves the most pleasurable result
 @Composable
 private fun PlayTrackingModeImpl(
     viewportState: AnimatableRect,
