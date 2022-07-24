@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
+import android.annotation.SuppressLint
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
@@ -446,6 +447,7 @@ private fun Modifier.clickTrackGestures(
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition") // FIXME: This is hacky but achieves most pleasurable result
 @Composable
 private fun PlayTrackingModeImpl(
     viewportState: AnimatableRect,
