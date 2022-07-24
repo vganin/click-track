@@ -38,7 +38,6 @@ enum class BuiltinClickSounds(
         sounds = ClickSounds(
             strongBeat = ClickSoundSource.Bundled(R.raw.drumkit_base),
             weakBeat = ClickSoundSource.Bundled(R.raw.drumkit_hat),
-            strongBeatAlternative = ClickSoundSource.Bundled(R.raw.drumkit_snare),
         )
     ),
 }
