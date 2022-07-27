@@ -27,7 +27,7 @@ import com.vsevolodganin.clicktrack.ui.piece.CueDurationView
 import com.vsevolodganin.clicktrack.ui.piece.DropdownSelector
 import com.vsevolodganin.clicktrack.ui.piece.DurationPicker
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
-import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 
 @Composable
 fun TrainingScreenView(
@@ -36,7 +36,12 @@ fun TrainingScreenView(
     dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
-        topBar = { GenericTopBarWithBack(R.string.training, dispatch) },
+        topBar = {
+            TopAppBarWithBack(
+                dispatch = dispatch,
+                title = { Text(stringResource(R.string.training)) },
+            )
+        },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             if (state.errors.isEmpty()) {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -14,7 +15,7 @@ import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.SettingsUiState
-import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.settings.BooleanChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooserItem
@@ -26,7 +27,12 @@ fun SettingsScreenView(
     dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
-        topBar = { GenericTopBarWithBack(R.string.settings, dispatch) },
+        topBar = {
+            TopAppBarWithBack(
+                dispatch = dispatch,
+                title = { Text(stringResource(R.string.settings)) },
+            )
+        },
         modifier = modifier,
     ) {
         Content(state, dispatch)

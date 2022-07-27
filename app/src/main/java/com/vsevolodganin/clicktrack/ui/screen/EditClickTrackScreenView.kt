@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement.SpaceBetween
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,8 +40,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.Bottom
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -66,7 +63,7 @@ import com.vsevolodganin.clicktrack.ui.piece.Checkbox
 import com.vsevolodganin.clicktrack.ui.piece.CueView
 import com.vsevolodganin.clicktrack.ui.piece.ExpandableChevron
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
-import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
@@ -85,35 +82,31 @@ fun EditClickTrackScreenView(
     val lazyListState = rememberLazyListState()
 
     Scaffold(
-        topBar = { GenericTopBarWithBack(R.string.edit_click_track, dispatch) },
-        floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                FloatingActionButton(
-                    onClick = {
-                        dispatch(EditClickTrackAction.AddNewCue)
-                        coroutineScope.launch {
-                            awaitFrame()
-                            lazyListState.scrollToItem(lazyListState.layoutInfo.totalItemsCount - 1)
+        topBar = {
+            TopAppBarWithBack(
+                dispatch = dispatch,
+                title = { Text(stringResource(R.string.edit_click_track)) },
+                actions = {
+                    if (state.showForwardButton) {
+                        IconButton(onClick = { dispatch(BackstackAction.ToClickTrackScreen(state.id)) }) {
+                            Icon(imageVector = Icons.Default.Check, contentDescription = null)
                         }
-                    },
-                    modifier = Modifier.align(Center)
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                }
-
-                if (state.showForwardButton) {
-                    FloatingActionButton(
-                        onClick = {
-                            dispatch(BackstackAction.ToClickTrackScreen(state.id))
-                        },
-                        modifier = Modifier
-                            .align(CenterEnd)
-                            .padding(end = 16.dp)
-                    ) {
-                        Icon(imageVector = Icons.Default.Check, contentDescription = null)
                     }
                 }
+            )
+        },
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    dispatch(EditClickTrackAction.AddNewCue)
+                    coroutineScope.launch {
+                        awaitFrame()
+                        lazyListState.scrollToItem(lazyListState.layoutInfo.totalItemsCount - 1)
+                    }
+                }
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
         modifier = modifier,

@@ -24,7 +24,6 @@ import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
@@ -56,7 +55,7 @@ import com.vsevolodganin.clicktrack.ui.model.PlayClickTrackUiState
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
-import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
+import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import kotlinx.coroutines.launch
 
 @Composable
@@ -107,13 +106,9 @@ private fun TopBar(
     dispatch: Dispatch,
     snackbarHostState: SnackbarHostState,
 ) {
-    TopAppBar(
+    TopAppBarWithBack(
+        dispatch = dispatch,
         title = { Text(text = state.clickTrack.value.name) },
-        navigationIcon = {
-            IconButton(onClick = { dispatch(BackAction) }) {
-                Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
-            }
-        },
         actions = {
             var editEnabled by remember { mutableStateOf(true) }
             IconButton(

@@ -45,8 +45,8 @@ import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.ui.model.SoundLibraryUiState
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
-import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopIcon
+import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 
@@ -57,7 +57,12 @@ fun SoundLibraryScreenView(
     dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
-        topBar = { GenericTopBarWithBack(R.string.sound_library, dispatch) },
+        topBar = {
+            TopAppBarWithBack(
+                dispatch = dispatch,
+                title = { Text(stringResource(R.string.sound_library)) },
+            )
+        },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             FloatingActionButton(onClick = { dispatch(SoundLibraryAction.AddNewClickSounds) }) {

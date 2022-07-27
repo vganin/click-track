@@ -40,7 +40,7 @@ import com.vsevolodganin.clicktrack.redux.action.AboutAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.AboutUiState
-import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Artstation
 import compose.icons.simpleicons.Twitter
@@ -49,7 +49,12 @@ import compose.icons.simpleicons.Twitter
 @Composable
 fun AboutScreenView(state: AboutUiState, modifier: Modifier = Modifier, dispatch: Dispatch = Dispatch {}) {
     Scaffold(
-        topBar = { GenericTopBarWithBack(R.string.about_title, dispatch) },
+        topBar = {
+            TopAppBarWithBack(
+                dispatch = dispatch,
+                title = { Text(stringResource(R.string.about_title)) },
+            )
+        },
         modifier = modifier,
     ) {
         Content(state, dispatch)

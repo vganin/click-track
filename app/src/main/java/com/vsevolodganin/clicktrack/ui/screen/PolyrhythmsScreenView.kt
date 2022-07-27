@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
@@ -36,9 +37,9 @@ import com.vsevolodganin.clicktrack.redux.action.PolyrhythmsAction
 import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.model.PolyrhythmsUiState
-import com.vsevolodganin.clicktrack.ui.piece.GenericTopBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
 import com.vsevolodganin.clicktrack.ui.piece.PolyrhythmCircle
+import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.widthByText
@@ -53,7 +54,12 @@ fun PolyrhythmsScreenView(
     dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
-        topBar = { GenericTopBarWithBack(R.string.polyrhythms_title, dispatch) },
+        topBar = {
+            TopAppBarWithBack(
+                dispatch = dispatch,
+                title = { Text(stringResource(R.string.polyrhythms_title)) },
+            )
+        },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             PlayStopButton(
