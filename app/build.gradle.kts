@@ -69,6 +69,12 @@ android {
 
             manifestPlaceholders += "crashlyticsCollectionEnabled" to "false"
         }
+
+        create("perftest") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".perftest"
+            signingConfig = signingConfigs.getByName("debug")
+        }
     }
 
     sourceSets["main"].java {
