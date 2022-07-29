@@ -1,15 +1,21 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,6 +27,7 @@ import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.redux.EditCueState
 import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
+import com.vsevolodganin.clicktrack.utils.compose.SimpleSpacer
 import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
 import kotlin.time.Duration.Companion.minutes
 
@@ -37,7 +44,9 @@ fun CueView(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.padding(8.dp)) {
-        Row {
+        var expanded by rememberSaveable { mutableStateOf(false) }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = stringResource(R.string.cue_position, displayPosition),
                 modifier = Modifier
@@ -45,53 +54,61 @@ fun CueView(
                     .padding(8.dp),
                 style = MaterialTheme.typography.h5
             )
-            Spacer(modifier = Modifier.width(8.dp))
+
+            SimpleSpacer(width = 8.dp)
+
             StatefulTextField(
                 initialValue = value.name,
                 onValueChanged = onNameChange,
                 placeholder = {
                     Text(stringResource(R.string.cue_name_hint))
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.weight(1f)
             )
+
+            IconButton(onClick = { expanded = !expanded }) {
+                ExpandableChevron(isExpanded = expanded)
+            }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        AnimatedVisibility(visible = expanded) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SimpleSpacer(height = 8.dp)
 
-        CueDurationView(
-            value = value.duration,
-            onValueChange = onDurationChange,
-            onTypeChange = onDurationTypeChange,
-        )
+                CueDurationView(
+                    value = value.duration,
+                    onValueChange = onDurationChange,
+                    onTypeChange = onDurationTypeChange,
+                )
 
-        Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    TimeSignatureView(
+                        value = value.timeSignature,
+                        onValueChange = onTimeSignatureChange,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
 
-        Row {
-            TimeSignatureView(
-                value = value.timeSignature,
-                onValueChange = onTimeSignatureChange,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
+                    Spacer(modifier = Modifier.width(16.dp))
 
-            Spacer(modifier = Modifier.width(16.dp))
+                    BpmInputField(
+                        value = value.bpm,
+                        onValueChange = onBpmChange,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.CenterVertically),
+                        isError = EditCueState.Error.BPM in value.errors
+                    )
+                }
 
-            BpmInputField(
-                value = value.bpm,
-                onValueChange = onBpmChange,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.CenterVertically),
-                isError = EditCueState.Error.BPM in value.errors
-            )
+                SubdivisionsChooser(
+                    pattern = value.pattern,
+                    timeSignature = value.timeSignature,
+                    onSubdivisionChoose = onPatternChange,
+                )
+            }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        SubdivisionsChooser(
-            pattern = value.pattern,
-            timeSignature = value.timeSignature,
-            onSubdivisionChoose = onPatternChange,
-        )
     }
 }
 
