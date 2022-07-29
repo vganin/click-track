@@ -1,7 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,17 +58,11 @@ fun CueView(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row {
-            CueDurationView(
-                value = value.duration,
-                onValueChange = onDurationChange,
-                onTypeChange = onDurationTypeChange,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .height(IntrinsicSize.Min)
-                    .weight(1f)
-            )
-        }
+        CueDurationView(
+            value = value.duration,
+            onValueChange = onDurationChange,
+            onTypeChange = onDurationTypeChange,
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
