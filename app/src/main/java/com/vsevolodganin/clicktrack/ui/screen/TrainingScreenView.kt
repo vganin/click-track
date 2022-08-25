@@ -189,7 +189,7 @@ private fun Content(viewModel: TrainingViewModel) {
             is TrainingEditState.Ending.ByTime -> {
                 DurationPicker(
                     value = ending.duration,
-                    onValueChange = { TrainingEditState.Ending.ByTime(it) },
+                    onValueChange = { viewModel.onEndingChange(TrainingEditState.Ending.ByTime(it)) },
                     modifier = endingValueModifier
                 )
             }
