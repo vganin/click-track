@@ -1,11 +1,28 @@
 package com.vsevolodganin.clicktrack.theme
 
 import androidx.appcompat.app.AppCompatDelegate
+import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class ThemeManager @Inject constructor() {
+@Singleton
+class ThemeManager @Inject constructor(
+    private val userPreferences: UserPreferencesRepository,
+) {
+    fun start() {
+        setTheme(userPreferences.theme.value)
+        GlobalScope.launch(context = Dispatchers.Main) {
+            userPreferences.theme.flow.collectLatest { theme ->
+                setTheme(theme)
+            }
+        }
+    }
 
-    fun setTheme(theme: Theme) {
+    private fun setTheme(theme: Theme) {
         val nightMode = when (theme) {
             Theme.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
             Theme.DARK -> AppCompatDelegate.MODE_NIGHT_YES

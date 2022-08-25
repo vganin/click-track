@@ -39,11 +39,10 @@ class Application : android.app.Application() {
 
         daggerComponent.inject(this)
 
-        themeManager.setTheme(userPreferences.theme.value)
+        themeManager.start()
 
         soundsPreloader.preload()
     }
-
 
     private fun strictMode() {
         StrictMode.setThreadPolicy(
