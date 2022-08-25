@@ -12,8 +12,7 @@ import kotlin.time.DurationUnit
 
 object DurationSerializer : KSerializer<Duration> {
 
-    override val descriptor: SerialDescriptor
-        get() = PrimitiveSerialDescriptor(Duration::class.simpleName!!, PrimitiveKind.DOUBLE)
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DurationSerializer", PrimitiveKind.DOUBLE)
 
     override fun deserialize(decoder: Decoder): Duration {
         return decoder.decodeDouble().nanoseconds
