@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.training
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
@@ -64,7 +64,7 @@ class TrainingViewModelImpl @AssistedInject constructor(
             val suggestedName = newClickTrackNameSuggester.suggest(NEW_TRAINING_CLICK_TRACK_NAME)
             val newClickTrack = trainingClickTrackGenerator.generate(trainingState, suggestedName)
             val newClickTrackId = clickTrackRepository.insert(newClickTrack)
-            navigation.push(ScreenConfiguration.PlayClickTrack(newClickTrackId))
+            navigation.replaceCurrent(ScreenConfiguration.PlayClickTrack(newClickTrackId))
         }
     }
 
