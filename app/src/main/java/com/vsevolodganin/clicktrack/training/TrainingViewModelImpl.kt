@@ -16,18 +16,15 @@ import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.optionalCast
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.withContext
 
 class TrainingViewModelImpl @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -39,7 +36,7 @@ class TrainingViewModelImpl @AssistedInject constructor(
     private val trainingClickTrackGenerator: TrainingClickTrackGenerator,
 ) : TrainingViewModel, ComponentContext by componentContext {
 
-    private val scope = coroutineScope(Dispatchers.Main)
+    private val scope = coroutineScope()
 
     private val _state: MutableStateFlow<TrainingEditState> = MutableStateFlow(
         userPreferences.trainingState.value.toEditState()
@@ -48,10 +45,9 @@ class TrainingViewModelImpl @AssistedInject constructor(
     override val state: StateFlow<TrainingEditState> = _state
 
     init {
-        GlobalScope.launch(Dispatchers.Unconfined, CoroutineStart.UNDISPATCHED) {
+        scope.launch {
             _state
                 .drop(1)
-                .debounce(500.milliseconds)
                 .collectLatest(::onTrainingStateChange)
         }
     }
@@ -64,7 +60,10 @@ class TrainingViewModelImpl @AssistedInject constructor(
             val suggestedName = newClickTrackNameSuggester.suggest(NEW_TRAINING_CLICK_TRACK_NAME)
             val newClickTrack = trainingClickTrackGenerator.generate(trainingState, suggestedName)
             val newClickTrackId = clickTrackRepository.insert(newClickTrack)
-            navigation.replaceCurrent(ScreenConfiguration.PlayClickTrack(newClickTrackId))
+
+            withContext(Dispatchers.Main) {
+                navigation.replaceCurrent(ScreenConfiguration.PlayClickTrack(newClickTrackId))
+            }
         }
     }
 
@@ -113,7 +112,7 @@ class TrainingViewModelImpl @AssistedInject constructor(
         val stateValidationResult = stateValidator.validate(trainingState)
 
         stateValidationResult.persistableState?.let { persistableState ->
-            userPreferences.trainingState.edit { persistableState }
+            userPreferences.trainingState.value = persistableState
         }
 
         reduceState {

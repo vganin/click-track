@@ -8,7 +8,6 @@ import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -20,6 +19,8 @@ class SettingsViewModelImpl @AssistedInject constructor(
     private val userPreferences: UserPreferencesRepository,
 ) : SettingsViewModel, ComponentContext by componentContext {
 
+    private val scope = coroutineScope()
+
     override val state: StateFlow<SettingsState> = combine(
         userPreferences.theme.flow,
         userPreferences.ignoreAudioFocus.flow,
@@ -29,7 +30,7 @@ class SettingsViewModelImpl @AssistedInject constructor(
             ignoreAudioFocus = ignoreAudioFocus
         )
     }.stateIn(
-        scope = coroutineScope(Dispatchers.Main),
+        scope = scope,
         started = SharingStarted.Eagerly,
         initialValue = SettingsState(
             theme = userPreferences.theme.value,

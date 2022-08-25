@@ -35,7 +35,7 @@ class InAppReview @Inject constructor(
                 val reviewManager = reviewManagerProvider.get()
                 val reviewInfo = reviewManager.requestReview()
                 reviewManager.launchReview(activity, reviewInfo)
-                userPreferencesRepository.reviewRequestTimestamp.edit { nowMilliseconds() }
+                userPreferencesRepository.reviewRequestTimestamp.value = nowMilliseconds()
                 analyticsLogger.logEvent("review_requested")
             }
         } catch (t: Throwable) {
@@ -48,7 +48,7 @@ class InAppReview @Inject constructor(
         val reviewRequestTimestamp = userPreferencesRepository.reviewRequestTimestamp.value
 
         if (reviewRequestTimestamp == UserPreferencesRepository.Const.REVIEW_NOT_REQUESTED) {
-            userPreferencesRepository.reviewRequestTimestamp.edit { now }
+            userPreferencesRepository.reviewRequestTimestamp.value = now
             return false
         }
 

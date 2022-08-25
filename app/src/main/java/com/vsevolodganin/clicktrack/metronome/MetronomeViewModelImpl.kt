@@ -14,7 +14,6 @@ import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.grabIf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -30,6 +29,8 @@ class MetronomeViewModelImpl @AssistedInject constructor(
     private val bpmMeter: BpmMeter,
 ) : MetronomeViewModel, ComponentContext by componentContext {
 
+    private val scope = coroutineScope()
+
     private val areOptionsExpanded: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     override val state: StateFlow<MetronomeState?> = combine(
@@ -38,7 +39,7 @@ class MetronomeViewModelImpl @AssistedInject constructor(
         userPreferences.metronomePattern.flow,
         playerServiceAccess.playbackState(),
         ::combineToState,
-    ).stateIn(coroutineScope(Dispatchers.Main), SharingStarted.Eagerly, null)
+    ).stateIn(scope, SharingStarted.Eagerly, null)
 
     private fun combineToState(
         areOptionsExpanded: Boolean,
@@ -68,7 +69,7 @@ class MetronomeViewModelImpl @AssistedInject constructor(
     }
 
     override fun onPatternChoose(pattern: NotePattern) {
-        userPreferences.metronomePattern.edit { pattern }
+        userPreferences.metronomePattern.value = pattern
         areOptionsExpanded.value = false
     }
 
@@ -88,7 +89,7 @@ class MetronomeViewModelImpl @AssistedInject constructor(
     override fun onBpmMeterClick() {
         bpmMeter.addTap()
         bpmMeter.calculateBpm()?.let { newBpm ->
-            userPreferences.metronomeBpm.edit { newBpm }
+            userPreferences.metronomeBpm.value = newBpm
         }
     }
 }

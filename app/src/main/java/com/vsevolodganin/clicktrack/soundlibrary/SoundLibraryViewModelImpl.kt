@@ -20,8 +20,6 @@ import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.optionalCast
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -40,26 +38,24 @@ class SoundLibraryViewModelImpl @AssistedInject constructor(
     private val soundChooser: SoundChooser,
 ) : SoundLibraryViewModel, ComponentContext by componentContext {
 
+    private val scope = coroutineScope()
+
     override val state: StateFlow<SoundLibraryState?> = combine(
         userPreferences.selectedSoundsId.flow,
         clickSoundsRepository.getAll(),
         playerServiceAccess.playbackState().map { it?.id }.distinctUntilChanged(),
-    ) { selectedId, userItems, playingClickTrackId ->
-        mutableListOf<SelectableClickSoundsItem>().apply {
-            this += BuiltinClickSounds.values().map { it.toItem(selectedId) }
-            this += userItems.map { it.toItem(selectedId, playingClickTrackId) }
-        }
-    }
-        .map(::SoundLibraryState)
-        .stateIn(coroutineScope(Dispatchers.Main), SharingStarted.Eagerly, null)
+        ::combineToState
+    ).stateIn(scope, SharingStarted.Eagerly, null)
 
-    init {
-        lifecycle.doOnPause {
-            val state = state.value ?: return@doOnPause
-            if (state.items.any { it.optionalCast<SelectableClickSoundsItem.UserDefined>()?.isPlaying == true }) {
-                playerServiceAccess.stop()
-            }
-        }
+    private fun combineToState(
+        selectedId: ClickSoundsId,
+        userItems: List<UserClickSounds>,
+        playingId: PlayableId?,
+    ): SoundLibraryState {
+        return SoundLibraryState(buildList {
+            this += BuiltinClickSounds.values().map { it.toItem(selectedId) }
+            this += userItems.map { it.toItem(selectedId, playingId) }
+        })
     }
 
     private fun BuiltinClickSounds.toItem(selectedId: ClickSoundsId): SelectableClickSoundsItem.Builtin {
@@ -80,25 +76,42 @@ class SoundLibraryViewModelImpl @AssistedInject constructor(
         )
     }
 
-    override fun onBackClick() = navigation.pop()
-
-    override fun onAddNewClick() = clickSoundsRepository.insert(ClickSounds(null, null))
-
-    override fun onItemClick(id: ClickSoundsId) = userPreferences.selectedSoundsId.edit { id }
-
-    override fun onItemRemove(id: ClickSoundsId.Database) {
-        userPreferences.selectedSoundsId.edit {
-            if (it == id) {
-                ClickSoundsId.Builtin(BuiltinClickSounds.BEEP)
-            } else {
-                it
+    init {
+        lifecycle.doOnPause {
+            val state = state.value ?: return@doOnPause
+            if (state.items.any { it.optionalCast<SelectableClickSoundsItem.UserDefined>()?.isPlaying == true }) {
+                playerServiceAccess.stop()
             }
         }
-        clickSoundsRepository.remove(id)
+    }
+
+    override fun onBackClick() = navigation.pop()
+
+    override fun onAddNewClick() {
+        scope.launch {
+            clickSoundsRepository.insert(ClickSounds(null, null))
+        }
+    }
+
+    override fun onItemClick(id: ClickSoundsId) {
+        userPreferences.selectedSoundsId.value = id
+    }
+
+    override fun onItemRemove(id: ClickSoundsId.Database) {
+        scope.launch {
+            userPreferences.selectedSoundsId.edit {
+                if (it == id) {
+                    ClickSoundsId.Builtin(BuiltinClickSounds.BEEP)
+                } else {
+                    it
+                }
+            }
+            clickSoundsRepository.remove(id)
+        }
     }
 
     override fun onItemSoundSelect(id: ClickSoundsId.Database, type: ClickSoundType) {
-        GlobalScope.launch {
+        scope.launch {
             soundChooser.launchFor(id, type)
         }
     }

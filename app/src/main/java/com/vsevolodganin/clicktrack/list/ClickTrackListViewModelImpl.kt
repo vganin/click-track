@@ -9,13 +9,16 @@ import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.DefaultCue
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
+import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ClickTrackListViewModelImpl @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -24,21 +27,31 @@ class ClickTrackListViewModelImpl @AssistedInject constructor(
     private val newClickTrackNameSuggester: NewClickTrackNameSuggester,
 ) : ClickTrackListViewModel, ComponentContext by componentContext {
 
+    private val scope = coroutineScope()
+
     override val state: StateFlow<ClickTrackListState> =
         clickTrackRepository.getAll()
             .map(::ClickTrackListState)
-            .stateIn(MainScope(), SharingStarted.Eagerly, ClickTrackListState(emptyList()))
+            .stateIn(scope, SharingStarted.Eagerly, ClickTrackListState(emptyList()))
 
     override fun onAddClick() {
-        val suggestedNewClickTrackName = newClickTrackNameSuggester.suggest()
-        val newClickTrack = defaultNewClickTrack(suggestedNewClickTrackName)
-        val newClickTrackId = clickTrackRepository.insert(newClickTrack)
-        navigation.push(ScreenConfiguration.EditClickTrack(id = newClickTrackId, isInitialEdit = true))
+        scope.launch {
+            val suggestedNewClickTrackName = newClickTrackNameSuggester.suggest()
+            val newClickTrack = defaultNewClickTrack(suggestedNewClickTrackName)
+            val newClickTrackId = clickTrackRepository.insert(newClickTrack)
+            withContext(Dispatchers.Main) {
+                navigation.push(ScreenConfiguration.EditClickTrack(id = newClickTrackId, isInitialEdit = true))
+            }
+        }
     }
 
     override fun onItemClick(id: ClickTrackId.Database) = navigation.push(ScreenConfiguration.PlayClickTrack(id = id))
 
-    override fun onItemRemove(id: ClickTrackId.Database) = clickTrackRepository.remove(id)
+    override fun onItemRemove(id: ClickTrackId.Database) {
+        scope.launch {
+            clickTrackRepository.remove(id)
+        }
+    }
 
     override fun onMenuClick() = navigation.openDrawer()
 

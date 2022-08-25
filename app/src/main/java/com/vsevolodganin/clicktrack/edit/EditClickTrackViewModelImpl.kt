@@ -13,21 +13,17 @@ import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.utils.collection.immutable.remove
 import com.vsevolodganin.clicktrack.utils.collection.immutable.replace
+import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
 class EditClickTrackViewModelImpl @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -37,19 +33,20 @@ class EditClickTrackViewModelImpl @AssistedInject constructor(
     private val clickTrackValidator: ClickTrackValidator,
 ) : EditClickTrackViewModel, ComponentContext by componentContext {
 
+    private val scope = coroutineScope()
+
     private val _state: MutableStateFlow<EditClickTrackState?> = MutableStateFlow(null)
 
     override val state: StateFlow<EditClickTrackState?> = _state
 
     init {
-        GlobalScope.launch(Dispatchers.Unconfined, CoroutineStart.UNDISPATCHED) {
+        scope.launch {
             _state.value = clickTrackRepository.getById(config.id)
                 .map { it?.toEditState(showForwardButton = config.isInitialEdit) }
                 .firstOrNull()
 
             _state
                 .drop(1)
-                .debounce(500.milliseconds)
                 .collectLatest(::onEditStateChange)
         }
     }

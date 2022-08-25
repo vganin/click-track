@@ -19,8 +19,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PlayClickTrackViewModelImpl @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
@@ -32,22 +34,20 @@ class PlayClickTrackViewModelImpl @AssistedInject constructor(
     private val exportWorkLauncher: ExportWorkLauncher,
 ) : PlayClickTrackViewModel, ComponentContext by componentContext {
 
-    private val scope = coroutineScope(Dispatchers.Main)
+    private val scope = coroutineScope()
 
     override val state: StateFlow<PlayClickTrackState?> = combine(
-        clickTrackRepository.getById(config.id),
+        clickTrackRepository.getById(config.id).filterNotNull(),
         userPreferences.playTrackingMode.flow,
         playerServiceAccess.playbackState(),
         ::combineToState,
     ).stateIn(scope, SharingStarted.Eagerly, null)
 
     private fun combineToState(
-        clickTrack: ClickTrackWithDatabaseId?,
+        clickTrack: ClickTrackWithDatabaseId,
         playTrackingMode: Boolean,
         playbackState: PlaybackState?,
-    ): PlayClickTrackState? {
-        clickTrack ?: return null
-
+    ): PlayClickTrackState {
         val isPlaying = playbackState?.id == clickTrack.id
 
         return PlayClickTrackState(
@@ -69,12 +69,7 @@ class PlayClickTrackViewModelImpl @AssistedInject constructor(
         }
     }
 
-    override fun onTogglePlayTrackingMode() {
-        val state = state.value ?: return
-        userPreferences.playTrackingMode.edit {
-            !state.playTrackingMode
-        }
-    }
+    override fun onTogglePlayTrackingMode() = userPreferences.playTrackingMode.edit { !it }
 
     override fun onProgressDragStart() = playerServiceAccess.pause()
 
@@ -83,8 +78,12 @@ class PlayClickTrackViewModelImpl @AssistedInject constructor(
     override fun onEditClick() = navigation.push(ScreenConfiguration.EditClickTrack(config.id, isInitialEdit = false))
 
     override fun onRemoveClick() {
-        clickTrackRepository.remove(config.id)
-        navigation.pop()
+        scope.launch {
+            clickTrackRepository.remove(config.id)
+            withContext(Dispatchers.Main) {
+                navigation.pop()
+            }
+        }
     }
 
     override fun onExportClick() {
