@@ -9,6 +9,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -16,53 +18,58 @@ import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.CueDuration
-import com.vsevolodganin.clicktrack.redux.TrainingMode
-import com.vsevolodganin.clicktrack.redux.TrainingState
-import com.vsevolodganin.clicktrack.redux.action.TrainingAction
-import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.model.DefaultBeatsDuration
+import com.vsevolodganin.clicktrack.model.DefaultMeasuresDuration
+import com.vsevolodganin.clicktrack.model.DefaultTimeDuration
+import com.vsevolodganin.clicktrack.training.TrainingEditState
+import com.vsevolodganin.clicktrack.training.TrainingEditState.TrainingMode
+import com.vsevolodganin.clicktrack.training.TrainingEndingKind
+import com.vsevolodganin.clicktrack.training.TrainingViewModel
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.model.TrainingUiState
 import com.vsevolodganin.clicktrack.ui.piece.BpmInputField
 import com.vsevolodganin.clicktrack.ui.piece.CueDurationView
 import com.vsevolodganin.clicktrack.ui.piece.DropdownSelector
 import com.vsevolodganin.clicktrack.ui.piece.DurationPicker
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun TrainingScreenView(
-    state: TrainingUiState,
+    viewModel: TrainingViewModel,
     modifier: Modifier = Modifier,
-    dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
         topBar = {
             TopAppBarWithBack(
-                dispatch = dispatch,
+                onBackClick = viewModel::onBackClick,
                 title = { Text(stringResource(R.string.training)) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
+            val state by viewModel.state.collectAsState()
             if (state.errors.isEmpty()) {
-                FloatingActionButton(onClick = {
-                    dispatch(TrainingAction.Accept)
-                }) {
+                FloatingActionButton(onClick = viewModel::onAcceptClick) {
                     Icon(Icons.Default.Check, contentDescription = null)
                 }
             }
         },
         modifier = modifier,
     ) {
-        Content(state, dispatch)
+        Content(viewModel)
     }
 }
 
 @Composable
-private fun Content(state: TrainingUiState, dispatch: Dispatch) {
+private fun Content(viewModel: TrainingViewModel) {
     ConstraintLayout(
         modifier = Modifier.padding(16.dp)
     ) {
+        val state by viewModel.state.collectAsState()
+
         val (startingTempoLabel, startingTempoValue, modeValue, segmentLengthValue, tempoChangeLabel, tempoChangeValue, endingLabel, endingValue) = createRefs()
 
         Text(
@@ -78,9 +85,7 @@ private fun Content(state: TrainingUiState, dispatch: Dispatch) {
 
         BpmInputField(
             value = state.startingTempo,
-            onValueChange = {
-                dispatch(TrainingAction.EditStartingTempo(it))
-            },
+            onValueChange = viewModel::onStartingTempoChange,
             modifier = Modifier
                 .constrainAs(startingTempoValue) {
                     start.linkTo(startingTempoLabel.end)
@@ -88,7 +93,7 @@ private fun Content(state: TrainingUiState, dispatch: Dispatch) {
                     top.linkTo(parent.top)
                 }
                 .width(RIGHT_COLUMN_WIDTH),
-            isError = TrainingState.Error.STARTING_TEMPO in state.errors
+            isError = TrainingEditState.Error.STARTING_TEMPO in state.errors
         )
 
         createHorizontalChain(startingTempoLabel, startingTempoValue, chainStyle = ChainStyle.SpreadInside)
@@ -97,9 +102,7 @@ private fun Content(state: TrainingUiState, dispatch: Dispatch) {
         DropdownSelector(
             items = TrainingMode.values().toList(),
             selectedValue = state.mode,
-            onSelect = {
-                dispatch(TrainingAction.EditMode(it))
-            },
+            onSelect = viewModel::onModeSelect,
             toString = { it.stringResource() },
             modifier = Modifier
                 .constrainAs(modeValue) {
@@ -111,12 +114,8 @@ private fun Content(state: TrainingUiState, dispatch: Dispatch) {
 
         CueDurationView(
             value = state.segmentLength,
-            onValueChange = {
-                dispatch(TrainingAction.EditSegmentLength(it))
-            },
-            onTypeChange = {
-                dispatch(TrainingAction.EditSegmentLengthType(it))
-            },
+            onValueChange = viewModel::onSegmentLengthChange,
+            onTypeChange = viewModel::onSegmentLengthTypeChange,
             modifier = Modifier
                 .constrainAs(segmentLengthValue) {
                     start.linkTo(parent.start)
@@ -143,9 +142,7 @@ private fun Content(state: TrainingUiState, dispatch: Dispatch) {
 
         BpmInputField(
             value = state.tempoChange,
-            onValueChange = {
-                dispatch(TrainingAction.EditTempoChange(it))
-            },
+            onValueChange = viewModel::onTempoChangeChange,
             modifier = Modifier
                 .constrainAs(tempoChangeValue) {
                     start.linkTo(tempoChangeLabel.end)
@@ -153,17 +150,15 @@ private fun Content(state: TrainingUiState, dispatch: Dispatch) {
                     top.linkTo(segmentLengthValue.bottom, 16.dp)
                 }
                 .width(RIGHT_COLUMN_WIDTH),
-            isError = TrainingState.Error.TEMPO_CHANGE in state.errors
+            isError = TrainingEditState.Error.TEMPO_CHANGE in state.errors
         )
 
         createHorizontalChain(tempoChangeLabel, tempoChangeValue, chainStyle = ChainStyle.SpreadInside)
 
         DropdownSelector(
-            items = TrainingState.EndingKind.values().toList(),
-            selectedValue = state.ending.kind,
-            onSelect = {
-                dispatch(TrainingAction.EditEndingKind(it))
-            },
+            items = TrainingEndingKind.values().toList(),
+            selectedValue = state.activeEndingKind,
+            onSelect = viewModel::onEndingKindChange,
             toString = { it.stringResource(state.mode) },
             modifier = Modifier
                 .constrainAs(endingLabel) {
@@ -183,22 +178,18 @@ private fun Content(state: TrainingUiState, dispatch: Dispatch) {
             }
             .width(RIGHT_COLUMN_WIDTH)
         when (val ending = state.ending) {
-            is TrainingState.Ending.ByTempo -> {
+            is TrainingEditState.Ending.ByTempo -> {
                 BpmInputField(
                     value = ending.endingTempo,
-                    onValueChange = {
-                        dispatch(TrainingAction.EditEnding(TrainingState.Ending.ByTempo(it)))
-                    },
+                    onValueChange = { viewModel.onEndingChange(TrainingEditState.Ending.ByTempo(it)) },
                     modifier = endingValueModifier,
-                    isError = TrainingState.Error.ENDING_TEMPO in state.errors
+                    isError = TrainingEditState.Error.ENDING_TEMPO in state.errors
                 )
             }
-            is TrainingState.Ending.ByTime -> {
+            is TrainingEditState.Ending.ByTime -> {
                 DurationPicker(
                     value = ending.duration,
-                    onValueChange = {
-                        dispatch(TrainingAction.EditEnding(TrainingState.Ending.ByTime(it)))
-                    },
+                    onValueChange = { TrainingEditState.Ending.ByTime(it) },
                     modifier = endingValueModifier
                 )
             }
@@ -219,14 +210,14 @@ private fun TrainingMode.stringResource(): String {
 }
 
 @Composable
-private fun TrainingState.EndingKind.stringResource(mode: TrainingMode): String {
+private fun TrainingEndingKind.stringResource(mode: TrainingMode): String {
     return stringResource(
         when (this) {
-            TrainingState.EndingKind.BY_TEMPO -> when (mode) {
+            TrainingEndingKind.BY_TEMPO -> when (mode) {
                 TrainingMode.INCREASE_TEMPO -> R.string.training_max_tempo
                 TrainingMode.DECREASE_TEMPO -> R.string.training_min_tempo
             }
-            TrainingState.EndingKind.BY_TIME -> R.string.training_play_for
+            TrainingEndingKind.BY_TIME -> R.string.training_play_for
         }
     )
 }
@@ -238,13 +229,32 @@ private val RIGHT_COLUMN_WIDTH = 140.dp
 @Composable
 private fun Preview() = ClickTrackTheme {
     TrainingScreenView(
-        state = TrainingUiState(
-            startingTempo = 120,
-            mode = TrainingMode.INCREASE_TEMPO,
-            segmentLength = CueDuration.Measures(4),
-            tempoChange = 5,
-            ending = TrainingState.Ending.ByTempo(160),
-            errors = emptySet(),
-        )
+        viewModel = object : TrainingViewModel {
+            override val state: StateFlow<TrainingEditState> = MutableStateFlow(
+                TrainingEditState(
+                    startingTempo = 120,
+                    mode = TrainingMode.INCREASE_TEMPO,
+                    activeSegmentLengthType = CueDuration.Type.MEASURES,
+                    segmentLengthBeats = DefaultBeatsDuration,
+                    segmentLengthMeasures = DefaultMeasuresDuration,
+                    segmentLengthTime = DefaultTimeDuration,
+                    tempoChange = 5,
+                    activeEndingKind = TrainingEndingKind.BY_TEMPO,
+                    endingByTempo = TrainingEditState.Ending.ByTempo(160),
+                    endingByTime = TrainingEditState.Ending.ByTime(5.minutes),
+                    errors = emptySet(),
+                )
+            )
+
+            override fun onBackClick() = Unit
+            override fun onAcceptClick() = Unit
+            override fun onStartingTempoChange(startingTempo: Int) = Unit
+            override fun onModeSelect(mode: TrainingMode) = Unit
+            override fun onSegmentLengthChange(segmentLength: CueDuration) = Unit
+            override fun onSegmentLengthTypeChange(segmentLengthType: CueDuration.Type) = Unit
+            override fun onTempoChangeChange(tempoChange: Int) = Unit
+            override fun onEndingChange(ending: TrainingEditState.Ending) = Unit
+            override fun onEndingKindChange(endingKind: TrainingEndingKind) = Unit
+        }
     )
 }

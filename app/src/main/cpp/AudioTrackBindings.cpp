@@ -6,7 +6,7 @@
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_vsevolodganin_clicktrack_player_AudioTrack_initNative(
+Java_com_vsevolodganin_clicktrack_audio_AudioTrack_initNative(
         JNIEnv* env,
         jobject thiz,
         jbyteArray data,
@@ -29,41 +29,41 @@ Java_com_vsevolodganin_clicktrack_player_AudioTrack_initNative(
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_vsevolodganin_clicktrack_player_AudioTrack_destroyNative(JNIEnv* env, jobject thiz, jlong native_ptr) {
+Java_com_vsevolodganin_clicktrack_audio_AudioTrack_destroyNative(JNIEnv* env, jobject thiz, jlong native_ptr) {
     delete (clicktrack::AudioTrack*) (native_ptr);
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_vsevolodganin_clicktrack_player_AudioTrack_resetStream(JNIEnv* env, jobject thiz, jlong native_ptr) {
+Java_com_vsevolodganin_clicktrack_audio_AudioTrack_resetStream(JNIEnv* env, jobject thiz, jlong native_ptr) {
     auto audioTrack = (clicktrack::AudioTrack*) native_ptr;
     audioTrack->resetStream();
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_vsevolodganin_clicktrack_player_AudioTrack_warmup(JNIEnv* env, jobject thiz, jlong native_ptr) {
+Java_com_vsevolodganin_clicktrack_audio_AudioTrack_warmup(JNIEnv* env, jobject thiz, jlong native_ptr) {
     auto audioTrack = (clicktrack::AudioTrack*) native_ptr;
     audioTrack->warmup();
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_vsevolodganin_clicktrack_player_AudioTrack_play(JNIEnv* env, jobject thiz, jlong native_ptr) {
+Java_com_vsevolodganin_clicktrack_audio_AudioTrack_play(JNIEnv* env, jobject thiz, jlong native_ptr) {
     auto audioTrack = (clicktrack::AudioTrack*) native_ptr;
     audioTrack->play();
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_vsevolodganin_clicktrack_player_AudioTrack_stop(JNIEnv* env, jobject thiz, jlong native_ptr) {
+Java_com_vsevolodganin_clicktrack_audio_AudioTrack_stop(JNIEnv* env, jobject thiz, jlong native_ptr) {
     auto audioTrack = (clicktrack::AudioTrack*) native_ptr;
     audioTrack->stop();
 }
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_com_vsevolodganin_clicktrack_player_AudioTrack_getLatencyMs(JNIEnv* env, jobject thiz, jlong native_ptr) {
+Java_com_vsevolodganin_clicktrack_audio_AudioTrack_getLatencyMs(JNIEnv* env, jobject thiz, jlong native_ptr) {
     auto audioTrack = (clicktrack::AudioTrack*) native_ptr;
     return audioTrack->getLatencyMs();
 }

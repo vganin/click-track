@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,70 +33,62 @@ import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.bpm
-import com.vsevolodganin.clicktrack.redux.action.PlayerAction
-import com.vsevolodganin.clicktrack.redux.action.PolyrhythmsAction
-import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.polyrhythm.PolyrhythmsState
+import com.vsevolodganin.clicktrack.polyrhythm.PolyrhythmsViewModel
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.model.PolyrhythmsUiState
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
 import com.vsevolodganin.clicktrack.ui.piece.PolyrhythmCircle
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.widthByText
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.DurationUnit
 
 @Composable
 fun PolyrhythmsScreenView(
-    state: PolyrhythmsUiState,
+    viewModel: PolyrhythmsViewModel,
     modifier: Modifier = Modifier,
-    dispatch: Dispatch = Dispatch {},
 ) {
+    val state by viewModel.state.collectAsState()
     Scaffold(
         topBar = {
             TopAppBarWithBack(
-                dispatch = dispatch,
+                onBackClick = viewModel::onBackClick,
                 title = { Text(stringResource(R.string.polyrhythms_title)) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             PlayStopButton(
-                isPlaying = state.isPlaying,
-                onToggle = {
-                    val action = if (state.isPlaying) {
-                        PlayerAction.StopPlay
-                    } else {
-                        PlayerAction.StartPlayPolyrhythm
-                    }
-                    dispatch(action)
-                }
+                isPlaying = state?.isPlaying ?: return@Scaffold,
+                onToggle = viewModel::onTogglePlay
             )
         },
         modifier = modifier,
     ) {
-        Content(state, dispatch)
+        Content(viewModel, state ?: return@Scaffold)
     }
 }
 
 @Composable
-private fun Content(state: PolyrhythmsUiState, dispatch: Dispatch) {
+private fun Content(
+    viewModel: PolyrhythmsViewModel,
+    state: PolyrhythmsState
+) {
     Column(modifier = Modifier.padding(16.dp)) {
         Row {
             NumberChooser(
                 value = state.twoLayerPolyrhythm.layer1,
-                onValueChoose = {
-                    dispatch(PolyrhythmsAction.EditLayer1(it))
-                },
+                onValueChoose = viewModel::onLayer1Change,
             )
             Spacer(modifier = Modifier.weight(1f))
             NumberChooser(
                 value = state.twoLayerPolyrhythm.layer2,
-                onValueChoose = {
-                    dispatch(PolyrhythmsAction.EditLayer2(it))
-                },
+                onValueChoose = viewModel::onLayer2Change,
             )
         }
 
@@ -210,14 +203,23 @@ private fun Duration.toAngle(totalDuration: Duration): Float {
 @Composable
 private fun Preview() = ClickTrackTheme {
     PolyrhythmsScreenView(
-        state = PolyrhythmsUiState(
-            twoLayerPolyrhythm = TwoLayerPolyrhythm(
-                bpm = 120.bpm,
-                layer1 = 3,
-                layer2 = 2
-            ),
-            isPlaying = true,
-            playableProgress = PlayProgress(100.milliseconds)
-        ),
+        viewModel = object : PolyrhythmsViewModel {
+            override val state: StateFlow<PolyrhythmsState?> = MutableStateFlow(
+                PolyrhythmsState(
+                    twoLayerPolyrhythm = TwoLayerPolyrhythm(
+                        bpm = 120.bpm,
+                        layer1 = 3,
+                        layer2 = 2
+                    ),
+                    isPlaying = true,
+                    playableProgress = PlayProgress(100.milliseconds)
+                )
+            )
+
+            override fun onBackClick() = Unit
+            override fun onTogglePlay() = Unit
+            override fun onLayer1Change(value: Int) = Unit
+            override fun onLayer2Change(value: Int) = Unit
+        }
     )
 }

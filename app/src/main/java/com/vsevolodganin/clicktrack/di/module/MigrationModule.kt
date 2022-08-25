@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.di.module
 
-import com.vsevolodganin.clicktrack.di.component.ActivityScoped
+import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import com.vsevolodganin.clicktrack.migration.CanMigrate
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import dagger.Binds
@@ -12,6 +12,6 @@ interface MigrationModule {
 
     @Binds
     @IntoSet
-    @ActivityScoped
+    @ActivityScope
     fun bindClickTrackRepository(clickTrackRepository: ClickTrackRepository): CanMigrate
 }

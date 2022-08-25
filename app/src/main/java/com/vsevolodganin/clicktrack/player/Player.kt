@@ -1,35 +1,25 @@
 package com.vsevolodganin.clicktrack.player
 
-import android.os.SystemClock
-import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
+import com.vsevolodganin.clicktrack.audio.SoundSourceProvider
+import com.vsevolodganin.clicktrack.audio.UserSelectedSounds
+import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
+import com.vsevolodganin.clicktrack.model.ClickSounds
+import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.ClickTrack
-import com.vsevolodganin.clicktrack.model.ClickTrackWithId
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.model.PlayableProgressTimeSource
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
-import com.vsevolodganin.clicktrack.sounds.SoundSourceProvider
-import com.vsevolodganin.clicktrack.sounds.UserSelectedSounds
-import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
-import com.vsevolodganin.clicktrack.utils.collection.toRoundRobin
-import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingCoroutines
-import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingSuspendAndSpinLock
-import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingThreadSleep
-import com.vsevolodganin.clicktrack.utils.coroutine.delayTillDeadlineUsingThreadSleepAndSpinLock
+import com.vsevolodganin.clicktrack.utils.coroutine.collectLatestFirst
 import com.vsevolodganin.clicktrack.utils.grabIf
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -44,126 +34,51 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.withIndex
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-interface Player {
-    suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double? = null, soundsId: ClickSoundsId? = null)
-    suspend fun start(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double? = null, soundsId: ClickSoundsId? = null)
-    suspend fun pause()
-    suspend fun stop()
-
-    fun playbackState(): Flow<PlaybackState?>
-}
-
-@PlayerServiceScoped
-class PlayerImpl @Inject constructor(
-    private val soundPool: PlayerSoundPool,
+@PlayerServiceScope
+class Player @Inject constructor(
     @PlayerDispatcher private val playerDispatcher: CoroutineDispatcher,
+    private val soundPool: PlayerSoundPool,
     private val clickSoundsRepository: ClickSoundsRepository,
+    private val playableContentProvider: PlayableContentProvider,
     private val userSelectedSounds: UserSelectedSounds,
-) : Player {
-
-    private var playerJob: Job? = null
+) {
     private val playbackState = MutableStateFlow<InternalPlaybackState?>(null)
     private val pausedState = MutableStateFlow(false)
     private val latencyState = MutableStateFlow(Duration.ZERO)
 
-    override suspend fun start(
-        clickTrack: ClickTrackWithId,
-        atProgress: Double?,
+    suspend fun play(
+        id: PlayableId,
+        startAtProgress: Double?,
         soundsId: ClickSoundsId?,
-    ) = coroutineScope {
-        playerJob?.cancel()
-        playerJob = launchPlayer {
-            val duration = clickTrack.value.durationInTime
-
-            if (duration == Duration.ZERO) {
-                Timber.w("Tried to play track with zero duration, exiting")
-                return@launchPlayer
+    ) {
+        try {
+            when (id) {
+                is ClickTrackId -> {
+                    playableContentProvider.clickTrackFlow(id)
+                        .withIndex()
+                        .collectLatestFirst { (index, clickTrack) ->
+                            clickTrack ?: return@collectLatestFirst
+                            val atProgress = if (index == 0) startAtProgress else null
+                            play(id, clickTrack, atProgress, soundsId)
+                        }
+                }
+                TwoLayerPolyrhythmId -> {
+                    playableContentProvider.twoLayerPolyrhythmFlow()
+                        .withIndex()
+                        .collectLatestFirst { (index, polyrhythm) ->
+                            val atProgress = if (index == 0) startAtProgress else null
+                            play(polyrhythm, atProgress, soundsId)
+                        }
+                }
             }
-
-            val currentPlayback = playbackState.value
-            val progress = atProgress
-                ?: grabIf(clickTrack.id == currentPlayback?.id) { currentPlayback?.calculateCurrentProgress() }
-                ?: 0.0
-            val startAt = duration * progress
-
-            pausedState.value = false
-
-            clickTrack.value.play(
-                startAt = startAt,
-                reportProgress = {
-                    playbackState.value = InternalPlaybackState(
-                        id = clickTrack.id,
-                        duration = duration,
-                        progress = it,
-                    )
-                },
-                reportLatency = latencyState::tryEmit,
-                soundSourceProvider = soundSourceProvider(soundsId)
-            )
-        }
-    }
-
-    override suspend fun start(
-        twoLayerPolyrhythm: TwoLayerPolyrhythm,
-        atProgress: Double?,
-        soundsId: ClickSoundsId?,
-    ) = coroutineScope {
-        playerJob?.cancel()
-        playerJob = launchPlayer {
-            val duration = twoLayerPolyrhythm.durationInTime
-
-            if (duration == Duration.ZERO) {
-                Timber.w("Tried to play polyrhythm with zero duration, exiting")
-                return@launchPlayer
-            }
-
-            val currentPlayback = playbackState.value
-            val progress = atProgress
-                ?: grabIf(TwoLayerPolyrhythmId == currentPlayback?.id) { currentPlayback?.calculateCurrentProgress() }
-                ?: 0.0
-            val startAt = duration * progress
-
-            pausedState.value = false
-
-            twoLayerPolyrhythm.play(
-                startAt = startAt,
-                reportProgress = {
-                    playbackState.value = InternalPlaybackState(
-                        id = TwoLayerPolyrhythmId,
-                        duration = duration,
-                        progress = it,
-                    )
-                },
-                reportLatency = latencyState::tryEmit,
-                soundSourceProvider = soundSourceProvider(soundsId)
-            )
-        }
-    }
-
-    private fun CoroutineScope.launchPlayer(block: suspend () -> Unit): Job {
-        return launch(playerDispatcher) {
-            block()
-
-            // Stop on successful block exit only. If coroutine was cancelled,
-            // the client should stop all by himself
-            playbackState.value = null
-            soundPool.stopAll()
-        }
-    }
-
-    override suspend fun pause() {
-        pausedState.value = true
-    }
-
-    override suspend fun stop() = coroutineScope {
-        playerJob?.cancel()
-        playerJob = launch(playerDispatcher) {
+        } finally {
             playbackState.value = null
 
             // Delaying superfluous sound pool stops in order to avoid
@@ -175,12 +90,85 @@ class PlayerImpl @Inject constructor(
         }
     }
 
-    override fun playbackState(): Flow<PlaybackState?> = externalPlaybackState
+    fun pause() {
+        pausedState.value = true
+    }
+
+    private suspend fun play(
+        id: ClickTrackId,
+        clickTrack: ClickTrack,
+        atProgress: Double?,
+        soundsId: ClickSoundsId?,
+    ) = withContext(playerDispatcher) {
+        val duration = clickTrack.durationInTime
+
+        if (duration == Duration.ZERO) {
+            Timber.w("Tried to play track with zero duration, exiting")
+            return@withContext
+        }
+
+        val currentPlayback = playbackState.value
+        val progress = atProgress
+            ?: grabIf(id == currentPlayback?.id) { currentPlayback?.calculateCurrentProgress() }
+            ?: 0.0
+        val startAt = duration * progress
+
+        pausedState.value = false
+
+        clickTrack.play(
+            startAt = startAt,
+            reportProgress = {
+                playbackState.value = InternalPlaybackState(
+                    id = id,
+                    duration = duration,
+                    progress = it,
+                )
+            },
+            reportLatency = latencyState::tryEmit,
+            soundSourceProvider = soundSourceProvider(soundsId)
+        )
+    }
+
+    private suspend fun play(
+        twoLayerPolyrhythm: TwoLayerPolyrhythm,
+        atProgress: Double?,
+        soundsId: ClickSoundsId?,
+    ) = withContext(playerDispatcher) {
+        val duration = twoLayerPolyrhythm.durationInTime
+
+        if (duration == Duration.ZERO) {
+            Timber.w("Tried to play polyrhythm with zero duration, exiting")
+            return@withContext
+        }
+
+        val currentPlayback = playbackState.value
+        val progress = atProgress
+            ?: grabIf(TwoLayerPolyrhythmId == currentPlayback?.id) { currentPlayback?.calculateCurrentProgress() }
+            ?: 0.0
+        val startAt = duration * progress
+
+        pausedState.value = false
+
+        twoLayerPolyrhythm.play(
+            startAt = startAt,
+            reportProgress = {
+                playbackState.value = InternalPlaybackState(
+                    id = TwoLayerPolyrhythmId,
+                    duration = duration,
+                    progress = it,
+                )
+            },
+            reportLatency = latencyState::tryEmit,
+            soundSourceProvider = soundSourceProvider(soundsId)
+        )
+    }
+
+    fun playbackState(): Flow<PlaybackState?> = externalPlaybackState
 
     private val externalPlaybackState = combine(
         playbackState,
         latencyState
-            .map { Const.LATENCY_RESOLUTION * (it / Const.LATENCY_RESOLUTION).toInt() }
+            .map { LATENCY_RESOLUTION * (it / LATENCY_RESOLUTION).toInt() }
             .distinctUntilChanged()
     ) { internalPlaybackState, latency -> internalPlaybackState to latency }
         .mapLatest { (internalPlaybackState, latency) ->
@@ -210,8 +198,7 @@ class PlayerImpl @Inject constructor(
         reportLatency: (Duration) -> Unit,
         soundSourceProvider: SoundSourceProvider,
     ) {
-        @Suppress("NAME_SHADOWING") // Because that looks better
-        val startAt = if (startAt >= durationInTime) {
+        val actualStartAt = if (startAt >= durationInTime) {
             if (loop) Duration.ZERO else return
         } else {
             startAt
@@ -233,13 +220,13 @@ class PlayerImpl @Inject constructor(
             }
             .loop(loop)
             .let {
-                if (startAt > Duration.ZERO) {
-                    it.startingAt(startAt).withSideEffect(atIndex = 0) { reportProgress(startAt) }
+                if (actualStartAt > Duration.ZERO) {
+                    it.startingAt(actualStartAt).withSideEffect(atIndex = 0) { reportProgress(actualStartAt) }
                 } else {
                     it
                 }
             }
-            .prefetch(Const.PREFETCH_SIZE)
+            .prefetch(PREFETCH_SIZE)
 
         PlayerSequencer.play(schedule)
     }
@@ -250,8 +237,7 @@ class PlayerImpl @Inject constructor(
         reportLatency: (Duration) -> Unit,
         soundSourceProvider: SoundSourceProvider,
     ) {
-        @Suppress("NAME_SHADOWING") // Because that looks better
-        val startAt = if (startAt >= durationInTime) {
+        val actualStartAt = if (startAt >= durationInTime) {
             Duration.ZERO
         } else {
             startAt
@@ -273,22 +259,22 @@ class PlayerImpl @Inject constructor(
             .asSequence()
             .loop(true)
             .let {
-                if (startAt > Duration.ZERO) {
-                    it.startingAt(startAt).withSideEffect(atIndex = 0) { reportProgress(startAt) }
+                if (actualStartAt > Duration.ZERO) {
+                    it.startingAt(actualStartAt).withSideEffect(atIndex = 0) { reportProgress(actualStartAt) }
                 } else {
                     it
                 }
             }
-            .prefetch(Const.PREFETCH_SIZE)
+            .prefetch(PREFETCH_SIZE)
 
         PlayerSequencer.play(schedule)
     }
 
-    private suspend fun CoroutineScope.soundSourceProvider(soundsId: ClickSoundsId?): SoundSourceProvider {
+    private suspend fun soundSourceProvider(soundsId: ClickSoundsId?): SoundSourceProvider {
         val soundsFlow = if (soundsId != null) soundsById(soundsId) else userSelectedSounds.get()
         val soundsState = soundsFlow
             .onEach { sounds -> sounds?.asIterable?.forEach(soundPool::warmup) }
-            .stateIn(scope = this)
+            .stateIn(GlobalScope)
         return SoundSourceProvider(soundsState)
     }
 
@@ -312,125 +298,11 @@ class PlayerImpl @Inject constructor(
         }
     }
 
-    private object Const {
+    private companion object Const {
         const val PREFETCH_SIZE = 100
 
         // Higher means lower precision when correcting UI for latency
         // Lower means higher precision but more progress bar jumps due to more frequent updates
         val LATENCY_RESOLUTION = 50.milliseconds
     }
-}
-
-private class PlayerAction(
-    val interval: Duration,
-    val action: suspend () -> Unit,
-)
-
-private fun Sequence<PlayerEvent>.toActions(
-    waitResume: suspend () -> Unit,
-    soundSourceProvider: SoundSourceProvider,
-    reportLatency: (Duration) -> Unit,
-    soundPool: PlayerSoundPool,
-) = map {
-    it.toAction(
-        waitResume = waitResume,
-        soundSourceProvider = soundSourceProvider,
-        reportLatency = reportLatency,
-        soundPool = soundPool,
-    )
-}
-
-private fun PlayerEvent.toAction(
-    waitResume: suspend () -> Unit,
-    soundSourceProvider: SoundSourceProvider,
-    reportLatency: (Duration) -> Unit,
-    soundPool: PlayerSoundPool,
-) = PlayerAction(
-    interval = duration,
-    action = {
-        waitResume()
-        if (soundType != null) {
-            val soundSource = soundSourceProvider.provide(soundType)
-            soundSource?.let(soundPool::play)
-            reportLatency(soundSource?.let(soundPool::latency) ?: Duration.ZERO)
-        }
-    }
-)
-
-private fun Sequence<PlayerAction>.withSideEffect(
-    atIndex: Int,
-    action: () -> Unit
-) = mapIndexed { index, event ->
-    if (index == atIndex) {
-        PlayerAction(
-            interval = event.interval,
-            action = {
-                event.action()
-                action()
-            }
-        )
-    } else {
-        event
-    }
-}
-
-private fun Sequence<PlayerAction>.startingAt(startAt: Duration): Sequence<PlayerAction> {
-    var runningDuration = Duration.ZERO
-    var dropCount = 0
-    for (event in this) {
-        if (runningDuration >= startAt) {
-            break
-        }
-        dropCount += 1
-        runningDuration += event.interval
-    }
-
-    return sequence {
-        yield(
-            PlayerAction(
-                interval = (runningDuration - startAt).coerceAtLeast(Duration.ZERO),
-                action = {},
-            )
-        )
-        yieldAll(drop(dropCount))
-    }
-}
-
-private fun Sequence<PlayerAction>.loop(loop: Boolean): Sequence<PlayerAction> {
-    return if (loop) toRoundRobin() else this
-}
-
-private object PlayerSequencer {
-
-    enum class DelayMethod {
-        THREAD_SLEEP, SUSPEND, THREAD_SLEEP_SPIN_LOCK, SUSPEND_SPIN_LOCK
-    }
-
-    suspend fun play(
-        schedule: Sequence<PlayerAction>,
-        delayMethod: DelayMethod = DelayMethod.THREAD_SLEEP_SPIN_LOCK,
-    ) {
-        val thisCoroutineJob = currentCoroutineContext()[Job] ?: return
-        val delay = delayMethod.referenceToMethod()
-        val iterator = schedule.iterator()
-        val startTime = nanoTime()
-        var deadline = startTime
-        while (iterator.hasNext()) {
-            thisCoroutineJob.ensureActive()
-            val event = iterator.next()
-            event.action()
-            val interval = event.interval
-            deadline += interval.inWholeNanoseconds
-            delay(deadline)
-        }
-    }
-
-    private fun DelayMethod.referenceToMethod() = when (this) {
-        DelayMethod.THREAD_SLEEP -> ::delayTillDeadlineUsingThreadSleep
-        DelayMethod.SUSPEND -> ::delayTillDeadlineUsingCoroutines
-        DelayMethod.THREAD_SLEEP_SPIN_LOCK -> ::delayTillDeadlineUsingThreadSleepAndSpinLock
-        DelayMethod.SUSPEND_SPIN_LOCK -> ::delayTillDeadlineUsingSuspendAndSpinLock
-    }
-
-    private fun nanoTime() = SystemClock.elapsedRealtimeNanos()
 }

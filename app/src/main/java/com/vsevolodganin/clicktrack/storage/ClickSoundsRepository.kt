@@ -2,11 +2,11 @@ package com.vsevolodganin.clicktrack.storage
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.vsevolodganin.clicktrack.Database
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
-import com.vsevolodganin.clicktrack.sounds.model.ClickSounds
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
-import com.vsevolodganin.clicktrack.sounds.model.UserClickSounds
+import com.vsevolodganin.clicktrack.model.ClickSoundSource
+import com.vsevolodganin.clicktrack.model.ClickSoundType
+import com.vsevolodganin.clicktrack.model.ClickSounds
+import com.vsevolodganin.clicktrack.model.ClickSoundsId
+import com.vsevolodganin.clicktrack.model.UserClickSounds
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
@@ -18,8 +18,8 @@ import com.vsevolodganin.clicktrack.storage.ClickSounds as StorageClickSounds
 
 @Singleton
 class ClickSoundsRepository @Inject constructor(
-    private val json: Json,
     private val database: Database,
+    private val json: Json,
 ) {
     fun getAll(): Flow<List<UserClickSounds>> {
         return database.sqlClickSoundsQueries.getAll().asFlow()

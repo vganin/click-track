@@ -8,25 +8,26 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
+import com.vsevolodganin.clicktrack.model.BuiltinClickSounds
+import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.bpm
-import com.vsevolodganin.clicktrack.redux.TrainingMode
-import com.vsevolodganin.clicktrack.redux.TrainingPersistableState
-import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository.Const.NO_APP_VERSION_CODE
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository.Const.REVIEW_NOT_REQUESTED
 import com.vsevolodganin.clicktrack.theme.Theme
+import com.vsevolodganin.clicktrack.training.TrainingEditState.TrainingMode
+import com.vsevolodganin.clicktrack.training.TrainingValidState
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
@@ -46,8 +47,9 @@ class UserPreferencesRepository @Inject constructor(
     }
 
     interface UserPropertyAccess<T> {
-        val stateFlow: StateFlow<T>
-        suspend fun edit(transform: (T) -> T)
+        val flow: Flow<T>
+        var value: T
+        fun edit(transform: (T) -> T)
     }
 
     val appVersionCode: UserPropertyAccess<Int> = UserPropertyAccessWithNoMapping(
@@ -97,14 +99,14 @@ class UserPreferencesRepository @Inject constructor(
         },
     )
 
-    val trainingState: UserPropertyAccess<TrainingPersistableState> = UserPropertyAccessWithMapping(
+    val trainingState: UserPropertyAccess<TrainingValidState> = UserPropertyAccessWithMapping(
         key = stringPreferencesKey("training_state"),
-        defaultValue = TrainingPersistableState(
+        defaultValue = TrainingValidState(
             startingTempo = 120.bpm,
             mode = TrainingMode.INCREASE_TEMPO,
             segmentLength = CueDuration.Measures(4),
             tempoChange = 5.bpm,
-            ending = TrainingPersistableState.Ending.ByTempo(160.bpm),
+            ending = TrainingValidState.Ending.ByTempo(160.bpm),
         ),
         toExternal = json::decodeFromString,
         toInternal = json::encodeToString,
@@ -156,14 +158,15 @@ class UserPreferencesRepository @Inject constructor(
             }
         }
 
-        override val stateFlow: StateFlow<TExternal> = _stateFlow
+        override val flow: Flow<TExternal> = _stateFlow
 
-        override suspend fun edit(transform: (TExternal) -> TExternal) {
-            do {
-                val currentValue = stateFlow.value
-                val newValue = transform(currentValue ?: defaultValue)
-            } while (!_stateFlow.compareAndSet(currentValue, newValue))
-        }
+        override var value: TExternal
+            get() = _stateFlow.value
+            set(value) {
+                _stateFlow.value = value
+            }
+
+        override fun edit(transform: (TExternal) -> TExternal) = _stateFlow.update(transform)
     }
 
     private inner class UserPropertyAccessWithNoMapping<T>(

@@ -9,12 +9,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import com.vsevolodganin.clicktrack.redux.action.BackAction
-import com.vsevolodganin.clicktrack.redux.core.Dispatch
 
 @Composable
 fun TopAppBarWithBack(
-    dispatch: Dispatch,
+    onBackClick: () -> Unit,
     title: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     actions: @Composable RowScope.() -> Unit = {},
@@ -24,7 +22,7 @@ fun TopAppBarWithBack(
         title = title,
         modifier = modifier,
         navigationIcon = {
-            IconButton(onClick = { dispatch(BackAction) }) {
+            IconButton(onClick = onBackClick) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },

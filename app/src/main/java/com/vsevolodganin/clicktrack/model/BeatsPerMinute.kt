@@ -9,33 +9,29 @@ import kotlin.time.Duration.Companion.minutes
 
 @Serializable
 @Parcelize
-data class BeatsPerMinute(
-    val value: Int,
-) : Parcelable, Comparable<BeatsPerMinute> {
+data class BeatsPerMinute(val value: Int) : Parcelable, Comparable<BeatsPerMinute> {
 
-    constructor(beatCount: Int, timelapse: Duration) : this((1.minutes / timelapse * beatCount).roundToInt())
+    companion object {
+        val VALID_TEMPO_RANGE = 1..999
+    }
 
     init {
-        require(value >= MIN_BPM_VALUE) { "Bpm should be equal or greater than $MIN_BPM_VALUE but was: $value" }
+        require(value in VALID_TEMPO_RANGE) {
+            "Bpm should be in range [${VALID_TEMPO_RANGE.first}, $${VALID_TEMPO_RANGE.last}] but was: $value"
+        }
     }
 
-    override fun compareTo(other: BeatsPerMinute): Int {
-        return value.compareTo(other.value)
-    }
-
-    operator fun plus(o: BeatsPerMinute): BeatsPerMinute {
-        return BeatsPerMinute(value + o.value)
-    }
-
-    operator fun minus(o: BeatsPerMinute): BeatsPerMinute {
-        return BeatsPerMinute(value - o.value)
-    }
+    override fun compareTo(other: BeatsPerMinute): Int = value.compareTo(other.value)
+    operator fun plus(o: BeatsPerMinute): BeatsPerMinute = (value + o.value).bpm
+    operator fun minus(o: BeatsPerMinute): BeatsPerMinute = (value - o.value).bpm
+    operator fun plus(o: BeatsPerMinuteDiff): BeatsPerMinute = (value + o.value).bpm
+    operator fun minus(o: BeatsPerMinuteDiff): BeatsPerMinute = (value - o.value).bpm
 }
 
-val Int.bpm: BeatsPerMinute get() = BeatsPerMinute(this)
+fun BeatsPerMinute(beatCount: Int, timelapse: Duration): BeatsPerMinute {
+    return (1.minutes / timelapse * beatCount).roundToInt().bpm
+}
 
-fun IntRange.toBpmRange(): ClosedRange<BeatsPerMinute> = start.bpm..endInclusive.bpm
+val Int.bpm: BeatsPerMinute get() = BeatsPerMinute(coerceIn(BeatsPerMinute.VALID_TEMPO_RANGE))
 
 val BeatsPerMinute.interval: Duration get() = 1.minutes / value
-
-const val MIN_BPM_VALUE = 1

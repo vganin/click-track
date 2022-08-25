@@ -45,7 +45,7 @@ class ClickTrackRepository @Inject constructor(
     }
 
     fun insert(clickTrack: ClickTrack): ClickTrackId.Database {
-        return database.sqlClickTrackQueries.transactionWithResult<Long> {
+        return database.sqlClickTrackQueries.transactionWithResult {
             database.sqlClickTrackQueries.insert(
                 name = clickTrack.name,
                 serializedValue = json.encodeToString(clickTrack)

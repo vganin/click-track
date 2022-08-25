@@ -16,6 +16,6 @@ data class Cue(
 ) : Parcelable {
 
     fun durationAsTimeWithBpmOffset(offset: BeatsPerMinuteDiff): Duration {
-        return duration.asTimeGiven(bpm.applyDiff(offset), timeSignature)
+        return duration.asTimeGiven(bpm + offset, timeSignature)
     }
 }

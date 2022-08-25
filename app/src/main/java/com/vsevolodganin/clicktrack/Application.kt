@@ -1,11 +1,13 @@
 package com.vsevolodganin.clicktrack
 
+import android.os.StrictMode
+import com.vsevolodganin.clicktrack.audio.SoundPreloader
 import com.vsevolodganin.clicktrack.di.component.DaggerApplicationComponent
-import com.vsevolodganin.clicktrack.sounds.SoundPreloader
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.ThemeManager
 import timber.log.Timber
 import javax.inject.Inject
+
 
 class Application : android.app.Application() {
 
@@ -25,6 +27,10 @@ class Application : android.app.Application() {
     override fun onCreate() {
         super.onCreate()
 
+        if (BuildConfig.DEBUG) {
+            strictMode()
+        }
+
         NativeLibraries.init(this)
 
         if (BuildConfig.DEBUG) {
@@ -33,8 +39,24 @@ class Application : android.app.Application() {
 
         daggerComponent.inject(this)
 
-        themeManager.setTheme(userPreferences.theme.stateFlow.value)
+        themeManager.setTheme(userPreferences.theme.value)
 
         soundsPreloader.preload()
+    }
+
+
+    private fun strictMode() {
+        StrictMode.setThreadPolicy(
+            StrictMode.ThreadPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build()
+        )
+        StrictMode.setVmPolicy(
+            StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build()
+        )
     }
 }

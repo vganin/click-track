@@ -2,13 +2,12 @@ package com.vsevolodganin.clicktrack.player
 
 import com.vsevolodganin.clicktrack.model.AbstractPolyrhythm
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
+import com.vsevolodganin.clicktrack.model.ClickSoundType
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.Cue
 import com.vsevolodganin.clicktrack.model.NoteEvent
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
-import com.vsevolodganin.clicktrack.model.applyDiff
 import com.vsevolodganin.clicktrack.model.interval
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
 import com.vsevolodganin.clicktrack.utils.collection.toRoundRobin
 import com.vsevolodganin.clicktrack.utils.math.Rational
 import com.vsevolodganin.clicktrack.utils.math.ZERO
@@ -37,7 +36,7 @@ fun ClickTrack.toPlayerEvents(): Sequence<PlayerEvent> {
 }
 
 fun Cue.toPlayerEvents(tempoOffset: BeatsPerMinuteDiff): Sequence<PlayerEvent> {
-    val tempo = bpm.applyDiff(tempoOffset)
+    val tempo = bpm + tempoOffset
     val polyrhythm = AbstractPolyrhythm(
         pattern1 = listOf(NoteEvent(timeSignature.noteCount.toRational(), NoteEvent.Type.NOTE)),
         pattern2 = pattern.events,

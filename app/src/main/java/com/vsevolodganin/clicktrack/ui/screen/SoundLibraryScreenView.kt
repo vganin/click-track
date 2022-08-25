@@ -27,8 +27,8 @@ import androidx.compose.material.icons.filled.CenterFocusStrong
 import androidx.compose.material.icons.filled.CenterFocusWeak
 import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -36,59 +36,54 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.redux.action.SoundLibraryAction
-import com.vsevolodganin.clicktrack.redux.core.Dispatch
-import com.vsevolodganin.clicktrack.sounds.model.BuiltinClickSounds
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundType
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
+import com.vsevolodganin.clicktrack.model.BuiltinClickSounds
+import com.vsevolodganin.clicktrack.model.ClickSoundType
+import com.vsevolodganin.clicktrack.model.ClickSoundsId
+import com.vsevolodganin.clicktrack.soundlibrary.SelectableClickSoundsItem
+import com.vsevolodganin.clicktrack.soundlibrary.SoundLibraryState
+import com.vsevolodganin.clicktrack.soundlibrary.SoundLibraryViewModel
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.model.SelectableClickSoundsItem
-import com.vsevolodganin.clicktrack.ui.model.SoundLibraryUiState
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopIcon
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun SoundLibraryScreenView(
-    state: SoundLibraryUiState,
+    viewModel: SoundLibraryViewModel,
     modifier: Modifier = Modifier,
-    dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
         topBar = {
             TopAppBarWithBack(
-                dispatch = dispatch,
+                onBackClick = viewModel::onBackClick,
                 title = { Text(stringResource(R.string.sound_library)) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(onClick = { dispatch(SoundLibraryAction.AddNewClickSounds) }) {
+            FloatingActionButton(onClick = viewModel::onAddNewClick) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
         modifier = modifier,
     ) {
-        Content(state, dispatch)
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            dispatch(SoundLibraryAction.StopSoundsTest)
-        }
+        val state by viewModel.state.collectAsState()
+        Content(viewModel, state ?: return@Scaffold)
     }
 }
 
 @Composable
 private fun Content(
-    state: SoundLibraryUiState,
-    dispatch: Dispatch,
+    viewModel: SoundLibraryViewModel,
+    state: SoundLibraryState,
 ) {
     LazyColumn {
         items(items = state.items, key = SelectableClickSoundsItem::id) { item ->
-            ClicksSoundsItem(item, dispatch)
+            ClicksSoundsItem(viewModel, item)
         }
 
         padWithFabSpace()
@@ -97,34 +92,30 @@ private fun Content(
 
 @Composable
 private fun ClicksSoundsItem(
-    item: SelectableClickSoundsItem,
-    dispatch: Dispatch,
+    viewModel: SoundLibraryViewModel,
+    item: SelectableClickSoundsItem
 ) {
-    val onSelect = remember {
-        { dispatch(SoundLibraryAction.SelectClickSounds(item.id)) }
-    }
-
     when (item) {
-        is SelectableClickSoundsItem.Builtin -> BuiltinClickSoundsItem(item, onSelect)
-        is SelectableClickSoundsItem.UserDefined -> UserDefinedSoundsItem(item, onSelect, dispatch)
+        is SelectableClickSoundsItem.Builtin -> BuiltinClickSoundsItem(viewModel, item)
+        is SelectableClickSoundsItem.UserDefined -> UserDefinedSoundsItem(viewModel, item)
     }
 }
 
 @Composable
 private fun BuiltinClickSoundsItem(
+    viewModel: SoundLibraryViewModel,
     item: SelectableClickSoundsItem.Builtin,
-    onSelect: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onSelect)
+            .clickable(onClick = { viewModel.onItemClick(item.id) })
             .padding(start = 8.dp)
     ) {
         RadioButton(
             selected = item.selected,
             modifier = Modifier.align(CenterVertically),
-            onClick = onSelect,
+            onClick = { viewModel.onItemClick(item.id) },
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -142,21 +133,20 @@ private fun BuiltinClickSoundsItem(
 
 @Composable
 private fun UserDefinedSoundsItem(
+    viewModel: SoundLibraryViewModel,
     item: SelectableClickSoundsItem.UserDefined,
-    onSelect: () -> Unit,
-    dispatch: Dispatch,
 ) {
     val contentPadding = 8.dp
 
     SwipeToDelete(
-        onDeleted = { dispatch(SoundLibraryAction.RemoveClickSounds(item.id)) },
+        onDeleted = { viewModel.onItemRemove(item.id) },
         contentPadding = contentPadding,
     ) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(contentPadding)
-                .clickable(onClick = onSelect),
+                .clickable(onClick = { viewModel.onItemClick(item.id) }),
             elevation = 2.dp
         ) {
             Row(
@@ -164,7 +154,7 @@ private fun UserDefinedSoundsItem(
             ) {
                 RadioButton(
                     selected = item.selected,
-                    onClick = onSelect,
+                    onClick = { viewModel.onItemClick(item.id) },
                     Modifier.align(CenterVertically)
                 )
 
@@ -183,14 +173,7 @@ private fun UserDefinedSoundsItem(
                         Spacer(modifier = Modifier.size(16.dp))
 
                         OutlinedButton(
-                            onClick = {
-                                dispatch(
-                                    SoundLibraryAction.SelectClickSound(
-                                        item.id,
-                                        ClickSoundType.STRONG
-                                    )
-                                )
-                            },
+                            onClick = { viewModel.onItemSoundSelect(item.id, ClickSoundType.STRONG) },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.secondary)
                         ) {
@@ -212,14 +195,7 @@ private fun UserDefinedSoundsItem(
                         Spacer(modifier = Modifier.size(16.dp))
 
                         OutlinedButton(
-                            onClick = {
-                                dispatch(
-                                    SoundLibraryAction.SelectClickSound(
-                                        item.id,
-                                        ClickSoundType.WEAK
-                                    )
-                                )
-                            },
+                            onClick = { viewModel.onItemSoundSelect(item.id, ClickSoundType.WEAK) },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.secondary)
                         ) {
@@ -246,13 +222,7 @@ private fun UserDefinedSoundsItem(
                     }
                 } else {
                     IconButton(
-                        onClick = {
-                            if (item.isPlaying) {
-                                dispatch(SoundLibraryAction.StopSoundsTest)
-                            } else {
-                                dispatch(SoundLibraryAction.StartSoundsTest(item.id))
-                            }
-                        },
+                        onClick = { viewModel.onItemSoundTestToggle(item.id) },
                         modifier = Modifier.align(CenterVertically),
                     ) {
                         PlayStopIcon(isPlaying = item.isPlaying)
@@ -267,29 +237,40 @@ private fun UserDefinedSoundsItem(
 @Composable
 private fun Preview() = ClickTrackTheme {
     SoundLibraryScreenView(
-        state = SoundLibraryUiState(
-            items = listOf(
-                SelectableClickSoundsItem.Builtin(
-                    data = BuiltinClickSounds.BEEP,
-                    selected = true
-                ),
-                SelectableClickSoundsItem.UserDefined(
-                    id = ClickSoundsId.Database(0L),
-                    strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
-                    weakBeatValue = "/audio/audio/audio/audio/weak.mp3",
-                    hasError = false,
-                    isPlaying = true,
-                    selected = false
-                ),
-                SelectableClickSoundsItem.UserDefined(
-                    id = ClickSoundsId.Database(1L),
-                    strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
-                    weakBeatValue = "no_access.mp3",
-                    hasError = true,
-                    isPlaying = false,
-                    selected = false
+        viewModel = object : SoundLibraryViewModel {
+            override val state: StateFlow<SoundLibraryState?> = MutableStateFlow(
+                SoundLibraryState(
+                    items = listOf(
+                        SelectableClickSoundsItem.Builtin(
+                            data = BuiltinClickSounds.BEEP,
+                            selected = true
+                        ),
+                        SelectableClickSoundsItem.UserDefined(
+                            id = ClickSoundsId.Database(0L),
+                            strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
+                            weakBeatValue = "/audio/audio/audio/audio/weak.mp3",
+                            hasError = false,
+                            isPlaying = true,
+                            selected = false
+                        ),
+                        SelectableClickSoundsItem.UserDefined(
+                            id = ClickSoundsId.Database(1L),
+                            strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
+                            weakBeatValue = "no_access.mp3",
+                            hasError = true,
+                            isPlaying = false,
+                            selected = false
+                        )
+                    ),
                 )
-            ),
-        ),
+            )
+
+            override fun onBackClick() = Unit
+            override fun onAddNewClick() = Unit
+            override fun onItemClick(id: ClickSoundsId) = Unit
+            override fun onItemRemove(id: ClickSoundsId.Database) = Unit
+            override fun onItemSoundSelect(id: ClickSoundsId.Database, type: ClickSoundType) = Unit
+            override fun onItemSoundTestToggle(id: ClickSoundsId.Database) = Unit
+        }
     )
 }

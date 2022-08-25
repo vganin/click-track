@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.rememberBackdropScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,21 +37,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.model.ClickTrackId
-import com.vsevolodganin.clicktrack.model.MetronomeTimeSignature
+import com.vsevolodganin.clicktrack.metronome.MetronomeState
+import com.vsevolodganin.clicktrack.metronome.MetronomeTimeSignature
+import com.vsevolodganin.clicktrack.metronome.MetronomeViewModel
+import com.vsevolodganin.clicktrack.metronome.metronomeClickTrack
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.bpm
-import com.vsevolodganin.clicktrack.model.metronomeClickTrack
-import com.vsevolodganin.clicktrack.redux.action.BackAction
-import com.vsevolodganin.clicktrack.redux.action.MetronomeAction
-import com.vsevolodganin.clicktrack.redux.action.MetronomeAction.CloseOptions
-import com.vsevolodganin.clicktrack.redux.action.MetronomeAction.OpenOptions
-import com.vsevolodganin.clicktrack.redux.action.MetronomeAction.SetPattern
-import com.vsevolodganin.clicktrack.redux.action.PlayerAction
-import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.model.MetronomeUiState
 import com.vsevolodganin.clicktrack.ui.piece.BpmWheel
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
@@ -59,42 +54,39 @@ import com.vsevolodganin.clicktrack.ui.piece.SubdivisionsChooser
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
 import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
 import com.vsevolodganin.clicktrack.ui.piece.onDarkAppBarSurface
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun MetronomeScreenView(
-    state: MetronomeUiState,
+    viewModel: MetronomeViewModel,
     modifier: Modifier = Modifier,
-    dispatch: Dispatch = Dispatch {},
 ) {
-    val insetTop = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    viewModel.state.collectAsState().value ?: return // FIXME: Otherwise crash in swipeable state
     BackdropScaffold(
-        appBar = { AppBar(dispatch) },
-        backLayerContent = {
-            Options(state, dispatch)
-        },
-        frontLayerContent = {
-            Content(state, dispatch)
-        },
+        appBar = { AppBar(viewModel) },
+        backLayerContent = { Options(viewModel) },
+        frontLayerContent = { Content(viewModel) },
         modifier = modifier,
-        scaffoldState = backdropState(state.areOptionsExpanded, dispatch),
-        peekHeight = BackdropScaffoldDefaults.PeekHeight + insetTop,
+        scaffoldState = backdropState(viewModel),
+        peekHeight = BackdropScaffoldDefaults.PeekHeight + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
         backLayerBackgroundColor = MaterialTheme.colors.darkAppBar,
         backLayerContentColor = MaterialTheme.colors.onDarkAppBarSurface,
     )
 }
 
 @Composable
-private fun AppBar(dispatch: Dispatch) {
+private fun AppBar(viewModel: MetronomeViewModel) {
     TopAppBar(
         title = { Text(text = stringResource(R.string.metronome)) },
         navigationIcon = {
-            IconButton(onClick = { dispatch(BackAction) }) {
+            IconButton(onClick = viewModel::onBackClick) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
             }
         },
         actions = {
-            IconButton(onClick = { dispatch(MetronomeAction.ToggleOptions) }) {
+            IconButton(onClick = viewModel::onToggleOptions) {
                 Icon(imageVector = Icons.Default.Tune, contentDescription = null)
             }
         }
@@ -102,10 +94,9 @@ private fun AppBar(dispatch: Dispatch) {
 }
 
 @Composable
-private fun Content(
-    state: MetronomeUiState,
-    dispatch: Dispatch,
-) {
+private fun Content(viewModel: MetronomeViewModel) {
+    val state = viewModel.state.collectAsState().value ?: return
+
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
@@ -127,7 +118,7 @@ private fun Content(
                     name = metronomeClickTrackName,
                     bpm = state.bpm,
                     pattern = state.pattern,
-                ).value
+                )
             }
 
             ClickTrackView(
@@ -162,28 +153,21 @@ private fun Content(
         ) {
             BpmWheel(
                 value = state.bpm,
-                onValueChange = { dispatch(MetronomeAction.ChangeBpm(it)) },
+                onValueChange = viewModel::onBpmChange,
                 modifier = Modifier
                     .size(200.dp)
                     .align(Alignment.Center)
             )
             PlayStopButton(
                 isPlaying = state.isPlaying,
-                onToggle = {
-                    val action = if (state.isPlaying) {
-                        PlayerAction.StopPlay
-                    } else {
-                        PlayerAction.StartPlayClickTrack(ClickTrackId.Builtin.Metronome)
-                    }
-                    dispatch(action)
-                },
+                onToggle = viewModel::onTogglePlay,
                 modifier = Modifier.align(Alignment.Center),
                 enableInsets = false
             )
         }
 
         FloatingActionButton(
-            onClick = { dispatch(MetronomeAction.BpmMeterTap) },
+            onClick = viewModel::onBpmMeterClick,
             modifier = Modifier
                 .size(64.dp)
                 .constrainAs(bpmMeter) {
@@ -205,32 +189,30 @@ private fun Content(
 }
 
 @Composable
-private fun Options(
-    state: MetronomeUiState,
-    dispatch: Dispatch,
-) {
+private fun Options(viewModel: MetronomeViewModel) {
+    val pattern = viewModel.state.collectAsState().value?.pattern ?: return
     SubdivisionsChooser(
-        pattern = state.pattern,
+        pattern = pattern,
         timeSignature = MetronomeTimeSignature,
-        onSubdivisionChoose = {
-            dispatch(SetPattern(it))
-            dispatch(CloseOptions)
-        },
+        onSubdivisionChoose = viewModel::onPatternChoose,
         modifier = Modifier.padding(8.dp),
         alwaysExpanded = true,
     )
 }
 
 @Composable
-private fun backdropState(areOptionsExpanded: Boolean, dispatch: Dispatch): BackdropScaffoldState {
+private fun backdropState(
+    viewModel: MetronomeViewModel,
+): BackdropScaffoldState {
+    val areOptionsExpanded = viewModel.state.collectAsState().value?.areOptionsExpanded ?: false
     val backdropValue = if (areOptionsExpanded) BackdropValue.Revealed else BackdropValue.Concealed
     return rememberBackdropScaffoldState(
         initialValue = backdropValue,
         confirmStateChange = remember {
             { newDrawerValue ->
                 when (newDrawerValue) {
-                    BackdropValue.Concealed -> dispatch(CloseOptions)
-                    BackdropValue.Revealed -> dispatch(OpenOptions)
+                    BackdropValue.Concealed -> viewModel.onOptionsExpandedChange(false)
+                    BackdropValue.Revealed -> viewModel.onOptionsExpandedChange(true)
                 }
                 true
             }
@@ -249,12 +231,24 @@ private fun backdropState(areOptionsExpanded: Boolean, dispatch: Dispatch): Back
 @Composable
 private fun Preview() = ClickTrackTheme {
     MetronomeScreenView(
-        MetronomeUiState(
-            bpm = 90.bpm,
-            pattern = NotePattern.QUINTUPLET_X2,
-            progress = PlayProgress(100.milliseconds),
-            isPlaying = false,
-            areOptionsExpanded = false,
-        )
+        viewModel = object : MetronomeViewModel {
+            override val state: StateFlow<MetronomeState?> = MutableStateFlow(
+                MetronomeState(
+                    bpm = 90.bpm,
+                    pattern = NotePattern.QUINTUPLET_X2,
+                    progress = PlayProgress(100.milliseconds),
+                    isPlaying = false,
+                    areOptionsExpanded = false,
+                )
+            )
+
+            override fun onBackClick() = Unit
+            override fun onToggleOptions() = Unit
+            override fun onOptionsExpandedChange(isOpened: Boolean) = Unit
+            override fun onPatternChoose(pattern: NotePattern) = Unit
+            override fun onBpmChange(bpmDiff: BeatsPerMinuteDiff) = Unit
+            override fun onTogglePlay() = Unit
+            override fun onBpmMeterClick() = Unit
+        }
     )
 }

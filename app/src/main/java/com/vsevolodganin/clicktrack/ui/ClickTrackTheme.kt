@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui
 
-import android.content.res.Configuration
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -8,9 +7,7 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.ui.screen.ClickTrackListPreview
 
 @Composable
 fun ClickTrackTheme(content: @Composable () -> Unit) {
@@ -58,21 +55,21 @@ private fun darkPalette() = darkColors(
     onSurface = colorResource(R.color.on_surface),
 )
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Composable
-private fun LightThemePreview() {
-    ThemePreview()
-}
-
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Composable
-private fun DarkThemePreview() {
-    ThemePreview()
-}
-
-@Composable
-private fun ThemePreview() {
-    ClickTrackTheme {
-        ClickTrackListPreview()
-    }
-}
+//@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+//@Composable
+//private fun LightThemePreview() {
+//    ThemePreview()
+//}
+//
+//@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+//@Composable
+//private fun DarkThemePreview() {
+//    ThemePreview()
+//}
+//
+//@Composable
+//private fun ThemePreview() {
+//    ClickTrackTheme {
+//        ClickTrackListPreview()
+//    }
+//}

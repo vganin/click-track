@@ -6,10 +6,12 @@ import android.media.AudioManager.AUDIOFOCUS_LOSS
 import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
+import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
+@PlayerServiceScope
 class AudioFocusManager @Inject constructor(
     private val audioManager: AudioManager
 ) {

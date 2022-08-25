@@ -1,5 +1,3 @@
-@file:UseSerializers(DurationSerializer::class)
-
 package com.vsevolodganin.clicktrack.model
 
 import android.os.Parcelable
@@ -9,38 +7,54 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.UseSerializers
 import kotlin.time.Duration
 
 @Serializable
-sealed class CueDuration : Parcelable {
+sealed interface CueDuration : Parcelable {
+
+    enum class Type {
+        BEATS,
+        MEASURES,
+        TIME,
+    }
+
+    val type: Type
 
     @Serializable
     @Parcelize
     @SerialName("com.vsevolodganin.clicktrack.lib.CueDuration.Beats") // For backward compatibility
-    data class Beats(val value: Int) : CueDuration() {
+    data class Beats(val value: Int) : CueDuration {
         init {
             require(value >= 0) { "Beats count should be non-negative but was: $value" }
         }
+
+        override val type: Type
+            get() = Type.BEATS
     }
 
     @Serializable
     @Parcelize
     @SerialName("com.vsevolodganin.clicktrack.lib.CueDuration.Measures") // For backward compatibility
-    data class Measures(val value: Int) : CueDuration() {
+    data class Measures(val value: Int) : CueDuration {
         init {
             require(value >= 0) { "Measures count should be non-negative but was: $value" }
         }
+
+        override val type: Type
+            get() = Type.MEASURES
     }
 
     @Serializable
     @Parcelize
     @TypeParceler<Duration, DurationParceler>
     @SerialName("com.vsevolodganin.clicktrack.lib.CueDuration.Time") // For backward compatibility
-    data class Time(val value: Duration) : CueDuration() {
+    data class Time(@Serializable(DurationSerializer::class) val value: Duration) : CueDuration {
         init {
             require(value >= Duration.ZERO) { "Time should be non-negative but was: $value" }
         }
+
+        override val type: Type
+            get() = Type.TIME
     }
 }
 

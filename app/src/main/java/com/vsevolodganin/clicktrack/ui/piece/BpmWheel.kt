@@ -28,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
-import com.vsevolodganin.clicktrack.model.applyDiff
 import com.vsevolodganin.clicktrack.model.bpm
 import com.vsevolodganin.clicktrack.utils.compose.detectRadialDragGesture
 import com.vsevolodganin.clicktrack.utils.compose.toRadians
@@ -44,7 +43,7 @@ fun BpmWheel(
 ) {
     BpmWheel(
         value = state.value,
-        onValueChange = { state.value = state.value.applyDiff(it) },
+        onValueChange = { state.value = state.value + it },
         modifier = modifier,
         sensitivity = sensitivity,
     )

@@ -7,7 +7,7 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class FirebaseModule {
+object FirebaseModule {
 
     @Provides
     @Singleton

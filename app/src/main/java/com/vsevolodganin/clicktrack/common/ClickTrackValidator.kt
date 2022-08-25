@@ -1,9 +1,10 @@
 package com.vsevolodganin.clicktrack.common
 
+import com.vsevolodganin.clicktrack.edit.EditClickTrackState
+import com.vsevolodganin.clicktrack.edit.EditCueState
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.Cue
-import com.vsevolodganin.clicktrack.redux.EditClickTrackState
-import com.vsevolodganin.clicktrack.redux.EditCueState
+import com.vsevolodganin.clicktrack.model.CueDuration
 import javax.inject.Inject
 
 class ClickTrackValidator @Inject constructor(
@@ -12,7 +13,6 @@ class ClickTrackValidator @Inject constructor(
 
     class ClickTrackValidationResult(
         val validClickTrack: ClickTrack,
-        val errors: Set<EditClickTrackState.Error>,
         val cueValidationResults: List<CueValidationResult>,
     )
 
@@ -22,21 +22,15 @@ class ClickTrackValidator @Inject constructor(
     )
 
     fun validate(editClickTrackState: EditClickTrackState): ClickTrackValidationResult {
-        val name = editClickTrackState.name.trim()
-        val errors = mutableSetOf<EditClickTrackState.Error>()
-        if (name.isEmpty()) {
-            errors += EditClickTrackState.Error.NAME
-        }
         val cueValidationResults = editClickTrackState.cues.map(::validate)
 
         return ClickTrackValidationResult(
             validClickTrack = ClickTrack(
-                name = name,
+                name = editClickTrackState.name.trim(),
                 loop = editClickTrackState.loop,
                 tempoDiff = editClickTrackState.tempoDiff,
                 cues = cueValidationResults.map(CueValidationResult::validCue),
             ),
-            errors = errors,
             cueValidationResults = cueValidationResults,
         )
     }
@@ -46,7 +40,7 @@ class ClickTrackValidator @Inject constructor(
         val errors = mutableSetOf<EditCueState.Error>()
 
         val bpmValidationResult = bpmValidator.validate(editCueState.bpm)
-        if (bpmValidationResult.hadError) {
+        if (bpmValidationResult.hasError) {
             errors += EditCueState.Error.BPM
         }
 
@@ -56,9 +50,9 @@ class ClickTrackValidator @Inject constructor(
                 bpm = bpmValidationResult.coercedBpm,
                 timeSignature = editCueState.timeSignature,
                 duration = when (editCueState.activeDurationType) {
-                    EditCueState.DurationType.BEATS -> editCueState.beats
-                    EditCueState.DurationType.MEASURES -> editCueState.measures
-                    EditCueState.DurationType.TIME -> editCueState.time
+                    CueDuration.Type.BEATS -> editCueState.beats
+                    CueDuration.Type.MEASURES -> editCueState.measures
+                    CueDuration.Type.TIME -> editCueState.time
                 },
                 pattern = editCueState.pattern
             ),

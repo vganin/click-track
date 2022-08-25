@@ -6,44 +6,44 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.redux.action.SettingsAction
-import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.settings.SettingsState
+import com.vsevolodganin.clicktrack.settings.SettingsViewModel
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.model.SettingsUiState
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.settings.BooleanChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooserItem
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun SettingsScreenView(
-    state: SettingsUiState,
+    viewModel: SettingsViewModel,
     modifier: Modifier = Modifier,
-    dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
         topBar = {
             TopAppBarWithBack(
-                dispatch = dispatch,
+                onBackClick = viewModel::onBackClick,
                 title = { Text(stringResource(R.string.settings)) },
             )
         },
         modifier = modifier,
     ) {
-        Content(state, dispatch)
+        Content(viewModel)
     }
 }
 
 @Composable
-private fun Content(
-    state: SettingsUiState,
-    dispatch: Dispatch,
-) {
+private fun Content(viewModel: SettingsViewModel) {
+    val state by viewModel.state.collectAsState()
     Column {
         ListChooser(
             title = stringResource(R.string.settings_theme),
@@ -55,13 +55,13 @@ private fun Content(
                     description = it.description()
                 )
             },
-            onChoose = { theme -> dispatch(SettingsAction.ChangeTheme(theme)) },
+            onChoose = viewModel::onThemeChange,
         )
         Divider(modifier = Modifier.padding(start = 16.dp))
         BooleanChooser(
             title = stringResource(R.string.settings_ignore_audio_focus),
             value = state.ignoreAudioFocus,
-            onCheckedChange = { ignoreAudioFocus -> dispatch(SettingsAction.ChangeIgnoreAudioFocus(ignoreAudioFocus)) },
+            onCheckedChange = viewModel::onIgnoreAudioFocusChange,
             description = stringResource(R.string.settings_ignore_audio_focus_description)
         )
     }
@@ -87,9 +87,18 @@ private fun Theme.description(): String? = when (this) {
 @Composable
 private fun Preview() = ClickTrackTheme {
     SettingsScreenView(
-        SettingsUiState(
-            theme = Theme.SYSTEM,
-            ignoreAudioFocus = false,
-        )
+        viewModel = object : SettingsViewModel {
+            override val state: StateFlow<SettingsState> = MutableStateFlow(
+                SettingsState(
+                    theme = Theme.SYSTEM,
+                    ignoreAudioFocus = false,
+                )
+            )
+
+            override fun onBackClick() = Unit
+            override fun onThemeChange(theme: Theme) = Unit
+            override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
+        }
+
     )
 }

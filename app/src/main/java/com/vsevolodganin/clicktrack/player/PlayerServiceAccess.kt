@@ -4,21 +4,25 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.os.IBinder
-import androidx.annotation.MainThread
-import com.vsevolodganin.clicktrack.di.component.ViewModelScoped
-import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundsId
+import com.vsevolodganin.clicktrack.di.component.ActivityScope
+import com.vsevolodganin.clicktrack.model.ClickSoundsId
+import com.vsevolodganin.clicktrack.model.PlayableId
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 
-@ViewModelScoped
+@ActivityScope
 class PlayerServiceAccess @Inject constructor(
     private val context: Context,
-) : Player {
+    activityCoroutineScope: CoroutineScope,
+) {
 
     private val binderState = MutableStateFlow<PlayerServiceBinder?>(null)
 
@@ -32,37 +36,26 @@ class PlayerServiceAccess @Inject constructor(
         }
     }
 
-    @MainThread
-    fun connect() {
-        PlayerService.bind(context, serviceConnection)
+    private val playbackState = binderState.flatMapLatest { it?.playbackState ?: flowOf(null) }
+        .onStart {
+            PlayerService.bind(context, serviceConnection)
+        }
+        .onCompletion {
+            context.unbindService(serviceConnection)
+        }
+        .shareIn(activityCoroutineScope, SharingStarted.WhileSubscribed())
+
+    fun start(id: PlayableId, atProgress: Double? = null, soundsId: ClickSoundsId? = null) {
+        PlayerService.start(context, id, atProgress, soundsId)
     }
 
-    @MainThread
-    fun disconnect() {
-        context.unbindService(serviceConnection)
-    }
-
-    fun start(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?, keepInBackground: Boolean) {
-        PlayerService.start(context, clickTrack, atProgress, soundsId, keepInBackground)
-    }
-
-    override suspend fun start(clickTrack: ClickTrackWithId, atProgress: Double?, soundsId: ClickSoundsId?) {
-        start(clickTrack, atProgress, soundsId, keepInBackground = true)
-    }
-
-    override suspend fun start(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) {
-        PlayerService.start(context, twoLayerPolyrhythm, atProgress, soundsId)
-    }
-
-    override suspend fun pause() {
+    fun pause() {
         PlayerService.pause(context)
     }
 
-    override suspend fun stop() {
+    fun stop() {
         PlayerService.stop(context)
     }
 
-    override fun playbackState(): Flow<PlaybackState?> {
-        return binderState.flatMapLatest { it?.playbackState ?: flowOf(null) }
-    }
+    fun playbackState(): Flow<PlaybackState?> = playbackState
 }

@@ -7,8 +7,12 @@
         android:shortcutShortLabel="@string/metronome"
         tools:ignore="UnusedAttribute">
         <intent
-            android:action="navigate_metronome"
+            android:action="android.intent.action.VIEW"
             android:targetClass="com.vsevolodganin.clicktrack.MainActivity"
-            android:targetPackage="${applicationId}" />
+            android:targetPackage="${applicationId}">
+            <extra
+                android:name="destination"
+                android:value="metronome" />
+        </intent>
     </shortcut>
 </shortcuts>

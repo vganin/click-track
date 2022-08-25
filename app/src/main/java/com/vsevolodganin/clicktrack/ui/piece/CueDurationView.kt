@@ -17,14 +17,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.CueDuration
-import com.vsevolodganin.clicktrack.redux.EditCueState
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun CueDurationView(
     value: CueDuration,
     onValueChange: (CueDuration) -> Unit,
-    onTypeChange: (EditCueState.DurationType) -> Unit,
+    onTypeChange: (CueDuration.Type) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(modifier = modifier.height(IntrinsicSize.Min)) {
@@ -69,11 +68,11 @@ fun CueDurationView(
 
 @Composable
 private fun DurationTypeDropdown(
-    value: EditCueState.DurationType,
-    onValueChange: (EditCueState.DurationType) -> Unit,
+    value: CueDuration.Type,
+    onValueChange: (CueDuration.Type) -> Unit,
 ) {
     DropdownSelector(
-        items = EditCueState.DurationType.values().toList(),
+        items = CueDuration.Type.values().toList(),
         selectedValue = value,
         onSelect = { selectedValue ->
             onValueChange(selectedValue)
@@ -123,22 +122,13 @@ private fun EditTimeView(
 }
 
 @Composable
-private fun EditCueState.DurationType.stringResource(): String {
+private fun CueDuration.Type.stringResource(): String {
     return when (this) {
-        EditCueState.DurationType.BEATS -> R.string.cue_duration_beats
-        EditCueState.DurationType.MEASURES -> R.string.cue_duration_measures
-        EditCueState.DurationType.TIME -> R.string.cue_duration_time
+        CueDuration.Type.BEATS -> R.string.cue_duration_beats
+        CueDuration.Type.MEASURES -> R.string.cue_duration_measures
+        CueDuration.Type.TIME -> R.string.cue_duration_time
     }.let { stringResource(it) }
 }
-
-private val CueDuration.type: EditCueState.DurationType
-    get() {
-        return when (this) {
-            is CueDuration.Beats -> EditCueState.DurationType.BEATS
-            is CueDuration.Measures -> EditCueState.DurationType.MEASURES
-            is CueDuration.Time -> EditCueState.DurationType.TIME
-        }
-    }
 
 @Preview
 @Composable

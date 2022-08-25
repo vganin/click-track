@@ -1,8 +1,7 @@
 package com.vsevolodganin.clicktrack.di.component
 
 import com.vsevolodganin.clicktrack.Application
-import com.vsevolodganin.clicktrack.di.module.ApplicationScopedAndroidModule
-import com.vsevolodganin.clicktrack.di.module.ApplicationScopedCoroutineModule
+import com.vsevolodganin.clicktrack.di.module.AndroidModule
 import com.vsevolodganin.clicktrack.di.module.DatabaseModule
 import com.vsevolodganin.clicktrack.di.module.FirebaseModule
 import com.vsevolodganin.clicktrack.di.module.SerializationModule
@@ -15,8 +14,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        ApplicationScopedCoroutineModule::class,
-        ApplicationScopedAndroidModule::class,
+        AndroidModule::class,
         SerializationModule::class,
         DatabaseModule::class,
         UserPreferencesModule::class,
@@ -27,7 +25,7 @@ interface ApplicationComponent {
     fun inject(application: Application)
     fun inject(worker: ExportWorker)
 
-    fun viewModelComponentBuilder(): ViewModelComponent.Builder
+    fun activityComponentBuilder(): ActivityComponent.Builder
     fun playerServiceComponentBuilder(): PlayerServiceComponent.Builder
 
     @Component.Builder

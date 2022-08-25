@@ -5,10 +5,10 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.vsevolodganin.clicktrack.di.component.ActivityScoped
+import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import javax.inject.Inject
 
-@ActivityScoped
+@ActivityScope
 class LinkOpener @Inject constructor(
     private val context: Activity,
 ) {

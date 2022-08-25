@@ -2,37 +2,28 @@ package com.vsevolodganin.clicktrack
 
 import android.content.Context
 import android.content.Intent
-import android.os.Parcelable
-import com.vsevolodganin.clicktrack.di.component.ActivityScoped
+import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import com.vsevolodganin.clicktrack.model.ClickTrackId
-import com.vsevolodganin.clicktrack.redux.AppState
-import com.vsevolodganin.clicktrack.redux.action.BackstackAction
-import com.vsevolodganin.clicktrack.redux.core.Store
-import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
-@ActivityScoped
+@ActivityScope
 class IntentProcessor @Inject constructor(
-    private val store: Store<AppState>,
+    private val navigation: Navigation
 ) {
     fun process(intent: Intent) {
         when (intent.action) {
-            Action.NAVIGATE -> {
-                val navigateAction = when (intent.getParcelableExtra<NavigationDestination>(Extras.NAVIGATION_DESTINATION)) {
-                    NavigationDestination.CLICK_TRACK -> when (val clickTrackId =
-                        intent.getParcelableExtra<ClickTrackId>(Extras.CLICK_TRACK_ID)) {
-                        is ClickTrackId.Database -> BackstackAction.ToClickTrackScreen(clickTrackId)
-                        ClickTrackId.Builtin.Metronome -> BackstackAction.ToMetronomeScreen
-                        is ClickTrackId.Builtin.ClickSoundsTest,
-                        null -> return
+            Intent.ACTION_VIEW -> {
+                when (intent.getStringExtra(Extras.DESTINATION)) {
+                    Extras.DESTINATION_CLICK_TRACK -> {
+                        val clickTrackId = intent.getLongExtra(Extras.CLICK_TRACK_ID, -1L)
+                            .takeIf { it >= 0 }
+                            ?.let(ClickTrackId::Database)
+                            ?: throw IllegalArgumentException("No ${Extras.CLICK_TRACK_ID} supplied")
+                        navigation.resetTo(ScreenConfiguration.PlayClickTrack(clickTrackId))
                     }
-                    NavigationDestination.POLYRHYTHMS -> BackstackAction.ToPolyrhythms
-                    null -> return
+                    Extras.DESTINATION_POLYRHYTHMS -> navigation.resetTo(ScreenConfiguration.Polyrhythms)
+                    Extras.DESTINATION_METRONOME -> navigation.resetTo(ScreenConfiguration.Metronome)
                 }
-                store.dispatch(navigateAction)
-            }
-            Action.NAVIGATE_METRONOME -> {
-                store.dispatch(BackstackAction.ToMetronomeScreen)
             }
         }
     }
@@ -40,33 +31,41 @@ class IntentProcessor @Inject constructor(
 
 class IntentFactory @Inject constructor(private val context: Context) {
 
-    fun openClickTrack(clickTrackId: ClickTrackId): Intent {
-        return Intent(context, MainActivity::class.java).apply {
-            action = Action.NAVIGATE
-            putExtra(Extras.NAVIGATION_DESTINATION, NavigationDestination.CLICK_TRACK as Parcelable)
-            putExtra(Extras.CLICK_TRACK_ID, clickTrackId)
+    fun navigate(id: ClickTrackId): Intent? {
+        return when (id) {
+            is ClickTrackId.Database -> navigateClickTrack(id)
+            ClickTrackId.Builtin.Metronome -> navigateMetronome()
+            is ClickTrackId.Builtin.ClickSoundsTest -> null
         }
     }
 
-    fun openPolyrhythms(): Intent {
+    fun navigateClickTrack(id: ClickTrackId.Database): Intent {
         return Intent(context, MainActivity::class.java).apply {
-            action = Action.NAVIGATE
-            putExtra(Extras.NAVIGATION_DESTINATION, NavigationDestination.POLYRHYTHMS as Parcelable)
+            action = Intent.ACTION_VIEW
+            putExtra(Extras.DESTINATION, Extras.DESTINATION_CLICK_TRACK)
+            putExtra(Extras.CLICK_TRACK_ID, id.value)
         }
     }
-}
 
-private object Action {
-    const val NAVIGATE = "navigate"
-    const val NAVIGATE_METRONOME = "navigate_metronome"
+    fun navigatePolyrhythms(): Intent {
+        return Intent(context, MainActivity::class.java).apply {
+            action = Intent.ACTION_VIEW
+            putExtra(Extras.DESTINATION, Extras.DESTINATION_POLYRHYTHMS)
+        }
+    }
+
+    fun navigateMetronome(): Intent {
+        return Intent(context, MainActivity::class.java).apply {
+            action = Intent.ACTION_VIEW
+            putExtra(Extras.DESTINATION, Extras.DESTINATION_METRONOME)
+        }
+    }
 }
 
 private object Extras {
-    const val NAVIGATION_DESTINATION = "navigation_destination"
+    const val DESTINATION = "destination"
+    const val DESTINATION_CLICK_TRACK = "click_track"
+    const val DESTINATION_POLYRHYTHMS = "polyrhythms"
+    const val DESTINATION_METRONOME = "metronome"
     const val CLICK_TRACK_ID = "click_track_id"
-}
-
-@Parcelize
-private enum class NavigationDestination : Parcelable {
-    CLICK_TRACK, POLYRHYTHMS
 }

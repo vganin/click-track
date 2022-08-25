@@ -6,10 +6,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioFormat
 import android.media.AudioManager
-import com.vsevolodganin.clicktrack.di.component.PlayerServiceScoped
+import com.vsevolodganin.clicktrack.audio.AudioTrack
+import com.vsevolodganin.clicktrack.audio.SoundBank
+import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
-import com.vsevolodganin.clicktrack.sounds.SoundBank
-import com.vsevolodganin.clicktrack.sounds.model.ClickSoundSource
+import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -20,7 +21,7 @@ import kotlin.time.Duration.Companion.milliseconds
 /**
  * Thread-unsafe, should be accessed from a single thread (see [com.vsevolodganin.clicktrack.di.module.PlayerDispatcher]).
  */
-@PlayerServiceScoped
+@PlayerServiceScope
 class PlayerSoundPool @Inject constructor(
     context: Context,
     private val soundBank: SoundBank,

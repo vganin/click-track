@@ -18,54 +18,57 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.list.ClickTrackListState
+import com.vsevolodganin.clicktrack.list.ClickTrackListViewModel
+import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.redux.action.BackstackAction
-import com.vsevolodganin.clicktrack.redux.action.ClickTrackAction
-import com.vsevolodganin.clicktrack.redux.action.DrawerAction
-import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.model.ClickTrackListUiState
-import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
-import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_2
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
+import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
+import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_2
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun ClickTrackListScreenView(
-    state: ClickTrackListUiState,
+    viewModel: ClickTrackListViewModel,
     modifier: Modifier = Modifier,
-    dispatch: Dispatch = Dispatch {},
 ) {
     Scaffold(
-        topBar = { TopBar(dispatch) },
+        topBar = { TopBar(viewModel) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(onClick = { dispatch(ClickTrackAction.AddNew) }) {
+            FloatingActionButton(onClick = { viewModel.onAddClick() }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
         modifier = modifier,
     ) {
-        Content(state, dispatch)
+        Content(viewModel)
     }
 }
 
 @Composable
-private fun Content(
-    state: ClickTrackListUiState,
-    dispatch: Dispatch,
-) {
+private fun Content(viewModel: ClickTrackListViewModel) {
+    val state by viewModel.state.collectAsState()
+
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(items = state.items, key = ClickTrackWithId::id) { clickTrack ->
-            ClickTrackListItem(clickTrack, dispatch)
+            ClickTrackListItem(
+                viewModel = viewModel,
+                clickTrack = clickTrack,
+            )
         }
 
         padWithFabSpace()
@@ -73,13 +76,13 @@ private fun Content(
 }
 
 @Composable
-private fun TopBar(dispatch: Dispatch) {
+private fun TopBar(viewModel: ClickTrackListViewModel) {
     TopAppBar(
         title = {
             Text(text = stringResource(id = R.string.click_track_list))
         },
         navigationIcon = {
-            IconButton(onClick = { dispatch(DrawerAction.Open) }) {
+            IconButton(onClick = viewModel::onMenuClick) {
                 Icon(imageVector = Icons.Default.Menu, contentDescription = null)
             }
         },
@@ -87,11 +90,14 @@ private fun TopBar(dispatch: Dispatch) {
 }
 
 @Composable
-private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithDatabaseId, dispatch: Dispatch) {
+private fun LazyItemScope.ClickTrackListItem(
+    viewModel: ClickTrackListViewModel,
+    clickTrack: ClickTrackWithDatabaseId,
+) {
     val contentPadding = 8.dp
 
     SwipeToDelete(
-        onDeleted = { dispatch(ClickTrackAction.Remove(clickTrack.id)) },
+        onDeleted = { viewModel.onItemRemove(clickTrack.id) },
         contentPadding = contentPadding
     ) {
         Card(
@@ -105,9 +111,7 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithDatabaseI
                     modifier = Modifier
                         .fillParentMaxWidth()
                         .height(100.dp)
-                        .clickable(onClick = {
-                            dispatch(BackstackAction.ToClickTrackScreen(clickTrack.id))
-                        }),
+                        .clickable(onClick = { viewModel.onItemClick(clickTrack.id) }),
                 )
                 Text(
                     text = clickTrack.value.name,
@@ -122,11 +126,20 @@ private fun LazyItemScope.ClickTrackListItem(clickTrack: ClickTrackWithDatabaseI
 @Composable
 fun ClickTrackListPreview() = ClickTrackTheme {
     ClickTrackListScreenView(
-        ClickTrackListUiState(
-            listOf(
-                PREVIEW_CLICK_TRACK_1,
-                PREVIEW_CLICK_TRACK_2,
+        viewModel = object : ClickTrackListViewModel {
+            override val state: StateFlow<ClickTrackListState> = MutableStateFlow(
+                ClickTrackListState(
+                    listOf(
+                        PREVIEW_CLICK_TRACK_1,
+                        PREVIEW_CLICK_TRACK_2,
+                    )
+                )
             )
-        )
+
+            override fun onAddClick() = Unit
+            override fun onItemClick(id: ClickTrackId.Database) = Unit
+            override fun onItemRemove(id: ClickTrackId.Database) = Unit
+            override fun onMenuClick() = Unit
+        }
     )
 }

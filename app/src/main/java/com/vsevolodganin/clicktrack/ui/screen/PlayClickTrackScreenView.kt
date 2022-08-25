@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,44 +43,40 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.redux.action.BackAction
-import com.vsevolodganin.clicktrack.redux.action.BackstackAction
-import com.vsevolodganin.clicktrack.redux.action.ClickTrackAction
-import com.vsevolodganin.clicktrack.redux.action.ExportAction
-import com.vsevolodganin.clicktrack.redux.action.PlayerAction
-import com.vsevolodganin.clicktrack.redux.action.SettingsAction
-import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.play.PlayClickTrackState
+import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModel
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
-import com.vsevolodganin.clicktrack.ui.model.PlayClickTrackUiState
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
+import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @Composable
 fun PlayClickTrackScreenView(
-    state: PlayClickTrackUiState,
+    viewModel: PlayClickTrackViewModel,
     modifier: Modifier = Modifier,
-    dispatch: Dispatch = Dispatch {},
 ) {
+    val state by viewModel.state.collectAsState()
     val scaffoldState = rememberScaffoldState()
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { TopBar(state, dispatch, scaffoldState.snackbarHostState) },
+        topBar = { TopBar(viewModel, state ?: return@Scaffold, scaffoldState.snackbarHostState) },
         floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = { BottomBar(state, dispatch) },
+        floatingActionButton = { BottomBar(viewModel, state ?: return@Scaffold) },
         modifier = modifier,
     ) {
-        Content(state, dispatch)
+        Content(viewModel, state ?: return@Scaffold)
     }
 }
 
 @Composable
 private fun Content(
-    state: PlayClickTrackUiState,
-    dispatch: Dispatch,
+    viewModel: PlayClickTrackViewModel,
+    state: PlayClickTrackState
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -92,8 +89,8 @@ private fun Content(
             drawTextMarks = true,
             progress = state.playProgress,
             progressDragAndDropEnabled = true,
-            onProgressDragStart = { dispatch(PlayerAction.PausePlay) },
-            onProgressDrop = { progress -> dispatch(PlayerAction.StartPlayClickTrack(state.clickTrack.id, progress)) },
+            onProgressDragStart = viewModel::onProgressDragStart,
+            onProgressDrop = viewModel::onProgressDrop,
             viewportPanEnabled = true,
             modifier = Modifier.fillMaxSize()
         )
@@ -102,18 +99,18 @@ private fun Content(
 
 @Composable
 private fun TopBar(
-    state: PlayClickTrackUiState,
-    dispatch: Dispatch,
+    viewModel: PlayClickTrackViewModel,
+    state: PlayClickTrackState,
     snackbarHostState: SnackbarHostState,
 ) {
     TopAppBarWithBack(
-        dispatch = dispatch,
+        onBackClick = viewModel::onBackClick,
         title = { Text(text = state.clickTrack.value.name) },
         actions = {
             var editEnabled by remember { mutableStateOf(true) }
             IconButton(
                 onClick = {
-                    dispatch(BackstackAction.ToEditClickTrackScreen(clickTrack = state.clickTrack, isInitialEdit = false))
+                    viewModel.onEditClick()
                     editEnabled = false
                 },
                 enabled = editEnabled
@@ -122,25 +119,16 @@ private fun TopBar(
             }
 
             var showDeleteConfirmation by remember { mutableStateOf(false) }
-            IconButton(
-                onClick = {
-                    showDeleteConfirmation = true
-                },
-            ) {
+
+            IconButton(onClick = { showDeleteConfirmation = true }) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = null)
             }
 
-            OverflowMenu(state, dispatch, snackbarHostState)
+            OverflowMenu(viewModel, state, snackbarHostState)
 
             if (showDeleteConfirmation) {
                 val dismiss: () -> Unit = remember {
                     { showDeleteConfirmation = false }
-                }
-                val confirm: () -> Unit = remember {
-                    lambda@{
-                        dispatch(ClickTrackAction.Remove(state.clickTrack.id))
-                        dispatch(BackAction)
-                    }
                 }
                 AlertDialog(
                     onDismissRequest = dismiss,
@@ -149,7 +137,7 @@ private fun TopBar(
                     },
                     confirmButton = {
                         TextButton(
-                            onClick = confirm,
+                            onClick = viewModel::onRemoveClick,
                             shape = RectangleShape
                         ) {
                             Text(text = stringResource(id = android.R.string.ok).uppercase())
@@ -170,7 +158,11 @@ private fun TopBar(
 }
 
 @Composable
-private fun OverflowMenu(state: PlayClickTrackUiState, dispatch: Dispatch, snackbarHostState: SnackbarHostState) {
+private fun OverflowMenu(
+    viewModel: PlayClickTrackViewModel,
+    state: PlayClickTrackState,
+    snackbarHostState: SnackbarHostState
+) {
     val coroutineScope = rememberCoroutineScope()
     var showDropdown by remember { mutableStateOf(false) }
 
@@ -183,7 +175,7 @@ private fun OverflowMenu(state: PlayClickTrackUiState, dispatch: Dispatch, snack
         val cancelActionLabel = stringResource(android.R.string.cancel)
 
         DropdownMenuItem(onClick = {
-            dispatch(ExportAction.Start(state.clickTrack.id))
+            viewModel.onExportClick()
             showDropdown = false
             coroutineScope.launch {
                 val snackbarResult = snackbarHostState.showSnackbar(
@@ -192,7 +184,7 @@ private fun OverflowMenu(state: PlayClickTrackUiState, dispatch: Dispatch, snack
                     actionLabel = cancelActionLabel
                 )
                 if (snackbarResult == SnackbarResult.ActionPerformed) {
-                    dispatch(ExportAction.Stop(state.clickTrack.id))
+                    viewModel.onCancelExportClick()
                 }
             }
         }) {
@@ -202,7 +194,10 @@ private fun OverflowMenu(state: PlayClickTrackUiState, dispatch: Dispatch, snack
 }
 
 @Composable
-private fun BottomBar(state: PlayClickTrackUiState, dispatch: Dispatch) {
+private fun BottomBar(
+    viewModel: PlayClickTrackViewModel,
+    state: PlayClickTrackState
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -210,23 +205,14 @@ private fun BottomBar(state: PlayClickTrackUiState, dispatch: Dispatch) {
     ) {
         PlayStopButton(
             isPlaying = state.isPlaying,
-            onToggle = {
-                val action = if (state.isPlaying) {
-                    PlayerAction.StopPlay
-                } else {
-                    PlayerAction.StartPlayClickTrack(state.clickTrack.id, progress = 0.0)
-                }
-                dispatch(action)
-            },
+            onToggle = viewModel::onTogglePlay,
             modifier = Modifier.align(Alignment.Center),
             enableInsets = false,
         )
 
         CompositionLocalProvider(LocalMinimumTouchTargetEnforcement provides false) {
             Chip(
-                onClick = {
-                    dispatch(SettingsAction.ChangePlayTrackingMode(!state.playTrackingMode))
-                },
+                onClick = viewModel::onTogglePlayTrackingMode,
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(start = 8.dp)
@@ -243,11 +229,25 @@ private fun BottomBar(state: PlayClickTrackUiState, dispatch: Dispatch) {
 @Composable
 private fun Preview() = ClickTrackTheme {
     PlayClickTrackScreenView(
-        PlayClickTrackUiState(
-            clickTrack = PREVIEW_CLICK_TRACK_1,
-            playProgress = null,
-            isPlaying = false,
-            playTrackingMode = true,
-        )
+        viewModel = object : PlayClickTrackViewModel {
+            override val state: StateFlow<PlayClickTrackState?> = MutableStateFlow(
+                PlayClickTrackState(
+                    clickTrack = PREVIEW_CLICK_TRACK_1,
+                    playProgress = null,
+                    isPlaying = false,
+                    playTrackingMode = true,
+                )
+            )
+
+            override fun onBackClick() = Unit
+            override fun onTogglePlay() = Unit
+            override fun onTogglePlayTrackingMode() = Unit
+            override fun onProgressDragStart() = Unit
+            override fun onProgressDrop(progress: Double) = Unit
+            override fun onEditClick() = Unit
+            override fun onRemoveClick() = Unit
+            override fun onExportClick() = Unit
+            override fun onCancelExportClick() = Unit
+        }
     )
 }

@@ -13,7 +13,9 @@ class BeatsPerMinuteDiff(
     companion object {
         val ZERO = BeatsPerMinuteDiff(0)
     }
-}
 
-fun BeatsPerMinute.applyDiff(diff: BeatsPerMinuteDiff): BeatsPerMinute =
-    BeatsPerMinute((value + diff.value).coerceAtLeast(MIN_BPM_VALUE))
+    operator fun plus(o: Int) = BeatsPerMinuteDiff(value + o)
+    operator fun minus(o: Int) = BeatsPerMinuteDiff(value - o)
+    operator fun plus(o: BeatsPerMinuteDiff) = (value + o.value).bpm
+    operator fun minus(o: BeatsPerMinuteDiff) = (value - o.value).bpm
+}

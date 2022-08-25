@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -24,6 +23,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -36,33 +37,37 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
-import com.vsevolodganin.clicktrack.redux.action.AboutAction
-import com.vsevolodganin.clicktrack.redux.core.Dispatch
+import com.vsevolodganin.clicktrack.about.AboutState
+import com.vsevolodganin.clicktrack.about.AboutViewModel
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.model.AboutUiState
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Artstation
 import compose.icons.simpleicons.Twitter
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun AboutScreenView(state: AboutUiState, modifier: Modifier = Modifier, dispatch: Dispatch = Dispatch {}) {
+fun AboutScreenView(
+    viewModel: AboutViewModel,
+    modifier: Modifier = Modifier
+) {
     Scaffold(
         topBar = {
             TopAppBarWithBack(
-                dispatch = dispatch,
+                onBackClick = viewModel::onBackClick,
                 title = { Text(stringResource(R.string.about_title)) },
             )
         },
         modifier = modifier,
     ) {
-        Content(state, dispatch)
+        Content(viewModel)
     }
 }
 
 @Composable
-private fun Content(state: AboutUiState, dispatch: Dispatch) {
+private fun Content(viewModel: AboutViewModel) {
+    val state by viewModel.state.collectAsState()
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     Box(
@@ -102,13 +107,13 @@ private fun Content(state: AboutUiState, dispatch: Dispatch) {
                 style = MaterialTheme.typography.h6
             )
             Row(modifier = Modifier.align(CenterHorizontally)) {
-                IconButton(onClick = { dispatch(AboutAction.GoHomePage) }) {
+                IconButton(onClick = viewModel::onHomeClick) {
                     Icon(imageVector = Icons.Default.Public, contentDescription = null)
                 }
-                IconButton(onClick = { dispatch(AboutAction.GoTwitter) }) {
+                IconButton(onClick = viewModel::onTwitterClick) {
                     Icon(imageVector = SimpleIcons.Twitter, contentDescription = null)
                 }
-                IconButton(onClick = { dispatch(AboutAction.SendEmail) }) {
+                IconButton(onClick = viewModel::onEmailClick) {
                     Icon(imageVector = Icons.Default.Email, contentDescription = null)
                 }
             }
@@ -126,7 +131,7 @@ private fun Content(state: AboutUiState, dispatch: Dispatch) {
                 style = MaterialTheme.typography.subtitle1
             )
             Row(modifier = Modifier.align(CenterHorizontally)) {
-                IconButton(onClick = { dispatch(AboutAction.GoArtstation) }) {
+                IconButton(onClick = viewModel::onArtstationClick) {
                     Icon(imageVector = SimpleIcons.Artstation, contentDescription = null)
                 }
             }
@@ -147,8 +152,18 @@ private fun Content(state: AboutUiState, dispatch: Dispatch) {
 @Composable
 private fun Preview() = ClickTrackTheme {
     AboutScreenView(
-        state = AboutUiState(
-            displayVersion = "6.6.6"
-        )
+        viewModel = object : AboutViewModel {
+            override val state: StateFlow<AboutState> = MutableStateFlow(
+                AboutState(
+                    displayVersion = "6.6.6"
+                )
+            )
+
+            override fun onBackClick() = Unit
+            override fun onHomeClick() = Unit
+            override fun onTwitterClick() = Unit
+            override fun onEmailClick() = Unit
+            override fun onArtstationClick() = Unit
+        }
     )
 }

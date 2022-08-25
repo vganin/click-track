@@ -27,12 +27,14 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,49 +48,46 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.edit.EditClickTrackState
+import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModel
+import com.vsevolodganin.clicktrack.edit.EditCueState
+import com.vsevolodganin.clicktrack.edit.toEditState
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
-import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
-import com.vsevolodganin.clicktrack.redux.EditClickTrackState
-import com.vsevolodganin.clicktrack.redux.EditCueState
-import com.vsevolodganin.clicktrack.redux.action.BackstackAction
-import com.vsevolodganin.clicktrack.redux.action.EditClickTrackAction
-import com.vsevolodganin.clicktrack.redux.core.Dispatch
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.model.EditClickTrackUiState
-import com.vsevolodganin.clicktrack.ui.model.EditCueUiState
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
 import com.vsevolodganin.clicktrack.ui.piece.CueView
 import com.vsevolodganin.clicktrack.ui.piece.ExpandableChevron
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
-import com.vsevolodganin.clicktrack.utils.compose.StatefulTextField
+import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
-import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun EditClickTrackScreenView(
-    state: EditClickTrackUiState,
+    viewModel: EditClickTrackViewModel,
     modifier: Modifier = Modifier,
-    dispatch: Dispatch = Dispatch {},
 ) {
+    val state by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    val lazyListState = rememberLazyListState()
+    val listState = rememberLazyListState()
 
     Scaffold(
         topBar = {
             TopAppBarWithBack(
-                dispatch = dispatch,
+                onBackClick = viewModel::onBackClick,
                 title = { Text(stringResource(R.string.edit_click_track)) },
                 actions = {
-                    if (state.showForwardButton) {
-                        IconButton(onClick = { dispatch(BackstackAction.ToClickTrackScreen(state.id)) }) {
+                    if (state?.showForwardButton == true) {
+                        IconButton(onClick = viewModel::onForwardClick) {
                             Icon(imageVector = Icons.Default.Check, contentDescription = null)
                         }
                     }
@@ -99,10 +98,10 @@ fun EditClickTrackScreenView(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    dispatch(EditClickTrackAction.AddNewCue)
+                    viewModel.onAddNewCueClick()
                     coroutineScope.launch {
                         awaitFrame()
-                        lazyListState.scrollToItem(lazyListState.layoutInfo.totalItemsCount - 1)
+                        listState.scrollToItem(listState.layoutInfo.totalItemsCount - 1)
                     }
                 }
             ) {
@@ -111,15 +110,19 @@ fun EditClickTrackScreenView(
         },
         modifier = modifier,
     ) {
-        Content(state, lazyListState, dispatch)
+        Content(
+            viewModel = viewModel,
+            state = state ?: return@Scaffold,
+            listState = listState,
+        )
     }
 }
 
 @Composable
 private fun Content(
-    state: EditClickTrackUiState,
+    viewModel: EditClickTrackViewModel,
+    state: EditClickTrackState,
     listState: LazyListState,
-    dispatch: Dispatch,
 ) {
     val contentPadding = 8.dp
     LazyColumn(
@@ -127,13 +130,12 @@ private fun Content(
         modifier = Modifier.fillMaxSize(),
     ) {
         stickyHeader {
-            StatefulTextField(
-                initialValue = state.name,
-                onValueChanged = { dispatch(EditClickTrackAction.EditName(it)) },
+            TextField(
+                value = state.name,
+                onValueChange = viewModel::onNameChange,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(text = stringResource(R.string.click_track_name_hint)) },
                 textStyle = MaterialTheme.typography.h6,
-                isError = EditClickTrackState.Error.NAME in state.errors,
                 colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
             )
         }
@@ -144,20 +146,20 @@ private fun Content(
 
         item {
             OptionsItem(
+                viewModel = viewModel,
                 loop = state.loop,
                 tempoDiff = state.tempoDiff,
                 contentPadding = contentPadding,
-                dispatch = dispatch,
             )
         }
 
         itemsIndexed(items = state.cues, key = { _, cue -> cue.id }) { index, cue ->
             CueListItem(
+                viewModel = viewModel,
                 cue = cue,
                 index = index,
                 contentPadding = contentPadding,
                 elevation = 1.dp,
-                dispatch = dispatch,
             )
         }
 
@@ -167,10 +169,10 @@ private fun Content(
 
 @Composable
 private fun OptionsItem(
+    viewModel: EditClickTrackViewModel,
     loop: Boolean,
     tempoDiff: BeatsPerMinuteDiff,
     contentPadding: Dp,
-    dispatch: Dispatch
 ) {
     var optionsExpanded by rememberSaveable { mutableStateOf(false) }
 
@@ -205,8 +207,8 @@ private fun OptionsItem(
                 exit = fadeOut() + shrinkVertically(shrinkTowards = Bottom),
             ) {
                 Column {
-                    LoopItem(loop, dispatch)
-                    TempoDiffItem(tempoDiff, dispatch)
+                    LoopItem(viewModel, loop)
+                    TempoDiffItem(viewModel, tempoDiff)
                 }
             }
         }
@@ -215,8 +217,8 @@ private fun OptionsItem(
 
 @Composable
 private fun LoopItem(
+    viewModel: EditClickTrackViewModel,
     loop: Boolean,
-    dispatch: Dispatch
 ) {
     Row {
         Spacer(modifier = Modifier.width(8.dp))
@@ -230,20 +232,20 @@ private fun LoopItem(
 
         Checkbox(
             checked = loop,
-            onCheckedChange = { dispatch(EditClickTrackAction.EditLoop(it)) }
+            onCheckedChange = viewModel::onLoopChange
         )
     }
 }
 
 @Composable
 private fun TempoDiffItem(
+    viewModel: EditClickTrackViewModel,
     tempoDiff: BeatsPerMinuteDiff,
-    dispatch: Dispatch,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = SpaceBetween, verticalAlignment = CenterVertically
     ) {
-        IconButton(onClick = { dispatch(EditClickTrackAction.DecrementTempoDiff) }) {
+        IconButton(onClick = viewModel::onTempoDiffDecrementClick) {
             Icon(imageVector = Icons.Default.Remove, contentDescription = null)
         }
 
@@ -253,7 +255,7 @@ private fun TempoDiffItem(
             color = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
         )
 
-        IconButton(onClick = { dispatch(EditClickTrackAction.IncrementTempoDiff) }) {
+        IconButton(onClick = viewModel::onTempoDiffIncrementClick) {
             Icon(imageVector = Icons.Default.Add, contentDescription = null)
         }
     }
@@ -273,15 +275,15 @@ private fun tempoDiffText(tempoDiff: BeatsPerMinuteDiff): String {
 
 @Composable
 private fun CueListItem(
-    cue: EditCueUiState,
+    viewModel: EditClickTrackViewModel,
+    cue: EditCueState,
     index: Int,
     contentPadding: Dp,
     elevation: Dp,
-    dispatch: Dispatch,
     modifier: Modifier = Modifier,
 ) {
     SwipeToDelete(
-        onDeleted = { dispatch(EditClickTrackAction.RemoveCue(index)) },
+        onDeleted = { viewModel.onCueRemove(index) },
         modifier = modifier,
         contentPadding = contentPadding,
     ) {
@@ -292,12 +294,12 @@ private fun CueListItem(
             CueView(
                 value = cue,
                 displayPosition = index + 1,
-                onNameChange = { dispatch(EditClickTrackAction.EditCueAction.EditName(index, it)) },
-                onBpmChange = { dispatch(EditClickTrackAction.EditCueAction.EditBpm(index, it)) },
-                onTimeSignatureChange = { dispatch(EditClickTrackAction.EditCueAction.EditTimeSignature(index, it)) },
-                onDurationChange = { dispatch(EditClickTrackAction.EditCueAction.EditDuration(index, it)) },
-                onDurationTypeChange = { dispatch(EditClickTrackAction.EditCueAction.EditDurationType(index, it)) },
-                onPatternChange = { dispatch(EditClickTrackAction.EditCueAction.EditPattern(index, it)) },
+                onNameChange = { viewModel.onCueNameChange(index, it) },
+                onBpmChange = { viewModel.onCueBpmChange(index, it) },
+                onTimeSignatureChange = { viewModel.onCueTimeSignatureChange(index, it) },
+                onDurationChange = { viewModel.onCueDurationChange(index, it) },
+                onDurationTypeChange = { viewModel.onCueDurationTypeChange(index, it) },
+                onPatternChange = { viewModel.onCuePatternChange(index, it) },
             )
         }
     }
@@ -307,32 +309,25 @@ private fun CueListItem(
 @Composable
 private fun Preview() = ClickTrackTheme {
     EditClickTrackScreenView(
-        state = EditClickTrackUiState(
-            id = ClickTrackId.Database(value = 0),
-            name = "Good click track",
-            loop = true,
-            tempoDiff = BeatsPerMinuteDiff(-3),
-            cues = listOf(
-                EditCueUiState(
-                    name = "",
-                    bpm = 60,
-                    timeSignature = TimeSignature(3, 4),
-                    duration = CueDuration.Beats(4),
-                    pattern = NotePattern.STRAIGHT_X1,
-                    errors = emptySet(),
-                ),
-                EditCueUiState(
-                    name = "",
-                    bpm = 120,
-                    timeSignature = TimeSignature(5, 4),
-                    duration = CueDuration.Time(1.minutes),
-                    pattern = NotePattern.QUINTUPLET_X2,
-                    errors = setOf(EditCueState.Error.BPM),
-                ),
-            ),
-            errors = setOf(EditClickTrackState.Error.NAME),
-            showForwardButton = true,
-        ),
-        dispatch = {},
+        viewModel = object : EditClickTrackViewModel {
+            override val state: StateFlow<EditClickTrackState?> = MutableStateFlow(
+                PREVIEW_CLICK_TRACK_1.toEditState(showForwardButton = true)
+            )
+
+            override fun onBackClick() = Unit
+            override fun onForwardClick() = Unit
+            override fun onNameChange(name: String) = Unit
+            override fun onLoopChange(loop: Boolean) = Unit
+            override fun onTempoDiffIncrementClick() = Unit
+            override fun onTempoDiffDecrementClick() = Unit
+            override fun onAddNewCueClick() = Unit
+            override fun onCueRemove(index: Int) = Unit
+            override fun onCueNameChange(index: Int, name: String) = Unit
+            override fun onCueBpmChange(index: Int, bpm: Int) = Unit
+            override fun onCueTimeSignatureChange(index: Int, timeSignature: TimeSignature) = Unit
+            override fun onCueDurationChange(index: Int, duration: CueDuration) = Unit
+            override fun onCueDurationTypeChange(index: Int, durationType: CueDuration.Type) = Unit
+            override fun onCuePatternChange(index: Int, pattern: NotePattern) = Unit
+        }
     )
 }

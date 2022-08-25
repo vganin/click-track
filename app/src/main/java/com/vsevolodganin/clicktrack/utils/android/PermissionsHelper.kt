@@ -2,15 +2,17 @@ package com.vsevolodganin.clicktrack.utils.android
 
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.appcompat.app.AppCompatActivity
-import com.vsevolodganin.clicktrack.di.component.ActivityScoped
+import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
-@ActivityScoped
+@ActivityScope
 class PermissionsHelper @Inject constructor(activity: AppCompatActivity) {
+    // FIXME: Fix process restoration case
+
     private val resultChannel = Channel<Map<String, Boolean>>()
     private val launcher = activity.registerForActivityResult(RequestMultiplePermissions(), resultChannel::trySend)
 

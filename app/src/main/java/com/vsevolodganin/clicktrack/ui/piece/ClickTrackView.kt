@@ -49,7 +49,7 @@ import androidx.compose.ui.util.fastAny
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.interval
-import com.vsevolodganin.clicktrack.ui.model.PREVIEW_CLICK_TRACK_1
+import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableRect
 import com.vsevolodganin.clicktrack.utils.compose.KeepScreenOn

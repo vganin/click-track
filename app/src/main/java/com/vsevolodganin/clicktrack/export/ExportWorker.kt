@@ -104,7 +104,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
     }
 
     private fun foregroundInfo(clickTrack: ClickTrackWithDatabaseId, progress: Float): ForegroundInfo {
-        val tapIntent = intentFactory.openClickTrack(clickTrack.id)
+        val tapIntent = intentFactory.navigateClickTrack(clickTrack.id)
 
         val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
