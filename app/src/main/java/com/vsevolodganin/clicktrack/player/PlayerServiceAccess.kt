@@ -4,10 +4,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.os.IBinder
+import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.PlayableId
-import kotlinx.coroutines.CoroutineScope
+import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,8 +22,9 @@ import javax.inject.Inject
 @ActivityScope
 class PlayerServiceAccess @Inject constructor(
     private val context: Context,
-    activityCoroutineScope: CoroutineScope,
+    lifecycleOwner: LifecycleOwner
 ) {
+    private val scope = lifecycleOwner.coroutineScope()
 
     private val binderState = MutableStateFlow<PlayerServiceBinder?>(null)
 
@@ -43,7 +45,7 @@ class PlayerServiceAccess @Inject constructor(
         .onCompletion {
             context.unbindService(serviceConnection)
         }
-        .shareIn(activityCoroutineScope, SharingStarted.WhileSubscribed())
+        .shareIn(scope, SharingStarted.Eagerly, replay = 1)
 
     fun start(id: PlayableId, atProgress: Double? = null, soundsId: ClickSoundsId? = null) {
         PlayerService.start(context, id, atProgress, soundsId)

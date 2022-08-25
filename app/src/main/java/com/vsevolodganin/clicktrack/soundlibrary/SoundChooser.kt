@@ -9,7 +9,7 @@ import android.os.Parcelable
 import android.provider.DocumentsContract
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
-import com.arkivanov.essenty.statekeeper.StateKeeper
+import com.arkivanov.essenty.statekeeper.StateKeeperOwner
 import com.arkivanov.essenty.statekeeper.consume
 import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
@@ -25,14 +25,14 @@ import javax.inject.Inject
 class SoundChooser @Inject constructor(
     private val activity: AppCompatActivity,
     private val clickSoundsRepository: ClickSoundsRepository,
-    stateKeeper: StateKeeper,
+    stateKeeperOwner: StateKeeperOwner,
 ) {
     private val pendingRequestState = MutableStateFlow<OpenAudioRequest?>(
-        stateKeeper.consume(OpenAudioRequest.SAVED_STATE_KEY)
+        stateKeeperOwner.stateKeeper.consume(OpenAudioRequest.SAVED_STATE_KEY)
     )
 
     init {
-        stateKeeper.register(OpenAudioRequest.SAVED_STATE_KEY) {
+        stateKeeperOwner.stateKeeper.register(OpenAudioRequest.SAVED_STATE_KEY) {
             pendingRequestState.value
         }
     }

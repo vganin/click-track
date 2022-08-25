@@ -14,14 +14,9 @@ import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
 import com.vsevolodganin.clicktrack.ui.RootView
 import com.vsevolodganin.clicktrack.utils.android.PermissionsHelper
 import com.vsevolodganin.clicktrack.utils.cast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-
-    @Inject
-    lateinit var coroutineScope: CoroutineScope
 
     @Inject
     lateinit var intentProcessor: IntentProcessor
@@ -35,14 +30,15 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var inAppReview: InAppReview
 
+    @Suppress("unused") // FIXME: Initializing eagerly for optimisimation
     @Inject
     lateinit var playerServiceAccess: PlayerServiceAccess
 
-    @Suppress("unused") // FIXME: Initializing eager for proper registration of Activity Result API
+    @Suppress("unused") // FIXME: Initializing eagerly for proper registration of Activity Result API
     @Inject
     lateinit var permissionsHelper: PermissionsHelper
 
-    @Suppress("unused") // FIXME: Initializing eager for proper registration of Activity Result API
+    @Suppress("unused") // FIXME: Initializing eagerly for proper registration of Activity Result API
     @Inject
     lateinit var soundChooser: SoundChooser
 
@@ -62,11 +58,6 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             intentProcessor.process(intent)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        coroutineScope.cancel()
     }
 
     override fun onNewIntent(intent: Intent) {
