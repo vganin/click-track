@@ -42,10 +42,12 @@ fun PlayPauseIcon(isPlaying: Boolean) {
         }
     )
 
-    val imageVector by derivedStateOf {
-        ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 48f, viewportHeight = 48f)
-            .addPath(pathData = pathData, fill = SolidColor(Color.White))
-            .build()
+    val imageVector by remember {
+        derivedStateOf {
+            ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 48f, viewportHeight = 48f)
+                .addPath(pathData = pathData, fill = SolidColor(Color.White))
+                .build()
+        }
     }
 
     Icon(

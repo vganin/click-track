@@ -61,23 +61,29 @@ private fun RootView(
         val position: Int,
     )
 
-    val activeScreen by derivedStateOf { ActiveScreen(screens.active.configuration, screens.active.instance, screens.backStack.size) }
+    val activeScreen by remember {
+        derivedStateOf {
+            ActiveScreen(screens.active.configuration, screens.active.instance, screens.backStack.size)
+        }
+    }
 
     updateTransition(targetState = activeScreen, label = "ContentView").AnimatedContent(
-        modifier = modifier,
-        transitionSpec = {
+        modifier = modifier, transitionSpec = {
             val animationSpec = spring(visibilityThreshold = IntOffset.VisibilityThreshold)
             val isPush = targetState.position >= initialState.position
 
             if (isPush) {
-                slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec) with
-                        slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec)
+                slideIntoContainer(
+                    towards = AnimatedContentScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                ) with slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec)
             } else {
-                slideIntoContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = animationSpec) with
-                        slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = animationSpec)
+                slideIntoContainer(
+                    towards = AnimatedContentScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                ) with slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = animationSpec)
             }
-        },
-        contentKey = ActiveScreen::config
+        }, contentKey = ActiveScreen::config
     ) { screen ->
         RootView(screen.viewModel)
     }
@@ -102,19 +108,18 @@ private fun RootView(viewModel: ScreenViewModel) {
 @Composable
 private fun drawerState(drawerViewModel: DrawerViewModel): ComposeDrawerState {
     val drawerState by drawerViewModel.state.collectAsState()
-    val drawerValue by derivedStateOf { if (drawerState.isOpened) DrawerValue.Open else DrawerValue.Closed }
-    return rememberDrawerState(
-        initialValue = drawerValue,
-        confirmStateChange = remember {
-            { newDrawerValue ->
-                when (newDrawerValue) {
-                    DrawerValue.Closed -> drawerViewModel.closeDrawer()
-                    DrawerValue.Open -> drawerViewModel.openDrawer()
-                }
-                true
+    val drawerValue by remember {
+        derivedStateOf { if (drawerState.isOpened) DrawerValue.Open else DrawerValue.Closed }
+    }
+    return rememberDrawerState(initialValue = drawerValue, confirmStateChange = remember {
+        { newDrawerValue ->
+            when (newDrawerValue) {
+                DrawerValue.Closed -> drawerViewModel.closeDrawer()
+                DrawerValue.Open -> drawerViewModel.openDrawer()
             }
+            true
         }
-    ).apply {
+    }).apply {
         LaunchedEffect(drawerValue) {
             when (drawerValue) {
                 DrawerValue.Closed -> close()

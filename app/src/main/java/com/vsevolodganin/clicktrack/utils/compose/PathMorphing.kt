@@ -44,11 +44,13 @@ fun animatePathAsState(path: List<PathNode>): State<List<PathNode>> {
         }
     }
 
-    return derivedStateOf {
-        if (canMorph(from, to)) {
-            lerp(from, to, fraction.value)
-        } else {
-            to
+    return remember {
+        derivedStateOf {
+            if (canMorph(from, to)) {
+                lerp(from, to, fraction.value)
+            } else {
+                to
+            }
         }
     }
 }
