@@ -107,6 +107,10 @@ android {
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
             "-opt-in=androidx.compose.animation.core.InternalAnimationApi",
             "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+
+            // https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/compiler-metrics.md
+            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/reports/compose_metrics",
+            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/reports/compose_metrics"
         )
     }
 
