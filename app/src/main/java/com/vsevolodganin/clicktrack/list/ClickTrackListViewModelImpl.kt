@@ -3,6 +3,7 @@ package com.vsevolodganin.clicktrack.list
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.push
 import com.vsevolodganin.clicktrack.Navigation
+import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
 import com.vsevolodganin.clicktrack.model.ClickTrack
@@ -19,9 +20,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.content.Context as AndroidContext
 
 class ClickTrackListViewModelImpl @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
+    private val androidContext: AndroidContext,
     private val navigation: Navigation,
     private val clickTrackRepository: ClickTrackRepository,
     private val newClickTrackNameSuggester: NewClickTrackNameSuggester,
@@ -36,7 +39,11 @@ class ClickTrackListViewModelImpl @AssistedInject constructor(
 
     override fun onAddClick() {
         scope.launch {
-            val suggestedNewClickTrackName = newClickTrackNameSuggester.suggest()
+            val suggestedNewClickTrackName = newClickTrackNameSuggester.suggest(
+                withContext(Dispatchers.Main) {
+                    androidContext.getString(R.string.general_unnamed_click_track_template)
+                }
+            )
             val newClickTrack = defaultNewClickTrack(suggestedNewClickTrackName)
             val newClickTrackId = clickTrackRepository.insert(newClickTrack)
             withContext(Dispatchers.Main) {

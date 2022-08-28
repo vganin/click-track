@@ -1,7 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -16,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.DefaultBeatsDuration
@@ -70,7 +70,16 @@ private fun Content(viewModel: TrainingViewModel) {
     ) {
         val state by viewModel.state.collectAsState()
 
-        val (startingTempoLabel, startingTempoValue, modeValue, segmentLengthValue, tempoChangeLabel, tempoChangeValue, endingLabel, endingValue) = createRefs()
+        val (
+            startingTempoLabel,
+            startingTempoValue,
+            modeValue,
+            segmentLengthValue,
+            tempoChangeLabel,
+            tempoChangeValue,
+            endingLabel,
+            endingValue
+        ) = createRefs()
 
         Text(
             text = stringResource(R.string.training_starting_tempo),
@@ -91,8 +100,8 @@ private fun Content(viewModel: TrainingViewModel) {
                     start.linkTo(startingTempoLabel.end)
                     end.linkTo(parent.end)
                     top.linkTo(parent.top)
-                }
-                .width(RIGHT_COLUMN_WIDTH),
+                    width = Dimension.value(RIGHT_COLUMN_WIDTH)
+                },
             isError = TrainingEditState.Error.STARTING_TEMPO in state.errors
         )
 
@@ -109,6 +118,7 @@ private fun Content(viewModel: TrainingViewModel) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     top.linkTo(firstRowBottom, 16.dp)
+                    width = Dimension.fillToConstraints
                 }
         )
 
@@ -148,8 +158,8 @@ private fun Content(viewModel: TrainingViewModel) {
                     start.linkTo(tempoChangeLabel.end)
                     end.linkTo(parent.end)
                     top.linkTo(segmentLengthValue.bottom, 16.dp)
-                }
-                .width(RIGHT_COLUMN_WIDTH),
+                    width = Dimension.value(RIGHT_COLUMN_WIDTH)
+                },
             isError = TrainingEditState.Error.TEMPO_CHANGE in state.errors
         )
 
@@ -163,10 +173,10 @@ private fun Content(viewModel: TrainingViewModel) {
             modifier = Modifier
                 .constrainAs(endingLabel) {
                     start.linkTo(parent.start)
-                    end.linkTo(endingValue.start)
+                    end.linkTo(endingValue.start, 8.dp)
                     top.linkTo(tempoChangeValue.bottom, 16.dp)
+                    width = Dimension.fillToConstraints
                 }
-                .width(LEFT_COLUMN_WIDTH)
         )
 
         val endingValueModifier = Modifier
@@ -175,8 +185,8 @@ private fun Content(viewModel: TrainingViewModel) {
                 end.linkTo(parent.end)
                 top.linkTo(endingLabel.top)
                 bottom.linkTo(endingLabel.bottom)
+                width = Dimension.value(RIGHT_COLUMN_WIDTH)
             }
-            .width(RIGHT_COLUMN_WIDTH)
         when (val ending = state.ending) {
             is TrainingEditState.Ending.ByTempo -> {
                 BpmInputField(
@@ -194,8 +204,6 @@ private fun Content(viewModel: TrainingViewModel) {
                 )
             }
         }
-
-        createHorizontalChain(endingLabel, endingValue, chainStyle = ChainStyle.SpreadInside)
     }
 }
 
@@ -222,7 +230,6 @@ private fun TrainingEndingKind.stringResource(mode: TrainingMode): String {
     )
 }
 
-private val LEFT_COLUMN_WIDTH = 160.dp
 private val RIGHT_COLUMN_WIDTH = 140.dp
 
 @ScreenPreviews

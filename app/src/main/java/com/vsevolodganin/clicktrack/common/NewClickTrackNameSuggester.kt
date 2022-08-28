@@ -8,7 +8,7 @@ import javax.inject.Inject
 class NewClickTrackNameSuggester @Inject constructor(
     private val storage: ClickTrackRepository
 ) {
-    fun suggest(baseName: String = DEFAULT_NAME_TEMPLATE): String {
+    fun suggest(baseName: String): String {
         val maxUsedDefaultNameNumber = storage.getAllNames()
             .asSequence()
             .mapNotNull { findDefaultNameNumber(baseName, it) }
@@ -22,8 +22,4 @@ class NewClickTrackNameSuggester @Inject constructor(
     }
 
     private fun format(baseName: String, withNumber: Int) = "$baseName $withNumber"
-
-    private companion object {
-        const val DEFAULT_NAME_TEMPLATE = "Unnamed click track"
-    }
 }

@@ -2,15 +2,15 @@
     <string name="about_developed_by">Developed by</string>
     <string name="about_developer_name">Vsevolod Ganin</string>
     <string name="about_logo_by">Logo by</string>
-    <string name="about_logo_developer_name">Varvara Roganova</string>
+    <string name="about_logo_developer_name">Varvara Furu</string>
     <string name="about_screen_title">About</string>
-    <string name="bpm_input_suffix">\ bpm</string>
+    <string name="bpm_input_suffix" translatable="false">\ bpm</string>
     <string name="click_track_list_screen_title">My click tracks</string>
-    <string name="cue_name_hint">Enter cue name (optional)</string>
-    <string name="cue_position">%1$d</string>
     <string name="cue_duration_beats">Beats</string>
     <string name="cue_duration_measures">Measures</string>
     <string name="cue_duration_time">Time</string>
+    <string name="cue_name_hint">Enter cue name (optional)</string>
+    <string name="cue_position" translatable="false">%1$d</string>
     <string name="drawer_about">About</string>
     <string name="drawer_metronome">Metronome</string>
     <string name="drawer_polyrhythms">Polyrhythms</string>
@@ -24,13 +24,15 @@
     <string name="edit_click_track_loop">Loop</string>
     <string name="edit_click_track_options">Options</string>
     <string name="edit_click_track_screen_title">Edit click track…</string>
-    <string name="edit_click_track_tempo_diff">%1$s%2$d bpm</string>
+    <string name="edit_click_track_tempo_diff" translatable="false">%1$s%2$d bpm</string>
     <string name="edit_click_track_title_hint">Name your click track…</string>
     <string name="export_worker_notification_finished">Finished exporting \"%1$s\"</string>
     <string name="export_worker_notification_in_process">Exporting \"%1$s\"…</string>
     <string name="export_worker_notification_open">Tap to open</string>
-    <string name="general_app_name">Click Track</string>
+    <string name="general_app_name" translatable="false">Click Track</string>
     <string name="general_metronome_click_track_title">Metronome</string>
+    <string name="general_unnamed_click_track_template">Unnamed click track</string>
+    <string name="general_unnamed_training_click_track_template">Training</string>
     <string name="metronome_bpm_meter_tap">TAP</string>
     <string name="metronome_screen_title">Metronome</string>
     <string name="notification_channel_export">Export</string>
@@ -50,7 +52,7 @@
     <string name="settings_screen_title">Settings</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_auto">Auto</string>
-    <string name="settings_theme_auto_description">Use a Dark Theme when the system\'s \'Battery Saver\' feature is enabled, otherwise use a Light Theme. This mode can help the device to decrease power usage, depending on the display technology in the device.</string>
+    <string name="settings_theme_auto_description">Use a Dark Theme when the system\'s \'Battery Saver\' feature is enabled, otherwise use a Light Theme.</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_system">System</string>
