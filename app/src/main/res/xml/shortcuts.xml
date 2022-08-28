@@ -4,7 +4,7 @@
         android:enabled="true"
         android:icon="@drawable/shortcut_metronome"
         android:shortcutId="metronome"
-        android:shortcutShortLabel="@string/metronome"
+        android:shortcutShortLabel="@string/shortcuts_metronome"
         tools:ignore="UnusedAttribute">
         <intent
             android:action="android.intent.action.VIEW"

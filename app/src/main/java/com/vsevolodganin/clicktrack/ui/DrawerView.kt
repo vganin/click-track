@@ -53,28 +53,28 @@ fun DrawerView(viewModel: DrawerViewModel) {
 
         DrawerButton(
             icon = ClickTrackIcons.Metronome,
-            label = stringResource(R.string.drawer_item_metronome),
+            label = stringResource(R.string.drawer_metronome),
             isSelected = state.selectedItem == DrawerState.SelectedItem.METRONOME,
             action = viewModel::navigateToMetronome
         )
 
         DrawerButton(
             icon = Icons.Filled.FitnessCenter,
-            label = stringResource(R.string.drawer_item_training),
+            label = stringResource(R.string.drawer_training),
             isSelected = state.selectedItem == DrawerState.SelectedItem.TRAINING,
             action = viewModel::navigateToTraining
         )
 
         DrawerButton(
             icon = ClickTrackIcons.Polyrhythm,
-            label = stringResource(R.string.drawer_item_polyrhythm),
+            label = stringResource(R.string.drawer_polyrhythms),
             isSelected = state.selectedItem == DrawerState.SelectedItem.POLYRHYTHMS,
             action = viewModel::navigateToPolyrhythms
         )
 
         DrawerButton(
             icon = Icons.Filled.LibraryMusic,
-            label = stringResource(R.string.drawer_item_sound_library),
+            label = stringResource(R.string.drawer_sound_library),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SOUND_LIBRARY,
             action = viewModel::navigateToSoundLibrary
         )
@@ -83,14 +83,14 @@ fun DrawerView(viewModel: DrawerViewModel) {
 
         DrawerButton(
             icon = Icons.Filled.Settings,
-            label = stringResource(R.string.drawer_item_settings),
+            label = stringResource(R.string.drawer_settings),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SETTINGS,
             action = viewModel::navigateToSettings
         )
 
         DrawerButton(
             icon = Icons.Filled.ContactSupport,
-            label = stringResource(R.string.drawer_item_about),
+            label = stringResource(R.string.drawer_about),
             isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
             action = viewModel::navigateToAbout
         )

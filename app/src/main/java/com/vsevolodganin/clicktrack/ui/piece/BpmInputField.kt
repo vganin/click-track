@@ -15,7 +15,7 @@ fun BpmInputField(
     modifier: Modifier = Modifier,
     isError: Boolean = false,
 ) {
-    val bpmSuffix = stringResource(R.string.cue_bpm_suffix)
+    val bpmSuffix = stringResource(R.string.bpm_input_suffix)
     NumberInputField(
         value = value,
         onValueChange = onValueChange,

@@ -60,7 +60,7 @@ fun SoundLibraryScreenView(
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(R.string.sound_library)) },
+                title = { Text(stringResource(R.string.sound_library_screen_title)) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,

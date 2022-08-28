@@ -84,7 +84,7 @@ fun EditClickTrackScreenView(
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(R.string.edit_click_track)) },
+                title = { Text(stringResource(R.string.edit_click_track_screen_title)) },
                 actions = {
                     if (state?.showForwardButton == true) {
                         IconButton(onClick = viewModel::onForwardClick) {
@@ -134,7 +134,7 @@ private fun Content(
                 value = state.name,
                 onValueChange = viewModel::onNameChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(text = stringResource(R.string.click_track_name_hint)) },
+                placeholder = { Text(text = stringResource(R.string.edit_click_track_title_hint)) },
                 textStyle = MaterialTheme.typography.h6,
                 colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
             )
@@ -189,7 +189,7 @@ private fun OptionsItem(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = stringResource(R.string.click_track_options),
+                    text = stringResource(R.string.edit_click_track_options),
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -224,7 +224,7 @@ private fun LoopItem(
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = stringResource(R.string.repeat),
+            text = stringResource(R.string.edit_click_track_loop),
             modifier = Modifier.align(CenterVertically)
         )
 
@@ -270,7 +270,7 @@ private fun tempoDiffText(tempoDiff: BeatsPerMinuteDiff): String {
         }
     }
     val number = remember(tempoDiff) { tempoDiff.value.absoluteValue }
-    return stringResource(id = R.string.click_track_tempo_diff, sign, number)
+    return stringResource(id = R.string.edit_click_track_tempo_diff, sign, number)
 }
 
 @Composable

@@ -117,7 +117,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
         return ForegroundInfo(
             foregroundNotificationId,
             NotificationCompat.Builder(appContext, notificationChannels.export)
-                .setContentTitle(appContext.getString(R.string.exporting, clickTrack.value.name))
+                .setContentTitle(appContext.getString(R.string.export_worker_notification_in_process, clickTrack.value.name))
                 .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ResourcesCompat.getColor(appContext.resources, R.color.debug_signature, null))
                 .setOngoing(true)
@@ -156,8 +156,8 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
             clickTrack.name,
             R.id.notification_export_finished,
             NotificationCompat.Builder(appContext, notificationChannels.export)
-                .setContentTitle(appContext.getString(R.string.export_finished, clickTrack.name))
-                .setContentText(appContext.getString(R.string.export_open))
+                .setContentTitle(appContext.getString(R.string.export_worker_notification_finished, clickTrack.name))
+                .setContentText(appContext.getString(R.string.export_worker_notification_open))
                 .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ResourcesCompat.getColor(appContext.resources, R.color.debug_signature, null))
                 .setContentIntent(PendingIntent.getActivity(appContext, 0, tapIntent, pendingIntentFlags))

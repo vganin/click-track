@@ -56,7 +56,7 @@ fun PolyrhythmsScreenView(
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(R.string.polyrhythms_title)) },
+                title = { Text(stringResource(R.string.polyrhythms_screen_title)) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,

@@ -9,7 +9,7 @@ enum class BuiltinClickSounds(
     val sounds: ClickSounds,
 ) {
     BEEP(
-        nameStringRes = R.string.builtin_sounds_beep,
+        nameStringRes = R.string.sound_library_beep,
         storageKey = "beep",
         sounds = ClickSounds(
             strongBeat = ClickSoundSource.Bundled(R.raw.beep_strong),
@@ -17,7 +17,7 @@ enum class BuiltinClickSounds(
         )
     ),
     CLAVES(
-        nameStringRes = R.string.builtin_sounds_claves,
+        nameStringRes = R.string.sound_library_claves,
         storageKey = "claves",
         sounds = ClickSounds(
             strongBeat = ClickSoundSource.Bundled(R.raw.claves_strong),
@@ -25,7 +25,7 @@ enum class BuiltinClickSounds(
         )
     ),
     COWBELL(
-        nameStringRes = R.string.builtin_sounds_cowbell,
+        nameStringRes = R.string.sound_library_cowbell,
         storageKey = "cowbell",
         sounds = ClickSounds(
             strongBeat = ClickSoundSource.Bundled(R.raw.cowbell_strong),
@@ -33,7 +33,7 @@ enum class BuiltinClickSounds(
         )
     ),
     DRUMS(
-        nameStringRes = R.string.builtin_sounds_drum_kit,
+        nameStringRes = R.string.sound_library_drum_kit,
         storageKey = "drum kit",
         sounds = ClickSounds(
             strongBeat = ClickSoundSource.Bundled(R.raw.drumkit_base),

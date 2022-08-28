@@ -79,7 +79,7 @@ fun MetronomeScreenView(
 @Composable
 private fun AppBar(viewModel: MetronomeViewModel) {
     TopAppBar(
-        title = { Text(text = stringResource(R.string.metronome)) },
+        title = { Text(text = stringResource(R.string.metronome_screen_title)) },
         navigationIcon = {
             IconButton(onClick = viewModel::onBackClick) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
@@ -112,7 +112,7 @@ private fun Content(viewModel: MetronomeViewModel) {
                 .constrainAs(clickTrackRef) {},
             elevation = 8.dp,
         ) {
-            val metronomeClickTrackName = stringResource(R.string.metronome)
+            val metronomeClickTrackName = stringResource(R.string.general_metronome_click_track_title)
             val metronomeClickTrack = remember(state.bpm, state.pattern) {
                 metronomeClickTrack(
                     name = metronomeClickTrackName,
@@ -178,7 +178,7 @@ private fun Content(viewModel: MetronomeViewModel) {
             enableInsets = false,
         ) {
             Text(
-                text = stringResource(id = R.string.bpm_meter_tap),
+                text = stringResource(id = R.string.metronome_bpm_meter_tap),
                 style = LocalTextStyle.current.copy(
                     fontWeight = FontWeight.Black,
                     letterSpacing = 4.sp,

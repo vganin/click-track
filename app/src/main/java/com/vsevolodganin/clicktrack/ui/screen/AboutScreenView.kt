@@ -56,7 +56,7 @@ fun AboutScreenView(
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(R.string.about_title)) },
+                title = { Text(stringResource(R.string.about_screen_title)) },
             )
         },
         modifier = modifier,

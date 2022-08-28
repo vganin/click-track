@@ -36,7 +36,7 @@ class PlayableContentProvider @Inject constructor(
                     userPreferences.metronomePattern.flow,
                 ) { bpm, pattern ->
                     metronomeClickTrack(
-                        name = context.getString(R.string.metronome),
+                        name = context.getString(R.string.general_metronome_click_track_title),
                         bpm = bpm,
                         pattern = pattern,
                     )

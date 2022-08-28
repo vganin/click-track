@@ -32,7 +32,7 @@ fun SettingsScreenView(
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(R.string.settings)) },
+                title = { Text(stringResource(R.string.settings_screen_title)) },
             )
         },
         modifier = modifier,

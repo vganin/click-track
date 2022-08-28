@@ -45,7 +45,7 @@ fun TrainingScreenView(
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(R.string.training)) },
+                title = { Text(stringResource(R.string.training_screen_title)) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,

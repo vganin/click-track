@@ -79,7 +79,7 @@ private fun Content(viewModel: ClickTrackListViewModel) {
 private fun TopBar(viewModel: ClickTrackListViewModel) {
     TopAppBar(
         title = {
-            Text(text = stringResource(id = R.string.click_track_list))
+            Text(text = stringResource(id = R.string.click_track_list_screen_title))
         },
         navigationIcon = {
             IconButton(onClick = viewModel::onMenuClick) {

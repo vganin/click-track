@@ -242,7 +242,11 @@ class PlayerService : Service() {
                         playableContentProvider.twoLayerPolyrhythmFlow()
                             .collectLatest { polyrhythm ->
                                 startForeground(
-                                    contentText = getString(R.string.polyrhythm_notification_title, polyrhythm.layer1, polyrhythm.layer2),
+                                    contentText = getString(
+                                        R.string.player_service_notification_polyrhythm_title,
+                                        polyrhythm.layer1,
+                                        polyrhythm.layer2
+                                    ),
                                     tapIntent = intentFactory.navigatePolyrhythms(),
                                     isPaused = args.isPaused
                                 )
@@ -325,7 +329,7 @@ class PlayerService : Service() {
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ResourcesCompat.getColor(resources, R.color.debug_signature, null))
             .setColorized(true)
-            .setContentTitle(getString(R.string.notification_playing_now))
+            .setContentTitle(getString(R.string.player_service_notification_playing_now))
             .setContentText(contentText)
             .setContentIntent(launchAppIntent)
             .setDeleteIntent(stopIntent)
@@ -333,12 +337,12 @@ class PlayerService : Service() {
             .setVisibility(VISIBILITY_PUBLIC)
             .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
             .setOngoing(true)
-            .addAction(0, getString(R.string.notification_stop), stopIntent)
+            .addAction(0, getString(R.string.player_service_notification_stop), stopIntent)
             .run {
                 if (isPaused) {
-                    addAction(0, getString(R.string.notification_resume), resumeIntent)
+                    addAction(0, getString(R.string.player_service_notification_resume), resumeIntent)
                 } else {
-                    addAction(0, getString(R.string.notification_pause), pauseIntent)
+                    addAction(0, getString(R.string.player_service_notification_pause), pauseIntent)
                 }
             }
 

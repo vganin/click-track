@@ -135,7 +135,7 @@ private fun TopBar(
                 AlertDialog(
                     onDismissRequest = dismiss,
                     text = {
-                        Text(text = stringResource(id = R.string.delete_click_track_confirmation))
+                        Text(text = stringResource(id = R.string.play_click_track_delete_confirmation))
                     },
                     confirmButton = {
                         TextButton(
@@ -173,7 +173,7 @@ private fun OverflowMenu(
     }
 
     DropdownMenu(expanded = showDropdown, onDismissRequest = { showDropdown = false }) {
-        val startedExportMessage = stringResource(R.string.started_export, state.clickTrack.value.name)
+        val startedExportMessage = stringResource(R.string.play_click_track_started_export, state.clickTrack.value.name)
         val cancelActionLabel = stringResource(android.R.string.cancel)
 
         DropdownMenuItem(onClick = {
@@ -190,7 +190,7 @@ private fun OverflowMenu(
                 }
             }
         }) {
-            Text(stringResource(R.string.export_to_audio_file))
+            Text(stringResource(R.string.play_click_track_export_to_audio_file))
         }
     }
 }
@@ -223,7 +223,7 @@ private fun BottomBar(
             ) {
                 Checkbox(checked = state.playTrackingMode, onCheckedChange = null)
                 Spacer(Modifier.width(8.dp))
-                Text(text = stringResource(R.string.play_tracking_mode))
+                Text(text = stringResource(R.string.play_click_track_play_tracking_mode))
             }
         }
     }
