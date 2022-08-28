@@ -5,7 +5,8 @@ import kotlinx.coroutines.flow.StateFlow
 interface PlayClickTrackViewModel {
     val state: StateFlow<PlayClickTrackState?>
     fun onBackClick()
-    fun onTogglePlay()
+    fun onTogglePlayStop()
+    fun onTogglePlayPause()
     fun onTogglePlayTrackingMode()
     fun onProgressDragStart()
     fun onProgressDrop(progress: Double)

@@ -10,30 +10,32 @@ import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.PlayableId
+import com.vsevolodganin.clicktrack.model.PlayableProgressTimeMark
 import com.vsevolodganin.clicktrack.model.PlayableProgressTimeSource
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
 import com.vsevolodganin.clicktrack.utils.coroutine.collectLatestFirst
+import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
 import com.vsevolodganin.clicktrack.utils.grabIf
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -65,16 +67,18 @@ class Player @Inject constructor(
                         .withIndex()
                         .collectLatestFirst { (index, clickTrack) ->
                             clickTrack ?: return@collectLatestFirst
-                            val atProgress = if (index == 0) startAtProgress else null
-                            play(id, clickTrack, atProgress, soundsId)
+                            pausable(if (index == 0) startAtProgress else null) { progress ->
+                                play(id, clickTrack, progress, soundsId)
+                            }
                         }
                 }
                 TwoLayerPolyrhythmId -> {
                     playableContentProvider.twoLayerPolyrhythmFlow()
                         .withIndex()
                         .collectLatestFirst { (index, polyrhythm) ->
-                            val atProgress = if (index == 0) startAtProgress else null
-                            play(polyrhythm, atProgress, soundsId)
+                            pausable(if (index == 0) startAtProgress else null) { progress ->
+                                play(polyrhythm, progress, soundsId)
+                            }
                         }
                 }
             }
@@ -94,6 +98,23 @@ class Player @Inject constructor(
         pausedState.value = true
     }
 
+    fun resume() {
+        pausedState.value = false
+    }
+
+    private suspend inline fun pausable(startAt: Double?, crossinline play: suspend (startAt: Double?) -> Unit) {
+        var savedProgress: Double? = startAt
+        val stopSignal = Channel<Unit>()
+        pausedState.takeUntilSignal(stopSignal.consumeAsFlow()).collectLatest { isPaused ->
+            if (isPaused) {
+                savedProgress = playbackState.value?.realProgress
+            } else {
+                play(savedProgress)
+                stopSignal.send(Unit)
+            }
+        }
+    }
+
     private suspend fun play(
         id: ClickTrackId,
         clickTrack: ClickTrack,
@@ -109,11 +130,9 @@ class Player @Inject constructor(
 
         val currentPlayback = playbackState.value
         val progress = atProgress
-            ?: grabIf(id == currentPlayback?.id) { currentPlayback?.calculateCurrentProgress() }
+            ?: grabIf(id == currentPlayback?.id) { currentPlayback?.realProgress }
             ?: 0.0
         val startAt = duration * progress
-
-        pausedState.value = false
 
         clickTrack.play(
             startAt = startAt,
@@ -121,7 +140,7 @@ class Player @Inject constructor(
                 playbackState.value = InternalPlaybackState(
                     id = id,
                     duration = duration,
-                    progress = it,
+                    position = it,
                 )
             },
             reportLatency = latencyState::tryEmit,
@@ -143,11 +162,9 @@ class Player @Inject constructor(
 
         val currentPlayback = playbackState.value
         val progress = atProgress
-            ?: grabIf(TwoLayerPolyrhythmId == currentPlayback?.id) { currentPlayback?.calculateCurrentProgress() }
+            ?: grabIf(TwoLayerPolyrhythmId == currentPlayback?.id) { currentPlayback?.realProgress }
             ?: 0.0
         val startAt = duration * progress
-
-        pausedState.value = false
 
         twoLayerPolyrhythm.play(
             startAt = startAt,
@@ -155,7 +172,7 @@ class Player @Inject constructor(
                 playbackState.value = InternalPlaybackState(
                     id = TwoLayerPolyrhythmId,
                     duration = duration,
-                    progress = it,
+                    position = it,
                 )
             },
             reportLatency = latencyState::tryEmit,
@@ -167,14 +184,15 @@ class Player @Inject constructor(
 
     private val externalPlaybackState = combine(
         playbackState,
+        pausedState,
         latencyState
             .map { LATENCY_RESOLUTION * (it / LATENCY_RESOLUTION).toInt() }
             .distinctUntilChanged()
-    ) { internalPlaybackState, latency -> internalPlaybackState to latency }
-        .mapLatest { (internalPlaybackState, latency) ->
+    ) { internalPlaybackState, isPaused, latency -> Triple(internalPlaybackState, isPaused, latency) }
+        .mapLatest { (internalPlaybackState, isPaused, latency) ->
             internalPlaybackState ?: return@mapLatest null
 
-            val emissionTime = internalPlaybackState.creationTime + latency
+            val emissionTime = internalPlaybackState.emissionTime + latency
 
             // If sound will be emitted in the future due to high latency (soundEmissionTime.elapsedNow() < 0)
             // then wait for it to actually happen
@@ -185,8 +203,8 @@ class Player @Inject constructor(
             PlaybackState(
                 id = internalPlaybackState.id,
                 progress = PlayProgress(
-                    position = internalPlaybackState.progress,
-                    emissionTime = emissionTime,
+                    position = internalPlaybackState.realPosition - latency,
+                    isPaused = isPaused,
                 ),
             )
         }
@@ -206,11 +224,6 @@ class Player @Inject constructor(
 
         val schedule = toPlayerEvents()
             .toActions(
-                waitResume = {
-                    if (pausedState.value) {
-                        pausedState.filter { false }.take(1).collect()
-                    }
-                },
                 soundSourceProvider = soundSourceProvider,
                 reportLatency = reportLatency,
                 soundPool = soundPool,
@@ -245,11 +258,6 @@ class Player @Inject constructor(
 
         val schedule = toPlayerEvents()
             .toActions(
-                waitResume = {
-                    if (pausedState.value) {
-                        pausedState.filter { false }.take(1).collect()
-                    }
-                },
                 soundSourceProvider = soundSourceProvider,
                 reportLatency = reportLatency,
                 soundPool = soundPool,
@@ -288,14 +296,13 @@ class Player @Inject constructor(
     private class InternalPlaybackState(
         val id: PlayableId,
         val duration: Duration,
-        val progress: Duration,
+        val position: Duration,
     ) {
-        val creationTime = PlayableProgressTimeSource.markNow()
+        val emissionTime: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow()
 
-        fun calculateCurrentProgress(): Double {
-            val elapsedSinceCreation = creationTime.elapsedNow()
-            return (progress + elapsedSinceCreation) / duration
-        }
+        val realPosition: Duration get() = position + emissionTime.elapsedNow()
+
+        val realProgress: Double get() = realPosition / duration
     }
 
     private companion object Const {

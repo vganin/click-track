@@ -21,9 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -167,25 +165,22 @@ private fun progressAngle(
         }
     }
 
-    var cachedProgress by remember { mutableStateOf(progress) }
-
     LaunchedEffect(progress) {
-        val progressTimePosition = progress.position + progress.emissionTime.elapsedNow()
+        val progressTimePosition = progress.realPosition
         val progressAnglePosition = progressTimePosition.toAngle(totalDuration)
         val animationDuration = totalDuration - progressTimePosition
 
-        if (progress.position <= cachedProgress.position) {
-            cachedProgress = progress
-            animatableProgressAngle.snapTo(progressAnglePosition)
-        }
+        animatableProgressAngle.snapTo(progressAnglePosition)
 
-        animatableProgressAngle.animateTo(
-            targetValue = FULL_ANGLE_DEGREES,
-            animationSpec = tween(
-                durationMillis = animationDuration.coerceAtLeast(Duration.ZERO).inWholeMilliseconds.toInt(),
-                easing = LinearEasing
+        if (!progress.isPaused) {
+            animatableProgressAngle.animateTo(
+                targetValue = FULL_ANGLE_DEGREES,
+                animationSpec = tween(
+                    durationMillis = animationDuration.coerceAtLeast(Duration.ZERO).inWholeMilliseconds.toInt(),
+                    easing = LinearEasing
+                )
             )
-        )
+        }
     }
 
     return animatableProgressAngle

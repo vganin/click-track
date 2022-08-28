@@ -45,10 +45,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.play.PlayClickTrackState
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModel
+import com.vsevolodganin.clicktrack.play.isPaused
+import com.vsevolodganin.clicktrack.play.isPlaying
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
-import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
+import com.vsevolodganin.clicktrack.ui.piece.PlayButtons
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -203,9 +205,11 @@ private fun BottomBar(
             .fillMaxWidth()
             .navigationBarsPadding()
     ) {
-        PlayStopButton(
+        PlayButtons(
             isPlaying = state.isPlaying,
-            onToggle = viewModel::onTogglePlay,
+            isPaused = state.isPaused,
+            onTogglePlayStop = viewModel::onTogglePlayStop,
+            onTogglePlayPause = viewModel::onTogglePlayPause,
             modifier = Modifier.align(Alignment.Center),
             enableInsets = false,
         )
@@ -234,13 +238,13 @@ private fun Preview() = ClickTrackTheme {
                 PlayClickTrackState(
                     clickTrack = PREVIEW_CLICK_TRACK_1,
                     playProgress = null,
-                    isPlaying = false,
                     playTrackingMode = true,
                 )
             )
 
             override fun onBackClick() = Unit
-            override fun onTogglePlay() = Unit
+            override fun onTogglePlayStop() = Unit
+            override fun onTogglePlayPause() = Unit
             override fun onTogglePlayTrackingMode() = Unit
             override fun onProgressDragStart() = Unit
             override fun onProgressDrop(progress: Double) = Unit

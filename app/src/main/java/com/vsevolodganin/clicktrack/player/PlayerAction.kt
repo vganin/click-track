@@ -10,13 +10,11 @@ class PlayerAction(
 )
 
 fun Sequence<PlayerEvent>.toActions(
-    waitResume: suspend () -> Unit,
     soundSourceProvider: SoundSourceProvider,
     reportLatency: (Duration) -> Unit,
     soundPool: PlayerSoundPool,
 ) = map {
     it.toAction(
-        waitResume = waitResume,
         soundSourceProvider = soundSourceProvider,
         reportLatency = reportLatency,
         soundPool = soundPool,
@@ -24,14 +22,12 @@ fun Sequence<PlayerEvent>.toActions(
 }
 
 fun PlayerEvent.toAction(
-    waitResume: suspend () -> Unit,
     soundSourceProvider: SoundSourceProvider,
     reportLatency: (Duration) -> Unit,
     soundPool: PlayerSoundPool,
 ) = PlayerAction(
     interval = duration,
     action = {
-        waitResume()
         if (soundType != null) {
             val soundSource = soundSourceProvider.provide(soundType)
             soundSource?.let(soundPool::play)

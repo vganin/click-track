@@ -230,17 +230,19 @@ private fun progressLinePosition(
     }
 
     LaunchedEffect(progress, totalDuration, totalWidthPx) {
-        val progressTimePosition = progress.position + progress.emissionTime.elapsedNow()
+        val progressTimePosition = progress.realPosition
         val progressXPosition = progressTimePosition.toX(totalDuration, totalWidthPx)
-        val animationDuration = (totalDuration - progressTimePosition).coerceAtLeast(Duration.ZERO)
 
         animatableProgressLinePosition.snapTo(progressXPosition)
 
-        animatableProgressLinePosition.animateTo(
-            targetValue = totalWidthPx, animationSpec = tween(
-                durationMillis = animationDuration.inWholeMilliseconds.toInt(), easing = LinearEasing
+        if (!progress.isPaused) {
+            val animationDuration = (totalDuration - progressTimePosition).coerceAtLeast(Duration.ZERO)
+            animatableProgressLinePosition.animateTo(
+                targetValue = totalWidthPx, animationSpec = tween(
+                    durationMillis = animationDuration.inWholeMilliseconds.toInt(), easing = LinearEasing
+                )
             )
-        )
+        }
     }
 
     return animatableProgressLinePosition

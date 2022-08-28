@@ -13,9 +13,12 @@ import kotlin.time.toDuration
 
 @Parcelize
 data class PlayProgress(
-    val position: @WriteWith<DurationParceler>() Duration,
-    val emissionTime: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow(),
-) : Parcelable
+    private val position: @WriteWith<DurationParceler>() Duration,
+    val isPaused: Boolean = false,
+    private val emissionTime: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow(),
+) : Parcelable {
+    val realPosition: Duration get() = if (isPaused) position else position + emissionTime.elapsedNow()
+}
 
 @Parcelize
 data class PlayableProgressTimeMark(private val startedAtNanos: Long) : TimeMark, Parcelable {

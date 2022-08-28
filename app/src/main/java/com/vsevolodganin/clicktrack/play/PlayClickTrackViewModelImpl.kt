@@ -48,24 +48,30 @@ class PlayClickTrackViewModelImpl @AssistedInject constructor(
         playTrackingMode: Boolean,
         playbackState: PlaybackState?,
     ): PlayClickTrackState {
-        val isPlaying = playbackState?.id == clickTrack.id
-
         return PlayClickTrackState(
             clickTrack = clickTrack,
-            isPlaying = isPlaying,
-            playProgress = grabIf(isPlaying) { playbackState?.progress },
+            playProgress = grabIf(playbackState?.id == clickTrack.id) { playbackState?.progress },
             playTrackingMode = playTrackingMode,
         )
     }
 
     override fun onBackClick() = navigation.pop()
 
-    override fun onTogglePlay() {
+    override fun onTogglePlayStop() {
         val state = state.value ?: return
         if (state.isPlaying) {
             playerServiceAccess.stop()
         } else {
             playerServiceAccess.start(config.id)
+        }
+    }
+
+    override fun onTogglePlayPause() {
+        val state = state.value ?: return
+        if (state.isPaused) {
+            playerServiceAccess.resume()
+        } else {
+            playerServiceAccess.pause()
         }
     }
 

@@ -47,17 +47,17 @@ class PlayerServiceAccess @Inject constructor(
         }
         .shareIn(scope, SharingStarted.Eagerly, replay = 1)
 
-    fun start(id: PlayableId, atProgress: Double? = null, soundsId: ClickSoundsId? = null) {
-        PlayerService.start(context, id, atProgress, soundsId)
-    }
+    fun start(
+        id: PlayableId,
+        atProgress: Double? = null,
+        soundsId: ClickSoundsId? = null
+    ) = PlayerService.start(context, id, atProgress, soundsId)
 
-    fun pause() {
-        PlayerService.pause(context)
-    }
+    fun pause() = PlayerService.pause(context)
 
-    fun stop() {
-        PlayerService.stop(context)
-    }
+    fun resume() = PlayerService.resume(context)
+
+    fun stop() = PlayerService.stop(context)
 
     fun playbackState(): Flow<PlaybackState?> = playbackState
 }
