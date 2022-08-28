@@ -27,7 +27,7 @@ android {
         applicationId = "com.vsevolodganin.clicktrack"
         minSdk = 21
         targetSdk = 32
-        versionCode = 40
+        versionCode = 41
         versionName = "1.1.0"
 
         setProperty("archivesBaseName", "click-track-$versionName")

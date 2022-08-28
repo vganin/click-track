@@ -21,14 +21,14 @@ data class TrainingValidState(
         val kind: TrainingEndingKind
 
         @Serializable
-        @SerialName("com.vsevolodganin.clicktrack.redux.TrainingPersistableState.Ending.ByTempo") // For backward compatibility
+        @SerialName("com.vsevolodganin.clicktrack.state.redux.TrainingPersistableState.Ending.ByTempo") // For backward compatibility
         class ByTempo(val endingTempo: BeatsPerMinute) : Ending {
             override val kind: TrainingEndingKind
                 get() = TrainingEndingKind.BY_TEMPO
         }
 
         @Serializable
-        @SerialName("com.vsevolodganin.clicktrack.redux.TrainingPersistableState.Ending.ByTime") // For backward compatibility
+        @SerialName("com.vsevolodganin.clicktrack.state.redux.TrainingPersistableState.Ending.ByTime") // For backward compatibility
         class ByTime(@Serializable(with = DurationSerializer::class) val duration: Duration) : Ending {
             override val kind: TrainingEndingKind
                 get() = TrainingEndingKind.BY_TIME
