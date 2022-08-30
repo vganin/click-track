@@ -1,16 +1,21 @@
 package com.vsevolodganin.clicktrack.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -44,11 +49,20 @@ import kotlinx.coroutines.flow.StateFlow
 fun DrawerView(viewModel: DrawerViewModel) {
     val state by viewModel.state.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .systemBarsPadding()
-    ) {
+    Column(modifier = Modifier.navigationBarsPadding()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .background(
+                    if (isSystemInDarkTheme()) {
+                        Color.Transparent
+                    } else {
+                        Color.Black.copy(alpha = 0.4f)
+                    }
+                )
+        )
+
         Spacer(modifier = Modifier.height(12.dp))
 
         DrawerButton(
@@ -95,7 +109,7 @@ fun DrawerView(viewModel: DrawerViewModel) {
             action = viewModel::navigateToAbout
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
     }
 }
 
