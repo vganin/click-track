@@ -11,7 +11,7 @@ sqlDelight = "1.5.3"
 
 [libraries]
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 android-gradlePlugin = "com.android.tools.build:gradle:7.2.2"
 androidx-activity-compose = "androidx.activity:activity-compose:1.5.1"
 androidx-appcompat = "androidx.appcompat:appcompat:1.5.0"
@@ -28,7 +28,7 @@ androidx-dataStore = "androidx.datastore:datastore-preferences:1.0.0"
 androidx-fragment = "androidx.fragment:fragment-ktx:1.5.2"
 androidx-media = "androidx.media:media:1.6.0"
 androidx-splashScreen = "androidx.core:core-splashscreen:1.0.0"
-androidx-workmanager = "androidx.work:work-runtime-ktx:2.7.1"
+androidx-workManager = "androidx.work:work-runtime-ktx:2.7.1"
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose-jetpack", version.ref = "decompose" }
@@ -48,7 +48,7 @@ kotlin-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serializat
 kotlin-serialization-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
 oboe = "com.google.oboe:oboe:1.6.1"
-resourceplaceholders = "de.timfreiheit.resourceplaceholders:placeholders:0.4"
+resourcePlaceholders = "de.timfreiheit.resourceplaceholders:placeholders:0.4"
 simpleIcons = "br.com.devsrsouza.compose.icons.android:simple-icons:1.0.0"
 sqlDelight-androidDriver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
 sqlDelight-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions-jvm", version.ref = "sqlDelight" }
@@ -56,7 +56,7 @@ sqlDelight-gradlePlugin = { module = "com.squareup.sqldelight:gradle-plugin", ve
 timber = "com.jakewharton.timber:timber:5.0.1"
 
 [bundles]
-accompanist = ["accompanist-insets", "accompanist-systemuicontroller"]
+accompanist = ["accompanist-insets", "accompanist-systemUiController"]
 androidx-compose = ["androidx-compose-foundation", "androidx-compose-material", "androidx-compose-material-iconsExtended", "androidx-compose-ui-tooling", "androidx-compose-ui-tooling-preview", "androidx-compose-ui-util", "androidx-compose-ui", "androidx-activity-compose", "androidx-constraintLayout-compose"]
 decompose = ["decompose-core", "decompose-compose", "essenty-stateKeeper"]
 kotlin-coroutines = ["kotlin-coroutines-core", "kotlin-coroutines-android"]
