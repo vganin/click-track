@@ -8,14 +8,14 @@ buildscript {
     }
 
     dependencies {
-        classpath(libs.kotlin.gradlePlugin)
-        classpath(libs.kotlin.serialization.gradlePlugin)
-        classpath(libs.android.gradlePlugin)
-        classpath(libs.sqlDelight.gradlePlugin)
-        classpath(libs.gms.gradlePlugin)
-        classpath(libs.firebase.crashlytics.gradlePlugin)
-        classpath(libs.gradleVersionsPlugin)
-        classpath(libs.resourcePlaceholders)
+        classpath(libs.gradlePlugins.kotlin)
+        classpath(libs.gradlePlugins.kotlin.serialization)
+        classpath(libs.gradlePlugins.agp)
+        classpath(libs.gradlePlugins.sqlDelight)
+        classpath(libs.gradlePlugins.gms)
+        classpath(libs.gradlePlugins.crashlytics)
+        classpath(libs.gradlePlugins.versionsPlugin)
+        classpath(libs.gradlePlugins.resourcePlaceholders)
     }
 }
 

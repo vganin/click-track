@@ -10,9 +10,17 @@ kotlin-serialization = "1.4.0"
 sqlDelight = "1.5.3"
 
 [libraries]
+gradlePlugins-agp = "com.android.tools.build:gradle:7.2.2"
+gradlePlugins-crashlytics = "com.google.firebase:firebase-crashlytics-gradle:2.9.1"
+gradlePlugins-gms = "com.google.gms:google-services:4.3.13"
+gradlePlugins-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradlePlugins-kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+gradlePlugins-sqlDelight = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sqlDelight" }
+gradlePlugins-versionsPlugin = "com.github.ben-manes:gradle-versions-plugin:0.42.0"
+gradlePlugins-resourcePlaceholders = "de.timfreiheit.resourceplaceholders:placeholders:0.4"
+
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
-android-gradlePlugin = "com.android.tools.build:gradle:7.2.2"
 androidx-activity-compose = "androidx.activity:activity-compose:1.5.1"
 androidx-appcompat = "androidx.appcompat:appcompat:1.5.0"
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
@@ -37,22 +45,15 @@ essenty-stateKeeper = "com.arkivanov.essenty:state-keeper:0.6.0"
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-bom = "com.google.firebase:firebase-bom:30.3.2"
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-firebase-crashlytics-gradlePlugin = "com.google.firebase:firebase-crashlytics-gradle:2.9.1"
-gms-gradlePlugin = "com.google.gms:google-services:4.3.13"
 googlePlay-core = "com.google.android.play:core-ktx:1.8.1"
-gradleVersionsPlugin = "com.github.ben-manes:gradle-versions-plugin:0.42.0"
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlin-coroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
-kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
-kotlin-serialization-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
 oboe = "com.google.oboe:oboe:1.6.1"
-resourcePlaceholders = "de.timfreiheit.resourceplaceholders:placeholders:0.4"
 simpleIcons = "br.com.devsrsouza.compose.icons.android:simple-icons:1.0.0"
 sqlDelight-androidDriver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
 sqlDelight-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions-jvm", version.ref = "sqlDelight" }
-sqlDelight-gradlePlugin = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sqlDelight" }
 timber = "com.jakewharton.timber:timber:5.0.1"
 
 [bundles]
