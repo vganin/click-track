@@ -13,7 +13,9 @@ import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.utils.collection.immutable.remove
 import com.vsevolodganin.clicktrack.utils.collection.immutable.replace
+import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,12 +36,13 @@ class EditClickTrackViewModelImpl @AssistedInject constructor(
 ) : EditClickTrackViewModel, ComponentContext by componentContext {
 
     private val scope = coroutineScope()
-
-    private val _state: MutableStateFlow<EditClickTrackState?> = MutableStateFlow(null)
+    private val _state: MutableStateFlow<EditClickTrackState?> = MutableStateFlow(consumeSavedState())
 
     override val state: StateFlow<EditClickTrackState?> = _state
 
     init {
+        registerSaveStateFor(state)
+
         scope.launch {
             _state.value = clickTrackRepository.getById(config.id)
                 .map { it?.toEditState(showForwardButton = config.isInitialEdit) }

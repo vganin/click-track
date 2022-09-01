@@ -1,12 +1,15 @@
 package com.vsevolodganin.clicktrack.edit
 
+import android.os.Parcelable
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
+import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
+@Parcelize
 data class EditClickTrackState(
     val id: ClickTrackId.Database,
     val name: String,
@@ -14,8 +17,9 @@ data class EditClickTrackState(
     val tempoDiff: BeatsPerMinuteDiff,
     val cues: List<EditCueState>,
     val showForwardButton: Boolean,
-)
+) : Parcelable
 
+@Parcelize
 data class EditCueState(
     val id: String = UUID.randomUUID().toString(),
     val name: String,
@@ -27,7 +31,7 @@ data class EditCueState(
     val time: CueDuration.Time,
     val pattern: NotePattern,
     val errors: Set<Error>,
-) {
+) : Parcelable {
     enum class Error {
         BPM
     }

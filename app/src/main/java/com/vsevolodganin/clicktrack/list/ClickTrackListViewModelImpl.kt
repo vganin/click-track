@@ -10,7 +10,9 @@ import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.DefaultCue
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
+import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +37,11 @@ class ClickTrackListViewModelImpl @AssistedInject constructor(
     override val state: StateFlow<ClickTrackListState> =
         clickTrackRepository.getAll()
             .map(::ClickTrackListState)
-            .stateIn(scope, SharingStarted.Eagerly, ClickTrackListState(emptyList()))
+            .stateIn(scope, SharingStarted.Eagerly, consumeSavedState() ?: ClickTrackListState(emptyList()))
+
+    init {
+        registerSaveStateFor(state)
+    }
 
     override fun onAddClick() {
         scope.launch {

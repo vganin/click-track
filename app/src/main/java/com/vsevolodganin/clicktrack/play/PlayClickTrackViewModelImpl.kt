@@ -6,12 +6,12 @@ import com.arkivanov.decompose.router.stack.push
 import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.export.ExportWorkLauncher
-import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
-import com.vsevolodganin.clicktrack.player.PlaybackState
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import com.vsevolodganin.clicktrack.utils.grabIf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -40,19 +40,16 @@ class PlayClickTrackViewModelImpl @AssistedInject constructor(
         clickTrackRepository.getById(config.id).filterNotNull(),
         userPreferences.playTrackingMode.flow,
         playerServiceAccess.playbackState(),
-        ::combineToState,
-    ).stateIn(scope, SharingStarted.Eagerly, null)
-
-    private fun combineToState(
-        clickTrack: ClickTrackWithDatabaseId,
-        playTrackingMode: Boolean,
-        playbackState: PlaybackState?,
-    ): PlayClickTrackState {
-        return PlayClickTrackState(
+    ) { clickTrack, playTrackingMode, playbackState ->
+        PlayClickTrackState(
             clickTrack = clickTrack,
             playProgress = grabIf(playbackState?.id == clickTrack.id) { playbackState?.progress },
             playTrackingMode = playTrackingMode,
         )
+    }.stateIn(scope, SharingStarted.Eagerly, consumeSavedState())
+
+    init {
+        registerSaveStateFor(state)
     }
 
     override fun onBackClick() = navigation.pop()

@@ -3,12 +3,12 @@ package com.vsevolodganin.clicktrack.polyrhythm
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.Navigation
-import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
-import com.vsevolodganin.clicktrack.player.PlaybackState
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import com.vsevolodganin.clicktrack.utils.grabIf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -28,20 +28,18 @@ class PolyrhythmsViewModelImpl @AssistedInject constructor(
 
     override val state: StateFlow<PolyrhythmsState?> = combine(
         userPreferences.polyrhythm.flow,
-        playerServiceAccess.playbackState(),
-        ::combineToState
-    ).stateIn(scope, SharingStarted.Eagerly, null)
-
-    private fun combineToState(
-        twoLayerPolyrhythm: TwoLayerPolyrhythm,
-        playbackState: PlaybackState?
-    ): PolyrhythmsState {
+        playerServiceAccess.playbackState()
+    ) { twoLayerPolyrhythm, playbackState ->
         val isPlaying = playbackState?.id == TwoLayerPolyrhythmId
-        return PolyrhythmsState(
+        PolyrhythmsState(
             twoLayerPolyrhythm = twoLayerPolyrhythm,
             isPlaying = isPlaying,
             playableProgress = grabIf(isPlaying) { playbackState?.progress }
         )
+    }.stateIn(scope, SharingStarted.Eagerly, consumeSavedState())
+
+    init {
+        registerSaveStateFor(state)
     }
 
     override fun onBackClick() = navigation.pop()

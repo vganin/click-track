@@ -3,14 +3,14 @@ package com.vsevolodganin.clicktrack.metronome
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.Navigation
-import com.vsevolodganin.clicktrack.model.BeatsPerMinute
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.NotePattern
-import com.vsevolodganin.clicktrack.player.PlaybackState
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import com.vsevolodganin.clicktrack.utils.grabIf
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -31,31 +31,32 @@ class MetronomeViewModelImpl @AssistedInject constructor(
 
     private val scope = coroutineScope()
 
-    private val areOptionsExpanded: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val areOptionsExpanded: MutableStateFlow<Boolean>
 
-    override val state: StateFlow<MetronomeState?> = combine(
-        areOptionsExpanded,
-        userPreferences.metronomeBpm.flow,
-        userPreferences.metronomePattern.flow,
-        playerServiceAccess.playbackState(),
-        ::combineToState,
-    ).stateIn(scope, SharingStarted.Eagerly, null)
+    override val state: StateFlow<MetronomeState?>
 
-    private fun combineToState(
-        areOptionsExpanded: Boolean,
-        bpm: BeatsPerMinute,
-        pattern: NotePattern,
-        playbackState: PlaybackState?,
-    ): MetronomeState {
-        val isPlaying = playbackState?.id is ClickTrackId.Builtin.Metronome
+    init {
+        val initialState: MetronomeState? = consumeSavedState()
 
-        return MetronomeState(
-            bpm = bpm,
-            pattern = pattern,
-            isPlaying = isPlaying,
-            progress = grabIf(isPlaying) { playbackState?.progress },
-            areOptionsExpanded = areOptionsExpanded,
-        )
+        areOptionsExpanded = MutableStateFlow(initialState?.areOptionsExpanded ?: false)
+
+        state = combine(
+            areOptionsExpanded,
+            userPreferences.metronomeBpm.flow,
+            userPreferences.metronomePattern.flow,
+            playerServiceAccess.playbackState(),
+        ) { areOptionsExpanded, bpm, pattern, playbackState ->
+            val isPlaying = playbackState?.id is ClickTrackId.Builtin.Metronome
+            MetronomeState(
+                bpm = bpm,
+                pattern = pattern,
+                isPlaying = isPlaying,
+                progress = grabIf(isPlaying) { playbackState?.progress },
+                areOptionsExpanded = areOptionsExpanded,
+            )
+        }.stateIn(scope, SharingStarted.Eagerly, initialState)
+
+        registerSaveStateFor(state)
     }
 
     override fun onBackClick() = navigation.pop()

@@ -16,7 +16,9 @@ import com.vsevolodganin.clicktrack.model.UserClickSounds
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import com.vsevolodganin.clicktrack.utils.optionalCast
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -43,19 +45,16 @@ class SoundLibraryViewModelImpl @AssistedInject constructor(
     override val state: StateFlow<SoundLibraryState?> = combine(
         userPreferences.selectedSoundsId.flow,
         clickSoundsRepository.getAll(),
-        playerServiceAccess.playbackState().map { it?.id }.distinctUntilChanged(),
-        ::combineToState
-    ).stateIn(scope, SharingStarted.Eagerly, null)
-
-    private fun combineToState(
-        selectedId: ClickSoundsId,
-        userItems: List<UserClickSounds>,
-        playingId: PlayableId?,
-    ): SoundLibraryState {
-        return SoundLibraryState(buildList {
+        playerServiceAccess.playbackState().map { it?.id }.distinctUntilChanged()
+    ) { selectedId, userItems, playingId ->
+        SoundLibraryState(buildList {
             this += BuiltinClickSounds.values().map { it.toItem(selectedId) }
             this += userItems.map { it.toItem(selectedId, playingId) }
         })
+    }.stateIn(scope, SharingStarted.Eagerly, consumeSavedState())
+
+    init {
+        registerSaveStateFor(state)
     }
 
     private fun BuiltinClickSounds.toItem(selectedId: ClickSoundsId): SelectableClickSoundsItem.Builtin {
