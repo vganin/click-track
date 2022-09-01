@@ -1,6 +1,8 @@
 package com.vsevolodganin.clicktrack.storage
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
+import com.squareup.sqldelight.runtime.coroutines.mapToList
+import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import com.vsevolodganin.clicktrack.Database
 import com.vsevolodganin.clicktrack.migration.CanMigrate
 import com.vsevolodganin.clicktrack.model.ClickTrack
@@ -32,7 +34,8 @@ class ClickTrackRepository @Inject constructor(
 
     fun getAll(): Flow<List<ClickTrackWithDatabaseId>> {
         return database.sqlClickTrackQueries.getAll().asFlow()
-            .map { it.executeAsList().map { elem -> elem.toCommon() } }
+            .mapToList()
+            .map { it.map { elem -> elem.toCommon() } }
     }
 
     fun getAllNames(): List<String> {
@@ -41,7 +44,8 @@ class ClickTrackRepository @Inject constructor(
 
     fun getById(id: ClickTrackId.Database): Flow<ClickTrackWithDatabaseId?> {
         return database.sqlClickTrackQueries.getById(id.value).asFlow()
-            .map { it.executeAsOneOrNull()?.toCommon() }
+            .mapToOneOrNull()
+            .map { it?.toCommon() }
     }
 
     fun insert(clickTrack: ClickTrack): ClickTrackId.Database {
