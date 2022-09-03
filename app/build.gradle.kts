@@ -21,14 +21,16 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdk = 32
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
         minSdk = 21
-        targetSdk = 32
+        targetSdk = 33
         versionCode = 41
         versionName = "1.1.0"
+
+        resourceConfigurations += setOf("en", "ru")
 
         setProperty("archivesBaseName", "click-track-$versionName")
 

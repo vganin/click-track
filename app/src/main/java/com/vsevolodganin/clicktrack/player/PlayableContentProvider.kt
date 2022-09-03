@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.player
 
-import android.content.Context
+import android.app.Application
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.metronome.metronomeClickTrack
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @PlayerServiceScope
 class PlayableContentProvider @Inject constructor(
-    private val context: Context,
+    private val application: Application,
     private val clickTrackRepository: ClickTrackRepository,
     private val userPreferences: UserPreferencesRepository
 ) {
@@ -36,7 +36,7 @@ class PlayableContentProvider @Inject constructor(
                     userPreferences.metronomePattern.flow,
                 ) { bpm, pattern ->
                     metronomeClickTrack(
-                        name = context.getString(R.string.general_metronome_click_track_title),
+                        name = application.getString(R.string.general_metronome_click_track_title),
                         bpm = bpm,
                         pattern = pattern,
                     )

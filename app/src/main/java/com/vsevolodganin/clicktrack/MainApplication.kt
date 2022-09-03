@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack
 
+import android.app.Application
 import android.os.StrictMode
 import com.vsevolodganin.clicktrack.audio.SoundPreloader
 import com.vsevolodganin.clicktrack.di.component.DaggerApplicationComponent
@@ -8,8 +9,7 @@ import com.vsevolodganin.clicktrack.theme.ThemeManager
 import timber.log.Timber
 import javax.inject.Inject
 
-
-class Application : android.app.Application() {
+class MainApplication : Application() {
 
     val daggerComponent = DaggerApplicationComponent.builder()
         .application(this)

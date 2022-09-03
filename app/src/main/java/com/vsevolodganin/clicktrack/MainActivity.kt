@@ -1,7 +1,9 @@
 package com.vsevolodganin.clicktrack
 
+import android.Manifest
 import android.content.Intent
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +17,8 @@ import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
 import com.vsevolodganin.clicktrack.ui.RootView
 import com.vsevolodganin.clicktrack.utils.android.PermissionsHelper
 import com.vsevolodganin.clicktrack.utils.cast
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -31,13 +35,12 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var inAppReview: InAppReview
 
-    @Suppress("unused") // FIXME: Initializing eagerly for optimisimation
-    @Inject
-    lateinit var playerServiceAccess: PlayerServiceAccess
-
-    @Suppress("unused") // FIXME: Initializing eagerly for proper registration of Activity Result API
     @Inject
     lateinit var permissionsHelper: PermissionsHelper
+
+    @Suppress("unused") // FIXME: Initializing eagerly for optimisation
+    @Inject
+    lateinit var playerServiceAccess: PlayerServiceAccess
 
     @Suppress("unused") // FIXME: Initializing eagerly for proper registration of Activity Result API
     @Inject
@@ -61,6 +64,12 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             intentProcessor.process(intent)
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            GlobalScope.launch {
+                permissionsHelper.requestPermission(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -75,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun inject() {
-        application.cast<Application>().daggerComponent.activityComponentBuilder()
+        application.cast<MainApplication>().daggerComponent.activityComponentBuilder()
             .activity(this)
             .rootComponentContext(defaultComponentContext())
             .build()

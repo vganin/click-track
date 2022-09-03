@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.di.module
 
-import android.content.Context
+import android.app.Application
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.Module
@@ -10,7 +10,7 @@ import dagger.Provides
 object GooglePlayModule {
 
     @Provides
-    fun provideReviewManager(context: Context): ReviewManager {
-        return ReviewManagerFactory.create(context)
+    fun provideReviewManager(application: Application): ReviewManager {
+        return ReviewManagerFactory.create(application)
     }
 }

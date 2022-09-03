@@ -16,9 +16,9 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.BuildConfig
 import com.vsevolodganin.clicktrack.IntentFactory
+import com.vsevolodganin.clicktrack.MainApplication
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.common.MediaStoreAccess
 import com.vsevolodganin.clicktrack.model.ClickTrack
@@ -70,7 +70,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
     private val foregroundNotificationId = id.leastSignificantBits.toInt()
 
     init {
-        appContext.cast<Application>().daggerComponent.inject(this)
+        appContext.cast<MainApplication>().daggerComponent.inject(this)
     }
 
     override suspend fun doWork(): Result {

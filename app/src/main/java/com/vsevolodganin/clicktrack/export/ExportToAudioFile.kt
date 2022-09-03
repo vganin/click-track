@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.export
 
-import android.content.Context
+import android.app.Application
 import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaFormat
@@ -25,7 +25,7 @@ import kotlin.time.DurationUnit
 
 @Reusable
 class ExportToAudioFile @Inject constructor(
-    private val context: Context,
+    private val application: Application,
     private val soundBank: SoundBank,
     private val userSelectedSounds: UserSelectedSounds,
 ) {
@@ -48,7 +48,7 @@ class ExportToAudioFile @Inject constructor(
                 }
 
             outputFile = withContext(Dispatchers.IO) {
-                File.createTempFile("click_track_export", ".m4a", context.cacheDir)
+                File.createTempFile("click_track_export", ".m4a", application.cacheDir)
             }
 
             muxer = MediaMuxer(outputFile.path, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)

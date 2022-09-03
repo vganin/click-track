@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.settings.SettingsState
 import com.vsevolodganin.clicktrack.settings.SettingsViewModel
 import com.vsevolodganin.clicktrack.theme.Theme
@@ -57,7 +58,24 @@ private fun Content(viewModel: SettingsViewModel) {
             },
             onChoose = viewModel::onThemeChange,
         )
+
         Divider(modifier = Modifier.padding(start = 16.dp))
+
+        ListChooser(
+            title = stringResource(R.string.settings_language),
+            value = state.language.displayValue(),
+            variants = AppLanguage.values().map {
+                ListChooserItem(
+                    value = it,
+                    displayValue = it.displayValue(),
+                    description = null
+                )
+            },
+            onChoose = viewModel::onLanguageChange,
+        )
+
+        Divider(modifier = Modifier.padding(start = 16.dp))
+
         BooleanChooser(
             title = stringResource(R.string.settings_ignore_audio_focus),
             value = state.ignoreAudioFocus,
@@ -83,6 +101,13 @@ private fun Theme.description(): String? = when (this) {
     Theme.AUTO -> R.string.settings_theme_auto_description
 }?.let { stringResource(it) }
 
+@Composable
+private fun AppLanguage.displayValue(): String = when (this) {
+    AppLanguage.SYSTEM -> R.string.settings_language_system
+    AppLanguage.ENGLISH -> R.string.settings_language_system_english
+    AppLanguage.RUSSIAN -> R.string.settings_language_system_russian
+}.let { stringResource(it) }
+
 @ScreenPreviews
 @Composable
 private fun Preview() = ClickTrackTheme {
@@ -92,11 +117,13 @@ private fun Preview() = ClickTrackTheme {
                 SettingsState(
                     theme = Theme.SYSTEM,
                     ignoreAudioFocus = false,
+                    language = AppLanguage.SYSTEM,
                 )
             )
 
             override fun onBackClick() = Unit
             override fun onThemeChange(theme: Theme) = Unit
+            override fun onLanguageChange(language: AppLanguage) = Unit
             override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
         }
 

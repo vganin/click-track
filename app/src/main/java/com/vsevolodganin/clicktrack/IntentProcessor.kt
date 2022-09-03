@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack
 
-import android.content.Context
+import android.app.Application
 import android.content.Intent
 import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import com.vsevolodganin.clicktrack.model.ClickTrackId
@@ -29,7 +29,7 @@ class IntentProcessor @Inject constructor(
     }
 }
 
-class IntentFactory @Inject constructor(private val context: Context) {
+class IntentFactory @Inject constructor(private val application: Application) {
 
     fun navigate(id: ClickTrackId): Intent? {
         return when (id) {
@@ -40,7 +40,7 @@ class IntentFactory @Inject constructor(private val context: Context) {
     }
 
     fun navigateClickTrack(id: ClickTrackId.Database): Intent {
-        return Intent(context, MainActivity::class.java).apply {
+        return Intent(application, MainActivity::class.java).apply {
             action = Intent.ACTION_VIEW
             putExtra(Extras.DESTINATION, Extras.DESTINATION_CLICK_TRACK)
             putExtra(Extras.CLICK_TRACK_ID, id.value)
@@ -48,14 +48,14 @@ class IntentFactory @Inject constructor(private val context: Context) {
     }
 
     fun navigatePolyrhythms(): Intent {
-        return Intent(context, MainActivity::class.java).apply {
+        return Intent(application, MainActivity::class.java).apply {
             action = Intent.ACTION_VIEW
             putExtra(Extras.DESTINATION, Extras.DESTINATION_POLYRHYTHMS)
         }
     }
 
     fun navigateMetronome(): Intent {
-        return Intent(context, MainActivity::class.java).apply {
+        return Intent(application, MainActivity::class.java).apply {
             action = Intent.ACTION_VIEW
             putExtra(Extras.DESTINATION, Extras.DESTINATION_METRONOME)
         }

@@ -15,9 +15,10 @@ import androidx.core.app.NotificationCompat.FLAG_FOREGROUND_SERVICE
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ServiceCompat
 import androidx.core.content.res.ResourcesCompat
-import com.vsevolodganin.clicktrack.Application
 import com.vsevolodganin.clicktrack.IntentFactory
+import com.vsevolodganin.clicktrack.MainApplication
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.ClickTrackId
@@ -178,7 +179,7 @@ class PlayerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            ACTION_START -> state.value = intent.getParcelableExtra(EXTRA_START_ARGUMENTS)
+            ACTION_START -> state.value = intent.getParcelableExtraCompat(EXTRA_START_ARGUMENTS)
                 ?: throw RuntimeException("No start arguments were supplied")
             ACTION_STOP -> state.value = null
             ACTION_PAUSE -> state.update { it?.copy(isPaused = true) }
@@ -359,7 +360,7 @@ class PlayerService : Service() {
     }
 
     private fun stopForeground() {
-        stopForeground(true)
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
         isNotificationDisplayed = false
     }
 
@@ -373,8 +374,17 @@ class PlayerService : Service() {
     }
 
     private fun inject() {
-        application.cast<Application>().daggerComponent.playerServiceComponentBuilder()
+        application.cast<MainApplication>().daggerComponent.playerServiceComponentBuilder()
             .build()
             .inject(this)
+    }
+
+    private inline fun <reified T : Parcelable> Intent.getParcelableExtraCompat(name: String): T? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getParcelableExtra(name, T::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            getParcelableExtra(name)
+        }
     }
 }

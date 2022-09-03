@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.di.module
 
-import android.content.Context
+import android.app.Application
 import com.google.firebase.analytics.FirebaseAnalytics
 import dagger.Module
 import dagger.Provides
@@ -11,7 +11,7 @@ object FirebaseModule {
 
     @Provides
     @Singleton
-    fun provideFirebase(context: Context): FirebaseAnalytics {
-        return FirebaseAnalytics.getInstance(context)
+    fun provideFirebase(application: Application): FirebaseAnalytics {
+        return FirebaseAnalytics.getInstance(application)
     }
 }

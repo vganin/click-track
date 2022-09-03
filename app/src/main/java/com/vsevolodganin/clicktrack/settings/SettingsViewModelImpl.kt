@@ -3,6 +3,8 @@ package com.vsevolodganin.clicktrack.settings
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.Navigation
+import com.vsevolodganin.clicktrack.language.AppLanguage
+import com.vsevolodganin.clicktrack.language.LanguageStore
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
@@ -17,6 +19,7 @@ class SettingsViewModelImpl @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
     private val navigation: Navigation,
     private val userPreferences: UserPreferencesRepository,
+    private val languageStore: LanguageStore,
 ) : SettingsViewModel, ComponentContext by componentContext {
 
     private val scope = coroutineScope()
@@ -24,17 +27,20 @@ class SettingsViewModelImpl @AssistedInject constructor(
     override val state: StateFlow<SettingsState> = combine(
         userPreferences.theme.flow,
         userPreferences.ignoreAudioFocus.flow,
-    ) { theme, ignoreAudioFocus ->
+        languageStore.appLanguage,
+    ) { theme, ignoreAudioFocus, language ->
         SettingsState(
             theme = theme,
-            ignoreAudioFocus = ignoreAudioFocus
+            ignoreAudioFocus = ignoreAudioFocus,
+            language = language
         )
     }.stateIn(
         scope = scope,
         started = SharingStarted.Eagerly,
         initialValue = SettingsState(
             theme = userPreferences.theme.value,
-            ignoreAudioFocus = userPreferences.ignoreAudioFocus.value
+            ignoreAudioFocus = userPreferences.ignoreAudioFocus.value,
+            language = languageStore.appLanguage.value
         )
     )
 
@@ -42,6 +48,10 @@ class SettingsViewModelImpl @AssistedInject constructor(
 
     override fun onThemeChange(theme: Theme) {
         userPreferences.theme.value = theme
+    }
+
+    override fun onLanguageChange(language: AppLanguage) {
+        languageStore.appLanguage.value = language
     }
 
     override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) {

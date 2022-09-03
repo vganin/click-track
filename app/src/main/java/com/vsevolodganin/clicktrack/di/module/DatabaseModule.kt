@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.di.module
 
-import android.content.Context
+import android.app.Application
 import com.squareup.sqldelight.android.AndroidSqliteDriver
 import com.vsevolodganin.clicktrack.Database
 import dagger.Module
@@ -12,11 +12,11 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(context: Context): Database {
+    fun provideDatabase(application: Application): Database {
         return Database(
             AndroidSqliteDriver(
                 schema = Database.Schema,
-                context = context,
+                context = application,
                 name = "click_track.db",
             )
         )

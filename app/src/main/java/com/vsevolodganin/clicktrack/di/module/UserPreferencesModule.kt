@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.di.module
 
-import android.content.Context
+import android.app.Application
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -15,10 +15,10 @@ object UserPreferencesModule {
 
     @Provides
     @Singleton
-    fun provideUserPreferences(context: Context): DataStore<Preferences> {
+    fun provideUserPreferences(application: Application): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
-            migrations = listOf(SharedPreferencesMigration(context, "user_preferences")),
-            produceFile = { context.preferencesDataStoreFile("user_preferences") },
+            migrations = listOf(SharedPreferencesMigration(application, "user_preferences")),
+            produceFile = { application.preferencesDataStoreFile("user_preferences") },
         )
     }
 }

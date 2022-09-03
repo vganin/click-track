@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.player
 
+import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -23,7 +24,7 @@ import kotlin.time.Duration.Companion.milliseconds
  */
 @PlayerServiceScope
 class PlayerSoundPool @Inject constructor(
-    context: Context,
+    application: Application,
     private val soundBank: SoundBank,
     @PlayerDispatcher private val playerDispatcher: CoroutineDispatcher,
 ) {
@@ -33,7 +34,7 @@ class PlayerSoundPool @Inject constructor(
         // Workaround for some Android P not properly disconnecting streams, so resetting them manually
         // Source: https://github.com/google/oboe/blob/master/docs/notes/disconnect.md#workaround-for-not-disconnecting-properly
         // Since our scope is singleton, no need to unregister receiver
-        context.registerReceiver(object : BroadcastReceiver() {
+        application.registerReceiver(object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 GlobalScope.launch(playerDispatcher) {
                     loadedSounds.forEach { (_, track) ->

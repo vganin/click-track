@@ -358,6 +358,7 @@ private fun Modifier.clickTrackGestures(
                             detectDragGesturesAfterLongPress(onDragStart = {
                                 view.performHapticFeedback(
                                     HapticFeedbackConstants.LONG_PRESS,
+                                    @Suppress("DEPRECATION") // TODO: Fix deprecation
                                     HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
                                 )
                                 launch {

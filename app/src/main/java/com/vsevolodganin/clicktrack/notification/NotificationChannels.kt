@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.notification
 
-import android.content.Context
+import android.app.Application
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Singleton
 class NotificationChannels @Inject constructor(
-    private val context: Context,
+    private val application: Application,
     private val notificationManager: NotificationManagerCompat
 ) {
     val playingNow = "playing_now"
@@ -34,7 +34,7 @@ class NotificationChannels @Inject constructor(
         vibrationEnabled: Boolean = false,
     ) {
         val channel = NotificationChannelCompat.Builder(id, importance)
-            .setName(context.getString(nameRes))
+            .setName(application.getString(nameRes))
             .setVibrationEnabled(vibrationEnabled)
             .build()
         notificationManager.createNotificationChannel(channel)

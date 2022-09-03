@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.player
 
+import android.app.Activity
 import android.content.ComponentName
-import android.content.Context
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @ActivityScope
 class PlayerServiceAccess @Inject constructor(
-    private val context: Context,
+    private val activity: Activity,
     lifecycleOwner: LifecycleOwner
 ) {
     private val scope = lifecycleOwner.coroutineScope()
@@ -40,10 +40,10 @@ class PlayerServiceAccess @Inject constructor(
 
     private val playbackState = binderState.flatMapLatest { it?.playbackState ?: flowOf(null) }
         .onStart {
-            PlayerService.bind(context, serviceConnection)
+            PlayerService.bind(activity, serviceConnection)
         }
         .onCompletion {
-            context.unbindService(serviceConnection)
+            activity.unbindService(serviceConnection)
         }
         .shareIn(scope, SharingStarted.Eagerly, replay = 1)
 
@@ -51,13 +51,13 @@ class PlayerServiceAccess @Inject constructor(
         id: PlayableId,
         atProgress: Double? = null,
         soundsId: ClickSoundsId? = null
-    ) = PlayerService.start(context, id, atProgress, soundsId)
+    ) = PlayerService.start(activity, id, atProgress, soundsId)
 
-    fun pause() = PlayerService.pause(context)
+    fun pause() = PlayerService.pause(activity)
 
-    fun resume() = PlayerService.resume(context)
+    fun resume() = PlayerService.resume(activity)
 
-    fun stop() = PlayerService.stop(context)
+    fun stop() = PlayerService.stop(activity)
 
     fun playbackState(): Flow<PlaybackState?> = playbackState
 }

@@ -34,7 +34,7 @@ class ExportWorkLauncher @Inject constructor(
 
     private suspend fun requestStoragePermission(): Boolean {
         return withContext(Dispatchers.Main) {
-            permissionsHelper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            permissionsHelper.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)!!
         }
     }
 

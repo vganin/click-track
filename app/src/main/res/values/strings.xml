@@ -49,6 +49,10 @@
     <string name="polyrhythms_screen_title">Polyrhythms</string>
     <string name="settings_ignore_audio_focus">Play with other audio</string>
     <string name="settings_ignore_audio_focus_description">Turn off to automatically stop click track playback when other audio starts.</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_system">System</string>
+    <string name="settings_language_system_english" translatable="false">English</string>
+    <string name="settings_language_system_russian" translatable="false">Русский</string>
     <string name="settings_screen_title">Settings</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_auto">Auto</string>

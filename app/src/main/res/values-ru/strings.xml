@@ -46,6 +46,8 @@
     <string name="polyrhythms_screen_title">Полиритмы</string>
     <string name="settings_ignore_audio_focus">Играть вместе с другим аудио</string>
     <string name="settings_ignore_audio_focus_description">Выключите, чтобы автоматически остановить клик трек, когда другое аудио начинает играть.</string>
+    <string name="settings_language">Язык</string>
+    <string name="settings_language_system">Системный</string>
     <string name="settings_screen_title">Настройки</string>
     <string name="settings_theme">Тема</string>
     <string name="settings_theme_auto">Авто</string>

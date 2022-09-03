@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.training
 
+import android.app.Activity
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.replaceCurrent
@@ -26,11 +27,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import android.content.Context as AndroidContext
 
 class TrainingViewModelImpl @AssistedInject constructor(
     @Assisted componentContext: ComponentContext,
-    private val androidContext: AndroidContext,
+    private val activity: Activity,
     private val navigation: Navigation,
     private val clickTrackRepository: ClickTrackRepository,
     private val userPreferences: UserPreferencesRepository,
@@ -62,7 +62,7 @@ class TrainingViewModelImpl @AssistedInject constructor(
             val trainingState = userPreferences.trainingState.flow.first()
             val suggestedName = newClickTrackNameSuggester.suggest(
                 withContext(Dispatchers.Main) {
-                    androidContext.getString(R.string.general_unnamed_training_click_track_template)
+                    activity.getString(R.string.general_unnamed_training_click_track_template)
                 }
             )
             val newClickTrack = trainingClickTrackGenerator.generate(trainingState, suggestedName)

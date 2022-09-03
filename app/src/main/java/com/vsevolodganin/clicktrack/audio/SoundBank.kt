@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.audio
 
+import android.app.Application
 import android.content.ContentResolver
-import android.content.Context
 import android.content.res.AssetFileDescriptor
 import android.net.Uri
 import androidx.annotation.RawRes
@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 class SoundBank @Inject constructor(
-    private val context: Context,
+    private val application: Application,
     private val audioDecoder: AudioDecoder,
     private val contentResolver: ContentResolver,
 ) {
@@ -32,7 +32,7 @@ class SoundBank @Inject constructor(
     }
 
     private fun load(@RawRes resId: Int): Pcm16Data? {
-        return context.resources.openRawResourceFd(resId).use(::load)
+        return application.resources.openRawResourceFd(resId).use(::load)
     }
 
     private fun load(uri: String): Pcm16Data? {

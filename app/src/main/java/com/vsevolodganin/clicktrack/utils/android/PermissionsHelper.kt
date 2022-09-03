@@ -16,11 +16,11 @@ class PermissionsHelper @Inject constructor(activity: AppCompatActivity) {
     private val resultChannel = Channel<Map<String, Boolean>>()
     private val launcher = activity.registerForActivityResult(RequestMultiplePermissions(), resultChannel::trySend)
 
-    suspend fun requestPermission(permission: String) = coroutineScope {
-        requestPermissions(arrayOf(permission))[permission]!!
+    suspend fun requestPermission(permission: String): Boolean? = coroutineScope {
+        requestPermissions(arrayOf(permission))[permission]
     }
 
-    suspend fun requestPermissions(permissions: Array<String>) = coroutineScope {
+    suspend fun requestPermissions(permissions: Array<String>): Map<String, Boolean> = coroutineScope {
         val resultAsync = async(start = CoroutineStart.UNDISPATCHED) {
             resultChannel.receive()
         }
