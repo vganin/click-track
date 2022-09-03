@@ -124,6 +124,9 @@ class PlayerService : Service() {
     @Inject
     lateinit var audioFocusManager: AudioFocusManager
 
+    @Inject
+    lateinit var latencyTracker: LatencyTracker
+
     private lateinit var mediaSession: MediaSessionCompat
 
     private var isNotificationDisplayed = false
@@ -169,12 +172,15 @@ class PlayerService : Service() {
         }
 
         initializePlayer()
+
+        latencyTracker.start()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mediaSession.release()
         disposePlayer()
+        latencyTracker.stop()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -301,23 +307,19 @@ class PlayerService : Service() {
         }
 
         launch {
-            data class SubState(
-                val id: PlayableId,
-                val startAtProgress: Double?,
-                val soundsId: ClickSoundsId?
-            )
+            fun State.toPlayerInput() = Player.Input(id, startAtProgress, soundsId)
 
-            fun State.toSubState() = SubState(id, startAtProgress, soundsId)
-
-            state.map { it?.toSubState() }.distinctUntilChanged().collectLatest { args ->
-                if (args == null || !requestAudioFocus()) {
-                    audioFocusManager.releaseAudioFocus()
-                    state.emit(null)
-                    return@collectLatest
+            state.map { it != null }.distinctUntilChanged().collectLatest { startPlay ->
+                if (startPlay && requestAudioFocus()) {
+                    player.play(
+                        state
+                            .filterNotNull()
+                            .map(State::toPlayerInput)
+                            .distinctUntilChanged()
+                    )
                 }
 
-                player.play(args.id, args.startAtProgress, args.soundsId)
-
+                audioFocusManager.releaseAudioFocus()
                 state.emit(null)
             }
         }

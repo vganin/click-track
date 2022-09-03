@@ -16,8 +16,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Thread-unsafe, should be accessed from a single thread (see [com.vsevolodganin.clicktrack.di.module.PlayerDispatcher]).
@@ -51,10 +49,6 @@ class PlayerSoundPool @Inject constructor(
 
     fun play(soundSource: ClickSoundSource) {
         audioTrack(soundSource)?.play()
-    }
-
-    fun latency(soundSource: ClickSoundSource): Duration? {
-        return audioTrack(soundSource)?.getLatencyMs()?.milliseconds
     }
 
     fun stopAll() {

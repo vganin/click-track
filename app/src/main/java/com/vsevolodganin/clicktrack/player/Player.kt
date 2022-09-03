@@ -21,6 +21,7 @@ import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
 import com.vsevolodganin.clicktrack.utils.grabIf
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -50,47 +51,33 @@ class Player @Inject constructor(
     private val clickSoundsRepository: ClickSoundsRepository,
     private val playableContentProvider: PlayableContentProvider,
     private val userSelectedSounds: UserSelectedSounds,
+    latencyTracker: LatencyTracker,
 ) {
+    data class Input(
+        val id: PlayableId,
+        val startAtProgress: Double?,
+        val soundsId: ClickSoundsId?,
+    )
+
     private val playbackState = MutableStateFlow<InternalPlaybackState?>(null)
     private val pausedState = MutableStateFlow(false)
-    private val latencyState = MutableStateFlow(Duration.ZERO)
 
-    suspend fun play(
-        id: PlayableId,
-        startAtProgress: Double?,
-        soundsId: ClickSoundsId?,
-    ) {
+    suspend fun play(input: Flow<Input>) {
         try {
-            when (id) {
-                is ClickTrackId -> {
-                    playableContentProvider.clickTrackFlow(id)
-                        .withIndex()
-                        .collectLatestFirst { (index, clickTrack) ->
-                            clickTrack ?: return@collectLatestFirst
-                            pausable(if (index == 0) startAtProgress else null) { progress ->
-                                play(id, clickTrack, progress, soundsId)
-                            }
-                        }
-                }
-                TwoLayerPolyrhythmId -> {
-                    playableContentProvider.twoLayerPolyrhythmFlow()
-                        .withIndex()
-                        .collectLatestFirst { (index, polyrhythm) ->
-                            pausable(if (index == 0) startAtProgress else null) { progress ->
-                                play(polyrhythm, progress, soundsId)
-                            }
-                        }
-                }
+            input.collectLatestFirst { (id, startAtProgress, soundsId) ->
+                play(id, startAtProgress, soundsId)
             }
         } finally {
-            playbackState.value = null
+            withContext(NonCancellable) {
+                playbackState.value = null
 
-            // Delaying superfluous sound pool stops in order to avoid
-            // race condition on some Android versions which causes
-            // audio stream to shut down without any notification.
-            // For more info see https://github.com/google/oboe/issues/1315
-            delay(500)
-            soundPool.stopAll()
+                // Delaying superfluous sound pool stops in order to avoid
+                // race condition on some Android versions which causes
+                // audio stream to shut down without any notification.
+                // For more info see https://github.com/google/oboe/issues/1315
+                delay(500)
+                soundPool.stopAll()
+            }
         }
     }
 
@@ -100,6 +87,34 @@ class Player @Inject constructor(
 
     fun resume() {
         pausedState.value = false
+    }
+
+    private suspend fun play(
+        id: PlayableId,
+        startAtProgress: Double?,
+        soundsId: ClickSoundsId?,
+    ) {
+        when (id) {
+            is ClickTrackId -> {
+                playableContentProvider.clickTrackFlow(id)
+                    .withIndex()
+                    .collectLatestFirst inner@{ (index, clickTrack) ->
+                        clickTrack ?: return@inner
+                        pausable(if (index == 0) startAtProgress else null) { progress ->
+                            play(id, clickTrack, progress, soundsId)
+                        }
+                    }
+            }
+            TwoLayerPolyrhythmId -> {
+                playableContentProvider.twoLayerPolyrhythmFlow()
+                    .withIndex()
+                    .collectLatestFirst { (index, polyrhythm) ->
+                        pausable(if (index == 0) startAtProgress else null) { progress ->
+                            play(polyrhythm, progress, soundsId)
+                        }
+                    }
+            }
+        }
     }
 
     private suspend inline fun pausable(startAt: Double?, crossinline play: suspend (startAt: Double?) -> Unit) {
@@ -143,7 +158,6 @@ class Player @Inject constructor(
                     position = it,
                 )
             },
-            reportLatency = latencyState::tryEmit,
             soundSourceProvider = soundSourceProvider(soundsId)
         )
     }
@@ -175,7 +189,6 @@ class Player @Inject constructor(
                     position = it,
                 )
             },
-            reportLatency = latencyState::tryEmit,
             soundSourceProvider = soundSourceProvider(soundsId)
         )
     }
@@ -185,20 +198,16 @@ class Player @Inject constructor(
     private val externalPlaybackState = combine(
         playbackState,
         pausedState,
-        latencyState
+        latencyTracker.latencyState
             .map { LATENCY_RESOLUTION * (it / LATENCY_RESOLUTION).toInt() }
             .distinctUntilChanged()
     ) { internalPlaybackState, isPaused, latency -> Triple(internalPlaybackState, isPaused, latency) }
         .mapLatest { (internalPlaybackState, isPaused, latency) ->
-            internalPlaybackState ?: return@mapLatest null
-
-            val emissionTime = internalPlaybackState.emissionTime + latency
-
-            // If sound will be emitted in the future due to high latency (soundEmissionTime.elapsedNow() < 0)
-            // then wait for it to actually happen
-            if (emissionTime.elapsedNow().isNegative()) {
-                delay(emissionTime.elapsedNow().absoluteValue)
+            if (!isPaused) {
+                delay(latency)
             }
+
+            internalPlaybackState ?: return@mapLatest null
 
             PlaybackState(
                 id = internalPlaybackState.id,
@@ -213,7 +222,6 @@ class Player @Inject constructor(
     private suspend fun ClickTrack.play(
         startAt: Duration,
         reportProgress: (Duration) -> Unit,
-        reportLatency: (Duration) -> Unit,
         soundSourceProvider: SoundSourceProvider,
     ) {
         val actualStartAt = if (startAt >= durationInTime) {
@@ -225,7 +233,6 @@ class Player @Inject constructor(
         val schedule = toPlayerEvents()
             .toActions(
                 soundSourceProvider = soundSourceProvider,
-                reportLatency = reportLatency,
                 soundPool = soundPool,
             )
             .withSideEffect(atIndex = 0) {
@@ -247,7 +254,6 @@ class Player @Inject constructor(
     private suspend fun TwoLayerPolyrhythm.play(
         startAt: Duration,
         reportProgress: (Duration) -> Unit,
-        reportLatency: (Duration) -> Unit,
         soundSourceProvider: SoundSourceProvider,
     ) {
         val actualStartAt = if (startAt >= durationInTime) {
@@ -259,7 +265,6 @@ class Player @Inject constructor(
         val schedule = toPlayerEvents()
             .toActions(
                 soundSourceProvider = soundSourceProvider,
-                reportLatency = reportLatency,
                 soundPool = soundPool,
             )
             .withSideEffect(atIndex = 0) { reportProgress(Duration.ZERO) }
@@ -298,7 +303,7 @@ class Player @Inject constructor(
         val duration: Duration,
         val position: Duration,
     ) {
-        val emissionTime: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow()
+        private val emissionTime: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow()
 
         val realPosition: Duration get() = position + emissionTime.elapsedNow()
 
