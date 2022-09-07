@@ -16,7 +16,16 @@ import androidx.compose.ui.tooling.preview.Preview
     uiMode = UI_MODE_NIGHT_YES
 )
 @Preview(
-    name = "3. Tablet",
+    name = "3. Russian",
+    locale = "ru",
+)
+@Preview(
+    name = "4. Tablet",
+    device = Devices.TABLET,
+)
+@Preview(
+    name = "5. Tablet in Russian",
+    locale = "ru",
     device = Devices.TABLET,
 )
 annotation class ScreenPreviews

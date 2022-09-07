@@ -9,4 +9,5 @@ interface AboutViewModel {
     fun onTwitterClick()
     fun onEmailClick()
     fun onArtstationClick()
+    fun onProjectLinkClick()
 }

@@ -30,10 +30,13 @@ class AboutViewModelImpl @AssistedInject constructor(
 
     override fun onArtstationClick() = linkOpener.url(ARTSTATION)
 
+    override fun onProjectLinkClick() = linkOpener.url(GITHUB_PROJECT)
+
     private companion object Const {
         const val EMAIL = "contact@vsevolodganin.com"
         const val HOME_PAGE = "https://dev.vsevolodganin.com"
         const val TWITTER = "https://twitter.com/vsevolod_ganin"
         const val ARTSTATION = "https://cacao_warrior.artstation.com/"
+        const val GITHUB_PROJECT = "https://github.com/vganin/click-track"
     }
 }

@@ -27,7 +27,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -35,12 +34,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.about.AboutState
 import com.vsevolodganin.clicktrack.about.AboutViewModel
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
+import com.vsevolodganin.clicktrack.utils.compose.UrlClickableText
+import com.vsevolodganin.clicktrack.utils.compose.textResource
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Artstation
 import compose.icons.simpleicons.Twitter
@@ -79,7 +81,8 @@ private fun Content(viewModel: AboutViewModel) {
             modifier = Modifier
                 .run {
                     if (isLandscape) align(Center) else this
-                }
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (!isLandscape) {
                 Image(
@@ -98,15 +101,13 @@ private fun Content(viewModel: AboutViewModel) {
 
             Text(
                 text = stringResource(R.string.about_developed_by),
-                modifier = Modifier.align(CenterHorizontally),
                 style = MaterialTheme.typography.caption
             )
             Text(
                 text = stringResource(R.string.about_developer_name),
-                modifier = Modifier.align(CenterHorizontally),
                 style = MaterialTheme.typography.h6
             )
-            Row(modifier = Modifier.align(CenterHorizontally)) {
+            Row {
                 IconButton(onClick = viewModel::onHomeClick) {
                     Icon(imageVector = Icons.Default.Public, contentDescription = null)
                 }
@@ -122,19 +123,24 @@ private fun Content(viewModel: AboutViewModel) {
 
             Text(
                 text = stringResource(R.string.about_logo_by),
-                modifier = Modifier.align(CenterHorizontally),
                 style = MaterialTheme.typography.caption,
             )
             Text(
                 text = stringResource(R.string.about_logo_developer_name),
-                modifier = Modifier.align(CenterHorizontally),
                 style = MaterialTheme.typography.subtitle1
             )
-            Row(modifier = Modifier.align(CenterHorizontally)) {
-                IconButton(onClick = viewModel::onArtstationClick) {
-                    Icon(imageVector = SimpleIcons.Artstation, contentDescription = null)
-                }
+            IconButton(onClick = viewModel::onArtstationClick) {
+                Icon(imageVector = SimpleIcons.Artstation, contentDescription = null)
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            UrlClickableText(
+                text = textResource(R.string.about_open_source_note),
+                onUrlClick = { viewModel.onProjectLinkClick() },
+                modifier = Modifier.padding(horizontal = 48.dp),
+                textAlign = TextAlign.Center,
+            )
         }
 
         Text(
@@ -164,6 +170,7 @@ private fun Preview() = ClickTrackTheme {
             override fun onTwitterClick() = Unit
             override fun onEmailClick() = Unit
             override fun onArtstationClick() = Unit
+            override fun onProjectLinkClick() = Unit
         }
     )
 }

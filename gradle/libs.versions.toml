@@ -21,7 +21,7 @@ gradlePlugins-resourcePlaceholders = "de.timfreiheit.resourceplaceholders:placeh
 
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
-androidx-activity-compose = "androidx.activity:activity-compose:1.5.1"
+androidx-activity-compose = "androidx.activity:activity-compose:1.6.0-rc02"
 androidx-appcompat = "androidx.appcompat:appcompat:1.6.0-beta01"
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose" }
 androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "androidx-compose" }
