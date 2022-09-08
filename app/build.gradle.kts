@@ -27,7 +27,7 @@ android {
         applicationId = "com.vsevolodganin.clicktrack"
         minSdk = 21
         targetSdk = 33
-        versionCode = 42
+        versionCode = 43
         versionName = "1.1.0"
 
         resourceConfigurations += setOf("en", "ru")
