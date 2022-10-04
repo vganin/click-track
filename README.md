@@ -1,6 +1,6 @@
 <div align="center">
     <picture>
-        <img alt="Logo" src="https://github.com/vganin/click-track/blob/master/.github/logo.png?raw=true">
+        <img alt="Logo" src=".github/logo.png">
     </picture>
 </div>
 
