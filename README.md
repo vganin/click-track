@@ -1,7 +1,7 @@
 <div align="center">
-    <picture>
+    <p>
         <img alt="Logo" src=".github/logo.png">
-    </picture>
+    </p>
 </div>
 
 <h1 align="center">Click Track</h1>
