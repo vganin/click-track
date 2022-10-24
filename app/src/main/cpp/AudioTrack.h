@@ -8,7 +8,7 @@ namespace clicktrack {
 class AudioTrack : public oboe::AudioStreamDataCallback, public oboe::AudioStreamErrorCallback {
 public:
     explicit AudioTrack(
-            void* const data,
+            const void* const data,
             const int32_t dataSize,
             const int channelCount,
             const int pcmEncoding,
@@ -32,7 +32,7 @@ public:
     int64_t getLatencyMs();
 
 private:
-    void* const data_;
+    const void* const data_;
     const int32_t dataSize_;
     const int channelCount_;
     const int pcmEncoding_;

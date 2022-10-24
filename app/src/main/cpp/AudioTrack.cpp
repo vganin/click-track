@@ -34,7 +34,7 @@ oboe::AudioFormat pcmFormatToOboeFormat(int pcmEncoding) {
 }
 
 AudioTrack::AudioTrack(
-        void* const data,
+        const void* const data,
         const int32_t dataSize,
         const int channelCount,
         const int pcmEncoding,
@@ -53,7 +53,7 @@ AudioTrack::AudioTrack(
 
 AudioTrack::~AudioTrack() {
     audioStream_->close();
-    std::free(data_);
+    std::free(const_cast<void*>(data_));
 }
 
 oboe::DataCallbackResult AudioTrack::onAudioReady(oboe::AudioStream* audioStream, void* audioData, int32_t numFrames) {
