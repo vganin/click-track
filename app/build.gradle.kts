@@ -1,3 +1,6 @@
+@file:Suppress("UnstableApiUsage")
+
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import java.util.Properties
 
 plugins {
@@ -27,7 +30,7 @@ android {
         applicationId = "com.vsevolodganin.clicktrack"
         minSdk = 21
         targetSdk = 33
-        versionCode = 43
+        versionCode = 44
         versionName = "1.1.0"
 
         resourceConfigurations += setOf("en", "ru")
@@ -64,6 +67,10 @@ android {
             }
 
             manifestPlaceholders += "crashlyticsCollectionEnabled" to "true"
+
+            configure<CrashlyticsExtension> {
+                nativeSymbolUploadEnabled = true
+            }
         }
 
         debug {
@@ -183,6 +190,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.core)
     implementation(libs.simpleIcons)
     implementation(libs.bundles.sqlDelight)
