@@ -90,27 +90,26 @@ void AudioTrack::warmup() {
 
     // Play silence for warmup
     mute_ = true;
-    audioStream_->requestStart();
+    const auto state = audioStream_->getState();
+    if (state != oboe::StreamState::Starting && state != oboe::StreamState::Started) {
+        audioStream_->requestStart();
+    }
 }
 
 void AudioTrack::play() {
-    using oboe::StreamState;
-
     internalResetStreamIfNeeded();
 
     mute_ = false;
     playbackFrameIndex_ = 0;
     const auto state = audioStream_->getState();
-    if (state != StreamState::Starting && state != StreamState::Started) {
+    if (state != oboe::StreamState::Starting && state != oboe::StreamState::Started) {
         audioStream_->requestStart();
     }
 }
 
 void AudioTrack::stop() {
-    using oboe::StreamState;
-
     const auto state = audioStream_->getState();
-    if (state != StreamState::Stopping && state != StreamState::Stopped) {
+    if (state != oboe::StreamState::Stopping && state != oboe::StreamState::Stopped) {
         audioStream_->requestStop();
     }
 }
