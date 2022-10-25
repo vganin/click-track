@@ -6,7 +6,6 @@ import android.content.res.AssetFileDescriptor
 import android.net.Uri
 import androidx.annotation.RawRes
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,9 +15,10 @@ class SoundBank @Inject constructor(
     private val audioDecoder: AudioDecoder,
     private val contentResolver: ContentResolver,
 ) {
-    private val cache = ConcurrentHashMap<ClickSoundSource, Pcm16Data>()
+    private val lock = Any()
+    private val cache = mutableMapOf<ClickSoundSource, Pcm16Data>()
 
-    fun get(sound: ClickSoundSource): Pcm16Data? {
+    fun get(sound: ClickSoundSource): Pcm16Data? = synchronized(lock) {
         return cache.getOrPut(sound) {
             load(sound) ?: return null
         }

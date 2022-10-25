@@ -35,9 +35,9 @@ Java_com_vsevolodganin_clicktrack_audio_AudioTrack_destroyNative(JNIEnv* env, jo
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_vsevolodganin_clicktrack_audio_AudioTrack_resetStream(JNIEnv* env, jobject thiz, jlong native_ptr) {
+Java_com_vsevolodganin_clicktrack_audio_AudioTrack_recover(JNIEnv* env, jobject thiz, jlong native_ptr) {
     auto audioTrack = (clicktrack::AudioTrack*) native_ptr;
-    audioTrack->resetStream();
+    audioTrack->recover();
 }
 
 extern "C"

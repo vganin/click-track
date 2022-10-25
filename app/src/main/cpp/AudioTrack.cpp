@@ -44,15 +44,18 @@ AudioTrack::AudioTrack(
     channelCount_(channelCount),
     pcmEncoding_(pcmEncoding),
     sampleRate_(sampleRate),
+    mutex(),
     playbackFrameIndex_(0),
     mute_(false),
-    shouldResetStream_(false),
-    audioStream_() {
-    internalInit();
+    isPlaying(false),
+    audioStream_(),
+    totalFrames_(0),
+    bytesPerFrame_(0) {
+    createStream();
 }
 
 AudioTrack::~AudioTrack() {
-    audioStream_->close();
+    disposeStream();
     std::free(const_cast<void*>(data_));
 }
 
@@ -71,52 +74,50 @@ oboe::DataCallbackResult AudioTrack::onAudioReady(oboe::AudioStream* audioStream
     return oboe::DataCallbackResult::Continue;
 }
 
-void AudioTrack::onErrorAfterClose(oboe::AudioStream* stream, oboe::Result error) {
+bool AudioTrack::onError(oboe::AudioStream* stream, oboe::Result error) {
     LOGE("Error occurred: %s", convertToText(error));
     if (error == oboe::Result::ErrorDisconnected) {
-        LOGE("Restarting audio stream after disconnect");
-        shouldResetStream_ = true;
+        const std::lock_guard<std::mutex> lock{mutex};
+        recoverStream();
+        return true;
     }
+    return false;
 }
 
-void AudioTrack::resetStream() {
-    audioStream_->stop();
-    audioStream_->close();
-    internalInit();
+void AudioTrack::recover() {
+    const std::lock_guard<std::mutex> lock{mutex};
+    recoverStream();
 }
 
 void AudioTrack::warmup() {
-    internalResetStreamIfNeeded();
-
-    // Play silence for warmup
-    mute_ = true;
-    const auto state = audioStream_->getState();
-    if (state != oboe::StreamState::Starting && state != oboe::StreamState::Started) {
+    const std::lock_guard<std::mutex> lock{mutex};
+    mute_ = true; // Play silence for warmup
+    if (!isPlaying) {
         audioStream_->requestStart();
+        isPlaying = true;
     }
 }
 
 void AudioTrack::play() {
-    internalResetStreamIfNeeded();
-
+    const std::lock_guard<std::mutex> lock{mutex};
     mute_ = false;
     playbackFrameIndex_ = 0;
-    const auto state = audioStream_->getState();
-    if (state != oboe::StreamState::Starting && state != oboe::StreamState::Started) {
+    if (!isPlaying) {
         audioStream_->requestStart();
+        isPlaying = true;
     }
 }
 
 void AudioTrack::stop() {
-    const auto state = audioStream_->getState();
-    if (state != oboe::StreamState::Stopping && state != oboe::StreamState::Stopped) {
+    const std::lock_guard<std::mutex> lock{mutex};
+    if (isPlaying) {
         audioStream_->requestStop();
+        isPlaying = false;
     }
 }
 
 int64_t AudioTrack::getLatencyMs() {
-    using oboe::StreamState;
-
+    const std::lock_guard<std::mutex> lock{mutex};
     const auto result = audioStream_->calculateLatencyMillis();
     if (result) {
         return static_cast<int64_t>(std::round(result.value()));
@@ -126,14 +127,7 @@ int64_t AudioTrack::getLatencyMs() {
     }
 }
 
-void AudioTrack::internalResetStreamIfNeeded() {
-    if (shouldResetStream_) {
-        shouldResetStream_ = false;
-        internalInit();
-    }
-}
-
-void AudioTrack::internalInit() {
+void AudioTrack::createStream() {
     const auto oboeAudioFormat = pcmFormatToOboeFormat(pcmEncoding_);
 
     const auto result = oboe::AudioStreamBuilder()
@@ -159,6 +153,19 @@ void AudioTrack::internalInit() {
 
     bytesPerFrame_ = audioStream_->getBytesPerFrame();
     totalFrames_ = dataSize_ / bytesPerFrame_;
+}
+
+void AudioTrack::disposeStream() {
+    audioStream_->stop();
+    audioStream_->close();
+}
+
+void AudioTrack::recoverStream() {
+    disposeStream();
+    createStream();
+    if (isPlaying) {
+        audioStream_->requestStart();
+    }
 }
 
 }

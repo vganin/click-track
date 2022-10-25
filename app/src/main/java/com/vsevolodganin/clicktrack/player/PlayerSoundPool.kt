@@ -10,22 +10,15 @@ import android.media.AudioManager
 import com.vsevolodganin.clicktrack.audio.AudioTrack
 import com.vsevolodganin.clicktrack.audio.SoundBank
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
-import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/**
- * Thread-unsafe, should be accessed from a single thread (see [com.vsevolodganin.clicktrack.di.module.PlayerDispatcher]).
- */
 @PlayerServiceScope
 class PlayerSoundPool @Inject constructor(
     application: Application,
     private val soundBank: SoundBank,
-    @PlayerDispatcher private val playerDispatcher: CoroutineDispatcher,
 ) {
+    private val lock = Any()
     private val loadedSounds = mutableMapOf<ClickSoundSource, AudioTrack>()
 
     init {
@@ -34,24 +27,24 @@ class PlayerSoundPool @Inject constructor(
         // Since our scope is singleton, no need to unregister receiver
         application.registerReceiver(object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                GlobalScope.launch(playerDispatcher) {
+                synchronized(lock) {
                     loadedSounds.forEach { (_, track) ->
-                        track.resetStream()
+                        track.recover()
                     }
                 }
             }
         }, IntentFilter(AudioManager.ACTION_HEADSET_PLUG))
     }
 
-    fun warmup(soundSource: ClickSoundSource) {
+    fun warmup(soundSource: ClickSoundSource) = synchronized(lock) {
         audioTrack(soundSource)?.warmup()
     }
 
-    fun play(soundSource: ClickSoundSource) {
+    fun play(soundSource: ClickSoundSource) = synchronized(lock) {
         audioTrack(soundSource)?.play()
     }
 
-    fun stopAll() {
+    fun stopAll() = synchronized(lock) {
         loadedSounds.values.forEach { audioTrack ->
             audioTrack.stop()
         }
