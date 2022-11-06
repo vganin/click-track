@@ -67,8 +67,6 @@ android {
                 signingConfig = signingConfigs.getByName("release")
             }
 
-            manifestPlaceholders += "crashlyticsCollectionEnabled" to "true"
-
             configure<CrashlyticsExtension> {
                 nativeSymbolUploadEnabled = true
             }
@@ -77,7 +75,9 @@ android {
         debug {
             applicationIdSuffix = ".debug"
 
-            manifestPlaceholders += "crashlyticsCollectionEnabled" to "false"
+            configure<CrashlyticsExtension> {
+                nativeSymbolUploadEnabled = true
+            }
         }
 
         create("perftest") {

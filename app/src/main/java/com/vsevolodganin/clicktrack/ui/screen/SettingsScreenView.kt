@@ -1,16 +1,23 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.vsevolodganin.clicktrack.BuildConfig
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.settings.SettingsState
@@ -21,6 +28,7 @@ import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.settings.BooleanChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooserItem
+import com.vsevolodganin.clicktrack.utils.native.nativeCrash
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -51,9 +59,7 @@ private fun Content(viewModel: SettingsViewModel) {
             value = state.theme.displayValue(),
             variants = Theme.values().map {
                 ListChooserItem(
-                    value = it,
-                    displayValue = it.displayValue(),
-                    description = it.description()
+                    value = it, displayValue = it.displayValue(), description = it.description()
                 )
             },
             onChoose = viewModel::onThemeChange,
@@ -66,9 +72,7 @@ private fun Content(viewModel: SettingsViewModel) {
             value = state.language.displayValue(),
             variants = AppLanguage.values().map {
                 ListChooserItem(
-                    value = it,
-                    displayValue = it.displayValue(),
-                    description = null
+                    value = it, displayValue = it.displayValue(), description = null
                 )
             },
             onChoose = viewModel::onLanguageChange,
@@ -82,6 +86,25 @@ private fun Content(viewModel: SettingsViewModel) {
             onCheckedChange = viewModel::onIgnoreAudioFocusChange,
             description = stringResource(R.string.settings_ignore_audio_focus_description)
         )
+
+        if (BuildConfig.DEBUG) {
+            Spacer(modifier = Modifier.weight(1f))
+
+            Column(
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Button(onClick = { throw RuntimeException("Test") }) {
+                    Text("Java crash")
+                }
+                Button(onClick = ::nativeCrash) {
+                    Text("Native crash")
+                }
+            }
+        }
     }
 }
 
@@ -111,21 +134,20 @@ private fun AppLanguage.displayValue(): String = when (this) {
 @ScreenPreviews
 @Composable
 private fun Preview() = ClickTrackTheme {
-    SettingsScreenView(
-        viewModel = object : SettingsViewModel {
-            override val state: StateFlow<SettingsState> = MutableStateFlow(
-                SettingsState(
-                    theme = Theme.SYSTEM,
-                    ignoreAudioFocus = false,
-                    language = AppLanguage.SYSTEM,
-                )
+    SettingsScreenView(viewModel = object : SettingsViewModel {
+        override val state: StateFlow<SettingsState> = MutableStateFlow(
+            SettingsState(
+                theme = Theme.SYSTEM,
+                ignoreAudioFocus = false,
+                language = AppLanguage.SYSTEM,
             )
+        )
 
-            override fun onBackClick() = Unit
-            override fun onThemeChange(theme: Theme) = Unit
-            override fun onLanguageChange(language: AppLanguage) = Unit
-            override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
-        }
+        override fun onBackClick() = Unit
+        override fun onThemeChange(theme: Theme) = Unit
+        override fun onLanguageChange(language: AppLanguage) = Unit
+        override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
+    }
 
     )
 }

@@ -42,7 +42,7 @@ dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = 
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose-jetpack", version.ref = "decompose" }
 decompose-core = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
-firebase-bom = "com.google.firebase:firebase-bom:31.0.2"
+firebase-bom = "com.google.firebase:firebase-bom:30.5.0"
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
 googlePlay-core = "com.google.android.play:core-ktx:1.8.1"

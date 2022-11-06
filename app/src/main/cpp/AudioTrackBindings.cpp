@@ -1,8 +1,7 @@
 #include <jni.h>
+#include <cstdlib>
 
 #include "AudioTrack.h"
-
-#include <cstdlib>
 
 extern "C"
 JNIEXPORT jlong JNICALL

@@ -8,6 +8,7 @@ add_library(
         OboeInit.cpp
         AudioTrackBindings.cpp
         AudioTrack.cpp
+        NativeCrash.cpp
 )
 
 find_library(log log)
