@@ -6,6 +6,7 @@ import android.content.res.AssetFileDescriptor
 import android.net.Uri
 import androidx.annotation.RawRes
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,7 +21,12 @@ class SoundBank @Inject constructor(
 
     fun get(sound: ClickSoundSource): Pcm16Data? = synchronized(lock) {
         return cache.getOrPut(sound) {
-            load(sound) ?: return null
+            try {
+                load(sound) ?: return null
+            } catch (t: Throwable) {
+                Timber.e("Failed to load $sound", t)
+                return null
+            }
         }
     }
 

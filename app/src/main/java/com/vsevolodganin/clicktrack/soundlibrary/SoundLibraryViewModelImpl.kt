@@ -129,7 +129,7 @@ class SoundLibraryViewModelImpl @AssistedInject constructor(
 
     private fun ClickSoundSource?.toText(): String {
         return when (this) {
-            is ClickSoundSource.Bundled -> "📦"
+            is ClickSoundSource.Bundled -> ""
             is ClickSoundSource.Uri -> documentMetadataHelper.getDisplayName(value) ?: value
             null -> ""
         }
