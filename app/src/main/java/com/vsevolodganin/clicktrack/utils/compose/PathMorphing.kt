@@ -229,13 +229,10 @@ private fun Preview() {
                     "M 16 9.85 L 38 23.85 L 38 23.85 L 16 23.957 L 16 9.85 M 16 23.957 L 38 23.85 L 38 23.85 L 16 37.85 L 16 23.957"
                 }
             )
-            val imageVector by derivedStateOf {
-                ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 48f, viewportHeight = 48f)
-                    .addPath(pathData = pathData, fill = SolidColor(Color.White))
-                    .build()
-            }
             Icon(
-                imageVector = imageVector,
+                imageVector = ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 48f, viewportHeight = 48f)
+                    .addPath(pathData = pathData, fill = SolidColor(Color.White))
+                    .build(),
                 contentDescription = null
             )
         }
