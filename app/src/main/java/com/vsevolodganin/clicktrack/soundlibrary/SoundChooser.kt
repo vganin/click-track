@@ -55,11 +55,7 @@ class SoundChooser @Inject constructor(
     private suspend fun getInitialUri(id: ClickSoundsId, type: ClickSoundType): Uri? {
         return when (id) {
             is ClickSoundsId.Builtin -> null
-            is ClickSoundsId.Database -> when (val source = clickSoundsRepository.getById(id).firstOrNull()?.value?.beatByType(type)) {
-                is ClickSoundSource.Bundled -> null
-                is ClickSoundSource.Uri -> source.value
-                null -> null
-            }
+            is ClickSoundsId.Database -> clickSoundsRepository.getById(id).firstOrNull()?.value?.beatByType(type)?.value
         }?.let(Uri::parse)
     }
 

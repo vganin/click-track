@@ -4,8 +4,8 @@ import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.vsevolodganin.clicktrack.Database
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType
-import com.vsevolodganin.clicktrack.model.ClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
+import com.vsevolodganin.clicktrack.model.UriClickSounds
 import com.vsevolodganin.clicktrack.model.UserClickSounds
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -31,20 +31,20 @@ class ClickSoundsRepository @Inject constructor(
             .map { it.executeAsOneOrNull()?.toCommon() }
     }
 
-    fun insert(clickSounds: ClickSounds) {
+    fun insert(clickSounds: UriClickSounds) {
         database.sqlClickSoundsQueries.insert(
             serializedValue = json.encodeToString(clickSounds)
         )
     }
 
-    fun update(id: ClickSoundsId.Database, clickSounds: ClickSounds) {
+    fun update(id: ClickSoundsId.Database, clickSounds: UriClickSounds) {
         database.sqlClickSoundsQueries.update(
             id = id.value,
             serializedValue = clickSounds.serializeToString()
         )
     }
 
-    fun update(id: ClickSoundsId.Database, type: ClickSoundType, source: ClickSoundSource) {
+    fun update(id: ClickSoundsId.Database, type: ClickSoundType, source: ClickSoundSource.Uri) {
         database.sqlClickSoundsQueries.transaction {
             val current = database.sqlClickSoundsQueries.getById(id.value).executeAsOneOrNull()?.toCommon() ?: return@transaction
             val updated = when (type) {
@@ -66,6 +66,6 @@ class ClickSoundsRepository @Inject constructor(
         value = serializedValue.deserializeToClickSounds()
     )
 
-    private fun ClickSounds.serializeToString(): String = json.encodeToString(this)
-    private fun String.deserializeToClickSounds(): ClickSounds = json.decodeFromString(this)
+    private fun UriClickSounds.serializeToString(): String = json.encodeToString(this)
+    private fun String.deserializeToClickSounds(): UriClickSounds = json.decodeFromString(this)
 }

@@ -6,5 +6,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class UserClickSounds(
     val id: ClickSoundsId.Database,
-    val value: ClickSounds,
+    val value: UriClickSounds,
 ) : Parcelable

@@ -8,10 +8,10 @@ import com.vsevolodganin.clicktrack.common.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType
-import com.vsevolodganin.clicktrack.model.ClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.PlayableId
+import com.vsevolodganin.clicktrack.model.UriClickSounds
 import com.vsevolodganin.clicktrack.model.UserClickSounds
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
@@ -88,7 +88,7 @@ class SoundLibraryViewModelImpl @AssistedInject constructor(
 
     override fun onAddNewClick() {
         scope.launch {
-            clickSoundsRepository.insert(ClickSounds(null, null))
+            clickSoundsRepository.insert(UriClickSounds(null, null))
         }
     }
 
