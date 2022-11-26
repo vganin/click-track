@@ -23,6 +23,7 @@ kotlin {
 
         framework {
             baseName = "ClickTrackMultiplatform"
+            isStatic = true
 
             export(project(":multiplatform"))
             export(project(":compose-ui"))

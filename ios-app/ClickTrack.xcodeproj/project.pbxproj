@@ -88,7 +88,6 @@
 				973DBEDB5C7BE0B4F40880B3 /* Pods-ClickTrack.debug.xcconfig */,
 				CADECB568532290FC852942B /* Pods-ClickTrack.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};

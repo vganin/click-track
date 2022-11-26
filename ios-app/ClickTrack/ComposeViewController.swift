@@ -1,14 +1,14 @@
 import SwiftUI
+
 import ClickTrackMultiplatform
 
-struct ContentView: UIViewControllerRepresentable {
+struct ComposeViewController: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> some UIViewController {
-        return ComposeUIViewControllerProviderKt.provideComposeUIViewController()
+        ComposeUIViewControllerProvider.
     }
 
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
         uiViewController.view.setNeedsLayout()
     }
-    
 }

@@ -63,3 +63,6 @@ decompose = ["decompose-core", "decompose-compose"]
 kotlin-coroutines = ["kotlin-coroutines-core", "kotlin-coroutines-android"]
 kotlin-serialization = ["kotlin-serialization-core", "kotlin-serialization-json"]
 sqlDelight = ["sqlDelight-androidDriver", "sqlDelight-coroutines"]
+
+[plugins]
+jetbrains-compose = "org.jetbrains.compose:1.3.0-alpha01-dev862"
