@@ -4,7 +4,7 @@ import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
+    `android-app`
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("kotlin-parcelize")

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00A68C631A12C351C086F3DD /* libPods-ClickTrack.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A136BDB198764F91F62F5CD /* libPods-ClickTrack.a */; };
+		09C2E6B6A4B7C1746488FE60 /* Pods_ClickTrack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1D53B0EA9F03701E67DF125 /* Pods_ClickTrack.framework */; };
 		4F3ABD9D293187EA00DB6023 /* ClickTrackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3ABD9C293187EA00DB6023 /* ClickTrackApp.swift */; };
 		4F3ABD9F293187EA00DB6023 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3ABD9E293187EA00DB6023 /* ContentView.swift */; };
 		4F3ABDA1293187EA00DB6023 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3ABDA0293187EA00DB6023 /* Assets.xcassets */; };
@@ -15,13 +15,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0A136BDB198764F91F62F5CD /* libPods-ClickTrack.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ClickTrack.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F3ABD99293187EA00DB6023 /* ClickTrack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ClickTrack.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F3ABD9C293187EA00DB6023 /* ClickTrackApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickTrackApp.swift; sourceTree = "<group>"; };
 		4F3ABD9E293187EA00DB6023 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4F3ABDA0293187EA00DB6023 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4F3ABDA3293187EA00DB6023 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		973DBEDB5C7BE0B4F40880B3 /* Pods-ClickTrack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClickTrack.debug.xcconfig"; path = "Target Support Files/Pods-ClickTrack/Pods-ClickTrack.debug.xcconfig"; sourceTree = "<group>"; };
+		C1D53B0EA9F03701E67DF125 /* Pods_ClickTrack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClickTrack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CADECB568532290FC852942B /* Pods-ClickTrack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClickTrack.release.xcconfig"; path = "Target Support Files/Pods-ClickTrack/Pods-ClickTrack.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -30,7 +30,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00A68C631A12C351C086F3DD /* libPods-ClickTrack.a in Frameworks */,
+				09C2E6B6A4B7C1746488FE60 /* Pods_ClickTrack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,7 +40,7 @@
 		299C411D90C319AB59B12A8C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0A136BDB198764F91F62F5CD /* libPods-ClickTrack.a */,
+				C1D53B0EA9F03701E67DF125 /* Pods_ClickTrack.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

@@ -2,15 +2,15 @@ PODS:
   - ClickTrackMultiplatform (1.0)
 
 DEPENDENCIES:
-  - ClickTrackMultiplatform (from `../multiplatform`)
+  - ClickTrackMultiplatform (from `../ios-kotlin-pod`)
 
 EXTERNAL SOURCES:
   ClickTrackMultiplatform:
-    :path: "../multiplatform"
+    :path: "../ios-kotlin-pod"
 
 SPEC CHECKSUMS:
-  ClickTrackMultiplatform: 235e2227b1bb93f63c53cc0303008f63b4a0f799
+  ClickTrackMultiplatform: 11dcfd905a098ea8bcbc8a9547e0e55a85fb73e7
 
-PODFILE CHECKSUM: 02f57f414ecea42dccf52d7b1ba754f9aac8bff5
+PODFILE CHECKSUM: 8f4e3806e53e0fc59a9753d99acc5c9a63ec392f
 
 COCOAPODS: 1.11.3

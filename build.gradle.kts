@@ -10,7 +10,7 @@ buildscript {
     dependencies {
         classpath(libs.gradlePlugins.kotlin)
         classpath(libs.gradlePlugins.kotlin.serialization)
-        classpath(libs.gradlePlugins.agp)
+        classpath(libs.gradlePlugins.android)
         classpath(libs.gradlePlugins.sqlDelight)
         classpath(libs.gradlePlugins.gms)
         classpath(libs.gradlePlugins.crashlytics)
