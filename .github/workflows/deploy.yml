@@ -10,7 +10,7 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
-      - run: ./gradlew -s :app:bundleRelease :app:uploadCrashlyticsSymbolFileRelease
+      - run: ./gradlew -s :app-android:bundleRelease :app-android:uploadCrashlyticsSymbolFileRelease
       - uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:

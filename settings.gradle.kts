@@ -1,3 +1,4 @@
 rootProject.name = "ClickTrack"
 
-include(":app")
+include(":android-app")
+include(":multiplatform")

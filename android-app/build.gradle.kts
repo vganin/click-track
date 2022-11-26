@@ -173,6 +173,8 @@ resourcePlaceholders {
 }
 
 dependencies {
+    implementation(project(":multiplatform"))
+
     implementation(libs.bundles.kotlin.coroutines)
     implementation(libs.bundles.kotlin.serialization)
     implementation(libs.androidx.core)

@@ -1,0 +1,16 @@
+PODS:
+  - ClickTrackMultiplatform (1.0)
+
+DEPENDENCIES:
+  - ClickTrackMultiplatform (from `../multiplatform`)
+
+EXTERNAL SOURCES:
+  ClickTrackMultiplatform:
+    :path: "../multiplatform"
+
+SPEC CHECKSUMS:
+  ClickTrackMultiplatform: 235e2227b1bb93f63c53cc0303008f63b4a0f799
+
+PODFILE CHECKSUM: 02f57f414ecea42dccf52d7b1ba754f9aac8bff5
+
+COCOAPODS: 1.11.3

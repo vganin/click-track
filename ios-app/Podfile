@@ -1,0 +1,3 @@
+target 'ClickTrack' do
+    pod 'ClickTrackMultiplatform', :path => '../multiplatform'
+end
