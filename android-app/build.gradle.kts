@@ -24,13 +24,10 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdk = 33
     namespace = "com.vsevolodganin.clicktrack"
 
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
-        minSdk = 21
-        targetSdk = 33
         versionCode = 48
         versionName = "1.1.0"
 
