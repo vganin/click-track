@@ -3,7 +3,6 @@ package com.vsevolodganin.clicktrack.polyrhythm
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.Navigation
-import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
@@ -56,15 +55,15 @@ class PolyrhythmsViewModelImpl @AssistedInject constructor(
 
     override fun onLayer1Change(value: Int) {
         userPreferences.polyrhythm.edit {
-            it.copy(layer1 = value).takeIfPlayable() ?: it
+            it.copy(layer1 = value.coerceInValidLayerValues())
         }
     }
 
     override fun onLayer2Change(value: Int) {
         userPreferences.polyrhythm.edit {
-            it.copy(layer2 = value).takeIfPlayable() ?: it
+            it.copy(layer2 = value.coerceInValidLayerValues())
         }
     }
 
-    private fun TwoLayerPolyrhythm.takeIfPlayable() = takeIf { it.isPlayable() }
+    private fun Int.coerceInValidLayerValues() = coerceIn(1..32)
 }
