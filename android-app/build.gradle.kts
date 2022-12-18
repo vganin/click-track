@@ -28,7 +28,7 @@ android {
 
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
-        versionCode = 49
+        versionCode = 50
         versionName = "1.1.0"
 
         resourceConfigurations += setOf("en", "ru")
