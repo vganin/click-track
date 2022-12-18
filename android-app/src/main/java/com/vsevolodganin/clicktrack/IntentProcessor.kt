@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Intent
 import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import com.vsevolodganin.clicktrack.model.ClickTrackId
+import com.vsevolodganin.clicktrack.utils.decompose.resetTo
 import javax.inject.Inject
 
 @ActivityScope

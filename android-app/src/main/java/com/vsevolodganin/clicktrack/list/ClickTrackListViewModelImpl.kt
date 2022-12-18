@@ -2,7 +2,6 @@ package com.vsevolodganin.clicktrack.list
 
 import android.app.Activity
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.decompose.router.stack.push
 import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.ScreenConfiguration
@@ -13,6 +12,7 @@ import com.vsevolodganin.clicktrack.model.DefaultCue
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import com.vsevolodganin.clicktrack.utils.decompose.pushIfUnique
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -53,12 +53,12 @@ class ClickTrackListViewModelImpl @AssistedInject constructor(
             val newClickTrack = defaultNewClickTrack(suggestedNewClickTrackName)
             val newClickTrackId = clickTrackRepository.insert(newClickTrack)
             withContext(Dispatchers.Main) {
-                navigation.push(ScreenConfiguration.EditClickTrack(id = newClickTrackId, isInitialEdit = true))
+                navigation.pushIfUnique(ScreenConfiguration.EditClickTrack(id = newClickTrackId, isInitialEdit = true))
             }
         }
     }
 
-    override fun onItemClick(id: ClickTrackId.Database) = navigation.push(ScreenConfiguration.PlayClickTrack(id = id))
+    override fun onItemClick(id: ClickTrackId.Database) = navigation.pushIfUnique(ScreenConfiguration.PlayClickTrack(id = id))
 
     override fun onItemRemove(id: ClickTrackId.Database) {
         scope.launch {

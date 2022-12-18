@@ -6,7 +6,7 @@ import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStack
 import com.vsevolodganin.clicktrack.ScreenStackState
-import com.vsevolodganin.clicktrack.resetTo
+import com.vsevolodganin.clicktrack.utils.decompose.resetTo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -2,7 +2,6 @@ package com.vsevolodganin.clicktrack.play
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
-import com.arkivanov.decompose.router.stack.push
 import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.export.ExportWorkLauncher
@@ -11,6 +10,7 @@ import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import com.vsevolodganin.clicktrack.utils.decompose.pushIfUnique
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import com.vsevolodganin.clicktrack.utils.grabIf
 import dagger.assisted.Assisted
@@ -78,7 +78,7 @@ class PlayClickTrackViewModelImpl @AssistedInject constructor(
 
     override fun onProgressDrop(progress: Double) = playerServiceAccess.start(config.id, progress)
 
-    override fun onEditClick() = navigation.push(ScreenConfiguration.EditClickTrack(config.id, isInitialEdit = false))
+    override fun onEditClick() = navigation.pushIfUnique(ScreenConfiguration.EditClickTrack(config.id, isInitialEdit = false))
 
     override fun onRemoveClick() {
         scope.launch {
