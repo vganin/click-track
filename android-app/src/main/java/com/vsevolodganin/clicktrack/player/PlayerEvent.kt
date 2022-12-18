@@ -65,6 +65,10 @@ fun Cue.toPlayerEvents(tempoOffset: BeatsPerMinuteDiff): Sequence<PlayerEvent> {
 }
 
 fun TwoLayerPolyrhythm.toPlayerEvents(): Sequence<PlayerEvent> {
+    if (!isPlayable()) {
+        return emptySequence()
+    }
+
     val tempo = bpm
     val layer1NoteLength = 1.toRational()
     val layer2NoteLength = layer1 over layer2
