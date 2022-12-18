@@ -14,7 +14,7 @@ jobs:
       - uses: r0adkll/sign-android-release@v1
         id: sign_app
         with:
-          releaseDirectory: app/build/outputs/bundle/release
+          releaseDirectory: android-app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.GPC_KEYSTORE }}
           alias: ${{ secrets.GPC_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.GPC_KEYSTORE_PASSWORD }}
