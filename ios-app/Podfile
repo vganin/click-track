@@ -3,5 +3,5 @@ use_frameworks!
 platform :ios, '13.5'
 
 target 'ClickTrack' do
-    pod 'ClickTrackMultiplatform', :path => '../ios-kotlin-pod'
+    pod 'ClickTrackMultiplatform', :path => '../multiplatform'
 end

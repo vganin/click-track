@@ -6,5 +6,10 @@ kotlin {
     ios()
     iosSimulatorArm64()
 
-    sourceSets["iosSimulatorArm64Main"].dependsOn(sourceSets["iosMain"])
+    sourceSets {
+        val iosMain by getting
+        val iosSimulatorArm64Main by getting
+
+        iosSimulatorArm64Main.dependsOn(iosMain)
+    }
 }

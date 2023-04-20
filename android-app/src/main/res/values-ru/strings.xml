@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="about_developed_by">Разработка</string>
-    <string name="about_developer_name">Всеволод Ганин</string>
-    <string name="about_logo_by">Лого</string>
-    <string name="about_logo_developer_name">Варвара Фуру</string>
-    <string name="about_open_source_note">Приложение теперь с <annotation url="stub">открытым исходным кодом</annotation></string>
-    <string name="about_screen_title">О приложении</string>
     <string name="click_track_list_screen_title">Мои клик-треки</string>
     <string name="cue_duration_beats">Доли</string>
     <string name="cue_duration_measures">Такты</string>

@@ -16,6 +16,7 @@ buildscript {
         classpath(libs.gradlePlugins.crashlytics)
         classpath(libs.gradlePlugins.versionsPlugin)
         classpath(libs.gradlePlugins.resourcePlaceholders)
+        classpath(libs.gradlePlugins.mokoResources)
     }
 }
 
@@ -26,7 +27,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 

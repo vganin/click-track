@@ -5,6 +5,8 @@ import java.util.Properties
 
 plugins {
     `android-app`
+    svg2compose
+    alias(libs.plugins.jetbrains.compose)
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
     id("kotlin-parcelize")
@@ -14,8 +16,6 @@ plugins {
     id("com.google.firebase.crashlytics")
     id("de.timfreiheit.resourceplaceholders")
 }
-
-apply(from = "generate_icons.gradle.kts")
 
 val keystorePropertiesFile = file("keystore.properties")
 val keystoreProperties = Properties()
@@ -84,10 +84,6 @@ android {
         }
     }
 
-    sourceSets["main"].java {
-        srcDir("build/generated/icons_gen")
-    }
-
     buildFeatures {
         compose = true
     }
@@ -119,10 +115,6 @@ android {
             "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/reports/compose_metrics",
             "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/reports/compose_metrics"
         )
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
     }
 
     buildFeatures {
@@ -181,8 +173,6 @@ dependencies {
     implementation(libs.androidx.dataStore)
     implementation(libs.androidx.media)
     implementation(libs.androidx.workManager)
-    implementation(libs.bundles.androidx.compose)
-    implementation(libs.bundles.accompanist)
     implementation(libs.dagger)
     kapt(libs.dagger.compiler)
     implementation(libs.oboe)
@@ -192,9 +182,6 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.core)
-    implementation(libs.simpleIcons)
     implementation(libs.bundles.sqlDelight)
     implementation(libs.timber)
 }
-
-tasks["preBuild"].dependsOn("generateIcons")

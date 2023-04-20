@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_developed_by">Разработка</string>
+    <string name="about_developer_name">Всеволод Ганин</string>
+    <string name="about_logo_by">Лого</string>
+    <string name="about_logo_developer_name">Варвара Фуру</string>
+    <string name="about_open_source_note">Приложение теперь с [открытым исходным кодом](stub_link)</string>
+    <string name="about_screen_title">О приложении</string>
+    <string name="about_version">версия %1$s</string>
+</resources>
