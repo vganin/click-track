@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="NewApi">
+        <!-- FIXME: Gives false positive because forEach is actually from Kotlin, not Java. Should recheck later -->
+        <ignore regexp="Call requires API level 24 \(current min is 21\):.*java\.lang\.Iterable#forEach"/>
+    </issue>
+</lint>

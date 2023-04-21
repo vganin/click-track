@@ -9,10 +9,10 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
@@ -264,6 +264,7 @@ private fun progressLineWidth(
             true -> spring(
                 dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessLow
             )
+
             false -> spring()
         }
 
@@ -342,14 +343,12 @@ private fun Modifier.clickTrackGestures(
             while (currentCoroutineContext().isActive) {
                 coroutineScope {
                     launch {
-                        forEachGesture {
-                            awaitPointerEventScope {
-                                awaitFirstDown(requireUnconsumed = false)
-                                onGestureStarted()
-                                @Suppress("ControlFlowWithEmptyBody") // Waiting for all pointers to go up
-                                while (awaitPointerEvent().changes.fastAny(PointerInputChange::pressed));
-                                onGestureEnded()
-                            }
+                        awaitEachGesture {
+                            awaitFirstDown(requireUnconsumed = false)
+                            onGestureStarted()
+                            @Suppress("ControlFlowWithEmptyBody") // Waiting for all pointers to go up
+                            while (awaitPointerEvent().changes.fastAny(PointerInputChange::pressed));
+                            onGestureEnded()
                         }
                     }
 
