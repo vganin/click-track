@@ -173,16 +173,18 @@ fun ClickTrackView(
 
         if (drawTextMarks) {
             Layout(modifier = Modifier.wrapContentSize(), content = {
-                for (mark in transformedAndPixelAlignedMarks) {
+                for ((index, mark) in transformedAndPixelAlignedMarks.withIndex()) {
                     mark.summary?.let { summary ->
-                        Box(modifier = Modifier.layoutId(mark)) {
+                        Box(modifier = Modifier.layoutId(index)) {
                             summary()
                         }
                     }
                 }
             }, measurePolicy = { measurables, constraints ->
                 val placeables = measurables.associate { measurable ->
-                    measurable.layoutId as Mark to measurable.measure(Constraints())
+                    val index = measurable.layoutId as Int
+                    val mark = transformedAndPixelAlignedMarks[index]
+                    mark to measurable.measure(Constraints())
                 }.toSortedMap { lhs, rhs -> lhs.x.compareTo(rhs.x) }.toList()
 
                 layout(constraints.maxWidth, constraints.maxHeight) {
