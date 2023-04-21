@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.30.1"
-dagger = "2.44"
+dagger = "2.45"
 decompose = "1.0.0-compose-experimental"
 kotlin = "1.8.20"
 kotlin-coroutines = "1.6.4"
@@ -9,33 +9,33 @@ sqlDelight = "1.5.5"
 mokoResources = "0.21.2"
 
 [libraries]
-gradlePlugins-android = "com.android.tools.build:gradle:7.2.0"
-gradlePlugins-crashlytics = "com.google.firebase:firebase-crashlytics-gradle:2.9.2"
-gradlePlugins-gms = "com.google.gms:google-services:4.3.14"
+gradlePlugins-android = "com.android.tools.build:gradle:7.4.2"
+gradlePlugins-crashlytics = "com.google.firebase:firebase-crashlytics-gradle:2.9.5"
+gradlePlugins-gms = "com.google.gms:google-services:4.3.15"
 gradlePlugins-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 gradlePlugins-kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 gradlePlugins-sqlDelight = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sqlDelight" }
-gradlePlugins-versionsPlugin = "com.github.ben-manes:gradle-versions-plugin:0.43.0"
+gradlePlugins-versionsPlugin = "com.github.ben-manes:gradle-versions-plugin:0.46.0"
 gradlePlugins-resourcePlaceholders = "de.timfreiheit.resourceplaceholders:placeholders:0.4"
 gradlePlugins-mokoResources = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoResources" }
 
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
-androidx-activity-compose = "androidx.activity:activity-compose:1.6.1"
-androidx-appcompat = "androidx.appcompat:appcompat:1.6.0-beta01"
+androidx-activity-compose = "androidx.activity:activity-compose:1.7.1"
+androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"
 androidx-constraintLayout-compose = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 androidx-core = "androidx.core:core-ktx:1.9.0"
 androidx-dataStore = "androidx.datastore:datastore-preferences:1.0.0"
-androidx-fragment = "androidx.fragment:fragment-ktx:1.5.4"
+androidx-fragment = "androidx.fragment:fragment-ktx:1.5.7"
 androidx-media = "androidx.media:media:1.6.0"
-androidx-splashScreen = "androidx.core:core-splashscreen:1.0.0"
-androidx-workManager = "androidx.work:work-runtime-ktx:2.7.1"
+androidx-splashScreen = "androidx.core:core-splashscreen:1.0.1"
+androidx-workManager = "androidx.work:work-runtime-ktx:2.8.1"
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
 decompose-core = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
-firebase-bom = "com.google.firebase:firebase-bom:30.5.0"
+firebase-bom = "com.google.firebase:firebase-bom:31.5.0"
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
 googlePlay-core = "com.google.android.play:core-ktx:1.8.1"
@@ -43,7 +43,7 @@ kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 kotlin-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
-oboe = "com.google.oboe:oboe:1.6.1"
+oboe = "com.google.oboe:oboe:1.7.0"
 simpleIcons = "br.com.devsrsouza.compose.icons:simple-icons:1.1.0"
 sqlDelight-androidDriver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
 sqlDelight-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions-jvm", version.ref = "sqlDelight" }

@@ -1,11 +1,14 @@
 package com.vsevolodganin.clicktrack.export
 
+import android.Manifest
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.net.Uri
 import android.os.Build
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
@@ -152,18 +155,20 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
             PendingIntent.FLAG_UPDATE_CURRENT
         }
 
-        notificationManager.notify(
-            clickTrack.name,
-            R.id.notification_export_finished,
-            NotificationCompat.Builder(appContext, notificationChannels.export)
-                .setContentTitle(appContext.getString(R.string.export_worker_notification_finished, clickTrack.name))
-                .setContentText(appContext.getString(R.string.export_worker_notification_open))
-                .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ResourcesCompat.getColor(appContext.resources, R.color.debug_signature, null))
-                .setContentIntent(PendingIntent.getActivity(appContext, 0, tapIntent, pendingIntentFlags))
-                .setGroup(NotificationGroups.EXPORT_FINISHED)
-                .build()
-        )
+        if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            notificationManager.notify(
+                clickTrack.name,
+                R.id.notification_export_finished,
+                NotificationCompat.Builder(appContext, notificationChannels.export)
+                    .setContentTitle(appContext.getString(R.string.export_worker_notification_finished, clickTrack.name))
+                    .setContentText(appContext.getString(R.string.export_worker_notification_open))
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setColor(ResourcesCompat.getColor(appContext.resources, R.color.debug_signature, null))
+                    .setContentIntent(PendingIntent.getActivity(appContext, 0, tapIntent, pendingIntentFlags))
+                    .setGroup(NotificationGroups.EXPORT_FINISHED)
+                    .build()
+            )
+        }
     }
 
     private object InputKeys {

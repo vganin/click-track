@@ -1,15 +1,18 @@
 package com.vsevolodganin.clicktrack.player
 
+import android.Manifest
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import android.os.Parcelable
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FLAG_FOREGROUND_SERVICE
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
@@ -353,7 +356,9 @@ class PlayerService : Service() {
             val notification = notificationBuilder
                 .build()
                 .apply { flags = flags or FLAG_FOREGROUND_SERVICE }
-            notificationManager.notify(R.id.notification_playing_now, notification)
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                notificationManager.notify(R.id.notification_playing_now, notification)
+            }
         } else {
             val notification = notificationBuilder.build()
             startForeground(R.id.notification_playing_now, notification)
