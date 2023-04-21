@@ -36,7 +36,7 @@ class AboutViewModelImpl @AssistedInject constructor(
         const val EMAIL = "contact@vsevolodganin.com"
         const val HOME_PAGE = "https://dev.vsevolodganin.com"
         const val TWITTER = "https://twitter.com/vsevolod_ganin"
-        const val ARTSTATION = "https://cacao_warrior.artstation.com/"
+        const val ARTSTATION = "https://varvara_furu.artstation.com"
         const val GITHUB_PROJECT = "https://github.com/vganin/click-track"
     }
 }
