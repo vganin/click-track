@@ -14,8 +14,20 @@ kotlin {
     sourceSets {
         all {
             languageSettings {
-                optIn("kotlin.ExperimentalStdlibApi")
+                optIn("androidx.compose.animation.ExperimentalAnimationApi")
+                optIn("androidx.compose.animation.core.InternalAnimationApi")
+                optIn("androidx.compose.foundation.ExperimentalFoundationApi")
+                optIn("androidx.compose.material.ExperimentalMaterialApi")
+                optIn("androidx.compose.ui.ExperimentalComposeUiApi")
                 optIn("androidx.compose.ui.text.ExperimentalTextApi")
+                optIn("kotlin.ExperimentalStdlibApi")
+                optIn("kotlin.contracts.ExperimentalContracts")
+                optIn("kotlin.time.ExperimentalTime")
+                optIn("kotlinx.coroutines.DelicateCoroutinesApi")
+                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+                optIn("kotlinx.coroutines.FlowPreview")
+                optIn("kotlinx.coroutines.InternalCoroutinesApi")
+                optIn("kotlinx.coroutines.ObsoleteCoroutinesApi")
             }
         }
 
@@ -28,7 +40,11 @@ kotlin {
                 api(compose.materialIconsExtended)
                 api(compose("org.jetbrains.compose.ui:ui-util")) // FIXME(https://github.com/JetBrains/compose-jb/issues/1295): Replace with `org.jetbrains.compose.ComposePlugin.Dependencies` field when it's available
                 api(libs.simpleIcons)
-                implementation(libs.mokoResources)
+                api(libs.bundles.decompose)
+                api(libs.bundles.kotlin.serialization)
+                api(libs.kotlin.datetime)
+                api(libs.mokoResources)
+                api(libs.uuid)
             }
 
             kotlin.srcDir("build/generated/source/svg2compose")

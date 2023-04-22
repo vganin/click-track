@@ -32,7 +32,7 @@ class SoundBank @Inject constructor(
 
     private fun load(sound: ClickSoundSource): Pcm16Data? {
         return when (sound) {
-            is ClickSoundSource.Bundled -> load(sound.resId)
+            is ClickSoundSource.Bundled -> load(sound.audioResource.rawResId)
             is ClickSoundSource.Uri -> load(sound.value)
         }
     }

@@ -6,4 +6,8 @@
     <string name="about_open_source_note">The app is [open-source](stub_link) now</string>
     <string name="about_screen_title">About</string>
     <string name="about_version">version %1$s</string>
+    <string name="sound_library_beep">Beep</string>
+    <string name="sound_library_claves">Claves</string>
+    <string name="sound_library_cowbell">Cowbell</string>
+    <string name="sound_library_drum_kit">Drum kit</string>
 </resources>

@@ -14,6 +14,7 @@ import com.vsevolodganin.clicktrack.common.InAppReview
 import com.vsevolodganin.clicktrack.migration.MigrationManager
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
+import com.vsevolodganin.clicktrack.ui.PlatformComposables
 import com.vsevolodganin.clicktrack.ui.RootView
 import com.vsevolodganin.clicktrack.utils.android.PermissionsHelper
 import com.vsevolodganin.clicktrack.utils.cast
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         migrationManager.tryMigrate()
 
         setContent {
-            RootView(rootViewModel)
+            RootView(rootViewModel, PlatformComposables)
         }
 
         if (savedInstanceState == null) {

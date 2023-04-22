@@ -121,7 +121,7 @@ private fun BuiltinClickSoundsItem(
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = stringResource(item.data.nameStringRes),
+            text = stringResource(item.data.nameResource.resourceId),
             modifier = Modifier
                 .fillMaxWidth()
                 .align(CenterVertically),

@@ -41,15 +41,17 @@ firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-
 googlePlay-core = "com.google.android.play:core-ktx:1.8.1"
 kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlin-coroutines" }
 kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
 kotlin-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+mokoResources = { module = "dev.icerock.moko:resources-compose", version.ref = "mokoResources" }
 oboe = "com.google.oboe:oboe:1.7.0"
 simpleIcons = "br.com.devsrsouza.compose.icons:simple-icons:1.1.0"
 sqlDelight-androidDriver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
 sqlDelight-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions-jvm", version.ref = "sqlDelight" }
 svg2compose = "com.github.DevSrSouza:svg-to-compose:0.8.1"
 timber = "com.jakewharton.timber:timber:5.0.1"
-mokoResources = { module = "dev.icerock.moko:resources-compose", version.ref = "mokoResources" }
+uuid = "com.benasher44:uuid:0.7.0"
 
 [bundles]
 accompanist = ["accompanist-insets", "accompanist-systemUiController"]

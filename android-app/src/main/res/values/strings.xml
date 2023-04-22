@@ -57,10 +57,6 @@
     <string name="settings_theme_system">System</string>
     <string name="settings_theme_system_description">Use the system\'s Dark Theme setting</string>
     <string name="shortcuts_metronome">Metronome</string>
-    <string name="sound_library_beep">Beep</string>
-    <string name="sound_library_claves">Claves</string>
-    <string name="sound_library_cowbell">Cowbell</string>
-    <string name="sound_library_drum_kit">Drum kit</string>
     <string name="sound_library_screen_title">Sound Library</string>
     <string name="training_decrease_by">Decrease by</string>
     <string name="training_decrease_every">Decrease every</string>
