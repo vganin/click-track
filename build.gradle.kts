@@ -1,5 +1,10 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
+plugins {
+    alias(libs.plugins.properties)
+    alias(libs.plugins.versions)
+}
+
 buildscript {
     repositories {
         google()
@@ -14,14 +19,10 @@ buildscript {
         classpath(libs.gradlePlugins.sqlDelight)
         classpath(libs.gradlePlugins.gms)
         classpath(libs.gradlePlugins.crashlytics)
-        classpath(libs.gradlePlugins.versionsPlugin)
         classpath(libs.gradlePlugins.resourcePlaceholders)
         classpath(libs.gradlePlugins.mokoResources)
     }
 }
-
-apply(plugin = "com.github.ben-manes.versions")
-apply(from = "properties.gradle.kts")
 
 allprojects {
     repositories {
@@ -37,8 +38,8 @@ tasks.register<Delete>("clean") {
 allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
         compilerOptions {
-            val mergedProperties: Map<String, String> by rootProject.extra
-            allWarningsAsErrors.set(mergedProperties["allKotlinWarningsAsErrors"]?.toBoolean() ?: true)
+            val allKotlinWarningsAsErrors: String? by project
+            allWarningsAsErrors.set(allKotlinWarningsAsErrors?.toBoolean() ?: true)
         }
     }
 }

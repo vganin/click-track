@@ -15,7 +15,6 @@ gradlePlugins-gms = "com.google.gms:google-services:4.3.15"
 gradlePlugins-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 gradlePlugins-kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 gradlePlugins-sqlDelight = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sqlDelight" }
-gradlePlugins-versionsPlugin = "com.github.ben-manes:gradle-versions-plugin:0.46.0"
 gradlePlugins-resourcePlaceholders = "de.timfreiheit.resourceplaceholders:placeholders:0.4"
 gradlePlugins-mokoResources = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoResources" }
 
@@ -62,3 +61,5 @@ sqlDelight = ["sqlDelight-androidDriver", "sqlDelight-coroutines"]
 
 [plugins]
 jetbrains-compose = "org.jetbrains.compose:1.4.0"
+properties = "net.saliman.properties:1.5.2"
+versions = "com.github.ben-manes.versions:0.46.0"
