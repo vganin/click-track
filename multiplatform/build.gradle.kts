@@ -3,6 +3,7 @@ import org.jetbrains.compose.compose
 plugins {
     `android-multiplatform`
     `ios-multiplatform`
+    svg2compose
     alias(libs.plugins.jetbrains.compose)
     kotlin("native.cocoapods")
     id("org.jetbrains.kotlin.plugin.serialization")

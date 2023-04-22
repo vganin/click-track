@@ -5,7 +5,6 @@ import java.util.Properties
 
 plugins {
     `android-app`
-    svg2compose
     alias(libs.plugins.jetbrains.compose)
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization")
