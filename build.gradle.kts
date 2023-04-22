@@ -35,10 +35,10 @@ tasks.register<Delete>("clean") {
 }
 
 allprojects {
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions {
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
+        compilerOptions {
             val mergedProperties: Map<String, String> by rootProject.extra
-            allWarningsAsErrors = mergedProperties["allKotlinWarningsAsErrors"]?.toBoolean() ?: true
+            allWarningsAsErrors.set(mergedProperties["allKotlinWarningsAsErrors"]?.toBoolean() ?: true)
         }
     }
 }
