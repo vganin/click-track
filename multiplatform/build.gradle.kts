@@ -1,13 +1,14 @@
 import org.jetbrains.compose.compose
 
+@Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
-    `android-multiplatform`
-    `ios-multiplatform`
-    svg2compose
+    id("clicktrack.multiplatform.android")
+    id("clicktrack.multiplatform.ios")
+    id("clicktrack.svg2compose")
     alias(libs.plugins.jetbrains.compose)
     kotlin("native.cocoapods")
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("kotlin-parcelize")
+    kotlin("plugin.serialization")
+    kotlin("plugin.parcelize")
     id("dev.icerock.mobile.multiplatform-resources")
 }
 
@@ -42,9 +43,9 @@ kotlin {
                 api(compose("org.jetbrains.compose.ui:ui-util")) // FIXME(https://github.com/JetBrains/compose-jb/issues/1295): Replace with `org.jetbrains.compose.ComposePlugin.Dependencies` field when it's available
                 api(libs.simpleIcons)
                 api(libs.bundles.decompose)
-                api(libs.bundles.kotlin.serialization)
-                api(libs.kotlin.datetime)
-                api(libs.mokoResources)
+                api(libs.bundles.kotlinx.serialization)
+                api(libs.kotlinx.datetime)
+                api(libs.moko.resources)
                 api(libs.uuid)
             }
 

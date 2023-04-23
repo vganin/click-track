@@ -5,12 +5,11 @@ plugins {
 repositories {
     google()
     mavenCentral()
-    gradlePluginPortal()
     maven { url = uri("https://jitpack.io") }
 }
 
 dependencies {
-    implementation(libs.gradlePlugins.kotlin)
-    implementation(libs.gradlePlugins.android)
+    implementation(libs.kotlin.gradlePlugin)
+    implementation(libs.android.gradlePlugin)
     implementation(libs.svg2compose)
 }

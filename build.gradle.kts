@@ -1,5 +1,6 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
+@Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
     alias(libs.plugins.properties)
     alias(libs.plugins.versions)
@@ -13,14 +14,13 @@ buildscript {
     }
 
     dependencies {
-        classpath(libs.gradlePlugins.kotlin)
-        classpath(libs.gradlePlugins.kotlin.serialization)
-        classpath(libs.gradlePlugins.android)
-        classpath(libs.gradlePlugins.sqlDelight)
-        classpath(libs.gradlePlugins.gms)
-        classpath(libs.gradlePlugins.crashlytics)
-        classpath(libs.gradlePlugins.resourcePlaceholders)
-        classpath(libs.gradlePlugins.mokoResources)
+        classpath(libs.kotlin.gradlePlugin)
+        classpath(libs.kotlinx.serialization.gradlePlugin)
+        classpath(libs.android.gradlePlugin)
+        classpath(libs.gms.gradlePlugin)
+        classpath(libs.firebase.crashlytics.gradlePlugin)
+        classpath(libs.resourcePlaceholders.gradlePlugin)
+        classpath(libs.moko.resources.gradlePlugin)
     }
 }
 

@@ -3,17 +3,18 @@
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import java.util.Properties
 
+@Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
-    `android-app`
+    id("clicktrack.android.application")
     alias(libs.plugins.jetbrains.compose)
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("kotlin-parcelize")
-    id("com.squareup.sqldelight")
-    id("kotlin-kapt")
+    alias(libs.plugins.sqldelight)
+    kotlin("android")
+    kotlin("plugin.serialization")
+    kotlin("plugin.parcelize")
+    kotlin("kapt")
+    id("de.timfreiheit.resourceplaceholders")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
-    id("de.timfreiheit.resourceplaceholders")
 }
 
 val keystorePropertiesFile = file("keystore.properties")
@@ -163,8 +164,8 @@ resourcePlaceholders {
 dependencies {
     implementation(project(":multiplatform"))
 
-    implementation(libs.bundles.kotlin.coroutines)
-    implementation(libs.bundles.kotlin.serialization)
+    implementation(libs.bundles.kotlinx.coroutines)
+    implementation(libs.bundles.kotlinx.serialization)
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.splashScreen)
@@ -181,6 +182,6 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.core)
-    implementation(libs.bundles.sqlDelight)
+    implementation(libs.bundles.sqldelight)
     implementation(libs.timber)
 }

@@ -3,23 +3,15 @@ accompanist = "0.30.1"
 dagger = "2.45"
 decompose = "1.0.0-compose-experimental"
 kotlin = "1.8.20"
-kotlin-coroutines = "1.6.4"
-kotlin-serialization = "1.5.0"
-sqlDelight = "1.5.5"
-mokoResources = "0.21.2"
+kotlinx-coroutines = "1.6.4"
+kotlinx-serialization = "1.5.0"
+moko-resources = "0.21.2"
+sqldelight = "1.5.5"
 
 [libraries]
-gradlePlugins-android = "com.android.tools.build:gradle:7.4.2"
-gradlePlugins-crashlytics = "com.google.firebase:firebase-crashlytics-gradle:2.9.5"
-gradlePlugins-gms = "com.google.gms:google-services:4.3.15"
-gradlePlugins-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-gradlePlugins-kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
-gradlePlugins-sqlDelight = { module = "com.squareup.sqldelight:gradle-plugin", version.ref = "sqlDelight" }
-gradlePlugins-resourcePlaceholders = "de.timfreiheit.resourceplaceholders:placeholders:0.4"
-gradlePlugins-mokoResources = { module = "dev.icerock.moko:resources-generator", version.ref = "mokoResources" }
-
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+android-gradlePlugin = "com.android.tools.build:gradle:7.4.2"
 androidx-activity-compose = "androidx.activity:activity-compose:1.7.1"
 androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"
 androidx-constraintLayout-compose = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
@@ -36,18 +28,24 @@ decompose-core = { module = "com.arkivanov.decompose:decompose", version.ref = "
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-bom = "com.google.firebase:firebase-bom:31.5.0"
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+firebase-crashlytics-gradlePlugin = "com.google.firebase:firebase-crashlytics-gradle:2.9.5"
 firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
+gms-gradlePlugin = "com.google.gms:google-services:4.3.15"
 googlePlay-core = "com.google.android.play:core-ktx:1.8.1"
-kotlin-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlin-coroutines" }
-kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
-kotlin-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
-kotlin-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
-kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
-mokoResources = { module = "dev.icerock.moko:resources-compose", version.ref = "mokoResources" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+moko-resources = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
+moko-resources-gradlePlugin = { module = "dev.icerock.moko:resources-generator", version.ref = "moko-resources" }
 oboe = "com.google.oboe:oboe:1.7.0"
+resourcePlaceholders-gradlePlugin = "de.timfreiheit.resourceplaceholders:placeholders:0.4"
 simpleIcons = "br.com.devsrsouza.compose.icons:simple-icons:1.1.0"
-sqlDelight-androidDriver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqlDelight" }
-sqlDelight-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions-jvm", version.ref = "sqlDelight" }
+sqldelight-androidDriver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions-jvm", version.ref = "sqldelight" }
 svg2compose = "com.github.DevSrSouza:svg-to-compose:0.8.1"
 timber = "com.jakewharton.timber:timber:5.0.1"
 uuid = "com.benasher44:uuid:0.7.0"
@@ -55,11 +53,12 @@ uuid = "com.benasher44:uuid:0.7.0"
 [bundles]
 accompanist = ["accompanist-insets", "accompanist-systemUiController"]
 decompose = ["decompose-core", "decompose-compose"]
-kotlin-coroutines = ["kotlin-coroutines-core", "kotlin-coroutines-android"]
-kotlin-serialization = ["kotlin-serialization-core", "kotlin-serialization-json"]
-sqlDelight = ["sqlDelight-androidDriver", "sqlDelight-coroutines"]
+kotlinx-coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-android"]
+kotlinx-serialization = ["kotlinx-serialization-core", "kotlinx-serialization-json"]
+sqldelight = ["sqldelight-androidDriver", "sqldelight-coroutines"]
 
 [plugins]
 jetbrains-compose = "org.jetbrains.compose:1.4.0"
 properties = "net.saliman.properties:1.5.2"
 versions = "com.github.ben-manes.versions:0.46.0"
+sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqldelight" }
