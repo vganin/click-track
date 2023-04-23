@@ -21,8 +21,6 @@ import com.vsevolodganin.clicktrack.ui.screen.SoundLibraryScreenView
 import com.vsevolodganin.clicktrack.ui.screen.TrainingScreenView
 
 object PlatformComposables : ComposableProvider {
-    override val theme: @Composable (@Composable () -> Unit) -> Unit
-        get() = @Composable { ClickTrackTheme(it) }
     override val drawer: @Composable (DrawerViewModel) -> Unit
         get() = @Composable { DrawerView(it) }
     override val clickTrackList: @Composable (ClickTrackListViewModel, Modifier) -> Unit

@@ -65,8 +65,6 @@ fun MainViewController() = ComposeUIViewController {
             )
         },
         composableProvider = object : ComposableProvider {
-            override val theme: @Composable (@Composable () -> Unit) -> Unit
-                get() = @Composable { it() }
             override val drawer: @Composable (DrawerViewModel) -> Unit
                 get() = @Composable {}
             override val clickTrackList: @Composable (ClickTrackListViewModel, Modifier) -> Unit

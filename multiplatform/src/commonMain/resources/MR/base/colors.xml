@@ -1,5 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="signature">#a53030</color>
+    <color name="signature_dark">#982d2d</color>
+    <color name="debug_signature">@color/signature</color>
+    <color name="splash_background">#0d0d0d</color>
+    <color name="delete">#aa3030</color>
     <color name="dark_app_bar">#262525</color>
-    <color name="on_dark_app_bar">#ffffff</color>
+    <color name="on_dark_app_bar">@color/white</color>
+
+    <!-- Material colors -->
+    <color name="primary">@color/signature</color>
+    <color name="primary_variant">@color/signature_dark</color>
+    <color name="secondary">@color/signature</color>
+    <color name="secondary_variant">@color/signature_dark</color>
+    <color name="background">
+        <light>#eeeded</light>
+        <dark>#121212</dark>
+    </color>
+    <color name="surface">
+        <light>@color/white</light>
+        <dark>#121212</dark>
+    </color>
+    <color name="on_primary">@color/white</color>
+    <color name="on_secondary">@color/white</color>
+    <color name="on_background">
+        <light>@color/black</light>
+        <dark>@color/white</dark>
+    </color>
+    <color name="on_surface">
+        <light>@color/black</light>
+        <dark>@color/white</dark>
+    </color>
 </resources>

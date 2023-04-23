@@ -38,7 +38,6 @@ import androidx.compose.material.DrawerState as ComposeDrawerState
 
 // TODO: Temporary for library consumer to provide composables that are not common yet
 interface ComposableProvider {
-    val theme: @Composable (@Composable () -> Unit) -> Unit
     val drawer: @Composable (DrawerViewModel) -> Unit
     val clickTrackList: @Composable (ClickTrackListViewModel, Modifier) -> Unit
     val playClickTrack: @Composable (PlayClickTrackViewModel, Modifier) -> Unit
@@ -52,7 +51,7 @@ interface ComposableProvider {
 
 @Composable
 fun RootView(viewModel: RootViewModel, composableProvider: ComposableProvider) {
-    composableProvider.theme {
+    ClickTrackTheme {
         Scaffold(
             scaffoldState = rememberScaffoldState(drawerState = drawerState(viewModel.drawer)),
             drawerContent = { composableProvider.drawer(viewModel.drawer) },
