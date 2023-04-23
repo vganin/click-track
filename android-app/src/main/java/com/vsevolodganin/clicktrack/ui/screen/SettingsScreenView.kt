@@ -131,23 +131,23 @@ private fun AppLanguage.displayValue(): String = when (this) {
     AppLanguage.RUSSIAN -> R.string.settings_language_system_russian
 }.let { stringResource(it) }
 
-@ScreenPreviews
+@ScreenPreview
 @Composable
 private fun Preview() = ClickTrackTheme {
-    SettingsScreenView(viewModel = object : SettingsViewModel {
-        override val state: StateFlow<SettingsState> = MutableStateFlow(
-            SettingsState(
-                theme = Theme.SYSTEM,
-                ignoreAudioFocus = false,
-                language = AppLanguage.SYSTEM,
+    SettingsScreenView(
+        viewModel = object : SettingsViewModel {
+            override val state: StateFlow<SettingsState> = MutableStateFlow(
+                SettingsState(
+                    theme = Theme.SYSTEM,
+                    ignoreAudioFocus = false,
+                    language = AppLanguage.SYSTEM,
+                )
             )
-        )
 
-        override fun onBackClick() = Unit
-        override fun onThemeChange(theme: Theme) = Unit
-        override fun onLanguageChange(language: AppLanguage) = Unit
-        override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
-    }
-
+            override fun onBackClick() = Unit
+            override fun onThemeChange(theme: Theme) = Unit
+            override fun onLanguageChange(language: AppLanguage) = Unit
+            override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
+        }
     )
 }

@@ -1,3 +1,3 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
-expect annotation class ScreenPreviews()
+expect annotation class ScreenPreview()

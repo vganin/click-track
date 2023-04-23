@@ -151,7 +151,7 @@ private fun Content(viewModel: AboutViewModel) {
     }
 }
 
-@ScreenPreviews
+@ScreenPreview
 @Composable
 private fun Preview() {
     AboutScreenView(

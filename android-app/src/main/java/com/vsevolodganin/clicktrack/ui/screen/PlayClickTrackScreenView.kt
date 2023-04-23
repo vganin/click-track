@@ -229,7 +229,7 @@ private fun BottomBar(
     }
 }
 
-@ScreenPreviews
+@ScreenPreview
 @Composable
 private fun Preview() = ClickTrackTheme {
     PlayClickTrackScreenView(

@@ -305,7 +305,7 @@ private fun CueListItem(
     }
 }
 
-@ScreenPreviews
+@ScreenPreview
 @Composable
 private fun Preview() = ClickTrackTheme {
     EditClickTrackScreenView(

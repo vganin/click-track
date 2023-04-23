@@ -122,7 +122,7 @@ private fun LazyItemScope.ClickTrackListItem(
     }
 }
 
-@ScreenPreviews
+@ScreenPreview
 @Composable
 fun ClickTrackListPreview() = ClickTrackTheme {
     ClickTrackListScreenView(

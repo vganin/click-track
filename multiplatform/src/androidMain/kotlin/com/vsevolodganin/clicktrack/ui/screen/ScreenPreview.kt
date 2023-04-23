@@ -28,4 +28,4 @@ import androidx.compose.ui.tooling.preview.Preview
     locale = "ru",
     device = Devices.TABLET,
 )
-actual annotation class ScreenPreviews
+actual annotation class ScreenPreview

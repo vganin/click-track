@@ -227,7 +227,7 @@ private fun backdropState(
     }
 }
 
-@ScreenPreviews
+@ScreenPreview
 @Composable
 private fun Preview() = ClickTrackTheme {
     MetronomeScreenView(

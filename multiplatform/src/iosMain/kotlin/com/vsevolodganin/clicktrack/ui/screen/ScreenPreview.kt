@@ -1,3 +1,3 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
-actual annotation class ScreenPreviews
+actual annotation class ScreenPreview

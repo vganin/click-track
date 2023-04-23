@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import com.vsevolodganin.clicktrack.ui.piece.SystemUiSetup
 import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
+import com.vsevolodganin.clicktrack.utils.compose.DarkPreview
+import com.vsevolodganin.clicktrack.utils.compose.LightPreview
 import com.vsevolodganin.clicktrack.utils.compose.isSystemInLandscape
 import com.vsevolodganin.clicktrack.utils.compose.navigationBars
 import dev.icerock.moko.resources.compose.colorResource
@@ -93,21 +95,22 @@ private fun surfaceColorAtElevation(
     }
 }
 
-//@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
-//@Composable
-//private fun LightThemePreview() {
-//    ThemePreview()
-//}
-//
-//@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-//@Composable
-//private fun DarkThemePreview() {
-//    ThemePreview()
-//}
-//
-//@Composable
-//private fun ThemePreview() {
-//    ClickTrackTheme {
+@LightPreview
+@Composable
+private fun LightThemePreview() {
+    ThemePreview()
+}
+
+@DarkPreview
+@Composable
+private fun DarkThemePreview() {
+    ThemePreview()
+}
+
+@Composable
+private fun ThemePreview() {
+    ClickTrackTheme {
+        // TODO: Uncomment after porting ClickTrackListPreview
 //        ClickTrackListPreview()
-//    }
-//}
+    }
+}

@@ -233,7 +233,7 @@ private fun UserDefinedSoundsItem(
     }
 }
 
-@ScreenPreviews
+@ScreenPreview
 @Composable
 private fun Preview() = ClickTrackTheme {
     SoundLibraryScreenView(

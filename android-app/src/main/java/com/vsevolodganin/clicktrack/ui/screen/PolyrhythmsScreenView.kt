@@ -194,7 +194,7 @@ private fun Duration.toAngle(totalDuration: Duration): Float {
     }
 }
 
-@ScreenPreviews
+@ScreenPreview
 @Composable
 private fun Preview() = ClickTrackTheme {
     PolyrhythmsScreenView(

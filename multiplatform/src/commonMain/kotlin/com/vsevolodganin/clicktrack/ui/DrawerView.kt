@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -10,10 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.material.Icon
@@ -33,15 +32,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.drawer.DrawerState
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.icons.ClickTrackIcons
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.Metronome
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.Polyrhythm
+import com.vsevolodganin.clicktrack.utils.compose.Preview
+import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
+import com.vsevolodganin.clicktrack.utils.compose.statusBars
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -67,28 +67,28 @@ fun DrawerView(viewModel: DrawerViewModel) {
 
         DrawerButton(
             icon = ClickTrackIcons.Metronome,
-            label = stringResource(R.string.drawer_metronome),
+            label = stringResource(MR.strings.drawer_metronome),
             isSelected = state.selectedItem == DrawerState.SelectedItem.METRONOME,
             action = viewModel::navigateToMetronome
         )
 
         DrawerButton(
             icon = Icons.Filled.FitnessCenter,
-            label = stringResource(R.string.drawer_training),
+            label = stringResource(MR.strings.drawer_training),
             isSelected = state.selectedItem == DrawerState.SelectedItem.TRAINING,
             action = viewModel::navigateToTraining
         )
 
         DrawerButton(
             icon = ClickTrackIcons.Polyrhythm,
-            label = stringResource(R.string.drawer_polyrhythms),
+            label = stringResource(MR.strings.drawer_polyrhythms),
             isSelected = state.selectedItem == DrawerState.SelectedItem.POLYRHYTHMS,
             action = viewModel::navigateToPolyrhythms
         )
 
         DrawerButton(
             icon = Icons.Filled.LibraryMusic,
-            label = stringResource(R.string.drawer_sound_library),
+            label = stringResource(MR.strings.drawer_sound_library),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SOUND_LIBRARY,
             action = viewModel::navigateToSoundLibrary
         )
@@ -97,14 +97,14 @@ fun DrawerView(viewModel: DrawerViewModel) {
 
         DrawerButton(
             icon = Icons.Filled.Settings,
-            label = stringResource(R.string.drawer_settings),
+            label = stringResource(MR.strings.drawer_settings),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SETTINGS,
             action = viewModel::navigateToSettings
         )
 
         DrawerButton(
             icon = Icons.Filled.ContactSupport,
-            label = stringResource(R.string.drawer_about),
+            label = stringResource(MR.strings.drawer_about),
             isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
             action = viewModel::navigateToAbout
         )

@@ -232,7 +232,7 @@ private fun TrainingEndingKind.stringResource(mode: TrainingMode): String {
 
 private val RIGHT_COLUMN_WIDTH = 140.dp
 
-@ScreenPreviews
+@ScreenPreview
 @Composable
 private fun Preview() = ClickTrackTheme {
     TrainingScreenView(

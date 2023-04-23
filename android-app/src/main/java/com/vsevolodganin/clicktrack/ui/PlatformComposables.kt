@@ -2,7 +2,6 @@ package com.vsevolodganin.clicktrack.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModel
 import com.vsevolodganin.clicktrack.list.ClickTrackListViewModel
 import com.vsevolodganin.clicktrack.metronome.MetronomeViewModel
@@ -21,8 +20,6 @@ import com.vsevolodganin.clicktrack.ui.screen.SoundLibraryScreenView
 import com.vsevolodganin.clicktrack.ui.screen.TrainingScreenView
 
 object PlatformComposables : ComposableProvider {
-    override val drawer: @Composable (DrawerViewModel) -> Unit
-        get() = @Composable { DrawerView(it) }
     override val clickTrackList: @Composable (ClickTrackListViewModel, Modifier) -> Unit
         get() = @Composable { viewModel, modifier -> ClickTrackListScreenView(viewModel, modifier) }
     override val playClickTrack: @Composable (PlayClickTrackViewModel, Modifier) -> Unit
