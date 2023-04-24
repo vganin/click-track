@@ -27,13 +27,14 @@ import com.vsevolodganin.clicktrack.ScreenViewModel
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModel
 import com.vsevolodganin.clicktrack.list.ClickTrackListViewModel
-import com.vsevolodganin.clicktrack.metronome.MetronomeViewModel
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModel
 import com.vsevolodganin.clicktrack.polyrhythm.PolyrhythmsViewModel
 import com.vsevolodganin.clicktrack.settings.SettingsViewModel
 import com.vsevolodganin.clicktrack.soundlibrary.SoundLibraryViewModel
 import com.vsevolodganin.clicktrack.training.TrainingViewModel
 import com.vsevolodganin.clicktrack.ui.screen.AboutScreenView
+import com.vsevolodganin.clicktrack.ui.screen.MetronomeScreenView
+import com.vsevolodganin.clicktrack.utils.compose.ForcedHapticFeedback
 import androidx.compose.material.DrawerState as ComposeDrawerState
 
 // TODO: Temporary for library consumer to provide composables that are not common yet
@@ -41,7 +42,6 @@ interface ComposableProvider {
     val clickTrackList: @Composable (ClickTrackListViewModel, Modifier) -> Unit
     val playClickTrack: @Composable (PlayClickTrackViewModel, Modifier) -> Unit
     val editClickTrack: @Composable (EditClickTrackViewModel, Modifier) -> Unit
-    val metronome: @Composable (MetronomeViewModel, Modifier) -> Unit
     val polyrhythms: @Composable (PolyrhythmsViewModel, Modifier) -> Unit
     val settings: @Composable (SettingsViewModel, Modifier) -> Unit
     val soundLibrary: @Composable (SoundLibraryViewModel, Modifier) -> Unit
@@ -51,11 +51,13 @@ interface ComposableProvider {
 @Composable
 fun RootView(viewModel: RootViewModel, composableProvider: ComposableProvider) {
     ClickTrackTheme {
-        Scaffold(
-            scaffoldState = rememberScaffoldState(drawerState = drawerState(viewModel.drawer)),
-            drawerContent = { DrawerView(viewModel.drawer) },
-        ) {
-            RootView(viewModel, Modifier.padding(it), composableProvider)
+        ForcedHapticFeedback {
+            Scaffold(
+                scaffoldState = rememberScaffoldState(drawerState = drawerState(viewModel.drawer)),
+                drawerContent = { DrawerView(viewModel.drawer) },
+            ) {
+                RootView(viewModel, Modifier.padding(it), composableProvider)
+            }
         }
     }
 }
@@ -107,7 +109,7 @@ private fun RootView(viewModel: ScreenViewModel, composableProvider: ComposableP
         is ScreenViewModel.ClickTrackList -> composableProvider.clickTrackList(viewModel.value, modifier)
         is ScreenViewModel.PlayClickTrack -> composableProvider.playClickTrack(viewModel.value, modifier)
         is ScreenViewModel.EditClickTrack -> composableProvider.editClickTrack(viewModel.value, modifier)
-        is ScreenViewModel.Metronome -> composableProvider.metronome(viewModel.value, modifier)
+        is ScreenViewModel.Metronome -> MetronomeScreenView(viewModel.value, modifier)
         is ScreenViewModel.Settings -> composableProvider.settings(viewModel.value, modifier)
         is ScreenViewModel.SoundLibrary -> composableProvider.soundLibrary(viewModel.value, modifier)
         is ScreenViewModel.Training -> composableProvider.training(viewModel.value, modifier)

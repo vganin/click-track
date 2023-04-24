@@ -1,7 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.FloatingActionButtonDefaults
 import androidx.compose.material.FloatingActionButtonElevation
@@ -12,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 
 @Composable
 fun FloatingActionButton(

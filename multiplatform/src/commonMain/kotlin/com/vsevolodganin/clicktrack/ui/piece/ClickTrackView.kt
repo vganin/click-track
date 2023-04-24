@@ -1,8 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import android.annotation.SuppressLint
-import android.os.SystemClock
-import android.view.HapticFeedbackConstants
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.LinearEasing
@@ -36,15 +33,17 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastAny
 import com.vsevolodganin.clicktrack.model.ClickTrack
@@ -54,9 +53,11 @@ import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableRect
 import com.vsevolodganin.clicktrack.utils.compose.KeepScreenOn
+import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.detectTransformGesturesWithEndCallbacks
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -179,37 +180,36 @@ fun ClickTrackView(
                     }
                 }
             }, measurePolicy = { measurables, constraints ->
-                val placeables = measurables.associate { measurable ->
+                val placeables = measurables.map { measurable ->
                     val index = measurable.layoutId as Int
                     val mark = transformedAndPixelAlignedMarks[index]
                     mark to measurable.measure(Constraints())
-                }.toSortedMap { lhs, rhs -> lhs.x.compareTo(rhs.x) }.toList()
+                }.sortedWith { (lhs, _), (rhs, _) -> lhs.x.compareTo(rhs.x) }
 
                 layout(constraints.maxWidth, constraints.maxHeight) {
-                    class Border(val x: Int, val endY: Int)
+                    class Obstacle(val offset: IntOffset, val size: IntSize)
 
-                    val borderMap = sortedMapOf<Int, Border>()
+                    val obstacles = mutableListOf<Obstacle>()
 
                     placeables.forEach { (mark, placeable) ->
                         val x = mark.x.roundToInt()
+                        var y = 0
 
-                        var startY = 0
-                        var endY = placeable.height
-                        while (true) {
-                            val menacingBorders = borderMap.subMap(startY, endY)
-                            val menacingBorder = menacingBorders.values.maxByOrNull { it.x }
-                            if (menacingBorder != null && menacingBorder.x >= x) {
-                                startY = menacingBorder.endY + 1
-                                endY = startY + placeable.height
-                            } else {
+                        val menacingObstacles = obstacles
+                            .filter { it.offset.x + it.size.width >= x }
+                            .sortedBy { it.offset.y }
+
+                        for (menacingObstacle in menacingObstacles) {
+                            if (menacingObstacle.offset.y > y + placeable.height) {
                                 break
+                            } else {
+                                y = menacingObstacle.offset.y + menacingObstacle.size.height + 1
                             }
                         }
 
-                        placeable.placeRelative(x = x, y = startY)
+                        placeable.placeRelative(x, y)
 
-                        borderMap.subMap(startY, endY).clear()
-                        borderMap[startY] = Border(x + placeable.width, endY)
+                        obstacles += Obstacle(IntOffset(x, y), IntSize(placeable.width, placeable.height))
                     }
                 }
             })
@@ -332,7 +332,7 @@ private fun Modifier.clickTrackGestures(
     onProgressDrop: suspend (progress: AnimatableFloat) -> Unit,
 ): Modifier = composed {
     if ((progressDragAndDropEnabled && progressPosition != null) || viewportZoomAndPanEnabled) {
-        val view = LocalView.current
+        val hapticFeedback = LocalHapticFeedback.current
         val coroutineScope = rememberCoroutineScope()
         var progressDragInProgress by remember { mutableStateOf(false) }
 
@@ -354,11 +354,7 @@ private fun Modifier.clickTrackGestures(
                     detectDragGesturesAfterLongPress(
                         onDragStart = {
                             progressDragInProgress = true
-                            view.performHapticFeedback(
-                                HapticFeedbackConstants.LONG_PRESS,
-                                @Suppress("DEPRECATION") // TODO: Fix deprecation
-                                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-                            )
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                             coroutineScope.launch {
                                 onProgressDragStart(progressPosition)
                             }
@@ -424,7 +420,7 @@ private fun Modifier.clickTrackGestures(
 
                             if (zoom == 1f) {
                                 velocityTracker.addPosition(
-                                    timeMillis = SystemClock.uptimeMillis(),
+                                    timeMillis = Clock.System.now().toEpochMilliseconds(),
                                     position = centroid
                                 )
                             } else {
@@ -457,7 +453,6 @@ private fun Modifier.clickTrackGestures(
     }
 }
 
-@SuppressLint("CoroutineCreationDuringComposition") // FIXME: This is hacky but achieves the most pleasurable result
 @Composable
 private fun PlayTrackingModeImpl(
     viewportState: AnimatableRect,

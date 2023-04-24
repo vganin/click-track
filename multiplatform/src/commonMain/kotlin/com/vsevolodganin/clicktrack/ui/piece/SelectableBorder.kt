@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -13,7 +12,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-@SuppressLint("ComposableModifierFactory") // Need to access material colors in default arguments
 @Composable
 fun Modifier.selectableBorder(
     isSelected: Boolean,
@@ -28,6 +26,7 @@ fun Modifier.selectableBorder(
             isError -> activeErrorColor
             else -> activeColor
         }
+
         else -> when {
             isError -> inactiveErrorColor
             else -> inactiveColor

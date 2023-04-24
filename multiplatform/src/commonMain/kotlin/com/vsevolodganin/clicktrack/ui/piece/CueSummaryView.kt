@@ -13,19 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vsevolodganin.clicktrack.model.Cue
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.model.bpm
+import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.widthInByText
 
 @Composable
 fun CueSummaryView(cue: Cue) {
     val cueName = cue.name
-    if (cueName == null || cueName.isBlank()) {
+    if (cueName.isNullOrBlank()) {
         BriefSummary(cue)
     } else {
         DetailedSummary(cueName, cue)
@@ -70,9 +70,9 @@ private fun DetailedSummary(title: String, cue: Cue) {
 private fun Preview() {
     CueSummaryView(
         Cue(
-        bpm = 60.bpm,
-        timeSignature = TimeSignature(3, 4),
-        duration = CueDuration.Beats(4),
-    )
+            bpm = 60.bpm,
+            timeSignature = TimeSignature(3, 4),
+            duration = CueDuration.Beats(4),
+        )
     )
 }

@@ -314,8 +314,6 @@ fun MainViewController() = ComposeUIViewController {
                 get() = @Composable { _, _ -> }
             override val editClickTrack: @Composable (EditClickTrackViewModel, Modifier) -> Unit
                 get() = @Composable { _, _ -> }
-            override val metronome: @Composable (MetronomeViewModel, Modifier) -> Unit
-                get() = @Composable { _, _ -> }
             override val polyrhythms: @Composable (PolyrhythmsViewModel, Modifier) -> Unit
                 get() = @Composable { _, _ -> }
             override val settings: @Composable (SettingsViewModel, Modifier) -> Unit

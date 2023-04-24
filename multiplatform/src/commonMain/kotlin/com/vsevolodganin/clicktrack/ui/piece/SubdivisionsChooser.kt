@@ -31,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.icons.ClickTrackIcons
 import com.vsevolodganin.clicktrack.icons.clicktrackicons.Notes
@@ -62,6 +61,7 @@ import com.vsevolodganin.clicktrack.icons.clicktrackicons.notes.Whole
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.NotePatternGroup
 import com.vsevolodganin.clicktrack.model.TimeSignature
+import com.vsevolodganin.clicktrack.utils.compose.Preview
 
 @Composable
 fun SubdivisionsChooser(

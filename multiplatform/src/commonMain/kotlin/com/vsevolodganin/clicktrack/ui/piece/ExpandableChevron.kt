@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathNode
 import androidx.compose.ui.graphics.vector.addPathNodes
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.vsevolodganin.clicktrack.utils.compose.Preview
 
 @Composable
 fun ExpandableChevron(

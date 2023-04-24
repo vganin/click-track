@@ -1,15 +1,16 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
+import ClickTrack.multiplatform.MR
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.BackdropScaffold
 import androidx.compose.material.BackdropScaffoldDefaults
 import androidx.compose.material.BackdropScaffoldState
@@ -30,13 +31,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.metronome.MetronomeState
 import com.vsevolodganin.clicktrack.metronome.MetronomeTimeSignature
 import com.vsevolodganin.clicktrack.metronome.MetronomeViewModel
@@ -54,6 +54,9 @@ import com.vsevolodganin.clicktrack.ui.piece.SubdivisionsChooser
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
 import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
 import com.vsevolodganin.clicktrack.ui.piece.onDarkAppBarSurface
+import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
+import com.vsevolodganin.clicktrack.utils.compose.statusBars
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.time.Duration.Companion.milliseconds
@@ -79,7 +82,7 @@ fun MetronomeScreenView(
 @Composable
 private fun AppBar(viewModel: MetronomeViewModel) {
     TopAppBar(
-        title = { Text(text = stringResource(R.string.metronome_screen_title)) },
+        title = { Text(text = stringResource(MR.strings.metronome_screen_title)) },
         navigationIcon = {
             IconButton(onClick = viewModel::onBackClick) {
                 Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
@@ -97,22 +100,22 @@ private fun AppBar(viewModel: MetronomeViewModel) {
 private fun Content(viewModel: MetronomeViewModel) {
     val state = viewModel.state.collectAsState().value ?: return
 
-    ConstraintLayout(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .navigationBarsPadding()
+            .padding(bottom = 32.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val (clickTrackRef, bpmText, bpmWheel, bpmMeter) = createRefs()
-
         Card(
             modifier = Modifier
                 .padding(8.dp)
                 .fillMaxWidth()
-                .height(200.dp)
-                .constrainAs(clickTrackRef) {},
+                .height(200.dp),
             elevation = 8.dp,
         ) {
-            val metronomeClickTrackName = stringResource(R.string.general_metronome_click_track_title)
+            val metronomeClickTrackName = stringResource(MR.strings.general_metronome_click_track_title)
             val metronomeClickTrack = remember(state.bpm, state.pattern) {
                 metronomeClickTrack(
                     name = metronomeClickTrackName,
@@ -136,54 +139,55 @@ private fun Content(viewModel: MetronomeViewModel) {
                 fontWeight = FontWeight.Medium,
                 letterSpacing = 8.sp,
             ),
-            modifier = Modifier
-                .constrainAs(bpmText) {
-                    centerHorizontallyTo(parent)
-                    top.linkTo(clickTrackRef.bottom)
-                    bottom.linkTo(bpmWheel.top)
-                }
         )
 
-        Box(
-            modifier = Modifier
-                .constrainAs(bpmWheel) {
-                    centerHorizontallyTo(parent)
-                    bottom.linkTo(parent.bottom, margin = 32.dp)
+        Layout(
+            content = {
+                Box(contentAlignment = Alignment.Center) {
+                    BpmWheel(
+                        value = state.bpm,
+                        onValueChange = viewModel::onBpmChange,
+                        modifier = Modifier.size(200.dp)
+                    )
+                    PlayStopButton(
+                        isPlaying = state.isPlaying,
+                        onToggle = viewModel::onTogglePlay,
+                        enableInsets = false
+                    )
                 }
-        ) {
-            BpmWheel(
-                value = state.bpm,
-                onValueChange = viewModel::onBpmChange,
-                modifier = Modifier
-                    .size(200.dp)
-                    .align(Alignment.Center)
-            )
-            PlayStopButton(
-                isPlaying = state.isPlaying,
-                onToggle = viewModel::onTogglePlay,
-                modifier = Modifier.align(Alignment.Center),
-                enableInsets = false
-            )
-        }
 
-        FloatingActionButton(
-            onClick = viewModel::onBpmMeterClick,
-            modifier = Modifier
-                .size(64.dp)
-                .constrainAs(bpmMeter) {
-                    centerVerticallyTo(bpmWheel)
-                    start.linkTo(bpmWheel.end)
-                    end.linkTo(parent.end)
-                },
-            enableInsets = false,
-        ) {
-            Text(
-                text = stringResource(id = R.string.metronome_bpm_meter_tap),
-                style = LocalTextStyle.current.copy(
-                    fontWeight = FontWeight.Black,
-                    letterSpacing = 4.sp,
+                FloatingActionButton(
+                    onClick = viewModel::onBpmMeterClick,
+                    modifier = Modifier.size(64.dp),
+                    enableInsets = false,
+                ) {
+                    Text(
+                        text = stringResource(MR.strings.metronome_bpm_meter_tap),
+                        style = LocalTextStyle.current.copy(
+                            fontWeight = FontWeight.Black,
+                            letterSpacing = 4.sp,
+                        )
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) { measurables, constraints ->
+            val wheel = measurables[0].measure(Constraints())
+            val fab = measurables[1].measure(Constraints())
+
+            val width = constraints.maxWidth
+            val height = maxOf(wheel.height, fab.height)
+
+            layout(width, height) {
+                // Wheel is centered horizontally, nothing special
+                wheel.placeRelative(x = (width - wheel.width) / 2, y = 0)
+
+                // FAB is placed in the middle between wheel's and parent's right borders
+                fab.placeRelative(
+                    x = (width * 3 + wheel.width - fab.width * 2) / 4,
+                    y = (height - fab.height) / 2
                 )
-            )
+            }
         }
     }
 }

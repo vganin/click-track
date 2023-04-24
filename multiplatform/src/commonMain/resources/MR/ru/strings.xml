@@ -4,7 +4,8 @@
     <string name="about_developer_name">Всеволод Ганин</string>
     <string name="about_logo_by">Лого</string>
     <string name="about_logo_developer_name">Варвара Фуру</string>
-    <string name="about_open_source_note">Приложение теперь с [открытым исходным кодом](stub_link)</string>
+    <string name="about_open_source_note">Приложение теперь с [открытым исходным кодом](stub_link)
+    </string>
     <string name="about_screen_title">О приложении</string>
     <string name="about_version">версия %1$s</string>
     <string name="drawer_about">О приложении</string>
@@ -14,6 +15,9 @@
     <string name="drawer_sound_library">Звуки</string>
     <string name="drawer_training">Тренировка</string>
     <string name="drawer_version">версия %1$s</string>
+    <string name="general_metronome_click_track_title">Метроном</string>
+    <string name="metronome_bpm_meter_tap">ТАП</string>
+    <string name="metronome_screen_title">Метроном</string>
     <string name="sound_library_beep">Гудок</string>
     <string name="sound_library_claves">Клаве</string>
     <string name="sound_library_cowbell">Ковбелл</string>
