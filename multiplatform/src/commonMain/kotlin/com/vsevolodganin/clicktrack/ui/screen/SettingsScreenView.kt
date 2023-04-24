@@ -1,10 +1,10 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
@@ -15,10 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.BuildConfig
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.settings.SettingsState
 import com.vsevolodganin.clicktrack.settings.SettingsViewModel
@@ -28,7 +25,10 @@ import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.settings.BooleanChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooserItem
-import com.vsevolodganin.clicktrack.utils.native.nativeCrash
+import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
+import com.vsevolodganin.clicktrack.utils.platform.isDebug
+import com.vsevolodganin.clicktrack.utils.platform.nativeCrash
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -41,7 +41,7 @@ fun SettingsScreenView(
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(R.string.settings_screen_title)) },
+                title = { Text(stringResource(MR.strings.settings_screen_title)) },
             )
         },
         modifier = modifier,
@@ -55,7 +55,7 @@ private fun Content(viewModel: SettingsViewModel) {
     val state by viewModel.state.collectAsState()
     Column {
         ListChooser(
-            title = stringResource(R.string.settings_theme),
+            title = stringResource(MR.strings.settings_theme),
             value = state.theme.displayValue(),
             variants = Theme.values().map {
                 ListChooserItem(
@@ -68,7 +68,7 @@ private fun Content(viewModel: SettingsViewModel) {
         Divider(modifier = Modifier.padding(start = 16.dp))
 
         ListChooser(
-            title = stringResource(R.string.settings_language),
+            title = stringResource(MR.strings.settings_language),
             value = state.language.displayValue(),
             variants = AppLanguage.values().map {
                 ListChooserItem(
@@ -81,13 +81,13 @@ private fun Content(viewModel: SettingsViewModel) {
         Divider(modifier = Modifier.padding(start = 16.dp))
 
         BooleanChooser(
-            title = stringResource(R.string.settings_ignore_audio_focus),
+            title = stringResource(MR.strings.settings_ignore_audio_focus),
             value = state.ignoreAudioFocus,
             onCheckedChange = viewModel::onIgnoreAudioFocusChange,
-            description = stringResource(R.string.settings_ignore_audio_focus_description)
+            description = stringResource(MR.strings.settings_ignore_audio_focus_description)
         )
 
-        if (BuildConfig.DEBUG) {
+        if (isDebug()) {
             Spacer(modifier = Modifier.weight(1f))
 
             Column(
@@ -98,7 +98,7 @@ private fun Content(viewModel: SettingsViewModel) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(onClick = { throw RuntimeException("Test") }) {
-                    Text("Java crash")
+                    Text("Kotlin crash")
                 }
                 Button(onClick = ::nativeCrash) {
                     Text("Native crash")
@@ -110,25 +110,25 @@ private fun Content(viewModel: SettingsViewModel) {
 
 @Composable
 private fun Theme.displayValue(): String = when (this) {
-    Theme.LIGHT -> R.string.settings_theme_light
-    Theme.DARK -> R.string.settings_theme_dark
-    Theme.SYSTEM -> R.string.settings_theme_system
-    Theme.AUTO -> R.string.settings_theme_auto
+    Theme.LIGHT -> MR.strings.settings_theme_light
+    Theme.DARK -> MR.strings.settings_theme_dark
+    Theme.SYSTEM -> MR.strings.settings_theme_system
+    Theme.AUTO -> MR.strings.settings_theme_auto
 }.let { stringResource(it) }
 
 @Composable
 private fun Theme.description(): String? = when (this) {
     Theme.LIGHT -> null
     Theme.DARK -> null
-    Theme.SYSTEM -> R.string.settings_theme_system_description
-    Theme.AUTO -> R.string.settings_theme_auto_description
+    Theme.SYSTEM -> MR.strings.settings_theme_system_description
+    Theme.AUTO -> MR.strings.settings_theme_auto_description
 }?.let { stringResource(it) }
 
 @Composable
 private fun AppLanguage.displayValue(): String = when (this) {
-    AppLanguage.SYSTEM -> R.string.settings_language_system
-    AppLanguage.ENGLISH -> R.string.settings_language_system_english
-    AppLanguage.RUSSIAN -> R.string.settings_language_system_russian
+    AppLanguage.SYSTEM -> MR.strings.settings_language_system
+    AppLanguage.ENGLISH -> MR.strings.settings_language_system_english
+    AppLanguage.RUSSIAN -> MR.strings.settings_language_system_russian
 }.let { stringResource(it) }
 
 @ScreenPreview

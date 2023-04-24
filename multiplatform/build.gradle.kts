@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 import org.jetbrains.compose.compose
 
 @Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
@@ -85,6 +87,36 @@ kotlin {
 
 android {
     namespace = "com.vsevolodganin.clicktrack.multiplatform"
+
+    externalNativeBuild {
+        cmake {
+            path = file("src/androidMain/cpp/CMakeLists.txt")
+        }
+    }
+
+    defaultConfig {
+        externalNativeBuild {
+            cmake {
+                arguments("-DANDROID_STL=c++_shared")
+            }
+        }
+    }
+
+    packagingOptions {
+        jniLibs {
+            excludes += "**/libc++_shared.so"
+        }
+    }
+
+    buildFeatures {
+        prefabPublishing = true
+    }
+
+    prefab {
+        create("multiplatform") {
+
+        }
+    }
 }
 
 multiplatformResources {

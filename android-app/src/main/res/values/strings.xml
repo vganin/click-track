@@ -32,20 +32,6 @@
     <string name="player_service_notification_resume">RESUME</string>
     <string name="player_service_notification_stop">STOP</string>
     <string name="polyrhythms_screen_title">Polyrhythms</string>
-    <string name="settings_ignore_audio_focus">Play with other audio</string>
-    <string name="settings_ignore_audio_focus_description">Turn off to automatically stop click track playback when other audio starts.</string>
-    <string name="settings_language">Language</string>
-    <string name="settings_language_system">System</string>
-    <string name="settings_language_system_english" translatable="false">English</string>
-    <string name="settings_language_system_russian" translatable="false">Русский</string>
-    <string name="settings_screen_title">Settings</string>
-    <string name="settings_theme">Theme</string>
-    <string name="settings_theme_auto">Auto</string>
-    <string name="settings_theme_auto_description">Use a Dark Theme when the system\'s \'Battery Saver\' feature is enabled, otherwise use a Light Theme.</string>
-    <string name="settings_theme_dark">Dark</string>
-    <string name="settings_theme_light">Light</string>
-    <string name="settings_theme_system">System</string>
-    <string name="settings_theme_system_description">Use the system\'s Dark Theme setting</string>
     <string name="shortcuts_metronome">Metronome</string>
     <string name="sound_library_screen_title">Sound Library</string>
     <string name="training_decrease_by">Decrease by</string>

@@ -29,11 +29,11 @@ import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModel
 import com.vsevolodganin.clicktrack.list.ClickTrackListViewModel
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModel
 import com.vsevolodganin.clicktrack.polyrhythm.PolyrhythmsViewModel
-import com.vsevolodganin.clicktrack.settings.SettingsViewModel
 import com.vsevolodganin.clicktrack.soundlibrary.SoundLibraryViewModel
 import com.vsevolodganin.clicktrack.training.TrainingViewModel
 import com.vsevolodganin.clicktrack.ui.screen.AboutScreenView
 import com.vsevolodganin.clicktrack.ui.screen.MetronomeScreenView
+import com.vsevolodganin.clicktrack.ui.screen.SettingsScreenView
 import com.vsevolodganin.clicktrack.utils.compose.ForcedHapticFeedback
 import androidx.compose.material.DrawerState as ComposeDrawerState
 
@@ -43,7 +43,6 @@ interface ComposableProvider {
     val playClickTrack: @Composable (PlayClickTrackViewModel, Modifier) -> Unit
     val editClickTrack: @Composable (EditClickTrackViewModel, Modifier) -> Unit
     val polyrhythms: @Composable (PolyrhythmsViewModel, Modifier) -> Unit
-    val settings: @Composable (SettingsViewModel, Modifier) -> Unit
     val soundLibrary: @Composable (SoundLibraryViewModel, Modifier) -> Unit
     val training: @Composable (TrainingViewModel, Modifier) -> Unit
 }
@@ -110,7 +109,7 @@ private fun RootView(viewModel: ScreenViewModel, composableProvider: ComposableP
         is ScreenViewModel.PlayClickTrack -> composableProvider.playClickTrack(viewModel.value, modifier)
         is ScreenViewModel.EditClickTrack -> composableProvider.editClickTrack(viewModel.value, modifier)
         is ScreenViewModel.Metronome -> MetronomeScreenView(viewModel.value, modifier)
-        is ScreenViewModel.Settings -> composableProvider.settings(viewModel.value, modifier)
+        is ScreenViewModel.Settings -> SettingsScreenView(viewModel.value, modifier)
         is ScreenViewModel.SoundLibrary -> composableProvider.soundLibrary(viewModel.value, modifier)
         is ScreenViewModel.Training -> composableProvider.training(viewModel.value, modifier)
         is ScreenViewModel.About -> AboutScreenView(viewModel.value, modifier)

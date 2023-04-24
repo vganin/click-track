@@ -4,8 +4,7 @@
     <string name="about_developer_name">Всеволод Ганин</string>
     <string name="about_logo_by">Лого</string>
     <string name="about_logo_developer_name">Варвара Фуру</string>
-    <string name="about_open_source_note">Приложение теперь с [открытым исходным кодом](stub_link)
-    </string>
+    <string name="about_open_source_note">Приложение теперь с [открытым исходным кодом](stub_link)</string>
     <string name="about_screen_title">О приложении</string>
     <string name="about_version">версия %1$s</string>
     <string name="drawer_about">О приложении</string>
@@ -18,6 +17,19 @@
     <string name="general_metronome_click_track_title">Метроном</string>
     <string name="metronome_bpm_meter_tap">ТАП</string>
     <string name="metronome_screen_title">Метроном</string>
+    <string name="settings_cancel">Отмена</string>
+    <string name="settings_ignore_audio_focus">Играть вместе с другим аудио</string>
+    <string name="settings_ignore_audio_focus_description">Выключите, чтобы автоматически остановить клик-трек, когда другое аудио начинает играть.</string>
+    <string name="settings_language">Язык</string>
+    <string name="settings_language_system">Системный</string>
+    <string name="settings_screen_title">Настройки</string>
+    <string name="settings_theme">Тема</string>
+    <string name="settings_theme_auto">Авто</string>
+    <string name="settings_theme_auto_description">Использовать Темную тему, когда включается Режим энергосбережения. В противном случае использовать Светлую тему.</string>
+    <string name="settings_theme_dark">Темная</string>
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_system">Системная</string>
+    <string name="settings_theme_system_description">Использовать тему из системных настроек</string>
     <string name="sound_library_beep">Гудок</string>
     <string name="sound_library_claves">Клаве</string>
     <string name="sound_library_cowbell">Ковбелл</string>

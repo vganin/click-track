@@ -1,10 +1,10 @@
 package com.vsevolodganin.clicktrack.ui.piece.settings
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
@@ -18,10 +18,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
+import com.vsevolodganin.clicktrack.utils.compose.AlertDialog
+import com.vsevolodganin.clicktrack.utils.compose.Preview
+import dev.icerock.moko.resources.compose.stringResource
 
 data class ListChooserItem<T>(
     val value: T,
@@ -56,7 +56,7 @@ fun <T> ListChooser(
                     onClick = { showChooser = false },
                     shape = RectangleShape
                 ) {
-                    Text(text = stringResource(id = android.R.string.cancel).uppercase())
+                    Text(text = stringResource(MR.strings.settings_cancel).uppercase())
                 }
             },
             text = {
@@ -68,9 +68,6 @@ fun <T> ListChooser(
                     }
                 )
             },
-            properties = DialogProperties(
-                usePlatformDefaultWidth = true
-            )
         )
     }
 }

@@ -11,6 +11,6 @@ void crashWithinInternalFunction() {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_vsevolodganin_clicktrack_utils_native_NativeCrashKt_nativeCrash(JNIEnv* env, jclass clazz) {
+Java_com_vsevolodganin_clicktrack_utils_platform_NativeCrashKt_nativeCrash(JNIEnv* env, jclass clazz) {
     crashWithinInternalFunction();
 }

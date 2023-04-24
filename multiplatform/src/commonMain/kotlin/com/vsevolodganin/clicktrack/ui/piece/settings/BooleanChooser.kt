@@ -7,7 +7,7 @@ import androidx.compose.material.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import com.vsevolodganin.clicktrack.utils.compose.Preview
 
 @Composable
 fun BooleanChooser(
