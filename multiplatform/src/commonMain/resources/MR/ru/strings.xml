@@ -18,6 +18,7 @@
     <string name="general_metronome_click_track_title">Метроном</string>
     <string name="metronome_bpm_meter_tap">ТАП</string>
     <string name="metronome_screen_title">Метроном</string>
+    <string name="polyrhythms_screen_title">Полиритмы</string>
     <string name="settings_cancel">Отмена</string>
     <string name="settings_ignore_audio_focus">Играть вместе с другим аудио</string>
     <string name="settings_ignore_audio_focus_description">Выключите, чтобы автоматически остановить клик-трек, когда другое аудио начинает играть.</string>

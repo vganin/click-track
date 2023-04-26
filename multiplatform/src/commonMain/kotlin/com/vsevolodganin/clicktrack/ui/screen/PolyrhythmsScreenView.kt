@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -24,10 +25,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.bpm
@@ -40,6 +39,7 @@ import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.widthByText
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.time.Duration
@@ -56,7 +56,7 @@ fun PolyrhythmsScreenView(
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(R.string.polyrhythms_screen_title)) },
+                title = { Text(stringResource(MR.strings.polyrhythms_screen_title)) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,

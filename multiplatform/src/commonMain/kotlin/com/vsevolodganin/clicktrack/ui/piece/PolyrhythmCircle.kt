@@ -1,7 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import android.annotation.SuppressLint
-import android.graphics.Matrix
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -32,13 +30,13 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.Angle
 import com.vsevolodganin.clicktrack.utils.compose.AngleSector
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
+import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.toRadians
 import kotlinx.coroutines.launch
 import kotlin.math.cos
@@ -168,7 +166,7 @@ private fun DrawScope.drawCircleWithMarks(
     circleRadius: Float,
 ) {
     val brush = sweepGradient(
-        widthFraction = 0.08f,
+        breadth = 0.08f,
         centerColor = secondaryColor,
         borderColor = primaryColor.copy(alpha = 0.1f)
     )
@@ -222,7 +220,6 @@ private fun DrawScope.drawDotAnimations(
     }
 }
 
-@SuppressLint("CoroutineCreationDuringComposition", "UnrememberedAnimatable")
 @Composable
 private fun animatedDots(
     number: Int,
@@ -269,20 +266,15 @@ private class DotAnimation(
     val animationProgress: State<Float>,
 )
 
-private fun sweepGradient(widthFraction: Float, centerColor: Color, borderColor: Color): Brush {
-    val centerFraction = 0.5f
+private fun sweepGradient(breadth: Float, centerColor: Color, borderColor: Color): Brush {
     return object : ShaderBrush() {
         override fun createShader(size: Size): Shader {
             val center = size.center
             return SweepGradientShader(
                 center = center,
-                colors = listOf(borderColor, centerColor, borderColor),
-                colorStops = listOf(centerFraction - widthFraction, centerFraction, centerFraction + widthFraction)
-            ).apply {
-                setLocalMatrix(Matrix().apply {
-                    postRotate(180f, center.x, center.y)
-                })
-            }
+                colors = listOf(centerColor, borderColor, borderColor, centerColor),
+                colorStops = listOf(0f, breadth, 1f - breadth, 1f)
+            )
         }
     }
 }
