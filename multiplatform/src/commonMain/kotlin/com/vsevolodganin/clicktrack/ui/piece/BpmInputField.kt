@@ -1,12 +1,12 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
-import com.vsevolodganin.clicktrack.R
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun BpmInputField(
@@ -15,7 +15,7 @@ fun BpmInputField(
     modifier: Modifier = Modifier,
     isError: Boolean = false,
 ) {
-    val bpmSuffix = stringResource(R.string.bpm_input_suffix)
+    val bpmSuffix = stringResource(MR.strings.bpm_input_suffix)
     NumberInputField(
         value = value,
         onValueChange = onValueChange,

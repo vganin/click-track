@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -37,7 +38,6 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.key.utf16CodePoint
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalTextInputService
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.BackspaceCommand
 import androidx.compose.ui.text.input.CommitTextCommand
 import androidx.compose.ui.text.input.ImeAction
@@ -46,10 +46,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TextInputSession
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.R
-import java.text.DecimalFormat
+import com.vsevolodganin.clicktrack.utils.compose.Preview
+import dev.icerock.moko.resources.compose.stringResource
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
@@ -102,7 +101,7 @@ fun DurationPicker(
     /** Converts Duration to String in format "hhmmss" */
     fun Duration.asString(): String {
         return toComponents { hours, minutes, seconds, _ ->
-            "${hours.coerceAtMost(99).twoDigits()}${minutes.twoDigits()}${seconds.twoDigits()}"
+            "${hours.coerceAtMost(99L).toInt().atLeastTwoDigits()}${minutes.atLeastTwoDigits()}${seconds.atLeastTwoDigits()}"
         }
     }
 
@@ -133,9 +132,9 @@ fun DurationPicker(
 
     @Composable
     fun formatInternalState(): String {
-        val hoursString = stringResource(R.string.duration_picker_hours)
-        val minutesString = stringResource(R.string.duration_picker_minutes)
-        val secondsString = stringResource(R.string.duration_picker_seconds)
+        val hoursString = stringResource(MR.strings.duration_picker_hours)
+        val minutesString = stringResource(MR.strings.duration_picker_minutes)
+        val secondsString = stringResource(MR.strings.duration_picker_seconds)
 
         return StringBuilder().apply {
             append(internalStringState.value.subSequence(0, 2))
@@ -246,8 +245,7 @@ private fun RowScope.CloseIcon(onClick: () -> Unit) {
     }
 }
 
-private val TWO_DIGITS_FORMAT = DecimalFormat("00")
-private fun Any.twoDigits() = TWO_DIGITS_FORMAT.format(this)
+private fun Int.atLeastTwoDigits() = "${this / 10}${this % 10}"
 
 private const val SECONDS_PER_MINUTE = 60L
 private const val MINUTES_PER_HOUR = 60L

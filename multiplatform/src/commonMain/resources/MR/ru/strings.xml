@@ -8,6 +8,10 @@
     <string name="about_screen_title">О приложении</string>
     <string name="about_version">версия %1$s</string>
     <string name="click_track_list_screen_title">Мои клик-треки</string>
+    <string name="cue_duration_beats">Доли</string>
+    <string name="cue_duration_measures">Такты</string>
+    <string name="cue_duration_time">Время</string>
+    <string name="cue_name_hint">Введите имя (необязательно)</string>
     <string name="drawer_about">О приложении</string>
     <string name="drawer_metronome">Метроном</string>
     <string name="drawer_polyrhythms">Полиритмы</string>
@@ -15,6 +19,9 @@
     <string name="drawer_sound_library">Звуки</string>
     <string name="drawer_training">Тренировка</string>
     <string name="drawer_version">версия %1$s</string>
+    <string name="duration_picker_hours">ч</string>
+    <string name="duration_picker_minutes">м</string>
+    <string name="duration_picker_seconds">с</string>
     <string name="general_metronome_click_track_title">Метроном</string>
     <string name="metronome_bpm_meter_tap">ТАП</string>
     <string name="metronome_screen_title">Метроном</string>
@@ -37,4 +44,13 @@
     <string name="sound_library_cowbell">Ковбелл</string>
     <string name="sound_library_drum_kit">Ударная установка</string>
     <string name="sound_library_screen_title">Звуки</string>
+    <string name="training_decrease_by">Decrease by</string>
+    <string name="training_decrease_every">Decrease every</string>
+    <string name="training_increase_by">Increase by</string>
+    <string name="training_increase_every">Increase every</string>
+    <string name="training_max_tempo">Max. tempo</string>
+    <string name="training_min_tempo">Min. tempo</string>
+    <string name="training_play_for">Play for</string>
+    <string name="training_screen_title">Generate training track…</string>
+    <string name="training_starting_tempo">Start with</string>
 </resources>

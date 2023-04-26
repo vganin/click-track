@@ -6,7 +6,13 @@
     <string name="about_open_source_note">The app is [open-source](stub_link) now</string>
     <string name="about_screen_title">About</string>
     <string name="about_version">version %1$s</string>
+    <string name="bpm_input_suffix">\ bpm</string>
     <string name="click_track_list_screen_title">My click tracks</string>
+    <string name="cue_duration_beats">Beats</string>
+    <string name="cue_duration_measures">Measures</string>
+    <string name="cue_duration_time">Time</string>
+    <string name="cue_name_hint">Enter cue name (optional)</string>
+    <string name="cue_position">%1$d</string>
     <string name="drawer_about">About</string>
     <string name="drawer_metronome">Metronome</string>
     <string name="drawer_polyrhythms">Polyrhythms</string>
@@ -14,6 +20,9 @@
     <string name="drawer_sound_library">Sound Library</string>
     <string name="drawer_training">Training</string>
     <string name="drawer_version">version %1$s</string>
+    <string name="duration_picker_hours">h</string>
+    <string name="duration_picker_minutes">m</string>
+    <string name="duration_picker_seconds">s</string>
     <string name="general_metronome_click_track_title">Metronome</string>
     <string name="metronome_bpm_meter_tap">TAP</string>
     <string name="metronome_screen_title">Metronome</string>
@@ -38,4 +47,13 @@
     <string name="sound_library_cowbell">Cowbell</string>
     <string name="sound_library_drum_kit">Drum kit</string>
     <string name="sound_library_screen_title">Sound Library</string>
+    <string name="training_decrease_by">Decrease by</string>
+    <string name="training_decrease_every">Decrease every</string>
+    <string name="training_increase_by">Increase by</string>
+    <string name="training_increase_every">Increase every</string>
+    <string name="training_max_tempo">Max. tempo</string>
+    <string name="training_min_tempo">Min. tempo</string>
+    <string name="training_play_for">Play for</string>
+    <string name="training_screen_title">Generate training track…</string>
+    <string name="training_starting_tempo">Start with</string>
 </resources>

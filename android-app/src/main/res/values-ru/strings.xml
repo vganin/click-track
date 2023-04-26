@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="cue_duration_beats">Доли</string>
-    <string name="cue_duration_measures">Такты</string>
-    <string name="cue_duration_time">Время</string>
-    <string name="cue_name_hint">Введите имя (необязательно)</string>
-    <string name="duration_picker_hours">ч</string>
-    <string name="duration_picker_minutes">м</string>
-    <string name="duration_picker_seconds">с</string>
     <string name="edit_click_track_loop">Повторять</string>
     <string name="edit_click_track_options">Настройки</string>
     <string name="edit_click_track_screen_title">Редактирование трека…</string>
@@ -28,13 +21,4 @@
     <string name="player_service_notification_resume">ПРОДОЛЖИТЬ</string>
     <string name="player_service_notification_stop">ОСТАНОВИТЬ</string>
     <string name="shortcuts_metronome">Метроном</string>
-    <string name="training_decrease_by">Уменьшать на</string>
-    <string name="training_decrease_every">Уменьшать каждые</string>
-    <string name="training_increase_by">Увеличивать на</string>
-    <string name="training_increase_every">Увеличивать каждые</string>
-    <string name="training_max_tempo">Макс. темп</string>
-    <string name="training_min_tempo">Мин. темп</string>
-    <string name="training_play_for">Продолжительность</string>
-    <string name="training_screen_title">Генерация тренировки…</string>
-    <string name="training_starting_tempo">Стартовый темп</string>
 </resources>

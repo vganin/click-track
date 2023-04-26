@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -12,11 +13,10 @@ import androidx.compose.material.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.CueDuration
+import com.vsevolodganin.clicktrack.utils.compose.Preview
+import dev.icerock.moko.resources.compose.stringResource
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
@@ -47,6 +47,7 @@ fun CueDurationView(
                         modifier = commonCueDurationModifier
                     )
                 }
+
                 is CueDuration.Measures -> {
                     EditMeasuresView(
                         value = value,
@@ -54,6 +55,7 @@ fun CueDurationView(
                         modifier = commonCueDurationModifier
                     )
                 }
+
                 is CueDuration.Time -> {
                     EditTimeView(
                         value = value,
@@ -124,9 +126,9 @@ private fun EditTimeView(
 @Composable
 private fun CueDuration.Type.stringResource(): String {
     return when (this) {
-        CueDuration.Type.BEATS -> R.string.cue_duration_beats
-        CueDuration.Type.MEASURES -> R.string.cue_duration_measures
-        CueDuration.Type.TIME -> R.string.cue_duration_time
+        CueDuration.Type.BEATS -> MR.strings.cue_duration_beats
+        CueDuration.Type.MEASURES -> MR.strings.cue_duration_measures
+        CueDuration.Type.TIME -> MR.strings.cue_duration_time
     }.let { stringResource(it) }
 }
 

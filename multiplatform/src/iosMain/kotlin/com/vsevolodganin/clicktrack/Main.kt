@@ -310,7 +310,5 @@ fun MainViewController() = ComposeUIViewController {
                 get() = @Composable { _, _ -> }
             override val editClickTrack: @Composable (EditClickTrackViewModel, Modifier) -> Unit
                 get() = @Composable { _, _ -> }
-            override val training: @Composable (TrainingViewModel, Modifier) -> Unit
-                get() = @Composable { _, _ -> }
         })
 }
