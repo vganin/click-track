@@ -284,7 +284,7 @@ private fun DropdownMenuContent(
 }
 
 @Composable
-internal fun DropdownMenuItemContent(
+private fun DropdownMenuItemContent(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
