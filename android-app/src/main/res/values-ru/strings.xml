@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="click_track_list_screen_title">Мои клик-треки</string>
     <string name="cue_duration_beats">Доли</string>
     <string name="cue_duration_measures">Такты</string>
     <string name="cue_duration_time">Время</string>

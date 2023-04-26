@@ -7,7 +7,7 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
-import com.arkivanov.decompose.router.stack.replaceAll
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.vsevolodganin.clicktrack.about.AboutState
 import com.vsevolodganin.clicktrack.about.AboutViewModel
@@ -53,6 +53,7 @@ import com.vsevolodganin.clicktrack.ui.ComposableProvider
 import com.vsevolodganin.clicktrack.ui.RootView
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_2
+import com.vsevolodganin.clicktrack.utils.decompose.resetTo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -89,7 +90,7 @@ fun MainViewController() = ComposeUIViewController {
         DefaultComponentContext(LifecycleRegistry()).childStack(
             source = screenStackNavigation,
             initialStack = {
-                listOf(ScreenConfiguration.About)
+                listOf(ScreenConfiguration.ClickTrackList)
             },
             childFactory = { configuration, _ ->
                 when (configuration) {
@@ -100,7 +101,7 @@ fun MainViewController() = ComposeUIViewController {
                             )
                         )
 
-                        override fun onBackClick() = Unit
+                        override fun onBackClick() = navigation.pop()
                         override fun onHomeClick() = Unit
                         override fun onTwitterClick() = Unit
                         override fun onEmailClick() = Unit
@@ -121,7 +122,7 @@ fun MainViewController() = ComposeUIViewController {
                         override fun onAddClick() = Unit
                         override fun onItemClick(id: ClickTrackId.Database) = Unit
                         override fun onItemRemove(id: ClickTrackId.Database) = Unit
-                        override fun onMenuClick() = Unit
+                        override fun onMenuClick() = navigation.openDrawer()
                     }.let(ScreenViewModel::ClickTrackList)
 
                     is ScreenConfiguration.EditClickTrack -> object : EditClickTrackViewModel {
@@ -129,7 +130,7 @@ fun MainViewController() = ComposeUIViewController {
                             PREVIEW_CLICK_TRACK_1.toEditState(showForwardButton = true)
                         )
 
-                        override fun onBackClick() = Unit
+                        override fun onBackClick() = navigation.pop()
                         override fun onForwardClick() = Unit
                         override fun onNameChange(name: String) = Unit
                         override fun onLoopChange(loop: Boolean) = Unit
@@ -156,7 +157,7 @@ fun MainViewController() = ComposeUIViewController {
                             )
                         )
 
-                        override fun onBackClick() = Unit
+                        override fun onBackClick() = navigation.pop()
                         override fun onToggleOptions() = Unit
                         override fun onOptionsExpandedChange(isOpened: Boolean) = Unit
                         override fun onPatternChoose(pattern: NotePattern) = Unit
@@ -174,7 +175,7 @@ fun MainViewController() = ComposeUIViewController {
                             )
                         )
 
-                        override fun onBackClick() = Unit
+                        override fun onBackClick() = navigation.pop()
                         override fun onTogglePlayStop() = Unit
                         override fun onTogglePlayPause() = Unit
                         override fun onTogglePlayTrackingMode() = Unit
@@ -199,7 +200,7 @@ fun MainViewController() = ComposeUIViewController {
                             )
                         )
 
-                        override fun onBackClick() = Unit
+                        override fun onBackClick() = navigation.pop()
                         override fun onTogglePlay() = Unit
                         override fun onLayer1Change(value: Int) = Unit
                         override fun onLayer2Change(value: Int) = Unit
@@ -214,7 +215,7 @@ fun MainViewController() = ComposeUIViewController {
                             )
                         )
 
-                        override fun onBackClick() = Unit
+                        override fun onBackClick() = navigation.pop()
                         override fun onThemeChange(theme: Theme) = Unit
                         override fun onLanguageChange(language: AppLanguage) = Unit
                         override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
@@ -248,7 +249,7 @@ fun MainViewController() = ComposeUIViewController {
                             )
                         )
 
-                        override fun onBackClick() = Unit
+                        override fun onBackClick() = navigation.pop()
                         override fun onAddNewClick() = Unit
                         override fun onItemClick(id: ClickSoundsId) = Unit
                         override fun onItemRemove(id: ClickSoundsId.Database) = Unit
@@ -273,7 +274,7 @@ fun MainViewController() = ComposeUIViewController {
                             )
                         )
 
-                        override fun onBackClick() = Unit
+                        override fun onBackClick() = navigation.pop()
                         override fun onAcceptClick() = Unit
                         override fun onStartingTempoChange(startingTempo: Int) = Unit
                         override fun onModeSelect(mode: TrainingEditState.TrainingMode) = Unit
@@ -300,16 +301,11 @@ fun MainViewController() = ComposeUIViewController {
                 override fun navigateToSettings() = resetTo(ScreenConfiguration.Settings)
                 override fun navigateToAbout() = resetTo(ScreenConfiguration.About)
 
-                private fun resetTo(config: ScreenConfiguration) {
-                    navigation.replaceAll(config)
-                    closeDrawer()
-                }
+                private fun resetTo(config: ScreenConfiguration) = navigation.resetTo(config)
             }
             override val screens: ScreenStackState = screens
         },
         composableProvider = object : ComposableProvider {
-            override val clickTrackList: @Composable (ClickTrackListViewModel, Modifier) -> Unit
-                get() = @Composable { _, _ -> }
             override val playClickTrack: @Composable (PlayClickTrackViewModel, Modifier) -> Unit
                 get() = @Composable { _, _ -> }
             override val editClickTrack: @Composable (EditClickTrackViewModel, Modifier) -> Unit

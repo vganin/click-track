@@ -1,6 +1,5 @@
 <resources>
     <string name="bpm_input_suffix" translatable="false">\ bpm</string>
-    <string name="click_track_list_screen_title">My click tracks</string>
     <string name="cue_duration_beats">Beats</string>
     <string name="cue_duration_measures">Measures</string>
     <string name="cue_duration_time">Time</string>

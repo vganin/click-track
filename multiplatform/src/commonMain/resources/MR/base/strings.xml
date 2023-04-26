@@ -6,6 +6,7 @@
     <string name="about_open_source_note">The app is [open-source](stub_link) now</string>
     <string name="about_screen_title">About</string>
     <string name="about_version">version %1$s</string>
+    <string name="click_track_list_screen_title">My click tracks</string>
     <string name="drawer_about">About</string>
     <string name="drawer_metronome">Metronome</string>
     <string name="drawer_polyrhythms">Polyrhythms</string>

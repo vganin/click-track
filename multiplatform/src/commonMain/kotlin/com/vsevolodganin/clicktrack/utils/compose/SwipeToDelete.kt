@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.utils.compose
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.MutableTransitionState
@@ -25,10 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.R
+import dev.icerock.moko.resources.compose.colorResource
 
 @Composable
 fun SwipeToDelete(
@@ -79,7 +79,7 @@ private fun BoxScope.DeleteLayout(
     val backgroundColor by animateColorAsState(
         when (state.targetValue) {
             RevealValue.Hidden -> Color.Transparent
-            RevealValue.Revealed -> colorResource(R.color.delete)
+            RevealValue.Revealed -> colorResource(MR.colors.delete)
         }
     )
 

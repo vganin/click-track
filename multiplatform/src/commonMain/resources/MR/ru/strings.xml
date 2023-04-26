@@ -7,6 +7,7 @@
     <string name="about_open_source_note">Приложение теперь с [открытым исходным кодом](stub_link)</string>
     <string name="about_screen_title">О приложении</string>
     <string name="about_version">версия %1$s</string>
+    <string name="click_track_list_screen_title">Мои клик-треки</string>
     <string name="drawer_about">О приложении</string>
     <string name="drawer_metronome">Метроном</string>
     <string name="drawer_polyrhythms">Полиритмы</string>

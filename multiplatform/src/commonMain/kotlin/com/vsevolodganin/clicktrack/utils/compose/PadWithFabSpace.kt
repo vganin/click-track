@@ -2,7 +2,6 @@ package com.vsevolodganin.clicktrack.utils.compose
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,7 +16,9 @@ fun PadWithFabSpace() {
     )
 }
 
-fun LazyListScope.padWithFabSpace() {
+fun Any.padWithFabSpace() {
+    // FIXME(https://github.com/JetBrains/compose-multiplatform/issues/3087): Workaround for compiler bug
+    this as LazyListScope
     item {
         PadWithFabSpace()
     }
