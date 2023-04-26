@@ -12,14 +12,5 @@
     <string name="general_unnamed_training_click_track_template">Training</string>
     <string name="notification_channel_export">Export</string>
     <string name="notification_channel_playing_now">Playing Now</string>
-    <string name="play_click_track_delete_confirmation">Do you really want to delete this click track?</string>
-    <string name="play_click_track_export_to_audio_file">Export as audio file</string>
-    <string name="play_click_track_play_tracking_mode">Play tracking</string>
-    <string name="play_click_track_started_export">Started exporting \"%1$s\"</string>
-    <string name="player_service_notification_pause">PAUSE</string>
-    <string name="player_service_notification_playing_now">Playing now…</string>
-    <string name="player_service_notification_polyrhythm_title">Polyrhythm %1$d over %2$d</string>
-    <string name="player_service_notification_resume">RESUME</string>
-    <string name="player_service_notification_stop">STOP</string>
     <string name="shortcuts_metronome">Metronome</string>
 </resources>

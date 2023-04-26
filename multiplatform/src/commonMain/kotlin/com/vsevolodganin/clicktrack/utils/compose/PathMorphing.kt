@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathNode
 import androidx.compose.ui.graphics.vector.addPathNodes
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
@@ -62,7 +61,7 @@ fun canMorph(from: List<PathNode>, to: List<PathNode>): Boolean {
     }
 
     for (i in from.indices) {
-        if (from[i].javaClass != to[i].javaClass) {
+        if (from[i]::class != to[i]::class) {
             return false
         }
     }
@@ -84,6 +83,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
             to as PathNode.Close
             from
         }
+
         is PathNode.RelativeMoveTo -> {
             to as PathNode.RelativeMoveTo
             PathNode.RelativeMoveTo(
@@ -91,6 +91,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.dy, to.dy, fraction),
             )
         }
+
         is PathNode.MoveTo -> {
             to as PathNode.MoveTo
             PathNode.MoveTo(
@@ -98,6 +99,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.y, to.y, fraction),
             )
         }
+
         is PathNode.RelativeLineTo -> {
             to as PathNode.RelativeLineTo
             PathNode.RelativeLineTo(
@@ -105,6 +107,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.dy, to.dy, fraction),
             )
         }
+
         is PathNode.LineTo -> {
             to as PathNode.LineTo
             PathNode.LineTo(
@@ -112,30 +115,35 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.y, to.y, fraction),
             )
         }
+
         is PathNode.RelativeHorizontalTo -> {
             to as PathNode.RelativeHorizontalTo
             PathNode.RelativeHorizontalTo(
                 lerp(from.dx, to.dx, fraction)
             )
         }
+
         is PathNode.HorizontalTo -> {
             to as PathNode.HorizontalTo
             PathNode.HorizontalTo(
                 lerp(from.x, to.x, fraction)
             )
         }
+
         is PathNode.RelativeVerticalTo -> {
             to as PathNode.RelativeVerticalTo
             PathNode.RelativeVerticalTo(
                 lerp(from.dy, to.dy, fraction)
             )
         }
+
         is PathNode.VerticalTo -> {
             to as PathNode.VerticalTo
             PathNode.VerticalTo(
                 lerp(from.y, to.y, fraction)
             )
         }
+
         is PathNode.RelativeCurveTo -> {
             to as PathNode.RelativeCurveTo
             PathNode.RelativeCurveTo(
@@ -147,6 +155,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.dy3, to.dy3, fraction),
             )
         }
+
         is PathNode.CurveTo -> {
             to as PathNode.CurveTo
             PathNode.CurveTo(
@@ -158,6 +167,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.y3, to.y3, fraction),
             )
         }
+
         is PathNode.RelativeReflectiveCurveTo -> {
             to as PathNode.RelativeReflectiveCurveTo
             PathNode.RelativeReflectiveCurveTo(
@@ -167,6 +177,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.dy2, to.dy2, fraction),
             )
         }
+
         is PathNode.ReflectiveCurveTo -> {
             to as PathNode.ReflectiveCurveTo
             PathNode.ReflectiveCurveTo(
@@ -176,6 +187,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.y2, to.y2, fraction),
             )
         }
+
         is PathNode.RelativeQuadTo -> {
             to as PathNode.RelativeQuadTo
             PathNode.RelativeQuadTo(
@@ -185,6 +197,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.dy2, to.dy2, fraction),
             )
         }
+
         is PathNode.QuadTo -> {
             to as PathNode.QuadTo
             PathNode.QuadTo(
@@ -194,6 +207,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.y2, to.y2, fraction),
             )
         }
+
         is PathNode.RelativeReflectiveQuadTo -> {
             to as PathNode.RelativeReflectiveQuadTo
             PathNode.RelativeReflectiveQuadTo(
@@ -201,6 +215,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.dy, to.dy, fraction),
             )
         }
+
         is PathNode.ReflectiveQuadTo -> {
             to as PathNode.ReflectiveQuadTo
             PathNode.ReflectiveQuadTo(
@@ -208,6 +223,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
                 lerp(from.y, to.y, fraction),
             )
         }
+
         is PathNode.RelativeArcTo -> TODO("Support for RelativeArcTo not implemented yet")
         is PathNode.ArcTo -> TODO("Support for ArcTo not implemented yet")
     }
@@ -215,7 +231,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
 
 @Preview
 @Composable
-private fun Preview() {
+private fun PreviewPathMorphing() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

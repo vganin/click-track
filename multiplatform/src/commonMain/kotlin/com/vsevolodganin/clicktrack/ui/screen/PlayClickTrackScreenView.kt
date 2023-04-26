@@ -1,17 +1,14 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Chip
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -39,10 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.play.PlayClickTrackState
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModel
 import com.vsevolodganin.clicktrack.play.isPaused
@@ -53,6 +47,11 @@ import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.piece.PlayButtons
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
+import com.vsevolodganin.clicktrack.utils.compose.AlertDialog
+import com.vsevolodganin.clicktrack.utils.compose.DropdownMenu
+import com.vsevolodganin.clicktrack.utils.compose.DropdownMenuItem
+import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -80,7 +79,7 @@ private fun Content(
     viewModel: PlayClickTrackViewModel,
     state: PlayClickTrackState
 ) {
-    ConstraintLayout(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.surface)
@@ -135,14 +134,14 @@ private fun TopBar(
                 AlertDialog(
                     onDismissRequest = dismiss,
                     text = {
-                        Text(text = stringResource(id = R.string.play_click_track_delete_confirmation))
+                        Text(text = stringResource(MR.strings.play_click_track_delete_confirmation))
                     },
                     confirmButton = {
                         TextButton(
                             onClick = viewModel::onRemoveClick,
                             shape = RectangleShape
                         ) {
-                            Text(text = stringResource(id = android.R.string.ok).uppercase())
+                            Text(text = stringResource(MR.strings.general_ok).uppercase())
                         }
                     },
                     dismissButton = {
@@ -150,7 +149,7 @@ private fun TopBar(
                             onClick = dismiss,
                             shape = RectangleShape
                         ) {
-                            Text(text = stringResource(id = android.R.string.cancel).uppercase())
+                            Text(text = stringResource(MR.strings.general_cancel).uppercase())
                         }
                     },
                 )
@@ -173,8 +172,8 @@ private fun OverflowMenu(
     }
 
     DropdownMenu(expanded = showDropdown, onDismissRequest = { showDropdown = false }) {
-        val startedExportMessage = stringResource(R.string.play_click_track_started_export, state.clickTrack.value.name)
-        val cancelActionLabel = stringResource(android.R.string.cancel)
+        val startedExportMessage = stringResource(MR.strings.play_click_track_started_export, state.clickTrack.value.name)
+        val cancelActionLabel = stringResource(MR.strings.general_cancel)
 
         DropdownMenuItem(onClick = {
             viewModel.onExportClick()
@@ -190,7 +189,7 @@ private fun OverflowMenu(
                 }
             }
         }) {
-            Text(stringResource(R.string.play_click_track_export_to_audio_file))
+            Text(stringResource(MR.strings.play_click_track_export_to_audio_file))
         }
     }
 }
@@ -223,7 +222,7 @@ private fun BottomBar(
             ) {
                 Checkbox(checked = state.playTrackingMode, onCheckedChange = null)
                 Spacer(Modifier.width(8.dp))
-                Text(text = stringResource(R.string.play_click_track_play_tracking_mode))
+                Text(text = stringResource(MR.strings.play_click_track_play_tracking_mode))
             }
         }
     }

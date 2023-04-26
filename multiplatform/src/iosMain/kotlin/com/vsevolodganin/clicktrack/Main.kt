@@ -120,7 +120,7 @@ fun MainViewController() = ComposeUIViewController {
                         )
 
                         override fun onAddClick() = Unit
-                        override fun onItemClick(id: ClickTrackId.Database) = Unit
+                        override fun onItemClick(id: ClickTrackId.Database) = navigation.resetTo(ScreenConfiguration.PlayClickTrack(id))
                         override fun onItemRemove(id: ClickTrackId.Database) = Unit
                         override fun onMenuClick() = navigation.openDrawer()
                     }.let(ScreenViewModel::ClickTrackList)
@@ -306,8 +306,6 @@ fun MainViewController() = ComposeUIViewController {
             override val screens: ScreenStackState = screens
         },
         composableProvider = object : ComposableProvider {
-            override val playClickTrack: @Composable (PlayClickTrackViewModel, Modifier) -> Unit
-                get() = @Composable { _, _ -> }
             override val editClickTrack: @Composable (EditClickTrackViewModel, Modifier) -> Unit
                 get() = @Composable { _, _ -> }
         })

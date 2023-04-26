@@ -56,7 +56,7 @@ fun <T> ListChooser(
                     onClick = { showChooser = false },
                     shape = RectangleShape
                 ) {
-                    Text(text = stringResource(MR.strings.settings_cancel).uppercase())
+                    Text(text = stringResource(MR.strings.general_cancel).uppercase())
                 }
             },
             text = {
