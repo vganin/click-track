@@ -22,6 +22,10 @@
     <string name="duration_picker_hours">ч</string>
     <string name="duration_picker_minutes">м</string>
     <string name="duration_picker_seconds">с</string>
+    <string name="edit_click_track_loop">Повторять</string>
+    <string name="edit_click_track_options">Настройки</string>
+    <string name="edit_click_track_screen_title">Редактирование трека…</string>
+    <string name="edit_click_track_title_hint">Введите имя клик-трека…</string>
     <string name="general_cancel">Отмена</string>
     <string name="general_metronome_click_track_title">Метроном</string>
     <string name="metronome_bpm_meter_tap">ТАП</string>

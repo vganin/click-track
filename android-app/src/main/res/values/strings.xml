@@ -1,9 +1,4 @@
 <resources>
-    <string name="edit_click_track_loop">Loop</string>
-    <string name="edit_click_track_options">Options</string>
-    <string name="edit_click_track_screen_title">Edit click track…</string>
-    <string name="edit_click_track_tempo_diff" translatable="false">%1$s%2$d bpm</string>
-    <string name="edit_click_track_title_hint">Name your click track…</string>
     <string name="export_worker_notification_finished">Finished exporting \"%1$s\"</string>
     <string name="export_worker_notification_in_process">Exporting \"%1$s\"…</string>
     <string name="export_worker_notification_open">Tap to open</string>

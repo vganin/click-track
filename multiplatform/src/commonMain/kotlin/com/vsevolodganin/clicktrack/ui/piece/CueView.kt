@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,10 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.edit.EditCueState
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.DefaultBeatsDuration
@@ -30,7 +28,9 @@ import com.vsevolodganin.clicktrack.model.DefaultMeasuresDuration
 import com.vsevolodganin.clicktrack.model.DefaultTimeDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
+import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.SimpleSpacer
+import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
 fun CueView(
@@ -49,7 +49,7 @@ fun CueView(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = stringResource(R.string.cue_position, displayPosition),
+                text = stringResource(MR.strings.cue_position, displayPosition),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(8.dp),
@@ -62,7 +62,7 @@ fun CueView(
                 value = value.name,
                 onValueChange = onNameChange,
                 placeholder = {
-                    Text(stringResource(R.string.cue_name_hint))
+                    Text(stringResource(MR.strings.cue_name_hint))
                 },
                 modifier = Modifier.weight(1f)
             )

@@ -25,9 +25,9 @@ import com.vsevolodganin.clicktrack.RootViewModel
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenViewModel
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
-import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModel
 import com.vsevolodganin.clicktrack.ui.screen.AboutScreenView
 import com.vsevolodganin.clicktrack.ui.screen.ClickTrackListScreenView
+import com.vsevolodganin.clicktrack.ui.screen.EditClickTrackScreenView
 import com.vsevolodganin.clicktrack.ui.screen.MetronomeScreenView
 import com.vsevolodganin.clicktrack.ui.screen.PlayClickTrackScreenView
 import com.vsevolodganin.clicktrack.ui.screen.PolyrhythmsScreenView
@@ -37,20 +37,15 @@ import com.vsevolodganin.clicktrack.ui.screen.TrainingScreenView
 import com.vsevolodganin.clicktrack.utils.compose.ForcedHapticFeedback
 import androidx.compose.material.DrawerState as ComposeDrawerState
 
-// TODO: Temporary for library consumer to provide composables that are not common yet
-interface ComposableProvider {
-    val editClickTrack: @Composable (EditClickTrackViewModel, Modifier) -> Unit
-}
-
 @Composable
-fun RootView(viewModel: RootViewModel, composableProvider: ComposableProvider) {
+fun RootView(viewModel: RootViewModel) {
     ClickTrackTheme {
         ForcedHapticFeedback {
             Scaffold(
                 scaffoldState = rememberScaffoldState(drawerState = drawerState(viewModel.drawer)),
                 drawerContent = { DrawerView(viewModel.drawer) },
             ) {
-                RootView(viewModel, Modifier.padding(it), composableProvider)
+                RootView(viewModel, Modifier.padding(it))
             }
         }
     }
@@ -60,7 +55,6 @@ fun RootView(viewModel: RootViewModel, composableProvider: ComposableProvider) {
 private fun RootView(
     viewModel: RootViewModel,
     modifier: Modifier,
-    composableProvider: ComposableProvider
 ) {
     val screens by viewModel.screens.subscribeAsState()
 
@@ -92,17 +86,17 @@ private fun RootView(
             }
         }, contentKey = ActiveScreen::config
     ) { screen ->
-        RootView(screen.viewModel, composableProvider)
+        RootView(screen.viewModel)
     }
 }
 
 @Composable
-private fun RootView(viewModel: ScreenViewModel, composableProvider: ComposableProvider) {
+private fun RootView(viewModel: ScreenViewModel) {
     val modifier = Modifier.fillMaxSize()
     when (viewModel) {
         is ScreenViewModel.ClickTrackList -> ClickTrackListScreenView(viewModel.value, modifier)
         is ScreenViewModel.PlayClickTrack -> PlayClickTrackScreenView(viewModel.value, modifier)
-        is ScreenViewModel.EditClickTrack -> composableProvider.editClickTrack(viewModel.value, modifier)
+        is ScreenViewModel.EditClickTrack -> EditClickTrackScreenView(viewModel.value, modifier)
         is ScreenViewModel.Metronome -> MetronomeScreenView(viewModel.value, modifier)
         is ScreenViewModel.Settings -> SettingsScreenView(viewModel.value, modifier)
         is ScreenViewModel.SoundLibrary -> SoundLibraryScreenView(viewModel.value, modifier)

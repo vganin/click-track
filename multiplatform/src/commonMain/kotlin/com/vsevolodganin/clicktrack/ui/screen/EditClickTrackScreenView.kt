@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -44,10 +45,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.edit.EditClickTrackState
 import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModel
 import com.vsevolodganin.clicktrack.edit.EditCueState
@@ -65,7 +64,7 @@ import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
-import kotlinx.coroutines.android.awaitFrame
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -84,7 +83,7 @@ fun EditClickTrackScreenView(
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(R.string.edit_click_track_screen_title)) },
+                title = { Text(stringResource(MR.strings.edit_click_track_screen_title)) },
                 actions = {
                     if (state?.showForwardButton == true) {
                         IconButton(onClick = viewModel::onForwardClick) {
@@ -100,7 +99,6 @@ fun EditClickTrackScreenView(
                 onClick = {
                     viewModel.onAddNewCueClick()
                     coroutineScope.launch {
-                        awaitFrame()
                         listState.scrollToItem(listState.layoutInfo.totalItemsCount - 1)
                     }
                 }
@@ -134,7 +132,7 @@ private fun Content(
                 value = state.name,
                 onValueChange = viewModel::onNameChange,
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(text = stringResource(R.string.edit_click_track_title_hint)) },
+                placeholder = { Text(text = stringResource(MR.strings.edit_click_track_title_hint)) },
                 textStyle = MaterialTheme.typography.h6,
                 colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
             )
@@ -189,7 +187,7 @@ private fun OptionsItem(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = stringResource(R.string.edit_click_track_options),
+                    text = stringResource(MR.strings.edit_click_track_options),
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -224,7 +222,7 @@ private fun LoopItem(
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = stringResource(R.string.edit_click_track_loop),
+            text = stringResource(MR.strings.edit_click_track_loop),
             modifier = Modifier.align(CenterVertically)
         )
 
@@ -270,7 +268,7 @@ private fun tempoDiffText(tempoDiff: BeatsPerMinuteDiff): String {
         }
     }
     val number = remember(tempoDiff) { tempoDiff.value.absoluteValue }
-    return stringResource(id = R.string.edit_click_track_tempo_diff, sign, number)
+    return stringResource(MR.strings.edit_click_track_tempo_diff, sign, number)
 }
 
 @Composable

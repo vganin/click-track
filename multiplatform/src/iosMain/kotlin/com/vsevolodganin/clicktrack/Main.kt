@@ -1,13 +1,12 @@
 package com.vsevolodganin.clicktrack
 
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
+import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.vsevolodganin.clicktrack.about.AboutState
 import com.vsevolodganin.clicktrack.about.AboutViewModel
@@ -49,7 +48,6 @@ import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.training.TrainingEditState
 import com.vsevolodganin.clicktrack.training.TrainingEndingKind
 import com.vsevolodganin.clicktrack.training.TrainingViewModel
-import com.vsevolodganin.clicktrack.ui.ComposableProvider
 import com.vsevolodganin.clicktrack.ui.RootView
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_2
@@ -120,7 +118,7 @@ fun MainViewController() = ComposeUIViewController {
                         )
 
                         override fun onAddClick() = Unit
-                        override fun onItemClick(id: ClickTrackId.Database) = navigation.resetTo(ScreenConfiguration.PlayClickTrack(id))
+                        override fun onItemClick(id: ClickTrackId.Database) = navigation.push(ScreenConfiguration.PlayClickTrack(id))
                         override fun onItemRemove(id: ClickTrackId.Database) = Unit
                         override fun onMenuClick() = navigation.openDrawer()
                     }.let(ScreenViewModel::ClickTrackList)
@@ -181,7 +179,7 @@ fun MainViewController() = ComposeUIViewController {
                         override fun onTogglePlayTrackingMode() = Unit
                         override fun onProgressDragStart() = Unit
                         override fun onProgressDrop(progress: Double) = Unit
-                        override fun onEditClick() = Unit
+                        override fun onEditClick() = navigation.push(ScreenConfiguration.EditClickTrack(PREVIEW_CLICK_TRACK_1.id, false))
                         override fun onRemoveClick() = Unit
                         override fun onExportClick() = Unit
                         override fun onCancelExportClick() = Unit
@@ -305,8 +303,5 @@ fun MainViewController() = ComposeUIViewController {
             }
             override val screens: ScreenStackState = screens
         },
-        composableProvider = object : ComposableProvider {
-            override val editClickTrack: @Composable (EditClickTrackViewModel, Modifier) -> Unit
-                get() = @Composable { _, _ -> }
-        })
+    )
 }

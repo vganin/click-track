@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="edit_click_track_loop">Повторять</string>
-    <string name="edit_click_track_options">Настройки</string>
-    <string name="edit_click_track_screen_title">Редактирование трека…</string>
-    <string name="edit_click_track_title_hint">Введите имя клик-трека…</string>
     <string name="export_worker_notification_finished">Завершен экспорт \"%1$s\"</string>
     <string name="export_worker_notification_in_process">Экспорт \"%1$s\"…</string>
     <string name="export_worker_notification_open">Нажмите, чтобы открыть</string>

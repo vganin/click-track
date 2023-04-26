@@ -10,12 +10,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathBuilder
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.DOWN
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.LEFT
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.RIGHT
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.UP
+import com.vsevolodganin.clicktrack.utils.compose.Preview
 
 enum class ArrowDirection {
     UP, DOWN, LEFT, RIGHT
@@ -47,18 +47,21 @@ fun arrowVectorResource(direction: ArrowDirection): ImageVector {
                         .lineTo(2f, 2f)
                         .close()
                         .getNodes()
+
                     DOWN -> PathBuilder()
                         .moveTo(0f, 0f)
                         .lineTo(2f, 0f)
                         .lineTo(1f, 2f)
                         .close()
                         .getNodes()
+
                     LEFT -> PathBuilder()
                         .moveTo(2f, 0f)
                         .lineTo(0f, 1f)
                         .lineTo(2f, 2f)
                         .close()
                         .getNodes()
+
                     RIGHT -> PathBuilder()
                         .moveTo(0f, 0f)
                         .lineTo(2f, 1f)

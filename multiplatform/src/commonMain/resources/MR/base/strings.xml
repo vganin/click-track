@@ -23,6 +23,11 @@
     <string name="duration_picker_hours">h</string>
     <string name="duration_picker_minutes">m</string>
     <string name="duration_picker_seconds">s</string>
+    <string name="edit_click_track_loop">Loop</string>
+    <string name="edit_click_track_options">Options</string>
+    <string name="edit_click_track_screen_title">Edit click track…</string>
+    <string name="edit_click_track_tempo_diff" translatable="false">%1$s%2$d bpm</string>
+    <string name="edit_click_track_title_hint">Name your click track…</string>
     <string name="general_cancel">Cancel</string>
     <string name="general_metronome_click_track_title">Metronome</string>
     <string name="general_ok">Ok</string>
