@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
+import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,11 +32,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundType
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
@@ -48,6 +47,7 @@ import com.vsevolodganin.clicktrack.ui.piece.PlayStopIcon
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
+import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -60,7 +60,7 @@ fun SoundLibraryScreenView(
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(R.string.sound_library_screen_title)) },
+                title = { Text(stringResource(MR.strings.sound_library_screen_title)) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -121,7 +121,7 @@ private fun BuiltinClickSoundsItem(
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = stringResource(item.data.nameResource.resourceId),
+            text = stringResource(item.data.nameResource),
             modifier = Modifier
                 .fillMaxWidth()
                 .align(CenterVertically),

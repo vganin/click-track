@@ -28,7 +28,6 @@
     <string name="player_service_notification_resume">ПРОДОЛЖИТЬ</string>
     <string name="player_service_notification_stop">ОСТАНОВИТЬ</string>
     <string name="shortcuts_metronome">Метроном</string>
-    <string name="sound_library_screen_title">Звуки</string>
     <string name="training_decrease_by">Уменьшать на</string>
     <string name="training_decrease_every">Уменьшать каждые</string>
     <string name="training_increase_by">Увеличивать на</string>

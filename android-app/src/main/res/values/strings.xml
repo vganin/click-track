@@ -31,7 +31,6 @@
     <string name="player_service_notification_resume">RESUME</string>
     <string name="player_service_notification_stop">STOP</string>
     <string name="shortcuts_metronome">Metronome</string>
-    <string name="sound_library_screen_title">Sound Library</string>
     <string name="training_decrease_by">Decrease by</string>
     <string name="training_decrease_every">Decrease every</string>
     <string name="training_increase_by">Increase by</string>

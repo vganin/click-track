@@ -37,4 +37,5 @@
     <string name="sound_library_claves">Claves</string>
     <string name="sound_library_cowbell">Cowbell</string>
     <string name="sound_library_drum_kit">Drum kit</string>
+    <string name="sound_library_screen_title">Sound Library</string>
 </resources>
