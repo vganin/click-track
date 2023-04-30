@@ -35,6 +35,7 @@ import androidx.compose.ui.util.lerp
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.Angle
 import com.vsevolodganin.clicktrack.utils.compose.AngleSector
+import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.toRadians
@@ -54,8 +55,10 @@ fun PolyrhythmCircle(
     val primaryColor = MaterialTheme.colors.primary
     val secondaryColor = MaterialTheme.colors.secondary
 
-    val innerDotAnimations = animatedDots(number = innerDotNumber, progressAngle = progressAngle)
-    val outerDotAnimations = animatedDots(number = outerDotNumber, progressAngle = progressAngle)
+    val innerDots = dots(number = innerDotNumber)
+    val outerDots = dots(number = outerDotNumber)
+    val innerDotPulses = dotPulses(number = innerDotNumber, progressAngle = progressAngle)
+    val outerDotPulses = dotPulses(number = outerDotNumber, progressAngle = progressAngle)
 
     val sweepAngle = remember { Animatable(0f) }
     LaunchedEffect(progressAngle == null) {
@@ -77,12 +80,12 @@ fun PolyrhythmCircle(
         drawPolyrhythmCircle(
             primaryColor = primaryColor,
             secondaryColor = secondaryColor,
-            innerDotNumber = innerDotNumber,
+            innerDots = innerDots,
             innerCircleRadius = innerCircleRadius,
-            innerDotAnimations = innerDotAnimations,
-            outerDotNumber = outerDotNumber,
+            innerDotPulses = innerDotPulses,
+            outerDots = outerDots,
             outerCircleRadius = outerCircleRadius,
-            outerDotAnimations = outerDotAnimations,
+            outerDotPulses = outerDotPulses,
         )
 
         if (progressAngle != null) {
@@ -125,44 +128,44 @@ fun PolyrhythmCircle(
 private fun DrawScope.drawPolyrhythmCircle(
     primaryColor: Color,
     secondaryColor: Color,
-    innerDotNumber: Int,
+    innerDots: List<Dot>,
     innerCircleRadius: Float,
-    innerDotAnimations: List<DotAnimation>,
-    outerDotNumber: Int,
+    innerDotPulses: List<DotPulse>,
+    outerDots: List<Dot>,
     outerCircleRadius: Float,
-    outerDotAnimations: List<DotAnimation>,
+    outerDotPulses: List<DotPulse>,
 ) {
-    drawCircleWithMarks(
+    drawCircleWithDots(
         primaryColor = primaryColor,
         secondaryColor = secondaryColor,
-        number = innerDotNumber,
+        dots = innerDots,
         circleRadius = innerCircleRadius,
     )
 
     drawDotAnimations(
         color = secondaryColor,
-        dotAnimations = innerDotAnimations,
+        dotAnimations = innerDotPulses,
         radius = innerCircleRadius
     )
 
-    drawCircleWithMarks(
+    drawCircleWithDots(
         primaryColor = primaryColor,
         secondaryColor = secondaryColor,
-        number = outerDotNumber,
+        dots = outerDots,
         circleRadius = outerCircleRadius,
     )
 
     drawDotAnimations(
         color = secondaryColor,
-        dotAnimations = outerDotAnimations,
+        dotAnimations = outerDotPulses,
         radius = outerCircleRadius
     )
 }
 
-private fun DrawScope.drawCircleWithMarks(
+private fun DrawScope.drawCircleWithDots(
     primaryColor: Color,
     secondaryColor: Color,
-    number: Int,
+    dots: List<Dot>,
     circleRadius: Float,
 ) {
     val brush = sweepGradient(
@@ -170,21 +173,30 @@ private fun DrawScope.drawCircleWithMarks(
         centerColor = secondaryColor,
         borderColor = primaryColor.copy(alpha = 0.1f)
     )
-    val angleIncrement = FULL_ANGLE_DEGREES / number
 
-    for (i in 0 until number) {
-        val angle = angleIncrement * i
+    val dotsSortedByAngle = dots.sortedBy { it.angle.value }
 
-        rotate(angle - 90f) {
-            drawArc(
+    dotsSortedByAngle.forEachIndexed { index, dot ->
+        rotate(dot.angle.value - 90f) {
+            fun drawArc(sweepAngle: Float) = drawArc(
                 brush = brush,
-                startAngle = -angleIncrement / 2,
-                sweepAngle = angleIncrement,
+                startAngle = 0f,
+                sweepAngle = sweepAngle,
                 useCenter = false,
                 style = Stroke(width = STROKE_WIDTH.toPx()),
                 topLeft = center - Offset(circleRadius, circleRadius),
                 size = Size(circleRadius * 2, circleRadius * 2)
             )
+
+            val nextCcwDotAngle = dotsSortedByAngle.getOrNull(index - 1)?.angle?.value
+                ?: (dotsSortedByAngle.last().angle.value - 360)
+            val nextCcwDotDistance = dot.angle.value - nextCcwDotAngle
+            drawArc(-nextCcwDotDistance / 2)
+
+            val nextCwDotAngle = dotsSortedByAngle.getOrNull(index + 1)?.angle?.value
+                ?: (dotsSortedByAngle.first().angle.value + 360)
+            val nextCwDotDistance = nextCwDotAngle - dot.angle.value
+            drawArc(nextCwDotDistance / 2)
 
             drawCircle(
                 brush = brush,
@@ -197,7 +209,7 @@ private fun DrawScope.drawCircleWithMarks(
 
 private fun DrawScope.drawDotAnimations(
     color: Color,
-    dotAnimations: List<DotAnimation>,
+    dotAnimations: List<DotPulse>,
     radius: Float,
 ) {
     for (dotAnimation in dotAnimations) {
@@ -221,16 +233,51 @@ private fun DrawScope.drawDotAnimations(
 }
 
 @Composable
-private fun animatedDots(
-    number: Int,
-    progressAngle: Float?,
-): List<DotAnimation> {
-    val coroutineScope = rememberCoroutineScope()
-    val animations = remember {
-        mutableStateListOf<DotAnimation>()
+private fun dots(number: Int): List<Dot> {
+    val activeDots = remember { mutableStateListOf<Dot>() }
+    val deletedDots = remember { mutableStateListOf<Dot>() }
+
+    LaunchedEffect(number) {
+        val angleIncrement = FULL_ANGLE_DEGREES / number
+        val createdNumber = maxOf(0, number - activeDots.size)
+        val deletedNumber = maxOf(0, activeDots.size - number)
+
+        repeat(deletedNumber) {
+            deletedDots += activeDots.removeAt(activeDots.lastIndex)
+        }
+
+        repeat(createdNumber) {
+            activeDots += Dot(Animatable(activeDots.lastOrNull()?.angle?.value ?: 0f))
+        }
+
+        activeDots.forEachIndexed { index, dot ->
+            launch {
+                dot.angle.animateTo(angleIncrement * index)
+            }
+        }
+
+        deletedDots.forEach { dot ->
+            launch {
+                dot.angle.animateTo(activeDots.lastOrNull()?.angle?.targetValue ?: 0f)
+                deletedDots -= dot
+            }
+        }
     }
 
-    if (progressAngle == null) return animations
+    return activeDots + deletedDots
+}
+
+@Composable
+private fun dotPulses(
+    number: Int,
+    progressAngle: Float?,
+): List<DotPulse> {
+    val coroutineScope = rememberCoroutineScope()
+    val pulses = remember {
+        mutableStateListOf<DotPulse>()
+    }
+
+    if (progressAngle == null) return pulses
 
     val previousProgressAngle = remember { mutableStateOf(progressAngle) }
 
@@ -240,28 +287,32 @@ private fun animatedDots(
         if (Angle(dotAngle) in AngleSector(previousProgressAngle.value, progressAngle)) {
             val progressAnimatable = Animatable(0f)
 
-            val dotAnimation = DotAnimation(
+            val dotPulse = DotPulse(
                 angle = dotAngle,
                 animationProgress = progressAnimatable.asState()
             )
-            animations += dotAnimation
+            pulses += dotPulse
 
             coroutineScope.launch {
                 progressAnimatable.animateTo(
                     targetValue = 1f,
                     animationSpec = tween(durationMillis = 300, easing = LinearEasing)
                 )
-                animations -= dotAnimation
+                pulses -= dotPulse
             }
         }
     }
 
     previousProgressAngle.value = progressAngle
 
-    return animations
+    return pulses
 }
 
-private class DotAnimation(
+private class Dot(
+    val angle: AnimatableFloat
+)
+
+private class DotPulse(
     val angle: Float,
     val animationProgress: State<Float>,
 )
