@@ -1,9 +1,10 @@
 package com.vsevolodganin.clicktrack.training
 
 import com.vsevolodganin.clicktrack.common.BpmValidator
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class TrainingStateValidator @Inject constructor(
+@Inject
+class TrainingStateValidator(
     private val bpmValidator: BpmValidator,
 ) {
 

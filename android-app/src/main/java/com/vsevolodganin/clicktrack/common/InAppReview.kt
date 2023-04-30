@@ -10,15 +10,15 @@ import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Provider
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
 
 @ActivityScope
-class InAppReview @Inject constructor(
-    private val reviewManagerProvider: Provider<ReviewManager>,
+@Inject
+class InAppReview(
+    private val reviewManagerProvider: () -> ReviewManager,
     private val activity: Activity,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val analyticsLogger: AnalyticsLogger,
@@ -32,7 +32,7 @@ class InAppReview @Inject constructor(
     private suspend fun tryRequestReview() {
         try {
             if (mayRequestReview()) {
-                val reviewManager = reviewManagerProvider.get()
+                val reviewManager = reviewManagerProvider.invoke()
                 val reviewInfo = reviewManager.requestReview()
                 reviewManager.launchReview(activity, reviewInfo)
                 userPreferencesRepository.reviewRequestTimestamp.value = nowMilliseconds()

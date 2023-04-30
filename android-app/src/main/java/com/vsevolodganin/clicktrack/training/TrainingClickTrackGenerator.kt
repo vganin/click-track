@@ -7,10 +7,11 @@ import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.model.asTimeGiven
 import com.vsevolodganin.clicktrack.training.TrainingEditState.TrainingMode
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration
 
-class TrainingClickTrackGenerator @Inject constructor() {
+@Inject
+class TrainingClickTrackGenerator() {
 
     fun generate(trainingState: TrainingValidState, name: String): ClickTrack {
         return ClickTrack(

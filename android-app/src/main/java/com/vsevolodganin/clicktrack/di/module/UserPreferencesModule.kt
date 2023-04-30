@@ -6,15 +6,11 @@ import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@Module
-object UserPreferencesModule {
+interface UserPreferencesModule {
 
     @Provides
-    @Singleton
     fun provideUserPreferences(application: Application): DataStore<Preferences> {
         return PreferenceDataStoreFactory.create(
             migrations = listOf(SharedPreferencesMigration(application, "user_preferences")),

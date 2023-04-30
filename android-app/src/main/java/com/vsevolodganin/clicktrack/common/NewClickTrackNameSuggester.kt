@@ -1,11 +1,10 @@
 package com.vsevolodganin.clicktrack.common
 
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
-import dagger.Reusable
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@Reusable
-class NewClickTrackNameSuggester @Inject constructor(
+@Inject
+class NewClickTrackNameSuggester(
     private val storage: ClickTrackRepository
 ) {
     fun suggest(baseName: String): String {

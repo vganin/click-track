@@ -9,10 +9,11 @@ import androidx.media.AudioManagerCompat
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @PlayerServiceScope
-class AudioFocusManager @Inject constructor(
+@Inject
+class AudioFocusManager(
     private val audioManager: AudioManager
 ) {
     private val hasFocus = MutableStateFlow(false)

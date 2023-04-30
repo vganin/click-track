@@ -2,11 +2,12 @@ package com.vsevolodganin.clicktrack.analytics
 
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
-class AnalyticsLogger @Inject constructor(private val firebaseAnalytics: FirebaseAnalytics) {
+@ApplicationScope
+@Inject
+class AnalyticsLogger(private val firebaseAnalytics: FirebaseAnalytics) {
 
     fun logEvent(name: String, vararg parameters: Pair<String, String>) {
         firebaseAnalytics.logEvent(

@@ -3,18 +3,14 @@ package com.vsevolodganin.clicktrack.di.module
 import android.os.Process
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.utils.coroutine.createSingleThreadCoroutineDispatcher
-import dagger.Module
-import dagger.Provides
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import javax.inject.Qualifier
+import me.tatarka.inject.annotations.Provides
 
-@Qualifier
-annotation class PlayerDispatcher
+typealias PlayerDispatcher = CoroutineDispatcher
 
-@Module
-object PlayerServiceModule {
+interface PlayerServiceModule {
 
     @Provides
     @PlayerServiceScope
@@ -24,8 +20,7 @@ object PlayerServiceModule {
 
     @Provides
     @PlayerServiceScope
-    @PlayerDispatcher
-    fun providePlayerCoroutineDispatcher(): CoroutineDispatcher {
+    fun providePlayerCoroutineDispatcher(): PlayerDispatcher {
         return createSingleThreadCoroutineDispatcher("ClickTrackPlayer", Process.THREAD_PRIORITY_URGENT_AUDIO)
     }
 }

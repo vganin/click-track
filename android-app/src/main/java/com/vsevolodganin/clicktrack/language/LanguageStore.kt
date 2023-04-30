@@ -10,10 +10,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
-class LanguageStore @Inject constructor(lifecycleOwner: LifecycleOwner) {
+@Inject
+class LanguageStore(lifecycleOwner: LifecycleOwner) {
 
     val appLanguage: MutableStateFlow<AppLanguage> = MutableStateFlow(storedAppLanguage)
 

@@ -2,10 +2,11 @@ package com.vsevolodganin.clicktrack.metronome
 
 import android.os.SystemClock
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
-class BpmMeter @Inject constructor() {
+@Inject
+class BpmMeter() {
 
     private val samples: Array<Long?> = Array(HISTORY_SIZE) { null }
     private var index: Int = 0

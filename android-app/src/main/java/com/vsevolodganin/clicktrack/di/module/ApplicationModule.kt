@@ -6,33 +6,31 @@ import android.content.Context
 import android.media.AudioManager
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.WorkManager
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import me.tatarka.inject.annotations.Provides
 
-@Module
-object ApplicationModule {
+interface ApplicationModule {
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideAudioManager(application: Application): AudioManager {
         return application.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideContentResolver(application: Application): ContentResolver {
         return application.contentResolver
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideWorkManager(application: Application): WorkManager {
         return WorkManager.getInstance(application)
     }
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideNotificationManager(application: Application): NotificationManagerCompat {
         return NotificationManagerCompat.from(application)
     }

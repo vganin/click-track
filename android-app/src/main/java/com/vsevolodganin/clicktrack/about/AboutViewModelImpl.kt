@@ -5,12 +5,13 @@ import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.BuildConfig
 import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.common.LinkOpener
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-class AboutViewModelImpl @AssistedInject constructor(
+@Inject
+class AboutViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: Navigation,
     private val linkOpener: LinkOpener,

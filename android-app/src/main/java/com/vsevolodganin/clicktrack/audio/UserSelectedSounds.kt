@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.audio
 
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.model.ClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
@@ -12,11 +13,11 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
-class UserSelectedSounds @Inject constructor(
+@ApplicationScope
+@Inject
+class UserSelectedSounds(
     userPreferencesRepository: UserPreferencesRepository,
     private val clickSoundsRepository: ClickSoundsRepository,
 ) {

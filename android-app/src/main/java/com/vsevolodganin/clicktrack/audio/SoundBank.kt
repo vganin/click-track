@@ -5,13 +5,14 @@ import android.content.ContentResolver
 import android.content.res.AssetFileDescriptor
 import android.net.Uri
 import androidx.annotation.RawRes
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
+import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class SoundBank @Inject constructor(
+@ApplicationScope
+@Inject
+class SoundBank(
     private val application: Application,
     private val audioDecoder: AudioDecoder,
     private val contentResolver: ContentResolver,

@@ -9,10 +9,11 @@ import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
-class RootViewModelImpl @Inject constructor(
+@Inject
+class RootViewModelImpl(
     private val componentContext: ComponentContext,
     private val drawerViewModel: DrawerViewModel,
     private val screenStackNavigation: ScreenStackNavigation,

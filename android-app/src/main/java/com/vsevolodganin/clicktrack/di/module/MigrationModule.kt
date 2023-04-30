@@ -3,15 +3,13 @@ package com.vsevolodganin.clicktrack.di.module
 import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import com.vsevolodganin.clicktrack.migration.CanMigrate
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
-import dagger.Binds
-import dagger.Module
-import dagger.multibindings.IntoSet
+import me.tatarka.inject.annotations.IntoSet
+import me.tatarka.inject.annotations.Provides
 
-@Module
 interface MigrationModule {
 
-    @Binds
+    @Provides
     @IntoSet
     @ActivityScope
-    fun bindClickTrackRepository(clickTrackRepository: ClickTrackRepository): CanMigrate
+    fun provideCanMigrate(clickTrackRepository: ClickTrackRepository): CanMigrate = clickTrackRepository
 }

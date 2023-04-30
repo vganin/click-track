@@ -4,17 +4,15 @@ import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.di.component.ActivityScope
-import dagger.Binds
-import dagger.Module
+import me.tatarka.inject.annotations.Provides
 
-@Module
 interface ActivityModule {
 
-    @Binds
+    @Provides
     @ActivityScope
-    fun provideBaseActivity(activity: MainActivity): Activity
+    fun provideBaseActivity(activity: MainActivity): Activity = activity
 
-    @Binds
+    @Provides
     @ActivityScope
-    fun provideAppCompatActivity(activity: MainActivity): AppCompatActivity
+    fun provideAppCompatActivity(activity: MainActivity): AppCompatActivity = activity
 }

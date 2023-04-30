@@ -19,7 +19,6 @@ import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
 import com.vsevolodganin.clicktrack.utils.coroutine.collectLatestFirst
 import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
 import com.vsevolodganin.clicktrack.utils.grabIf
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
@@ -39,14 +38,15 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
-import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 @PlayerServiceScope
-class Player @Inject constructor(
-    @PlayerDispatcher private val playerDispatcher: CoroutineDispatcher,
+@Inject
+class Player(
+    private val playerDispatcher: PlayerDispatcher,
     private val soundPool: PlayerSoundPool,
     private val clickSoundsRepository: ClickSoundsRepository,
     private val playableContentProvider: PlayableContentProvider,
@@ -105,6 +105,7 @@ class Player @Inject constructor(
                         }
                     }
             }
+
             TwoLayerPolyrhythmId -> {
                 playableContentProvider.twoLayerPolyrhythmFlow()
                     .withIndex()

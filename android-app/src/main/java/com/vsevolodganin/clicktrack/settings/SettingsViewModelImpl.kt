@@ -8,14 +8,15 @@ import com.vsevolodganin.clicktrack.language.LanguageStore
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-class SettingsViewModelImpl @AssistedInject constructor(
+@Inject
+class SettingsViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: Navigation,
     private val userPreferences: UserPreferencesRepository,
