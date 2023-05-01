@@ -2,15 +2,13 @@ package com.vsevolodganin.clicktrack.di.module
 
 import android.app.Application
 import com.google.firebase.analytics.FirebaseAnalytics
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import me.tatarka.inject.annotations.Provides
 
-@Module
-object FirebaseModule {
+interface FirebaseModule {
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideFirebase(application: Application): FirebaseAnalytics {
         return FirebaseAnalytics.getInstance(application)
     }

@@ -19,10 +19,11 @@ import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.parcelize.Parcelize
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
-class SoundChooser @Inject constructor(
+@Inject
+class SoundChooser(
     private val activity: AppCompatActivity,
     private val clickSoundsRepository: ClickSoundsRepository,
     stateKeeperOwner: StateKeeperOwner,

@@ -6,10 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.vsevolodganin.clicktrack.di.component.ActivityScope
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
-class LinkOpener @Inject constructor(
+@Inject
+class LinkOpener(
     private val context: Activity,
 ) {
     fun url(url: String) {

@@ -17,10 +17,11 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
-class PlayerServiceAccess @Inject constructor(
+@Inject
+class PlayerServiceAccess(
     private val activity: Activity,
     lifecycleOwner: LifecycleOwner
 ) {

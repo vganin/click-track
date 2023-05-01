@@ -14,10 +14,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @PlayerServiceScope
-class PlayableContentProvider @Inject constructor(
+@Inject
+class PlayableContentProvider(
     private val application: Application,
     private val clickTrackRepository: ClickTrackRepository,
     private val userPreferences: UserPreferencesRepository

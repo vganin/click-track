@@ -5,10 +5,11 @@ import android.content.Intent
 import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.utils.decompose.resetTo
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
-class IntentProcessor @Inject constructor(
+@Inject
+class IntentProcessor(
     private val navigation: Navigation
 ) {
     fun process(intent: Intent) {
@@ -30,7 +31,8 @@ class IntentProcessor @Inject constructor(
     }
 }
 
-class IntentFactory @Inject constructor(private val application: Application) {
+@Inject
+class IntentFactory(private val application: Application) {
 
     fun navigate(id: ClickTrackId): Intent? {
         return when (id) {

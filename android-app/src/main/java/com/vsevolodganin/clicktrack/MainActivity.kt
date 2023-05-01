@@ -10,41 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.arkivanov.decompose.defaultComponentContext
-import com.vsevolodganin.clicktrack.common.InAppReview
-import com.vsevolodganin.clicktrack.migration.MigrationManager
-import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
-import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
+import com.vsevolodganin.clicktrack.di.component.ActivityComponent
+import com.vsevolodganin.clicktrack.di.component.create
 import com.vsevolodganin.clicktrack.ui.RootView
-import com.vsevolodganin.clicktrack.utils.android.PermissionsHelper
-import com.vsevolodganin.clicktrack.utils.cast
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var intentProcessor: IntentProcessor
-
-    @Inject
-    lateinit var migrationManager: MigrationManager
-
-    @Inject
-    lateinit var rootViewModel: RootViewModel
-
-    @Inject
-    lateinit var inAppReview: InAppReview
-
-    @Inject
-    lateinit var permissionsHelper: PermissionsHelper
-
-    @Suppress("unused") // FIXME: Initializing eagerly for optimisation
-    @Inject
-    lateinit var playerServiceAccess: PlayerServiceAccess
-
-    @Suppress("unused") // FIXME: Initializing eagerly for proper registration of Activity Result API
-    @Inject
-    lateinit var soundChooser: SoundChooser
+    private lateinit var component: ActivityComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,41 +27,41 @@ class MainActivity : AppCompatActivity() {
 
         installSplashScreen()
 
-        inject()
+        component = ActivityComponent::class.create(
+            applicationComponent = applicationComponent,
+            activity = this,
+            componentContext = defaultComponentContext()
+        )
 
-        migrationManager.tryMigrate()
+        // FIXME: Initializing eagerly for proper registration of Activity Result API
+        component.soundChooser
+        component.permissionsHelper
+
+        component.migrationManager.tryMigrate()
 
         setContent {
-            RootView(rootViewModel)
+            RootView(component.rootViewModel)
         }
 
         if (savedInstanceState == null) {
-            intentProcessor.process(intent)
+            component.intentProcessor.process(intent)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             GlobalScope.launch {
-                permissionsHelper.requestPermission(Manifest.permission.POST_NOTIFICATIONS)
+                component.permissionsHelper.requestPermission(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        intentProcessor.process(intent)
+        component.intentProcessor.process(intent)
     }
 
     override fun onResume() {
         super.onResume()
         volumeControlStream = AudioManager.STREAM_MUSIC
-        inAppReview.tryLaunchRequestReview()
-    }
-
-    private fun inject() {
-        application.cast<MainApplication>().daggerComponent.activityComponentBuilder()
-            .activity(this)
-            .rootComponentContext(defaultComponentContext())
-            .build()
-            .inject(this)
+        component.inAppReview.tryLaunchRequestReview()
     }
 }

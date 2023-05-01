@@ -11,10 +11,11 @@ import com.vsevolodganin.clicktrack.audio.AudioTrack
 import com.vsevolodganin.clicktrack.audio.SoundBank
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @PlayerServiceScope
-class PlayerSoundPool @Inject constructor(
+@Inject
+class PlayerSoundPool(
     application: Application,
     private val soundBank: SoundBank,
 ) {

@@ -4,6 +4,7 @@ import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import com.vsevolodganin.clicktrack.Database
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.migration.CanMigrate
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
@@ -14,12 +15,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 import com.vsevolodganin.clicktrack.storage.ClickTrack as StorageClickTrack
 
-@Singleton
-class ClickTrackRepository @Inject constructor(
+@ApplicationScope
+@Inject
+class ClickTrackRepository(
     private val database: Database,
     private val json: Json,
 ) : CanMigrate {

@@ -13,68 +13,62 @@ import com.vsevolodganin.clicktrack.RootViewModelImpl
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.ScreenStackState
+import com.vsevolodganin.clicktrack.ScreenViewModelFactory
 import com.vsevolodganin.clicktrack.di.component.ActivityScope
-import com.vsevolodganin.clicktrack.di.factory.DrawerViewModelFactory
-import com.vsevolodganin.clicktrack.di.factory.ScreenViewModelFactory
 import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
-import dagger.Binds
-import dagger.Module
-import dagger.Provides
+import com.vsevolodganin.clicktrack.drawer.DrawerViewModelImpl
+import me.tatarka.inject.annotations.Provides
 
-@Module
 interface ViewModelModule {
 
-    @Binds
+    @Provides
     @ActivityScope
-    fun provideRootViewModel(rootViewModelImpl: RootViewModelImpl): RootViewModel
+    fun provideRootViewModel(rootViewModelImpl: RootViewModelImpl): RootViewModel = rootViewModelImpl
 
-    @Binds
+    @Provides
     @ActivityScope
-    fun provideDrawerNavigation(drawerViewModel: DrawerViewModel): DrawerNavigation
+    fun provideDrawerNavigation(drawerViewModel: DrawerViewModel): DrawerNavigation = drawerViewModel
 
-    @Binds
+    @Provides
     @ActivityScope
-    fun provideLifecycleOwner(componentContext: ComponentContext): LifecycleOwner
+    fun provideLifecycleOwner(componentContext: ComponentContext): LifecycleOwner = componentContext
 
-    @Binds
+    @Provides
     @ActivityScope
-    fun provideStateKeeperOwner(componentContext: ComponentContext): StateKeeperOwner
+    fun provideStateKeeperOwner(componentContext: ComponentContext): StateKeeperOwner = componentContext
 
-    @Binds
+    @Provides
     @ActivityScope
-    fun provideInstanceKeeperOwner(componentContext: ComponentContext): InstanceKeeperOwner
+    fun provideInstanceKeeperOwner(componentContext: ComponentContext): InstanceKeeperOwner = componentContext
 
-    companion object {
+    @Provides
+    @ActivityScope
+    fun provideStackNavigation(): ScreenStackNavigation = StackNavigation()
 
-        @Provides
-        @ActivityScope
-        fun provideStackNavigation(): ScreenStackNavigation = StackNavigation()
+    @Provides
+    @ActivityScope
+    fun provideScreenStackState(
+        componentContext: ComponentContext,
+        stackNavigation: ScreenStackNavigation,
+        screenViewModelFactory: ScreenViewModelFactory
+    ): ScreenStackState = componentContext.childStack(
+        source = stackNavigation,
+        initialStack = { listOf(ScreenConfiguration.ClickTrackList) },
+        childFactory = screenViewModelFactory::create,
+    )
 
-        @Provides
-        @ActivityScope
-        fun provideScreenStackState(
-            componentContext: ComponentContext,
-            stackNavigation: ScreenStackNavigation,
-            screenViewModelFactory: ScreenViewModelFactory
-        ): ScreenStackState = componentContext.childStack(
-            source = stackNavigation,
-            initialStack = { listOf(ScreenConfiguration.ClickTrackList) },
-            childFactory = screenViewModelFactory::create,
-        )
+    @Provides
+    @ActivityScope
+    fun provideDrawerViewModel(
+        componentContext: ComponentContext,
+        drawerViewModelFactory: (ComponentContext) -> DrawerViewModelImpl,
+    ): DrawerViewModel = drawerViewModelFactory.invoke(componentContext.childContext("Drawer"))
 
-        @Provides
-        @ActivityScope
-        fun provideDrawerViewModel(
-            componentContext: ComponentContext,
-            drawerViewModelFactory: DrawerViewModelFactory,
-        ): DrawerViewModel = drawerViewModelFactory.create(componentContext.childContext("Drawer"))
-
-        @Provides
-        @ActivityScope
-        fun provideNavigation(
-            stackNavigation: ScreenStackNavigation,
-            drawerNavigation: DrawerNavigation
-        ): Navigation = Navigation(stackNavigation, drawerNavigation)
-    }
+    @Provides
+    @ActivityScope
+    fun provideNavigation(
+        stackNavigation: ScreenStackNavigation,
+        drawerNavigation: DrawerNavigation
+    ): Navigation = Navigation(stackNavigation, drawerNavigation)
 }

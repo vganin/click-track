@@ -11,13 +11,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @PlayerServiceScope
-class LatencyTracker @Inject constructor() {
+@Inject
+class LatencyTracker() {
 
     private var latencyMeasureJob: Job? = null
     private val dummyAudioTrack = AudioTrack(ByteArray(0), AudioFormat.ENCODING_PCM_16BIT, 2, 44100)

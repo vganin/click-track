@@ -1,38 +1,34 @@
 package com.vsevolodganin.clicktrack.di.component
 
-import com.vsevolodganin.clicktrack.MainApplication
+import com.vsevolodganin.clicktrack.audio.SoundPreloader
 import com.vsevolodganin.clicktrack.di.module.ApplicationModule
 import com.vsevolodganin.clicktrack.di.module.DatabaseModule
 import com.vsevolodganin.clicktrack.di.module.FirebaseModule
 import com.vsevolodganin.clicktrack.di.module.SerializationModule
 import com.vsevolodganin.clicktrack.di.module.UserPreferencesModule
-import com.vsevolodganin.clicktrack.export.ExportWorker
-import dagger.BindsInstance
-import dagger.Component
-import javax.inject.Singleton
+import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import com.vsevolodganin.clicktrack.theme.ThemeManager
+import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.Inject
+import me.tatarka.inject.annotations.Provides
+import me.tatarka.inject.annotations.Scope
 
-@Singleton
-@Component(
-    modules = [
-        ApplicationModule::class,
-        SerializationModule::class,
-        DatabaseModule::class,
-        UserPreferencesModule::class,
-        FirebaseModule::class,
-    ]
-)
-interface ApplicationComponent {
-    fun inject(application: MainApplication)
-    fun inject(worker: ExportWorker)
+@Scope
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
+annotation class ApplicationScope
 
-    fun activityComponentBuilder(): ActivityComponent.Builder
-    fun playerServiceComponentBuilder(): PlayerServiceComponent.Builder
+@ApplicationScope
+@Component
+abstract @Inject
+class ApplicationComponent(
+    @get:Provides val application: android.app.Application
+) : ApplicationModule,
+    SerializationModule,
+    DatabaseModule,
+    UserPreferencesModule,
+    FirebaseModule {
 
-    @Component.Builder
-    interface Builder {
-        @BindsInstance
-        fun application(application: android.app.Application): Builder
-
-        fun build(): ApplicationComponent
-    }
+    abstract val userPreferences: UserPreferencesRepository
+    abstract val themeManager: ThemeManager
+    abstract val soundsPreloader: SoundPreloader
 }

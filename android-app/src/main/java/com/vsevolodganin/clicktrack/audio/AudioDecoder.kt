@@ -5,17 +5,18 @@ import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaExtractor
 import android.media.MediaFormat
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
 import com.vsevolodganin.clicktrack.utils.media.channelCount
 import com.vsevolodganin.clicktrack.utils.media.sampleRate
+import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
 import java.nio.ByteBuffer
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.math.min
 
-@Singleton
-class AudioDecoder @Inject constructor() {
+@ApplicationScope
+@Inject
+class AudioDecoder() {
     fun extractPcm(afd: AssetFileDescriptor, maxSeconds: Int): Pcm16Data? {
         val mediaExtractor = MediaExtractor()
 

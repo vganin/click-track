@@ -3,10 +3,11 @@ package com.vsevolodganin.clicktrack.common
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
+import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
-import javax.inject.Inject
 
-class DocumentMetadataHelper @Inject constructor(private val contentResolver: ContentResolver) {
+@Inject
+class DocumentMetadataHelper(private val contentResolver: ContentResolver) {
 
     fun isAccessible(uri: String): Boolean {
         return try {

@@ -7,16 +7,17 @@ import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStack
 import com.vsevolodganin.clicktrack.ScreenStackState
 import com.vsevolodganin.clicktrack.utils.decompose.resetTo
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-class DrawerViewModelImpl @AssistedInject constructor(
+@Inject
+class DrawerViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val navigation: dagger.Lazy<Navigation>, // Lazy to avoid cyclic dependency initialization
-    screenStackState: dagger.Lazy<ScreenStackState>, // Lazy to avoid cyclic dependency initialization
+    private val navigation: Lazy<Navigation>, // Lazy to avoid cyclic dependency initialization
+    screenStackState: Lazy<ScreenStackState>, // Lazy to avoid cyclic dependency initialization
 ) : DrawerViewModel, ComponentContext by componentContext {
 
     private val _state: MutableStateFlow<DrawerState> = MutableStateFlow(
@@ -34,8 +35,8 @@ class DrawerViewModelImpl @AssistedInject constructor(
 
     init {
         lifecycle.subscribe(
-            onCreate = { screenStackState.get().subscribe(onScreenStackChange) },
-            onDestroy = { screenStackState.get().unsubscribe(onScreenStackChange) }
+            onCreate = { screenStackState.value.subscribe(onScreenStackChange) },
+            onDestroy = { screenStackState.value.unsubscribe(onScreenStackChange) }
         )
     }
 
@@ -51,7 +52,7 @@ class DrawerViewModelImpl @AssistedInject constructor(
 
     override fun navigateToAbout() = resetTo(ScreenConfiguration.About)
 
-    private fun resetTo(config: ScreenConfiguration) = navigation.get().resetTo(config)
+    private fun resetTo(config: ScreenConfiguration) = navigation.value.resetTo(config)
 
     override fun openDrawer() = _state.update { it.copy(isOpened = true) }
 

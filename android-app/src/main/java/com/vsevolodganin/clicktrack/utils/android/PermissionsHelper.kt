@@ -7,10 +7,13 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
-class PermissionsHelper @Inject constructor(activity: AppCompatActivity) {
+@Inject
+class PermissionsHelper(
+    activity: AppCompatActivity
+) {
     // FIXME: Fix process restoration case
 
     private val resultChannel = Channel<Map<String, Boolean>>()

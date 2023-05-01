@@ -6,13 +6,12 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.utils.android.PermissionsHelper
-import dagger.Reusable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@Reusable
-class ExportWorkLauncher @Inject constructor(
+@Inject
+class ExportWorkLauncher(
     private val workManager: WorkManager,
     private val permissionsHelper: PermissionsHelper,
 ) {

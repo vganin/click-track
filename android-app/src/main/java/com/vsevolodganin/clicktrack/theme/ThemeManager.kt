@@ -1,16 +1,17 @@
 package com.vsevolodganin.clicktrack.theme
 
 import androidx.appcompat.app.AppCompatDelegate
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
-class ThemeManager @Inject constructor(
+@ApplicationScope
+@Inject
+class ThemeManager(
     private val userPreferences: UserPreferencesRepository,
 ) {
     fun start() {

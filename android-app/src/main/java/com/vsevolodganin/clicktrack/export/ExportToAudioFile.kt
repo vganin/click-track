@@ -13,18 +13,17 @@ import com.vsevolodganin.clicktrack.audio.framesPerSecond
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.player.toPlayerEvents
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
-import dagger.Reusable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
 import java.io.File
-import javax.inject.Inject
 import kotlin.time.DurationUnit
 
-@Reusable
-class ExportToAudioFile @Inject constructor(
+@Inject
+class ExportToAudioFile(
     private val application: Application,
     private val soundBank: SoundBank,
     private val userSelectedSounds: UserSelectedSounds,

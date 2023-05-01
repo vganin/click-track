@@ -2,6 +2,7 @@ package com.vsevolodganin.clicktrack.storage
 
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.vsevolodganin.clicktrack.Database
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
@@ -12,12 +13,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 import com.vsevolodganin.clicktrack.storage.ClickSounds as StorageClickSounds
 
-@Singleton
-class ClickSoundsRepository @Inject constructor(
+@ApplicationScope
+@Inject
+class ClickSoundsRepository(
     private val database: Database,
     private val json: Json,
 ) {

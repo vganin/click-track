@@ -2,11 +2,10 @@ package com.vsevolodganin.clicktrack.common
 
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
 import com.vsevolodganin.clicktrack.model.bpm
-import dagger.Reusable
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@Reusable
-class BpmValidator @Inject constructor() {
+@Inject
+class BpmValidator() {
 
     class ValidationResult(
         val coercedBpm: BeatsPerMinute,

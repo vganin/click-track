@@ -5,11 +5,12 @@ import androidx.annotation.StringRes
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import com.vsevolodganin.clicktrack.R
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
-class NotificationChannels @Inject constructor(
+@ApplicationScope
+@Inject
+class NotificationChannels(
     private val application: Application,
     private val notificationManager: NotificationManagerCompat
 ) {

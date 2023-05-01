@@ -7,9 +7,10 @@ import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-class SoundPreloader @Inject constructor(
+@Inject
+class SoundPreloader(
     private val clickSoundsRepository: ClickSoundsRepository,
     private val soundBank: SoundBank,
 ) {

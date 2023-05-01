@@ -3,10 +3,11 @@ package com.vsevolodganin.clicktrack.migration
 import com.vsevolodganin.clicktrack.BuildConfig
 import com.vsevolodganin.clicktrack.di.component.ActivityScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
-class MigrationManager @Inject constructor(
+@Inject
+class MigrationManager(
     private val userPreferencesRepository: UserPreferencesRepository,
     private val canMigrate: Set<@JvmSuppressWildcards CanMigrate>,
 ) {

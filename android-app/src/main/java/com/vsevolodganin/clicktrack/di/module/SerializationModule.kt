@@ -1,15 +1,13 @@
 package com.vsevolodganin.clicktrack.di.module
 
-import dagger.Module
-import dagger.Provides
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import kotlinx.serialization.json.Json
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Provides
 
-@Module
-object SerializationModule {
+interface SerializationModule {
 
     @Provides
-    @Singleton
+    @ApplicationScope
     fun provideJson(): Json = Json {
         ignoreUnknownKeys = true
     }
