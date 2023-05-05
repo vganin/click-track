@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack
 
 import com.arkivanov.decompose.ComponentContext
+import com.vsevolodganin.clicktrack.about.AboutViewModelImpl
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -12,7 +13,7 @@ class ScreenViewModelFactoryImpl(
     private val settingsViewModelFactory: (componentContext: ComponentContext) -> DummySettingsViewModelImpl,
     private val soundLibraryViewModelFactory: (componentContext: ComponentContext) -> DummySoundLibraryViewModelImpl,
     private val trainingViewModelFactory: (componentContext: ComponentContext) -> DummyTrainingViewModelImpl,
-    private val aboutViewModelFactory: (componentContext: ComponentContext) -> DummyAboutViewModelImpl,
+    private val aboutViewModelFactory: (componentContext: ComponentContext) -> AboutViewModelImpl,
     private val polyrhythmsViewModelFactory: (componentContext: ComponentContext) -> DummyPolyrhythmsViewModelImpl,
 ) : ScreenViewModelFactory {
     override fun create(screenConfiguration: ScreenConfiguration, componentContext: ComponentContext): ScreenViewModel {
