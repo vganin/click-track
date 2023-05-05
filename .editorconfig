@@ -1,0 +1,22 @@
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+max_line_length = 140
+tab_width = 4
+
+[{*.kt,*.kts}]
+ij_kotlin_line_break_after_multiline_when_entry = false
+
+[{*.cpp,*.h}]
+ij_c_indent_namespace_members = 0
+ij_c_space_after_pointer_in_declaration = true
+ij_c_space_before_pointer_in_declaration = false
+
+[{*.json,*.yaml,*.yml}]
+indent_size = 2
+
+[strings.xml]
+max_line_length = 200

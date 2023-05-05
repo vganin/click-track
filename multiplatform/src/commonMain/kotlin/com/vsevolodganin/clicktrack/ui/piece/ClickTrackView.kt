@@ -414,8 +414,8 @@ private fun Modifier.clickTrackGestures(
                             val bounds = viewportState.bounds
                             val newWidth = (viewport.width / zoom).coerceAtMost(bounds.width)
                             val newLeft = viewport.left -
-                                    (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width -
-                                    pan.x / currentViewportTransformations.scaleX
+                                (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width -
+                                pan.x / currentViewportTransformations.scaleX
                             val newRight = newLeft + newWidth
 
                             if (zoom == 1f) {

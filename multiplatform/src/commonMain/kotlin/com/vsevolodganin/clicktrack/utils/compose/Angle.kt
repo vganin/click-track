@@ -36,7 +36,7 @@ class AngleSector(private val start: Angle, private val end: Angle) {
 
         return if (startNormalized > endNormalized) {
             angleNormalized in startNormalized..(endNormalized + FULL_ANGLE_DEGREES) ||
-                    (angleNormalized + FULL_ANGLE_DEGREES) in startNormalized..(endNormalized + FULL_ANGLE_DEGREES)
+                (angleNormalized + FULL_ANGLE_DEGREES) in startNormalized..(endNormalized + FULL_ANGLE_DEGREES)
         } else {
             angleNormalized in startNormalized..endNormalized
         }

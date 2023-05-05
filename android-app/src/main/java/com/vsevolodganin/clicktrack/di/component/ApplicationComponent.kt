@@ -19,8 +19,8 @@ annotation class ApplicationScope
 
 @ApplicationScope
 @Component
-abstract @Inject
-class ApplicationComponent(
+@Inject
+abstract class ApplicationComponent(
     @get:Provides val application: android.app.Application
 ) : ApplicationModule,
     SerializationModule,
