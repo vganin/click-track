@@ -14,7 +14,7 @@ import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.ScreenStackState
 import com.vsevolodganin.clicktrack.ScreenViewModelFactory
-import com.vsevolodganin.clicktrack.di.component.ActivityScope
+import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModelImpl
@@ -23,31 +23,31 @@ import me.tatarka.inject.annotations.Provides
 interface ViewModelModule {
 
     @Provides
-    @ActivityScope
+    @MainControllerScope
     fun provideRootViewModel(rootViewModelImpl: RootViewModelImpl): RootViewModel = rootViewModelImpl
 
     @Provides
-    @ActivityScope
+    @MainControllerScope
     fun provideDrawerNavigation(drawerViewModel: DrawerViewModel): DrawerNavigation = drawerViewModel
 
     @Provides
-    @ActivityScope
+    @MainControllerScope
     fun provideLifecycleOwner(componentContext: ComponentContext): LifecycleOwner = componentContext
 
     @Provides
-    @ActivityScope
+    @MainControllerScope
     fun provideStateKeeperOwner(componentContext: ComponentContext): StateKeeperOwner = componentContext
 
     @Provides
-    @ActivityScope
+    @MainControllerScope
     fun provideInstanceKeeperOwner(componentContext: ComponentContext): InstanceKeeperOwner = componentContext
 
     @Provides
-    @ActivityScope
+    @MainControllerScope
     fun provideStackNavigation(): ScreenStackNavigation = StackNavigation()
 
     @Provides
-    @ActivityScope
+    @MainControllerScope
     fun provideScreenStackState(
         componentContext: ComponentContext,
         stackNavigation: ScreenStackNavigation,
@@ -59,14 +59,14 @@ interface ViewModelModule {
     )
 
     @Provides
-    @ActivityScope
+    @MainControllerScope
     fun provideDrawerViewModel(
         componentContext: ComponentContext,
         drawerViewModelFactory: (ComponentContext) -> DrawerViewModelImpl,
     ): DrawerViewModel = drawerViewModelFactory.invoke(componentContext.childContext("Drawer"))
 
     @Provides
-    @ActivityScope
+    @MainControllerScope
     fun provideNavigation(
         stackNavigation: ScreenStackNavigation,
         drawerNavigation: DrawerNavigation

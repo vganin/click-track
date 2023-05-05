@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import com.arkivanov.essenty.statekeeper.StateKeeperOwner
 import com.arkivanov.essenty.statekeeper.consume
-import com.vsevolodganin.clicktrack.di.component.ActivityScope
+import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.parcelize.Parcelize
 import me.tatarka.inject.annotations.Inject
 
-@ActivityScope
+@MainControllerScope
 @Inject
 class SoundChooser(
     private val activity: AppCompatActivity,

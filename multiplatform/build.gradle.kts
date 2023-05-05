@@ -8,6 +8,7 @@ plugins {
     id("clicktrack.multiplatform.ios")
     id("clicktrack.svg2compose")
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.ksp)
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
     kotlin("plugin.parcelize")
@@ -49,6 +50,7 @@ kotlin {
                 api(libs.kotlinx.datetime)
                 api(libs.moko.resources)
                 api(libs.uuid)
+                api(libs.kotlininject.runtime)
             }
 
             kotlin.srcDir("build/generated/source/svg2compose")
@@ -121,4 +123,17 @@ android {
 
 multiplatformResources {
     disableStaticFrameworkWarning = true
+}
+
+// FIXME(https://github.com/google/ksp/issues/567): Improve KSP declarations
+dependencies {
+    for (configName in arrayOf(
+        "kspCommonMainMetadata",
+        "kspAndroid",
+        "kspIosX64",
+        "kspIosArm64",
+        "kspIosSimulatorArm64"
+    )) {
+        add(configName, libs.kotlininject.compiler)
+    }
 }

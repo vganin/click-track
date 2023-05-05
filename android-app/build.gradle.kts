@@ -173,10 +173,6 @@ dependencies {
     implementation(libs.androidx.dataStore)
     implementation(libs.androidx.media)
     implementation(libs.androidx.workManager)
-    libs.kotlininject.apply {
-        ksp(compiler)
-        implementation(runtime)
-    }
     implementation(libs.oboe)
     implementation(libs.bundles.decompose)
     implementation(platform(libs.firebase.bom))
@@ -186,4 +182,5 @@ dependencies {
     implementation(libs.googlePlay.core)
     implementation(libs.bundles.sqldelight)
     implementation(libs.timber)
+    ksp(libs.kotlininject.compiler)
 }

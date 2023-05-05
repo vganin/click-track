@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.utils.decompose
 
-import android.os.Parcelable
+import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.statekeeper.StateKeeperOwner
 import com.arkivanov.essenty.statekeeper.consume
 import kotlinx.coroutines.flow.StateFlow

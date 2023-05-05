@@ -2,12 +2,12 @@ package com.vsevolodganin.clicktrack
 
 import android.app.Application
 import android.content.Intent
-import com.vsevolodganin.clicktrack.di.component.ActivityScope
+import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.utils.decompose.resetTo
 import me.tatarka.inject.annotations.Inject
 
-@ActivityScope
+@MainControllerScope
 @Inject
 class IntentProcessor(
     private val navigation: Navigation

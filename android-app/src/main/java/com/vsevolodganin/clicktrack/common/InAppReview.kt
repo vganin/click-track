@@ -5,7 +5,7 @@ import com.google.android.play.core.ktx.launchReview
 import com.google.android.play.core.ktx.requestReview
 import com.google.android.play.core.review.ReviewManager
 import com.vsevolodganin.clicktrack.analytics.AnalyticsLogger
-import com.vsevolodganin.clicktrack.di.component.ActivityScope
+import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -15,7 +15,7 @@ import timber.log.Timber
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
 
-@ActivityScope
+@MainControllerScope
 @Inject
 class InAppReview(
     private val reviewManagerProvider: () -> ReviewManager,

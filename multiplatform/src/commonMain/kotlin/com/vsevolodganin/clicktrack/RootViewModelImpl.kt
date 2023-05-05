@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.essenty.backhandler.BackCallback
-import com.vsevolodganin.clicktrack.di.component.ActivityScope
+import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
-@ActivityScope
+@MainControllerScope
 @Inject
 class RootViewModelImpl(
     private val componentContext: ComponentContext,

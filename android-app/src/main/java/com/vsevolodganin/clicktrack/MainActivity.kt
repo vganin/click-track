@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.arkivanov.decompose.defaultComponentContext
-import com.vsevolodganin.clicktrack.di.component.ActivityComponent
+import com.vsevolodganin.clicktrack.di.component.MainActivityComponent
 import com.vsevolodganin.clicktrack.di.component.create
 import com.vsevolodganin.clicktrack.ui.RootView
 import kotlinx.coroutines.GlobalScope
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var component: ActivityComponent
+    private lateinit var component: MainActivityComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         installSplashScreen()
 
-        component = ActivityComponent::class.create(
+        component = MainActivityComponent::class.create(
             applicationComponent = applicationComponent,
             activity = this,
             componentContext = defaultComponentContext()

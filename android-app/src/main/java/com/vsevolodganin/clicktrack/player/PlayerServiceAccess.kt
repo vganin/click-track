@@ -5,7 +5,7 @@ import android.content.ComponentName
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
-import com.vsevolodganin.clicktrack.di.component.ActivityScope
+import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import me.tatarka.inject.annotations.Inject
 
-@ActivityScope
+@MainControllerScope
 @Inject
 class PlayerServiceAccess(
     private val activity: Activity,

@@ -10,6 +10,8 @@ import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.vsevolodganin.clicktrack.about.AboutState
 import com.vsevolodganin.clicktrack.about.AboutViewModel
+import com.vsevolodganin.clicktrack.di.component.MainViewControllerComponent
+import com.vsevolodganin.clicktrack.di.component.create
 import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
 import com.vsevolodganin.clicktrack.drawer.DrawerState
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
@@ -60,32 +62,39 @@ import kotlin.time.Duration.Companion.minutes
 
 // TODO: 🚧 Under heavy construction 🚧
 fun MainViewController() = ComposeUIViewController {
-    val drawerState = remember {
-        MutableStateFlow(
+    val component = remember {
+        val drawerState = MutableStateFlow(
             DrawerState(
                 isOpened = false,
                 selectedItem = null,
             )
         )
-    }
 
-    val drawerNavigation = remember {
-        object : DrawerNavigation {
+        val drawerNavigation = object : DrawerNavigation {
             override fun openDrawer() = drawerState.update { it.copy(isOpened = true) }
             override fun closeDrawer() = drawerState.update { it.copy(isOpened = false) }
         }
-    }
 
-    val screenStackNavigation = remember {
-        StackNavigation<ScreenConfiguration>()
-    }
+        val screenStackNavigation = StackNavigation<ScreenConfiguration>()
 
-    val navigation = remember {
-        Navigation(screenStackNavigation, drawerNavigation)
-    }
+        val navigation = Navigation(screenStackNavigation, drawerNavigation)
 
-    val screens = remember {
-        DefaultComponentContext(LifecycleRegistry()).childStack(
+        val componentContext = DefaultComponentContext(LifecycleRegistry())
+
+        val drawerViewModel = object : DrawerViewModel, DrawerNavigation by drawerNavigation {
+            override val state: StateFlow<DrawerState> = drawerState
+
+            override fun navigateToMetronome() = resetTo(ScreenConfiguration.Metronome)
+            override fun navigateToTraining() = resetTo(ScreenConfiguration.Training)
+            override fun navigateToPolyrhythms() = resetTo(ScreenConfiguration.Polyrhythms)
+            override fun navigateToSoundLibrary() = resetTo(ScreenConfiguration.SoundLibrary)
+            override fun navigateToSettings() = resetTo(ScreenConfiguration.Settings)
+            override fun navigateToAbout() = resetTo(ScreenConfiguration.About)
+
+            private fun resetTo(config: ScreenConfiguration) = navigation.resetTo(config)
+        }
+
+        val screenStackState = componentContext.childStack(
             source = screenStackNavigation,
             initialStack = {
                 listOf(ScreenConfiguration.ClickTrackList)
@@ -285,23 +294,14 @@ fun MainViewController() = ComposeUIViewController {
                 }
             }
         )
+
+        MainViewControllerComponent::class.create(
+            componentContext = componentContext,
+            drawerViewModel = drawerViewModel,
+            screenStackNavigation = screenStackNavigation,
+            screenStackState = screenStackState
+        )
     }
 
-    RootView(
-        viewModel = object : RootViewModel {
-            override val drawer: DrawerViewModel = object : DrawerViewModel, DrawerNavigation by drawerNavigation {
-                override val state: StateFlow<DrawerState> = drawerState
-
-                override fun navigateToMetronome() = resetTo(ScreenConfiguration.Metronome)
-                override fun navigateToTraining() = resetTo(ScreenConfiguration.Training)
-                override fun navigateToPolyrhythms() = resetTo(ScreenConfiguration.Polyrhythms)
-                override fun navigateToSoundLibrary() = resetTo(ScreenConfiguration.SoundLibrary)
-                override fun navigateToSettings() = resetTo(ScreenConfiguration.Settings)
-                override fun navigateToAbout() = resetTo(ScreenConfiguration.About)
-
-                private fun resetTo(config: ScreenConfiguration) = navigation.resetTo(config)
-            }
-            override val screens: ScreenStackState = screens
-        },
-    )
+    RootView(component.rootViewModel)
 }

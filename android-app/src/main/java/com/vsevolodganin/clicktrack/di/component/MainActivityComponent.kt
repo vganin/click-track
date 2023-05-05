@@ -14,15 +14,10 @@ import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
 import com.vsevolodganin.clicktrack.utils.android.PermissionsHelper
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
-import me.tatarka.inject.annotations.Scope
 
-@Scope
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
-annotation class ActivityScope
-
-@ActivityScope
+@MainControllerScope
 @Component
-abstract class ActivityComponent(
+abstract class MainActivityComponent(
     @Component protected val applicationComponent: ApplicationComponent,
     @get:Provides protected val activity: MainActivity,
     @get:Provides protected val componentContext: ComponentContext,

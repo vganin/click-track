@@ -1,11 +1,11 @@
 package com.vsevolodganin.clicktrack.migration
 
 import com.vsevolodganin.clicktrack.BuildConfig
-import com.vsevolodganin.clicktrack.di.component.ActivityScope
+import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import me.tatarka.inject.annotations.Inject
 
-@ActivityScope
+@MainControllerScope
 @Inject
 class MigrationManager(
     private val userPreferencesRepository: UserPreferencesRepository,
