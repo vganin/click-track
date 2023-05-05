@@ -13,7 +13,8 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class DummySettingsViewModelImpl(
-    @Assisted componentContext: ComponentContext,
+    // This is only temporary impl
+    @Suppress("UNUSED_PARAMETER") @Assisted componentContext: ComponentContext,
     private val navigation: Navigation,
 ) : SettingsViewModel {
     override val state: StateFlow<SettingsState> = MutableStateFlow(
