@@ -13,7 +13,7 @@ import com.vsevolodganin.clicktrack.training.TrainingViewModelImpl
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ScreenViewModelFactory(
+class ScreenViewModelFactoryImpl(
     private val clickTrackListViewModelFactory: (componentContext: ComponentContext) -> ClickTrackListViewModelImpl,
     private val playClickTrackViewModelFactory: (componentContext: ComponentContext, config: ScreenConfiguration.PlayClickTrack) -> PlayClickTrackViewModelImpl,
     private val editClickTrackViewModelFactory: (componentContext: ComponentContext, config: ScreenConfiguration.EditClickTrack) -> EditClickTrackViewModelImpl,
@@ -23,8 +23,8 @@ class ScreenViewModelFactory(
     private val trainingViewModelFactory: (componentContext: ComponentContext) -> TrainingViewModelImpl,
     private val aboutViewModelFactory: (componentContext: ComponentContext) -> AboutViewModelImpl,
     private val polyrhythmsViewModelFactory: (componentContext: ComponentContext) -> PolyrhythmsViewModelImpl,
-) {
-    fun create(screenConfiguration: ScreenConfiguration, componentContext: ComponentContext): ScreenViewModel {
+) : ScreenViewModelFactory {
+    override fun create(screenConfiguration: ScreenConfiguration, componentContext: ComponentContext): ScreenViewModel {
         return when (screenConfiguration) {
             ScreenConfiguration.ClickTrackList -> ScreenViewModel.ClickTrackList(
                 clickTrackListViewModelFactory.invoke(componentContext)

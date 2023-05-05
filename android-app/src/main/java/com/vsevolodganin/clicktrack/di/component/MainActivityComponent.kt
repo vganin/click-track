@@ -4,6 +4,8 @@ import com.arkivanov.decompose.ComponentContext
 import com.vsevolodganin.clicktrack.IntentProcessor
 import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.RootViewModel
+import com.vsevolodganin.clicktrack.ScreenViewModelFactory
+import com.vsevolodganin.clicktrack.ScreenViewModelFactoryImpl
 import com.vsevolodganin.clicktrack.common.InAppReview
 import com.vsevolodganin.clicktrack.di.module.ActivityModule
 import com.vsevolodganin.clicktrack.di.module.GooglePlayModule
@@ -32,4 +34,8 @@ abstract class MainActivityComponent(
     abstract val inAppReview: InAppReview
     abstract val soundChooser: SoundChooser
     abstract val permissionsHelper: PermissionsHelper
+
+    // FIXME: Temp
+    @get:Provides
+    protected val ScreenViewModelFactoryImpl.screenViewModelFactory: ScreenViewModelFactory get() = this
 }
