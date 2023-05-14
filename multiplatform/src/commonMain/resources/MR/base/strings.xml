@@ -31,6 +31,7 @@
     <string name="general_cancel">Cancel</string>
     <string name="general_metronome_click_track_title">Metronome</string>
     <string name="general_ok">Ok</string>
+    <string name="general_unnamed_click_track_template">Unnamed click track</string>
     <string name="metronome_bpm_meter_tap">TAP</string>
     <string name="metronome_screen_title">Metronome</string>
     <string name="play_click_track_delete_confirmation">Do you really want to delete this click track?</string>

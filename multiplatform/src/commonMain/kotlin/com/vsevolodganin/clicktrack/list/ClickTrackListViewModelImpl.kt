@@ -1,9 +1,8 @@
 package com.vsevolodganin.clicktrack.list
 
-import android.app.Activity
+import ClickTrack.multiplatform.MR
 import com.arkivanov.decompose.ComponentContext
 import com.vsevolodganin.clicktrack.Navigation
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
 import com.vsevolodganin.clicktrack.model.ClickTrack
@@ -14,6 +13,7 @@ import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.pushIfUnique
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
+import com.vsevolodganin.clicktrack.utils.resources.StringResolver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +27,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class ClickTrackListViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val activity: Activity,
+    private val stringResolver: StringResolver,
     private val navigation: Navigation,
     private val clickTrackRepository: ClickTrackRepository,
     private val newClickTrackNameSuggester: NewClickTrackNameSuggester,
@@ -48,7 +48,7 @@ class ClickTrackListViewModelImpl(
         scope.launch {
             val suggestedNewClickTrackName = newClickTrackNameSuggester.suggest(
                 withContext(Dispatchers.Main) {
-                    activity.getString(R.string.general_unnamed_click_track_template)
+                    stringResolver.resolve(MR.strings.general_unnamed_click_track_template)
                 }
             )
             val newClickTrack = defaultNewClickTrack(suggestedNewClickTrackName)

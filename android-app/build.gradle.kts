@@ -7,7 +7,6 @@ import java.util.Properties
 plugins {
     id("clicktrack.android.application")
     alias(libs.plugins.jetbrains.compose)
-    alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
     kotlin("android")
     kotlin("plugin.serialization")
@@ -110,6 +109,7 @@ android {
             "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
             "-opt-in=androidx.compose.animation.core.InternalAnimationApi",
             "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
+            "-opt-in=com.russhwolf.settings.ExperimentalSettingsApi",
 
             // https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/compiler-metrics.md
             "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/reports/compose_metrics",
@@ -151,12 +151,6 @@ android {
     }
 }
 
-sqldelight {
-    database("Database") {
-        schemaOutputDirectory = file("src/test/sqldelight/schema")
-    }
-}
-
 resourcePlaceholders {
     files = listOf("xml/shortcuts.xml")
 }
@@ -170,7 +164,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.splashScreen)
     implementation(libs.androidx.fragment)
-    implementation(libs.androidx.dataStore)
     implementation(libs.androidx.media)
     implementation(libs.androidx.workManager)
     implementation(libs.oboe)
@@ -180,7 +173,6 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.core)
-    implementation(libs.bundles.sqldelight)
     implementation(libs.timber)
     ksp(libs.kotlininject.compiler)
 }

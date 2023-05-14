@@ -2,11 +2,12 @@ package com.vsevolodganin.clicktrack
 
 import com.arkivanov.decompose.ComponentContext
 import com.vsevolodganin.clicktrack.about.AboutViewModelImpl
+import com.vsevolodganin.clicktrack.list.ClickTrackListViewModelImpl
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ScreenViewModelFactoryImpl(
-    private val clickTrackListViewModelFactory: (componentContext: ComponentContext) -> DummyClickTrackListViewModelImpl,
+    private val clickTrackListViewModelFactory: (componentContext: ComponentContext) -> ClickTrackListViewModelImpl,
     private val playClickTrackViewModelFactory: (componentContext: ComponentContext, config: ScreenConfiguration.PlayClickTrack) -> DummyPlayClickTrackViewModelImpl,
     private val editClickTrackViewModelFactory: (componentContext: ComponentContext, config: ScreenConfiguration.EditClickTrack) -> DummyEditClickTrackViewModelImpl,
     private val metronomeViewModelFactory: (componentContext: ComponentContext) -> DummyMetronomeViewModelImpl,
