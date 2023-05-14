@@ -8,6 +8,7 @@ plugins {
     id("clicktrack.multiplatform.ios")
     id("clicktrack.svg2compose")
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
@@ -25,6 +26,7 @@ kotlin {
                 optIn("androidx.compose.material.ExperimentalMaterialApi")
                 optIn("androidx.compose.ui.ExperimentalComposeUiApi")
                 optIn("androidx.compose.ui.text.ExperimentalTextApi")
+                optIn("com.russhwolf.settings.ExperimentalSettingsApi")
                 optIn("kotlin.ExperimentalStdlibApi")
                 optIn("kotlin.contracts.ExperimentalContracts")
                 optIn("kotlin.time.ExperimentalTime")
@@ -51,9 +53,11 @@ kotlin {
                 api(libs.moko.resources)
                 api(libs.uuid)
                 api(libs.kotlininject.runtime)
+                api(libs.sqldelight.runtime)
+                api(libs.sqldelight.coroutines)
+                api(libs.multiplatformsettings)
+                api(libs.multiplatformsettings.coroutines)
             }
-
-            kotlin.srcDir("build/generated/source/svg2compose")
         }
 
         androidMain {
@@ -65,7 +69,15 @@ kotlin {
                 api("androidx.compose.ui:ui-tooling:1.4.2")
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.constraintLayout.compose)
+                api(libs.androidx.dataStore)
                 api(libs.bundles.accompanist)
+                api(libs.sqldelight.androidDriver)
+            }
+        }
+
+        iosMain {
+            dependencies {
+                api(libs.sqldelight.nativeDriver)
             }
         }
     }
@@ -123,6 +135,13 @@ android {
 
 multiplatformResources {
     disableStaticFrameworkWarning = true
+}
+
+sqldelight {
+    database("Database") {
+        packageName = "com.vsevolodganin.clicktrack"
+        schemaOutputDirectory = file("src/commonTest/sqldelight/schema")
+    }
 }
 
 // FIXME(https://github.com/google/ksp/issues/567): Improve KSP declarations

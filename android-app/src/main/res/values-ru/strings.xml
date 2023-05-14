@@ -3,7 +3,6 @@
     <string name="export_worker_notification_finished">Завершен экспорт \"%1$s\"</string>
     <string name="export_worker_notification_in_process">Экспорт \"%1$s\"…</string>
     <string name="export_worker_notification_open">Нажмите, чтобы открыть</string>
-    <string name="general_unnamed_click_track_template">Безымянный клик-трек</string>
     <string name="general_unnamed_training_click_track_template">Тренировка</string>
     <string name="notification_channel_export">Экспорт</string>
     <string name="notification_channel_playing_now">Сейчас играет</string>

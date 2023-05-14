@@ -1,13 +1,11 @@
 package com.vsevolodganin.clicktrack.di.component
 
 import com.arkivanov.decompose.ComponentContext
-import com.vsevolodganin.clicktrack.BuildConfig
 import com.vsevolodganin.clicktrack.IntentProcessor
 import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.RootViewModel
 import com.vsevolodganin.clicktrack.ScreenViewModelFactory
 import com.vsevolodganin.clicktrack.ScreenViewModelFactoryImpl
-import com.vsevolodganin.clicktrack.common.DisplayAppVersion
 import com.vsevolodganin.clicktrack.common.InAppReview
 import com.vsevolodganin.clicktrack.di.module.ActivityModule
 import com.vsevolodganin.clicktrack.di.module.GooglePlayModule
@@ -40,10 +38,5 @@ abstract class MainActivityComponent(
     // FIXME: Temp begin
     @get:Provides
     protected val ScreenViewModelFactoryImpl.screenViewModelFactory: ScreenViewModelFactory get() = this
-
-    @get:Provides
-    protected val displayAppVersion = object : DisplayAppVersion {
-        override val value: String get() = BuildConfig.DISPLAY_VERSION
-    }
     // FIXME: Temp end
 }

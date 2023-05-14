@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.about
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.Navigation
-import com.vsevolodganin.clicktrack.common.DisplayAppVersion
+import com.vsevolodganin.clicktrack.common.BuildConfig
 import com.vsevolodganin.clicktrack.common.LinkOpener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,11 +15,11 @@ class AboutViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: Navigation,
     private val linkOpener: LinkOpener,
-    displayAppVersion: DisplayAppVersion
+    buildConfig: BuildConfig
 ) : AboutViewModel, ComponentContext by componentContext {
 
     override val state: StateFlow<AboutState> = MutableStateFlow(
-        AboutState(displayVersion = displayAppVersion.value)
+        AboutState(displayVersion = buildConfig.displayVersion)
     )
 
     override fun onBackClick() = navigation.pop()
