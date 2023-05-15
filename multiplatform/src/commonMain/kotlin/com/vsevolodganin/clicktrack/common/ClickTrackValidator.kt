@@ -8,9 +8,7 @@ import com.vsevolodganin.clicktrack.model.CueDuration
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ClickTrackValidator(
-    private val bpmValidator: BpmValidator,
-) {
+class ClickTrackValidator(private val bpmValidator: BpmValidator) {
 
     class ClickTrackValidationResult(
         val validClickTrack: ClickTrack,

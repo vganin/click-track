@@ -5,7 +5,7 @@ import com.vsevolodganin.clicktrack.model.bpm
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class BpmValidator() {
+class BpmValidator {
 
     class ValidationResult(
         val coercedBpm: BeatsPerMinute,
