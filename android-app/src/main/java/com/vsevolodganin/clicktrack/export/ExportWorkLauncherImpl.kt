@@ -11,11 +11,11 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class ExportWorkLauncher(
+class ExportWorkLauncherImpl(
     private val workManager: WorkManager,
     private val permissionsHelper: PermissionsHelper,
-) {
-    suspend fun launchExportToAudioFile(clickTrackId: ClickTrackId.Database) {
+) : ExportWorkLauncher {
+    override suspend fun launchExportToAudioFile(clickTrackId: ClickTrackId.Database) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P && !requestStoragePermission()) {
             return
         }
@@ -27,7 +27,7 @@ class ExportWorkLauncher(
         )
     }
 
-    fun stopExportToAudioFile(clickTrackId: ClickTrackId.Database) {
+    override fun stopExportToAudioFile(clickTrackId: ClickTrackId.Database) {
         workManager.cancelUniqueWork(clickTrackId.toUniqueWorkName())
     }
 

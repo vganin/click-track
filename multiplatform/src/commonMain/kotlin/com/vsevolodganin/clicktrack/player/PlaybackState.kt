@@ -1,9 +1,9 @@
 package com.vsevolodganin.clicktrack.player
 
-import android.os.Parcelable
+import com.arkivanov.essenty.parcelable.Parcelable
+import com.arkivanov.essenty.parcelable.Parcelize
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.PlayableId
-import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PlaybackState(

@@ -21,10 +21,10 @@ import me.tatarka.inject.annotations.Inject
 
 @MainControllerScope
 @Inject
-class PlayerServiceAccess(
+class PlayerServiceAccessImpl(
     private val activity: Activity,
     lifecycleOwner: LifecycleOwner
-) {
+) : PlayerServiceAccess {
     private val scope = lifecycleOwner.coroutineScope()
 
     private val binderState = MutableStateFlow<PlayerServiceBinder?>(null)
@@ -48,17 +48,14 @@ class PlayerServiceAccess(
         }
         .shareIn(scope, SharingStarted.Eagerly, replay = 1)
 
-    fun start(
-        id: PlayableId,
-        atProgress: Double? = null,
-        soundsId: ClickSoundsId? = null
-    ) = PlayerService.start(activity, id, atProgress, soundsId)
+    override fun start(id: PlayableId, atProgress: Double?, soundsId: ClickSoundsId?) =
+        PlayerService.start(activity, id, atProgress, soundsId)
 
-    fun pause() = PlayerService.pause(activity)
+    override fun pause() = PlayerService.pause(activity)
 
-    fun resume() = PlayerService.resume(activity)
+    override fun resume() = PlayerService.resume(activity)
 
-    fun stop() = PlayerService.stop(activity)
+    override fun stop() = PlayerService.stop(activity)
 
-    fun playbackState(): Flow<PlaybackState?> = playbackState
+    override fun playbackState(): Flow<PlaybackState?> = playbackState
 }

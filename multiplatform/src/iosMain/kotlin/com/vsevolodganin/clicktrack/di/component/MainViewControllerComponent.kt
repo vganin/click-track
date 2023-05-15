@@ -1,12 +1,16 @@
 package com.vsevolodganin.clicktrack.di.component
 
 import com.arkivanov.decompose.ComponentContext
+import com.vsevolodganin.clicktrack.DummyExportWorkLauncherImpl
+import com.vsevolodganin.clicktrack.DummyPlayerServiceAccessImpl
 import com.vsevolodganin.clicktrack.RootViewModel
 import com.vsevolodganin.clicktrack.ScreenViewModelFactory
 import com.vsevolodganin.clicktrack.ScreenViewModelFactoryImpl
 import com.vsevolodganin.clicktrack.di.module.MigrationModule
 import com.vsevolodganin.clicktrack.di.module.ViewModelModule
+import com.vsevolodganin.clicktrack.export.ExportWorkLauncher
 import com.vsevolodganin.clicktrack.migration.MigrationManager
+import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -21,6 +25,7 @@ abstract class MainViewControllerComponent(
     abstract val rootViewModel: RootViewModel
     abstract val migrationManager: MigrationManager
 
-    @get:Provides
-    protected val ScreenViewModelFactoryImpl.screenViewModelFactory: ScreenViewModelFactory get() = this
+    protected val ScreenViewModelFactoryImpl.binding: ScreenViewModelFactory @Provides get() = this
+    protected val DummyPlayerServiceAccessImpl.binding: PlayerServiceAccess @Provides get() = this
+    protected val DummyExportWorkLauncherImpl.binding: ExportWorkLauncher @Provides get() = this
 }
