@@ -13,6 +13,8 @@ import com.vsevolodganin.clicktrack.di.module.MigrationModule
 import com.vsevolodganin.clicktrack.di.module.ViewModelModule
 import com.vsevolodganin.clicktrack.export.ExportWorkLauncher
 import com.vsevolodganin.clicktrack.export.ExportWorkLauncherImpl
+import com.vsevolodganin.clicktrack.language.LanguageStore
+import com.vsevolodganin.clicktrack.language.LanguageStoreImpl
 import com.vsevolodganin.clicktrack.migration.MigrationManager
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccessImpl
@@ -42,4 +44,5 @@ abstract class MainActivityComponent(
     protected val ScreenViewModelFactoryImpl.binding: ScreenViewModelFactory @Provides get() = this
     protected val PlayerServiceAccessImpl.binding: PlayerServiceAccess @Provides get() = this
     protected val ExportWorkLauncherImpl.binding: ExportWorkLauncher @Provides get() = this
+    protected val LanguageStoreImpl.binding: LanguageStore @Provides get() = this
 }

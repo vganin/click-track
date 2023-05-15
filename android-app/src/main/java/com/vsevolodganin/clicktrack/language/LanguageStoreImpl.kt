@@ -14,9 +14,9 @@ import me.tatarka.inject.annotations.Inject
 
 @MainControllerScope
 @Inject
-class LanguageStore(lifecycleOwner: LifecycleOwner) {
+class LanguageStoreImpl(lifecycleOwner: LifecycleOwner) : LanguageStore {
 
-    val appLanguage: MutableStateFlow<AppLanguage> = MutableStateFlow(storedAppLanguage)
+    override val appLanguage: MutableStateFlow<AppLanguage> = MutableStateFlow(storedAppLanguage)
 
     init {
         GlobalScope.launch(context = Dispatchers.Unconfined, start = CoroutineStart.UNDISPATCHED) {
