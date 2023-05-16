@@ -6,6 +6,7 @@ import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModelImpl
 import com.vsevolodganin.clicktrack.list.ClickTrackListViewModelImpl
 import com.vsevolodganin.clicktrack.metronome.MetronomeViewModelImpl
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModelImpl
+import com.vsevolodganin.clicktrack.polyrhythm.PolyrhythmsViewModelImpl
 import com.vsevolodganin.clicktrack.settings.SettingsViewModelImpl
 import me.tatarka.inject.annotations.Inject
 
@@ -19,7 +20,7 @@ class ScreenViewModelFactoryImpl(
     private val soundLibraryViewModelFactory: (componentContext: ComponentContext) -> DummySoundLibraryViewModelImpl,
     private val trainingViewModelFactory: (componentContext: ComponentContext) -> DummyTrainingViewModelImpl,
     private val aboutViewModelFactory: (componentContext: ComponentContext) -> AboutViewModelImpl,
-    private val polyrhythmsViewModelFactory: (componentContext: ComponentContext) -> DummyPolyrhythmsViewModelImpl,
+    private val polyrhythmsViewModelFactory: (componentContext: ComponentContext) -> PolyrhythmsViewModelImpl,
 ) : ScreenViewModelFactory {
     override fun create(screenConfiguration: ScreenConfiguration, componentContext: ComponentContext): ScreenViewModel {
         return when (screenConfiguration) {
