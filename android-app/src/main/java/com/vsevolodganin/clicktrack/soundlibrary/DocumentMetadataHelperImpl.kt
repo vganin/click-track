@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.common
+package com.vsevolodganin.clicktrack.soundlibrary
 
 import android.content.ContentResolver
 import android.net.Uri
@@ -7,9 +7,9 @@ import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
 
 @Inject
-class DocumentMetadataHelper(private val contentResolver: ContentResolver) {
+class DocumentMetadataHelperImpl(private val contentResolver: ContentResolver) : DocumentMetadataHelper {
 
-    fun isAccessible(uri: String): Boolean {
+    override fun isAccessible(uri: String): Boolean {
         return try {
             contentResolver.query(Uri.parse(uri), null, null, null, null, null)?.use {
                 it.moveToFirst()
@@ -19,13 +19,13 @@ class DocumentMetadataHelper(private val contentResolver: ContentResolver) {
         }
     }
 
-    fun hasReadPermission(uri: String): Boolean {
+    override fun hasReadPermission(uri: String): Boolean {
         return contentResolver.persistedUriPermissions.any { permission ->
             permission.uri.toString() == uri && permission.isReadPermission
         }
     }
 
-    fun getDisplayName(uri: String): String? {
+    override fun getDisplayName(uri: String): String? {
         val parsedUri = Uri.parse(uri)
 
         return try {

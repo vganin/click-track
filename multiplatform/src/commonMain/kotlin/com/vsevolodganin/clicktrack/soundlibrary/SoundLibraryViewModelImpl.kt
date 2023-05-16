@@ -4,7 +4,6 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.essenty.lifecycle.doOnPause
 import com.vsevolodganin.clicktrack.Navigation
-import com.vsevolodganin.clicktrack.common.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType

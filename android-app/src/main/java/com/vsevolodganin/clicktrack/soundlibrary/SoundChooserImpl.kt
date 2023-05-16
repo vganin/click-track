@@ -23,11 +23,11 @@ import me.tatarka.inject.annotations.Inject
 
 @MainControllerScope
 @Inject
-class SoundChooser(
+class SoundChooserImpl(
     private val activity: AppCompatActivity,
     private val clickSoundsRepository: ClickSoundsRepository,
     stateKeeperOwner: StateKeeperOwner,
-) {
+) : SoundChooser {
     private val pendingRequestState = MutableStateFlow<OpenAudioRequest?>(
         stateKeeperOwner.stateKeeper.consume(OpenAudioRequest.SAVED_STATE_KEY)
     )
@@ -47,7 +47,7 @@ class SoundChooser(
         }
     }
 
-    suspend fun launchFor(id: ClickSoundsId.Database, type: ClickSoundType) {
+    override suspend fun launchFor(id: ClickSoundsId.Database, type: ClickSoundType) {
         val initialUri = getInitialUri(id, type)
         pendingRequestState.value = OpenAudioRequest(id, type)
         launcher.launch(initialUri)
