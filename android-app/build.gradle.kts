@@ -1,6 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Properties
 
 @Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
@@ -28,13 +30,11 @@ android {
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
         versionCode = 50
-        versionName = "1.1.0"
+        versionName = "1.1.0 (${SimpleDateFormat("yyyyMMdd").format(Date())})"
 
         resourceConfigurations += setOf("en", "ru")
 
         setProperty("archivesBaseName", "click-track-$versionName")
-
-        buildConfigField("String", "DISPLAY_VERSION", "\"$versionName\"")
 
         externalNativeBuild {
             cmake {

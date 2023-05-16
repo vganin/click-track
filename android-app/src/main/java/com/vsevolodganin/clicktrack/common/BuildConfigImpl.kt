@@ -8,5 +8,5 @@ import com.vsevolodganin.clicktrack.BuildConfig as AndroidBuildConfig
 @ApplicationScope
 class BuildConfigImpl : BuildConfig {
     override val versionCode: Int get() = AndroidBuildConfig.VERSION_CODE
-    override val displayVersion: String get() = AndroidBuildConfig.DISPLAY_VERSION
+    override val versionName: String get() = AndroidBuildConfig.VERSION_NAME
 }

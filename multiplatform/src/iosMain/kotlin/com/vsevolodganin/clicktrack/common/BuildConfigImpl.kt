@@ -8,5 +8,5 @@ import platform.Foundation.NSBundle
 @ApplicationScope
 class BuildConfigImpl : BuildConfig {
     override val versionCode: Int = 0
-    override val displayVersion: String get() = NSBundle.mainBundle.objectForInfoDictionaryKey("CFBundleShortVersionString").toString()
+    override val versionName: String get() = NSBundle.mainBundle.objectForInfoDictionaryKey("CFBundleShortVersionString").toString()
 }

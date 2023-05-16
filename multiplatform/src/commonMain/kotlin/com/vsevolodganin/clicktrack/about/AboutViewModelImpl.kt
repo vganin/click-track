@@ -19,7 +19,7 @@ class AboutViewModelImpl(
 ) : AboutViewModel, ComponentContext by componentContext {
 
     override val state: StateFlow<AboutState> = MutableStateFlow(
-        AboutState(displayVersion = buildConfig.displayVersion)
+        AboutState(displayVersion = buildConfig.versionName)
     )
 
     override fun onBackClick() = navigation.pop()
