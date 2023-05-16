@@ -24,17 +24,20 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(keystorePropertiesFile.inputStream())
 }
 
+val baseVersion = "1.1.0"
+val currentDate = SimpleDateFormat("yyyyMMdd").format(Date())!!
+
 android {
     namespace = "com.vsevolodganin.clicktrack"
 
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
         versionCode = 51
-        versionName = "1.1.0 (${SimpleDateFormat("yyyyMMdd").format(Date())})"
+        versionName = "$baseVersion ($currentDate)"
 
         resourceConfigurations += setOf("en", "ru")
 
-        setProperty("archivesBaseName", "click-track-$versionName")
+        setProperty("archivesBaseName", "click-track-$baseVersion-$currentDate")
 
         externalNativeBuild {
             cmake {
