@@ -29,6 +29,7 @@
     <string name="general_cancel">Отмена</string>
     <string name="general_metronome_click_track_title">Метроном</string>
     <string name="general_unnamed_click_track_template">Безымянный клик-трек</string>
+    <string name="general_unnamed_training_click_track_template">Тренировка</string>
     <string name="metronome_bpm_meter_tap">ТАП</string>
     <string name="metronome_screen_title">Метроном</string>
     <string name="play_click_track_delete_confirmation">Вы точно хотите удалить клик-трек?</string>

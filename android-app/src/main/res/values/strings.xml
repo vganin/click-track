@@ -3,7 +3,6 @@
     <string name="export_worker_notification_in_process">Exporting \"%1$s\"…</string>
     <string name="export_worker_notification_open">Tap to open</string>
     <string name="general_app_name" translatable="false">Click Track</string>
-    <string name="general_unnamed_training_click_track_template">Training</string>
     <string name="notification_channel_export">Export</string>
     <string name="notification_channel_playing_now">Playing Now</string>
     <string name="shortcuts_metronome">Metronome</string>

@@ -8,6 +8,7 @@ import com.vsevolodganin.clicktrack.metronome.MetronomeViewModelImpl
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModelImpl
 import com.vsevolodganin.clicktrack.polyrhythm.PolyrhythmsViewModelImpl
 import com.vsevolodganin.clicktrack.settings.SettingsViewModelImpl
+import com.vsevolodganin.clicktrack.training.TrainingViewModelImpl
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -18,7 +19,7 @@ class ScreenViewModelFactoryImpl(
     private val metronomeViewModelFactory: (componentContext: ComponentContext) -> MetronomeViewModelImpl,
     private val settingsViewModelFactory: (componentContext: ComponentContext) -> SettingsViewModelImpl,
     private val soundLibraryViewModelFactory: (componentContext: ComponentContext) -> DummySoundLibraryViewModelImpl,
-    private val trainingViewModelFactory: (componentContext: ComponentContext) -> DummyTrainingViewModelImpl,
+    private val trainingViewModelFactory: (componentContext: ComponentContext) -> TrainingViewModelImpl,
     private val aboutViewModelFactory: (componentContext: ComponentContext) -> AboutViewModelImpl,
     private val polyrhythmsViewModelFactory: (componentContext: ComponentContext) -> PolyrhythmsViewModelImpl,
 ) : ScreenViewModelFactory {

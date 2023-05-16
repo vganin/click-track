@@ -1,11 +1,10 @@
 package com.vsevolodganin.clicktrack.training
 
-import android.app.Activity
+import ClickTrack.multiplatform.MR
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.vsevolodganin.clicktrack.Navigation
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
 import com.vsevolodganin.clicktrack.model.CueDuration
@@ -16,6 +15,7 @@ import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.optionalCast
+import com.vsevolodganin.clicktrack.utils.resources.StringResolver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +31,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TrainingViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val activity: Activity,
+    private val stringResolver: StringResolver,
     private val navigation: Navigation,
     private val clickTrackRepository: ClickTrackRepository,
     private val userPreferences: UserPreferencesRepository,
@@ -63,7 +63,7 @@ class TrainingViewModelImpl(
             val trainingState = userPreferences.trainingState.flow.first()
             val suggestedName = newClickTrackNameSuggester.suggest(
                 withContext(Dispatchers.Main) {
-                    activity.getString(R.string.general_unnamed_training_click_track_template)
+                    stringResolver.resolve(MR.strings.general_unnamed_training_click_track_template)
                 }
             )
             val newClickTrack = trainingClickTrackGenerator.generate(trainingState, suggestedName)
