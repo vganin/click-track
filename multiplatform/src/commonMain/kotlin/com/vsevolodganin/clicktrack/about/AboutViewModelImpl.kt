@@ -36,8 +36,8 @@ class AboutViewModelImpl(
 
     private companion object Const {
         const val EMAIL = "contact@vsevolodganin.com"
-        const val HOME_PAGE = "https://dev.vsevolodganin.com"
-        const val TWITTER = "https://twitter.com/vsevolod_ganin"
+        const val HOME_PAGE = "https://vsevolodganin.com"
+        const val TWITTER = "https://twitter.com/vsga_dev"
         const val ARTSTATION = "https://varvara_furu.artstation.com"
         const val GITHUB_PROJECT = "https://github.com/vganin/click-track"
     }
