@@ -1,12 +1,12 @@
 package com.vsevolodganin.clicktrack.metronome
 
-import android.os.SystemClock
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
+import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
 @Inject
-class BpmMeter() {
+class BpmMeter {
 
     private val samples: Array<Long?> = Array(HISTORY_SIZE) { null }
     private var index: Int = 0
@@ -34,7 +34,7 @@ class BpmMeter() {
         )
     }
 
-    private fun now() = SystemClock.uptimeMillis()
+    private fun now() = Clock.System.now().toEpochMilliseconds()
 }
 
 private const val TIME_WINDOW_SIZE_MILLIS = 3000L

@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.vsevolodganin.clicktrack.about.AboutViewModelImpl
 import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModelImpl
 import com.vsevolodganin.clicktrack.list.ClickTrackListViewModelImpl
+import com.vsevolodganin.clicktrack.metronome.MetronomeViewModelImpl
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModelImpl
 import com.vsevolodganin.clicktrack.settings.SettingsViewModelImpl
 import me.tatarka.inject.annotations.Inject
@@ -13,7 +14,7 @@ class ScreenViewModelFactoryImpl(
     private val clickTrackListViewModelFactory: (componentContext: ComponentContext) -> ClickTrackListViewModelImpl,
     private val playClickTrackViewModelFactory: (componentContext: ComponentContext, config: ScreenConfiguration.PlayClickTrack) -> PlayClickTrackViewModelImpl,
     private val editClickTrackViewModelFactory: (componentContext: ComponentContext, config: ScreenConfiguration.EditClickTrack) -> EditClickTrackViewModelImpl,
-    private val metronomeViewModelFactory: (componentContext: ComponentContext) -> DummyMetronomeViewModelImpl,
+    private val metronomeViewModelFactory: (componentContext: ComponentContext) -> MetronomeViewModelImpl,
     private val settingsViewModelFactory: (componentContext: ComponentContext) -> SettingsViewModelImpl,
     private val soundLibraryViewModelFactory: (componentContext: ComponentContext) -> DummySoundLibraryViewModelImpl,
     private val trainingViewModelFactory: (componentContext: ComponentContext) -> DummyTrainingViewModelImpl,
