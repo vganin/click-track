@@ -7,12 +7,12 @@ add_library(
         OboeInit.cpp
         AudioTrackBindings.cpp
         AudioTrack.cpp
+        NativeCrash.cpp
 )
 
 find_library(log log)
 find_package(oboe REQUIRED CONFIG)
-find_package(multiplatform REQUIRED CONFIG)
-
-target_link_libraries(clicktrack log oboe::oboe multiplatform::multiplatform)
 
 include_directories(iolib)
+
+target_link_libraries(clicktrack log oboe::oboe)

@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.utils.platform
+package com.vsevolodganin.clicktrack.settings.debug
 
 fun interface NativeCrash {
     operator fun invoke()

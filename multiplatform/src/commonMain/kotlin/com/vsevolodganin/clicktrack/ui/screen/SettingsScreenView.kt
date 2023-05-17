@@ -27,7 +27,6 @@ import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooserItem
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import com.vsevolodganin.clicktrack.utils.platform.isDebug
-import com.vsevolodganin.clicktrack.utils.platform.nativeCrash
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -97,10 +96,10 @@ private fun Content(viewModel: SettingsViewModel) {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(onClick = { throw RuntimeException("Test") }) {
+                Button(onClick = viewModel::onKotlinCrashClick) {
                     Text("Kotlin crash")
                 }
-                Button(onClick = ::nativeCrash) {
+                Button(onClick = viewModel::onNativeCrashClick) {
                     Text("Native crash")
                 }
             }
@@ -148,6 +147,8 @@ private fun Preview() = ClickTrackTheme {
             override fun onThemeChange(theme: Theme) = Unit
             override fun onLanguageChange(language: AppLanguage) = Unit
             override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
+            override fun onKotlinCrashClick() = Unit
+            override fun onNativeCrashClick() = Unit
         }
     )
 }

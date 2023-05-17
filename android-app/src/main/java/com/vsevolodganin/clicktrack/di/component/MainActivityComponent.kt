@@ -16,6 +16,8 @@ import com.vsevolodganin.clicktrack.language.LanguageStoreImpl
 import com.vsevolodganin.clicktrack.migration.MigrationManager
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccessImpl
+import com.vsevolodganin.clicktrack.settings.debug.NativeCrash
+import com.vsevolodganin.clicktrack.settings.debug.NativeCrashImpl
 import com.vsevolodganin.clicktrack.soundlibrary.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.soundlibrary.DocumentMetadataHelperImpl
 import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
@@ -47,4 +49,5 @@ abstract class MainActivityComponent(
     protected val LanguageStoreImpl.binding: LanguageStore @Provides get() = this
     protected val SoundChooserImpl.binding: SoundChooser @Provides get() = this
     protected val DocumentMetadataHelperImpl.binding: DocumentMetadataHelper @Provides get() = this
+    protected val NativeCrashImpl.binding: NativeCrash @Provides get() = this
 }
