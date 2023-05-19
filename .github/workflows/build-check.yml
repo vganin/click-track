@@ -15,7 +15,12 @@ jobs:
           distribution: 'zulu'
           java-version: '11'
           cache: 'gradle'
-      - run: ./gradlew -s :android-app:bundleRelease :android-app:lintRelease :multiplatform:verifySqlDelightMigration
+      - run: >
+          ./gradlew -s
+            :android-app:bundleRelease 
+            :android-app:lintRelease
+            testReleaseUnitTest
+            :multiplatform:verifySqlDelightMigration
   ios:
     runs-on: macos-latest
     steps:
