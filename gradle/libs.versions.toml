@@ -9,6 +9,7 @@ ksp = "1.8.20-1.0.11"
 moko-resources = "0.21.2"
 sqldelight = "1.5.5"
 multiplatformsettings = "1.0.0"
+mockk = "1.13.5"
 
 [libraries]
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
@@ -41,6 +42,8 @@ kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 moko-resources = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
 moko-resources-gradlePlugin = { module = "dev.icerock.moko:resources-generator", version.ref = "moko-resources" }
 multiplatformsettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformsettings" }

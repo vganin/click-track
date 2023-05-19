@@ -60,6 +60,12 @@ kotlin {
             }
         }
 
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+
         androidMain {
             dependencies {
                 api(compose.uiTooling)
@@ -72,6 +78,13 @@ kotlin {
                 api(libs.androidx.dataStore)
                 api(libs.bundles.accompanist)
                 api(libs.sqldelight.androidDriver)
+            }
+        }
+
+        androidUnitTest {
+            dependencies {
+                implementation(libs.mockk.android)
+                implementation(libs.mockk.agent)
             }
         }
 
