@@ -17,10 +17,10 @@ jobs:
           cache: 'gradle'
       - run: >
           ./gradlew -s
-            :android-app:bundleRelease 
-            :android-app:lintRelease
-            testReleaseUnitTest
-            :multiplatform:verifySqlDelightMigration
+          :android-app:bundleRelease 
+          :android-app:lintRelease
+          testReleaseUnitTest
+          :multiplatform:verifySqlDelightMigration
   ios:
     runs-on: macos-latest
     steps:
