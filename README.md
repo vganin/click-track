@@ -6,6 +6,9 @@
 
 <h1 align="center">Click Track</h1>
 
+[![Build Check](https://github.com/vganin/click-track/actions/workflows/build-check.yml/badge.svg)](https://github.com/vganin/click-track/actions/workflows/build-check.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/vganin/d911211e98e25a98f2fa644c9526d062/raw/click-track-coverage-badge.json)](https://vganin.github.io/click-track/)
+
 **Click Track** is a free metronome app for Android. Click track entity is a sequence of sections (cues), each having its own tempo, time signature, and subdivisions.
 
 <a href="https://play.google.com/store/apps/details?id=com.vsevolodganin.clicktrack&utm_source=github.com">

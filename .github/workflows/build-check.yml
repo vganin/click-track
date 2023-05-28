@@ -5,9 +5,19 @@ on:
   pull_request:
     branches: [ master ]
   workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 jobs:
   android:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.coverage-deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v3
@@ -21,6 +31,30 @@ jobs:
           :android-app:lintRelease
           testReleaseUnitTest
           :multiplatform:verifySqlDelightMigration
+      - name: Generate coverage output
+        run: |
+          ./gradlew :multiplatform:koverHtmlReportRelease
+          echo "COVERAGE=$(./gradlew -q :multiplatform:printLineCoverage)" >> $GITHUB_ENV
+      # TODO: Decouple and simplify coverage report generation
+      - uses: actions/configure-pages@v3
+      - name: Upload coverage artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: multiplatform/build/reports/kover/htmlRelease
+      - name: Deploy coverage report
+        id: coverage-deployment
+        uses: actions/deploy-pages@v2
+      - name: Update coverage badge
+        uses: schneegans/dynamic-badges-action@v1.6.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: d911211e98e25a98f2fa644c9526d062
+          filename: click-track-coverage-badge.json
+          label: Coverage
+          message: ${{ env.COVERAGE }}%
+          valColorRange: ${{ env.COVERAGE }}
+          minColorRange: 0
+          maxColorRange: 100
   ios:
     runs-on: macos-latest
     steps:

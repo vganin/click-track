@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.compose.compose
+import javax.xml.parsers.DocumentBuilderFactory
 
 @Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
@@ -10,6 +11,7 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlinx.kover)
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
     kotlin("plugin.parcelize")
@@ -137,5 +139,39 @@ dependencies {
         "kspIosSimulatorArm64"
     )) {
         add(configName, libs.kotlininject.compiler)
+    }
+}
+
+tasks.register("printLineCoverage") {
+    group = "verification" // Put into the same group as the `kover` tasks
+    dependsOn("koverXmlReportRelease")
+    doLast {
+        val report = file("$buildDir/reports/kover/reportRelease.xml")
+
+        val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(report)
+        val rootNode = doc.firstChild
+        var childNode = rootNode.firstChild
+
+        var coveragePercent = 0.0
+
+        while (childNode != null) {
+            if (childNode.nodeName == "counter") {
+                val typeAttr = childNode.attributes.getNamedItem("type")
+                if (typeAttr.textContent == "LINE") {
+                    val missedAttr = childNode.attributes.getNamedItem("missed")
+                    val coveredAttr = childNode.attributes.getNamedItem("covered")
+
+                    val missed = missedAttr.textContent.toLong()
+                    val covered = coveredAttr.textContent.toLong()
+
+                    coveragePercent = (covered * 100.0) / (missed + covered)
+
+                    break
+                }
+            }
+            childNode = childNode.nextSibling
+        }
+
+        println("%.1f".format(coveragePercent))
     }
 }
