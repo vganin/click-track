@@ -32,7 +32,7 @@ android {
 
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
-        versionCode = 51
+        versionCode = 52
         versionName = "$baseVersion ($currentDate)"
 
         resourceConfigurations += setOf("en", "ru")
