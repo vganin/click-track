@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.polyrhythm
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
-import com.vsevolodganin.clicktrack.Navigation
+import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
@@ -20,7 +20,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class PolyrhythmsViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val navigation: Navigation,
+    private val navigation: ScreenStackNavigation,
     private val userPreferences: UserPreferencesRepository,
     private val playerServiceAccess: PlayerServiceAccess,
 ) : PolyrhythmsViewModel, ComponentContext by componentContext {

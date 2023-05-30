@@ -2,9 +2,10 @@ package com.vsevolodganin.clicktrack.list
 
 import ClickTrack.multiplatform.MR
 import com.arkivanov.decompose.ComponentContext
-import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.ScreenConfiguration
+import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
+import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.DefaultCue
@@ -28,7 +29,8 @@ import me.tatarka.inject.annotations.Inject
 class ClickTrackListViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val stringResolver: StringResolver,
-    private val navigation: Navigation,
+    private val navigation: ScreenStackNavigation,
+    private val drawerNavigation: DrawerNavigation,
     private val clickTrackRepository: ClickTrackRepository,
     private val newClickTrackNameSuggester: NewClickTrackNameSuggester,
 ) : ClickTrackListViewModel, ComponentContext by componentContext {
@@ -67,7 +69,7 @@ class ClickTrackListViewModelImpl(
         }
     }
 
-    override fun onMenuClick() = navigation.openDrawer()
+    override fun onMenuClick() = drawerNavigation.openDrawer()
 
     private fun defaultNewClickTrack(suggestedNewClickTrackName: String) = ClickTrack(
         name = suggestedNewClickTrackName,

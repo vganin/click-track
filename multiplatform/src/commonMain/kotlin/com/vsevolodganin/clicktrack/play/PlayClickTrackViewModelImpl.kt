@@ -2,8 +2,8 @@ package com.vsevolodganin.clicktrack.play
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
-import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.ScreenConfiguration
+import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.export.ExportWorkLauncher
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
@@ -28,7 +28,7 @@ import me.tatarka.inject.annotations.Inject
 class PlayClickTrackViewModelImpl(
     @Assisted componentContext: ComponentContext,
     @Assisted private val config: ScreenConfiguration.PlayClickTrack,
-    private val navigation: Navigation,
+    private val navigation: ScreenStackNavigation,
     private val clickTrackRepository: ClickTrackRepository,
     private val playerServiceAccess: PlayerServiceAccess,
     private val userPreferences: UserPreferencesRepository,

@@ -7,7 +7,6 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.essenty.instancekeeper.InstanceKeeperOwner
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.statekeeper.StateKeeperOwner
-import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.RootViewModel
 import com.vsevolodganin.clicktrack.RootViewModelImpl
 import com.vsevolodganin.clicktrack.ScreenConfiguration
@@ -64,11 +63,4 @@ interface ViewModelModule {
         componentContext: ComponentContext,
         drawerViewModelFactory: (ComponentContext) -> DrawerViewModelImpl,
     ): DrawerViewModel = drawerViewModelFactory.invoke(componentContext.childContext("Drawer"))
-
-    @Provides
-    @MainControllerScope
-    fun provideNavigation(
-        stackNavigation: ScreenStackNavigation,
-        drawerNavigation: DrawerNavigation
-    ): Navigation = Navigation(stackNavigation, drawerNavigation)
 }

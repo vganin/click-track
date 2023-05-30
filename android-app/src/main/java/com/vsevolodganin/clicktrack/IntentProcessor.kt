@@ -10,7 +10,7 @@ import me.tatarka.inject.annotations.Inject
 @MainControllerScope
 @Inject
 class IntentProcessor(
-    private val navigation: Navigation
+    private val navigation: ScreenStackNavigation
 ) {
     fun process(intent: Intent) {
         when (intent.action) {

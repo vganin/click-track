@@ -3,8 +3,8 @@ package com.vsevolodganin.clicktrack.edit
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.replaceCurrent
-import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.ScreenConfiguration
+import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.ClickTrackValidator
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.DefaultCue
@@ -31,7 +31,7 @@ import me.tatarka.inject.annotations.Inject
 class EditClickTrackViewModelImpl(
     @Assisted componentContext: ComponentContext,
     @Assisted private val config: ScreenConfiguration.EditClickTrack,
-    private val navigation: Navigation,
+    private val navigation: ScreenStackNavigation,
     private val clickTrackRepository: ClickTrackRepository,
     private val clickTrackValidator: ClickTrackValidator,
 ) : EditClickTrackViewModel, ComponentContext by componentContext {

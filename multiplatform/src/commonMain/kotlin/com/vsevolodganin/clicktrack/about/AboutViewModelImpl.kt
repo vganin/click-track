@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.about
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
-import com.vsevolodganin.clicktrack.Navigation
+import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.BuildConfig
 import com.vsevolodganin.clicktrack.common.LinkOpener
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class AboutViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val navigation: Navigation,
+    private val navigation: ScreenStackNavigation,
     private val linkOpener: LinkOpener,
     buildConfig: BuildConfig
 ) : AboutViewModel, ComponentContext by componentContext {

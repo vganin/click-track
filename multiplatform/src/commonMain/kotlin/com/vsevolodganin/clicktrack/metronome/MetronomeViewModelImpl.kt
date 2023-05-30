@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.metronome
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
-import com.vsevolodganin.clicktrack.Navigation
+import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.NotePattern
@@ -24,7 +24,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class MetronomeViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val navigation: Navigation,
+    private val navigation: ScreenStackNavigation,
     private val userPreferences: UserPreferencesRepository,
     private val playerServiceAccess: PlayerServiceAccess,
     private val bpmMeter: BpmMeter,

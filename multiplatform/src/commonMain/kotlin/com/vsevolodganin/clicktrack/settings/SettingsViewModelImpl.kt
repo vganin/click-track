@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.settings
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
-import com.vsevolodganin.clicktrack.Navigation
+import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.language.LanguageStore
 import com.vsevolodganin.clicktrack.settings.debug.KotlinCrash
@@ -20,7 +20,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class SettingsViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val navigation: Navigation,
+    private val navigation: ScreenStackNavigation,
     private val userPreferences: UserPreferencesRepository,
     private val languageStore: LanguageStore,
     private val kotlinCrashProvider: () -> KotlinCrash,

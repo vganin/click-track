@@ -2,9 +2,9 @@ package com.vsevolodganin.clicktrack.drawer
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.subscribe
-import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStack
+import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.ScreenStackState
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.utils.decompose.resetTo
@@ -18,7 +18,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class DrawerViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val navigation: Lazy<Navigation>, // Lazy to avoid cyclic dependency initialization
+    private val navigation: ScreenStackNavigation,
     screenStackState: Lazy<ScreenStackState>, // Lazy to avoid cyclic dependency initialization
 ) : DrawerViewModel, ComponentContext by componentContext {
 
@@ -54,7 +54,10 @@ class DrawerViewModelImpl(
 
     override fun navigateToAbout() = resetTo(ScreenConfiguration.About)
 
-    private fun resetTo(config: ScreenConfiguration) = navigation.value.resetTo(config)
+    private fun resetTo(config: ScreenConfiguration) {
+        closeDrawer()
+        navigation.resetTo(config)
+    }
 
     override fun openDrawer() = _state.update { it.copy(isOpened = true) }
 

@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.soundlibrary
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.essenty.lifecycle.doOnPause
-import com.vsevolodganin.clicktrack.Navigation
+import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType
@@ -32,7 +32,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class SoundLibraryViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val navigation: Navigation,
+    private val navigation: ScreenStackNavigation,
     private val userPreferences: UserPreferencesRepository,
     private val clickSoundsRepository: ClickSoundsRepository,
     private val documentMetadataHelper: DocumentMetadataHelper,

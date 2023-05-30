@@ -4,8 +4,8 @@ import ClickTrack.multiplatform.MR
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.replaceCurrent
-import com.vsevolodganin.clicktrack.Navigation
 import com.vsevolodganin.clicktrack.ScreenConfiguration
+import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.DefaultBeatsDuration
@@ -32,7 +32,7 @@ import me.tatarka.inject.annotations.Inject
 class TrainingViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val stringResolver: StringResolver,
-    private val navigation: Navigation,
+    private val navigation: ScreenStackNavigation,
     private val clickTrackRepository: ClickTrackRepository,
     private val userPreferences: UserPreferencesRepository,
     private val stateValidator: TrainingStateValidator,
