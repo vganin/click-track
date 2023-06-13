@@ -9,7 +9,7 @@ import com.vsevolodganin.clicktrack.audio.SoundBank
 import com.vsevolodganin.clicktrack.audio.SoundSourceProvider
 import com.vsevolodganin.clicktrack.audio.UserSelectedSounds
 import com.vsevolodganin.clicktrack.audio.bytesPerFrame
-import com.vsevolodganin.clicktrack.audio.framesPerSecond
+import com.vsevolodganin.clicktrack.audio.frameRate
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.player.toPlayerEvents
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
@@ -151,7 +151,7 @@ class ExportToAudioFile(
                     ?.let(soundBank::get)
                     ?: continue
 
-                val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * soundData.framesPerSecond).toInt()
+                val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * soundData.frameRate).toInt()
                 val framesOfSound = (soundData.data.size / soundData.bytesPerFrame).coerceAtMost(maxFramesCount)
                 val framesOfSilence = maxFramesCount - framesOfSound
 

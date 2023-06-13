@@ -20,18 +20,19 @@ fun MediaFormat.sampleRate(): Int {
     return getInteger(MediaFormat.KEY_SAMPLE_RATE)
 }
 
-fun MediaFormat.bytesPerSample(): Int {
+fun MediaFormat.bitDepth(): Int {
     return when (val pcmEncoding = pcmEncoding()) {
-        AudioFormat.ENCODING_PCM_8BIT -> 1
-        AudioFormat.ENCODING_PCM_16BIT -> 2
-        AudioFormat.ENCODING_PCM_24BIT_PACKED -> 3
+        AudioFormat.ENCODING_PCM_8BIT -> 8
+        AudioFormat.ENCODING_PCM_16BIT -> 16
+        AudioFormat.ENCODING_PCM_24BIT_PACKED -> 24
         AudioFormat.ENCODING_PCM_32BIT,
-        AudioFormat.ENCODING_PCM_FLOAT,
-        -> 4
+        AudioFormat.ENCODING_PCM_FLOAT -> 32
         AudioFormat.ENCODING_INVALID -> throw IllegalArgumentException("Bad audio format $pcmEncoding")
         else -> throw IllegalArgumentException("Bad audio format $pcmEncoding")
     }
 }
+
+fun MediaFormat.bytesPerSample(): Int = bitDepth() / 8
 
 fun MediaFormat.bytesPerSecond(): Int {
     return sampleRate() * bytesPerSample() * channelCount()

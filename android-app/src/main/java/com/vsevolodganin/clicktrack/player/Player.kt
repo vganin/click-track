@@ -1,7 +1,16 @@
 package com.vsevolodganin.clicktrack.player
 
+import android.media.AudioAttributes
+import android.media.AudioFormat
+import android.media.AudioManager
+import android.media.AudioTrack
+import com.vsevolodganin.clicktrack.audio.PcmData
+import com.vsevolodganin.clicktrack.audio.PcmResampler
+import com.vsevolodganin.clicktrack.audio.SoundBank
 import com.vsevolodganin.clicktrack.audio.SoundSourceProvider
 import com.vsevolodganin.clicktrack.audio.UserSelectedSounds
+import com.vsevolodganin.clicktrack.audio.bytesPerFrame
+import com.vsevolodganin.clicktrack.audio.frameRate
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
 import com.vsevolodganin.clicktrack.model.ClickSounds
@@ -16,6 +25,7 @@ import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
+import com.vsevolodganin.clicktrack.utils.collection.toRoundRobin
 import com.vsevolodganin.clicktrack.utils.coroutine.collectLatestFirst
 import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
 import com.vsevolodganin.clicktrack.utils.grabIf
@@ -33,15 +43,16 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.DurationUnit
 
 @PlayerServiceScope
 @Inject
@@ -52,6 +63,8 @@ class Player(
     private val playableContentProvider: PlayableContentProvider,
     private val userSelectedSounds: UserSelectedSounds,
     latencyTracker: LatencyTracker,
+    private val soundBank: SoundBank,
+    private val pcmResampler: PcmResampler,
 ) {
     data class Input(
         val id: PlayableId,
@@ -61,6 +74,26 @@ class Player(
 
     private val playbackState = MutableStateFlow<InternalPlaybackState?>(null)
     private val pausedState = MutableStateFlow(false)
+
+    private val ditDepth = 16
+    private val sampleRate = 44100
+    private val channelConfig = AudioFormat.CHANNEL_OUT_MONO
+    private val encoding = AudioFormat.ENCODING_PCM_16BIT
+    private val bufferSize = AudioTrack.getMinBufferSize(sampleRate, channelConfig, encoding)
+    private var track = AudioTrack(
+        AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build(),
+        AudioFormat.Builder()
+            .setSampleRate(sampleRate)
+            .setEncoding(encoding)
+            .setChannelMask(channelConfig)
+            .build(),
+        bufferSize,
+        AudioTrack.MODE_STREAM,
+        AudioManager.AUDIO_SESSION_ID_GENERATE
+    )
 
     suspend fun play(input: Flow<Input>) {
         try {
@@ -231,25 +264,100 @@ class Player(
             startAt
         }
 
-        val schedule = toPlayerEvents()
-            .toActions(
-                soundSourceProvider = soundSourceProvider,
-                soundPool = soundPool,
-            )
-            .withSideEffect(atIndex = 0) {
-                reportProgress(Duration.ZERO)
+//        val schedule = toPlayerEvents()
+//            .toActions(
+//                soundSourceProvider = soundSourceProvider,
+//                soundPool = soundPool,
+//            )
+//            .withSideEffect(atIndex = 0) {
+//                reportProgress(Duration.ZERO)
+//            }
+//            .loop(loop)
+//            .let {
+//                if (actualStartAt > Duration.ZERO) {
+//                    it.startingAt(actualStartAt).withSideEffect(atIndex = 0) { reportProgress(actualStartAt) }
+//                } else {
+//                    it
+//                }
+//            }
+//            .prefetch(PREFETCH_SIZE)
+//
+//        PlayerSequencer.play(schedule)
+
+        reportProgress(startAt)
+        val skipBytes = (actualStartAt.toDouble(DurationUnit.SECONDS) * sampleRate * 2).toInt() / 2 * 2
+        val playerEvents = toPlayerEvents()
+        val bytes = sequence {
+            for (event in playerEvents) {
+                val soundData = event.soundType
+                    ?.let(soundSourceProvider::provide)
+                    ?.let(soundBank::get)
+                    ?.let { pcm ->
+                        PcmData(
+                            bitDepth = ditDepth,
+                            sampleRate = sampleRate,
+                            channelCount = 1,
+                            data = pcmResampler.resample(
+                                inputData = pcm.data,
+                                inputBitDepth = pcm.bitDepth,
+                                inputSampleRate = pcm.sampleRate,
+                                inputChannelCount = pcm.channelCount,
+                                outputBitDepth = ditDepth,
+                                outputSampleRate = sampleRate
+                            )
+                        )
+                    }
+                    ?: continue
+
+                val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * soundData.frameRate).toInt()
+                val framesOfSound = (soundData.data.size / soundData.bytesPerFrame).coerceAtMost(maxFramesCount)
+                val framesOfSilence = maxFramesCount - framesOfSound
+
+                yieldAll(soundData.data.asSequence().take(framesOfSound * soundData.bytesPerFrame))
+                yieldAll(sequence { repeat(framesOfSilence * soundData.bytesPerFrame) { yield(0) } })
             }
-            .loop(loop)
-            .let {
-                if (actualStartAt > Duration.ZERO) {
-                    it.startingAt(actualStartAt).withSideEffect(atIndex = 0) { reportProgress(actualStartAt) }
-                } else {
-                    it
+            reportProgress(Duration.ZERO)
+        }.run {
+            if (loop) toRoundRobin() else this
+        }.drop(skipBytes)
+
+        track.play()
+
+        try {
+            outer@ for (batch in bytes.chunked(bufferSize * 2)) {
+                val byteArray = ByteArray(batch.size) { batch[it] }
+                var written = 0
+                while (written < byteArray.size) {
+                    val result = track.write(byteArray, written, byteArray.size)
+                    if (result >= 0) {
+                        written += result
+                    } else if (result == AudioTrack.ERROR_DEAD_OBJECT) {
+                        track.release()
+                        track = AudioTrack(
+                            AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_MEDIA)
+                                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                                .build(),
+                            AudioFormat.Builder()
+                                .setSampleRate(sampleRate)
+                                .setEncoding(encoding)
+                                .setChannelMask(channelConfig)
+                                .build(),
+                            bufferSize,
+                            AudioTrack.MODE_STREAM,
+                            AudioManager.AUDIO_SESSION_ID_GENERATE
+                        )
+                    } else {
+                        Timber.e("Audio track unrecoverable error: $result")
+                        break@outer
+                    }
+                    yield()
                 }
             }
-            .prefetch(PREFETCH_SIZE)
-
-        PlayerSequencer.play(schedule)
+        } finally {
+            track.pause()
+            track.flush()
+        }
     }
 
     private suspend fun TwoLayerPolyrhythm.play(
@@ -286,9 +394,7 @@ class Player(
 
     private suspend fun soundSourceProvider(soundsId: ClickSoundsId?): SoundSourceProvider {
         val soundsFlow = if (soundsId != null) soundsById(soundsId) else userSelectedSounds.get()
-        val soundsState = soundsFlow
-            .onEach { sounds -> sounds?.asIterable?.forEach(soundPool::warmup) }
-            .stateIn(GlobalScope)
+        val soundsState = soundsFlow.stateIn(GlobalScope)
         return SoundSourceProvider(soundsState)
     }
 

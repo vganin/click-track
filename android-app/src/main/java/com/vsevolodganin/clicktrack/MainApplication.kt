@@ -22,8 +22,6 @@ class MainApplication : Application() {
             strictMode()
         }
 
-        NativeLibraries.init(this)
-
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }

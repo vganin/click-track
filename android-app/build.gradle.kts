@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Properties
@@ -38,12 +37,6 @@ android {
         resourceConfigurations += setOf("en", "ru")
 
         setProperty("archivesBaseName", "click-track-$baseVersion-$currentDate")
-
-        externalNativeBuild {
-            cmake {
-                arguments("-DANDROID_STL=c++_shared")
-            }
-        }
     }
 
     signingConfigs {
@@ -65,18 +58,10 @@ android {
             if (keystorePropertiesFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
             }
-
-            configure<CrashlyticsExtension> {
-                nativeSymbolUploadEnabled = true
-            }
         }
 
         debug {
             applicationIdSuffix = ".debug"
-
-            configure<CrashlyticsExtension> {
-                nativeSymbolUploadEnabled = true
-            }
         }
 
         create("perftest") {
@@ -120,16 +105,6 @@ android {
         )
     }
 
-    buildFeatures {
-        prefab = true
-    }
-
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-        }
-    }
-
     lint {
         disable += listOf(
             // FIXME(https://issuetracker.google.com/issues/184830262)
@@ -158,6 +133,10 @@ resourcePlaceholders {
     files = listOf("xml/shortcuts.xml")
 }
 
+repositories {
+    maven { url = uri("https://mvn.0110.be/releases") }
+}
+
 dependencies {
     implementation(project(":multiplatform"))
 
@@ -169,7 +148,6 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.media)
     implementation(libs.androidx.workManager)
-    implementation(libs.oboe)
     implementation(libs.bundles.decompose)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
@@ -178,4 +156,6 @@ dependencies {
     implementation(libs.googlePlay.core)
     implementation(libs.timber)
     ksp(libs.kotlininject.compiler)
+
+    implementation("be.tarsos.dsp:core:2.5")
 }
