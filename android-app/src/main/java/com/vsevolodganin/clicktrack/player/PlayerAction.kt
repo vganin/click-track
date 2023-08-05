@@ -25,7 +25,7 @@ fun PlayerEvent.toAction(
 ) = PlayerAction(
     interval = duration,
     action = {
-        if (soundType != null) {
+        soundTypes.forEach { soundType ->
             val soundSource = soundSourceProvider.provide(soundType)
             soundSource?.let(soundPool::play)
         }

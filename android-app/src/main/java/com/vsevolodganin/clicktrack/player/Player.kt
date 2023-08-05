@@ -15,6 +15,7 @@ import com.vsevolodganin.clicktrack.model.PlayableProgressTimeSource
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
+import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
 import com.vsevolodganin.clicktrack.utils.coroutine.collectLatestFirst
 import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
@@ -51,6 +52,7 @@ class Player(
     private val clickSoundsRepository: ClickSoundsRepository,
     private val playableContentProvider: PlayableContentProvider,
     private val userSelectedSounds: UserSelectedSounds,
+    private val userPreferencesRepository: UserPreferencesRepository,
     latencyTracker: LatencyTracker,
 ) {
     data class Input(
@@ -225,24 +227,84 @@ class Player(
         reportProgress: (Duration) -> Unit,
         soundSourceProvider: SoundSourceProvider,
     ) {
-        val actualStartAt = if (startAt >= durationInTime) {
+        play(
+            playerEvents = toPlayerEvents(),
+            loop = loop,
+            startAt = startAt,
+            duration = durationInTime,
+            reportProgress = reportProgress,
+            soundSourceProvider = soundSourceProvider,
+        )
+    }
+
+    private suspend fun TwoLayerPolyrhythm.play(
+        startAt: Duration,
+        reportProgress: (Duration) -> Unit,
+        soundSourceProvider: SoundSourceProvider,
+    ) {
+        play(
+            playerEvents = toPlayerEvents(),
+            loop = true,
+            startAt = startAt,
+            duration = durationInTime,
+            reportProgress = reportProgress,
+            soundSourceProvider = soundSourceProvider,
+        )
+    }
+
+    private suspend fun play(
+        playerEvents: Sequence<PlayerEvent>,
+        loop: Boolean,
+        startAt: Duration,
+        duration: Duration,
+        reportProgress: (Duration) -> Unit,
+        soundSourceProvider: SoundSourceProvider,
+    ) {
+        @Suppress("NAME_SHADOWING") // Wrap startAt around for safety
+        val startAt = if (startAt >= duration) {
             if (loop) Duration.ZERO else return
         } else {
             startAt
         }
 
-        val schedule = toPlayerEvents()
+        if (!userPreferencesRepository.enableExperimentalAudioRenderer.value) {
+            playUsingDelays(
+                playerEvents = playerEvents,
+                loop = loop,
+                startAt = startAt,
+                reportProgress = reportProgress,
+                soundSourceProvider = soundSourceProvider
+            )
+        } else {
+            playUsingСontinuousRendering(
+                playerEvents = playerEvents,
+                loop = loop,
+                startAt = startAt,
+                reportProgress = reportProgress,
+                soundSourceProvider = soundSourceProvider
+            )
+        }
+    }
+
+    private suspend fun playUsingDelays(
+        playerEvents: Sequence<PlayerEvent>,
+        loop: Boolean,
+        startAt: Duration,
+        reportProgress: (Duration) -> Unit,
+        soundSourceProvider: SoundSourceProvider,
+    ) {
+        val schedule = playerEvents
             .toActions(
                 soundSourceProvider = soundSourceProvider,
                 soundPool = soundPool,
             )
-            .withSideEffect(atIndex = 0) {
-                reportProgress(Duration.ZERO)
-            }
+            .withSideEffect(atIndex = 0) { reportProgress(Duration.ZERO) }
+            .toList()
+            .asSequence()
             .loop(loop)
             .let {
-                if (actualStartAt > Duration.ZERO) {
-                    it.startingAt(actualStartAt).withSideEffect(atIndex = 0) { reportProgress(actualStartAt) }
+                if (startAt > Duration.ZERO) {
+                    it.startingAt(startAt).withSideEffect(atIndex = 0) { reportProgress(startAt) }
                 } else {
                     it
                 }
@@ -252,36 +314,14 @@ class Player(
         PlayerSequencer.play(schedule)
     }
 
-    private suspend fun TwoLayerPolyrhythm.play(
+    private suspend fun playUsingСontinuousRendering(
+        playerEvents: Sequence<PlayerEvent>,
+        loop: Boolean,
         startAt: Duration,
         reportProgress: (Duration) -> Unit,
         soundSourceProvider: SoundSourceProvider,
     ) {
-        val actualStartAt = if (startAt >= durationInTime) {
-            Duration.ZERO
-        } else {
-            startAt
-        }
-
-        val schedule = toPlayerEvents()
-            .toActions(
-                soundSourceProvider = soundSourceProvider,
-                soundPool = soundPool,
-            )
-            .withSideEffect(atIndex = 0) { reportProgress(Duration.ZERO) }
-            .toList()
-            .asSequence()
-            .loop(true)
-            .let {
-                if (actualStartAt > Duration.ZERO) {
-                    it.startingAt(actualStartAt).withSideEffect(atIndex = 0) { reportProgress(actualStartAt) }
-                } else {
-                    it
-                }
-            }
-            .prefetch(PREFETCH_SIZE)
-
-        PlayerSequencer.play(schedule)
+        TODO("Implement")
     }
 
     private suspend fun soundSourceProvider(soundsId: ClickSoundsId?): SoundSourceProvider {

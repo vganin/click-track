@@ -127,6 +127,11 @@ class UserPreferencesRepository(
         defaultValue = true,
     )
 
+    val enableExperimentalAudioRenderer: UserPropertyAccess<Boolean> = UserPropertyAccessWithNoMapping(
+        key = PreferenceKey.Boolean("experimental_audio_renderer"),
+        defaultValue = false
+    )
+
     private open inner class UserPropertyAccessWithMapping<TInternal, TExternal>(
         private val key: PreferenceKey<TInternal>,
         private val defaultValue: TExternal,

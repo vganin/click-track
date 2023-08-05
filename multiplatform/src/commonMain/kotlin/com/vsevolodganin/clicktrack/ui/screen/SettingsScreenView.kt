@@ -86,6 +86,15 @@ private fun Content(viewModel: SettingsViewModel) {
             description = stringResource(MR.strings.settings_ignore_audio_focus_description)
         )
 
+        Divider(modifier = Modifier.padding(start = 16.dp))
+
+        BooleanChooser(
+            title = stringResource(MR.strings.settings_enable_experimental_audio_renderer),
+            value = state.enableExperimentalAudioRenderer,
+            onCheckedChange = viewModel::onEnableExperimentalAudioRendererChange,
+            description = stringResource(MR.strings.settings_enable_experimental_audio_renderer_description)
+        )
+
         if (isDebug()) {
             Spacer(modifier = Modifier.weight(1f))
 
@@ -140,6 +149,7 @@ private fun Preview() = ClickTrackTheme {
                     theme = Theme.SYSTEM,
                     ignoreAudioFocus = false,
                     language = AppLanguage.SYSTEM,
+                    enableExperimentalAudioRenderer = false,
                 )
             )
 
@@ -147,6 +157,7 @@ private fun Preview() = ClickTrackTheme {
             override fun onThemeChange(theme: Theme) = Unit
             override fun onLanguageChange(language: AppLanguage) = Unit
             override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
+            override fun onEnableExperimentalAudioRendererChange(enableExperimentalAudioRenderer: Boolean) = Unit
             override fun onKotlinCrashClick() = Unit
             override fun onNativeCrashClick() = Unit
         }

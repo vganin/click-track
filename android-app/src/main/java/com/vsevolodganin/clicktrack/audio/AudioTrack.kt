@@ -1,5 +1,8 @@
 package com.vsevolodganin.clicktrack.audio
 
+@Deprecated(
+    message = "This is legacy Oboe-backed audio track implementation. Will be removed in the nearest future."
+)
 class AudioTrack(
     data: ByteArray,
     pcmEncoding: Int,

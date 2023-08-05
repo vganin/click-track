@@ -6,6 +6,7 @@ import android.media.MediaCodecList
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import com.vsevolodganin.clicktrack.utils.media.bitDepth
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
 import com.vsevolodganin.clicktrack.utils.media.channelCount
 import com.vsevolodganin.clicktrack.utils.media.sampleRate
@@ -16,8 +17,9 @@ import kotlin.math.min
 
 @ApplicationScope
 @Inject
-class AudioDecoder() {
-    fun extractPcm(afd: AssetFileDescriptor, maxSeconds: Int): Pcm16Data? {
+class AudioDecoder {
+
+    fun extractPcm(afd: AssetFileDescriptor, maxSeconds: Int): PcmData? {
         val mediaExtractor = MediaExtractor()
 
         try {
@@ -38,7 +40,7 @@ class AudioDecoder() {
         return null
     }
 
-    private fun extractPcm(mediaExtractor: MediaExtractor, trackIndex: Int, trackFormat: MediaFormat, maxSeconds: Int): Pcm16Data? {
+    private fun extractPcm(mediaExtractor: MediaExtractor, trackIndex: Int, trackFormat: MediaFormat, maxSeconds: Int): PcmData? {
         var codec: MediaCodec? = null
 
         return try {
@@ -101,7 +103,8 @@ class AudioDecoder() {
                 }
             }
 
-            Pcm16Data(
+            PcmData(
+                bitDepth = outputTrackFormat.bitDepth(),
                 sampleRate = outputTrackFormat.sampleRate(),
                 channelCount = outputTrackFormat.channelCount(),
                 data = resultByteBuffer.array().copyOf(resultByteBuffer.position()),

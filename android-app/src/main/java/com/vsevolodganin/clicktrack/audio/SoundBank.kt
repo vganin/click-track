@@ -18,9 +18,9 @@ class SoundBank(
     private val contentResolver: ContentResolver,
 ) {
     private val lock = Any()
-    private val cache = mutableMapOf<ClickSoundSource, Pcm16Data>()
+    private val cache = mutableMapOf<ClickSoundSource, PcmData>()
 
-    fun get(sound: ClickSoundSource): Pcm16Data? = synchronized(lock) {
+    fun get(sound: ClickSoundSource): PcmData? = synchronized(lock) {
         return cache.getOrPut(sound) {
             try {
                 load(sound) ?: return null
@@ -31,22 +31,22 @@ class SoundBank(
         }
     }
 
-    private fun load(sound: ClickSoundSource): Pcm16Data? {
+    private fun load(sound: ClickSoundSource): PcmData? {
         return when (sound) {
             is ClickSoundSource.Bundled -> load(sound.audioResource.rawResId)
             is ClickSoundSource.Uri -> load(sound.value)
         }
     }
 
-    private fun load(@RawRes resId: Int): Pcm16Data? {
+    private fun load(@RawRes resId: Int): PcmData? {
         return application.resources.openRawResourceFd(resId).use(::load)
     }
 
-    private fun load(uri: String): Pcm16Data? {
+    private fun load(uri: String): PcmData? {
         return contentResolver.openAssetFileDescriptor(Uri.parse(uri), "r")?.use(::load)
     }
 
-    private fun load(afd: AssetFileDescriptor): Pcm16Data? {
+    private fun load(afd: AssetFileDescriptor): PcmData? {
         return audioDecoder.extractPcm(afd, MAX_SECONDS)
     }
 

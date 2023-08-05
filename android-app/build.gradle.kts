@@ -158,6 +158,10 @@ resourcePlaceholders {
     files = listOf("xml/shortcuts.xml")
 }
 
+repositories {
+    maven { url = uri("https://mvn.0110.be/releases") } // Required for TarsosDSP
+}
+
 dependencies {
     implementation(project(":multiplatform"))
 
@@ -177,5 +181,6 @@ dependencies {
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.core)
     implementation(libs.timber)
+    implementation(libs.tarsosdsp)
     ksp(libs.kotlininject.compiler)
 }

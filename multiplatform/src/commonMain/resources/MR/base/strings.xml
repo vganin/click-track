@@ -45,6 +45,8 @@
     <string name="player_service_notification_resume">RESUME</string>
     <string name="player_service_notification_stop">STOP</string>
     <string name="polyrhythms_screen_title">Polyrhythms</string>
+    <string name="settings_enable_experimental_audio_renderer">Experimental audio renderer</string>
+    <string name="settings_enable_experimental_audio_renderer_description">Restart playback to take effect. New experimental audio renderer gives maximum click precision, but might drain battery faster.</string>
     <string name="settings_ignore_audio_focus">Play with other audio</string>
     <string name="settings_ignore_audio_focus_description">Turn off to automatically stop click track playback when other audio starts.</string>
     <string name="settings_language">Language</string>

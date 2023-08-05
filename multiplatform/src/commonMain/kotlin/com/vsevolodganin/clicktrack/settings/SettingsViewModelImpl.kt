@@ -33,11 +33,13 @@ class SettingsViewModelImpl(
         userPreferences.theme.flow,
         userPreferences.ignoreAudioFocus.flow,
         languageStore.appLanguage,
-    ) { theme, ignoreAudioFocus, language ->
+        userPreferences.enableExperimentalAudioRenderer.flow,
+    ) { theme, ignoreAudioFocus, language, enableExperimentalAudioRenderer ->
         SettingsState(
             theme = theme,
             ignoreAudioFocus = ignoreAudioFocus,
-            language = language
+            language = language,
+            enableExperimentalAudioRenderer = enableExperimentalAudioRenderer
         )
     }.stateIn(
         scope = scope,
@@ -45,7 +47,8 @@ class SettingsViewModelImpl(
         initialValue = SettingsState(
             theme = userPreferences.theme.value,
             ignoreAudioFocus = userPreferences.ignoreAudioFocus.value,
-            language = languageStore.appLanguage.value
+            language = languageStore.appLanguage.value,
+            enableExperimentalAudioRenderer = userPreferences.enableExperimentalAudioRenderer.value,
         )
     )
 
@@ -61,6 +64,10 @@ class SettingsViewModelImpl(
 
     override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) {
         userPreferences.ignoreAudioFocus.value = ignoreAudioFocus
+    }
+
+    override fun onEnableExperimentalAudioRendererChange(enableExperimentalAudioRenderer: Boolean) {
+        userPreferences.enableExperimentalAudioRenderer.value = enableExperimentalAudioRenderer
     }
 
     override fun onKotlinCrashClick() {
