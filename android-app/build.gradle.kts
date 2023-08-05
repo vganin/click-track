@@ -148,6 +148,7 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.media)
     implementation(libs.androidx.workManager)
+    implementation(libs.androidx.lifecycle.service)
     implementation(libs.bundles.decompose)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

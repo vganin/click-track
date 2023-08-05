@@ -11,5 +11,4 @@ interface SettingsViewModel {
     fun onLanguageChange(language: AppLanguage)
     fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean)
     fun onKotlinCrashClick()
-    fun onNativeCrashClick()
 }

@@ -5,9 +5,11 @@ import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.export.ExportWorkLauncher
-import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
+import com.vsevolodganin.clicktrack.player.Player
+import com.vsevolodganin.clicktrack.player.play
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import com.vsevolodganin.clicktrack.ui.piece.toPlayProgress
 import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.pushIfUnique
@@ -30,7 +32,7 @@ class PlayClickTrackViewModelImpl(
     @Assisted private val config: ScreenConfiguration.PlayClickTrack,
     private val navigation: ScreenStackNavigation,
     private val clickTrackRepository: ClickTrackRepository,
-    private val playerServiceAccess: PlayerServiceAccess,
+    private val player: Player,
     private val userPreferences: UserPreferencesRepository,
     private val exportWorkLauncher: ExportWorkLauncher,
 ) : PlayClickTrackViewModel, ComponentContext by componentContext {
@@ -40,11 +42,11 @@ class PlayClickTrackViewModelImpl(
     override val state: StateFlow<PlayClickTrackState?> = combine(
         clickTrackRepository.getById(config.id).filterNotNull(),
         userPreferences.playTrackingMode.flow,
-        playerServiceAccess.playbackState(),
+        player.playbackState,
     ) { clickTrack, playTrackingMode, playbackState ->
         PlayClickTrackState(
             clickTrack = clickTrack,
-            playProgress = grabIf(playbackState?.id == clickTrack.id) { playbackState?.progress },
+            playProgress = grabIf(playbackState?.id == clickTrack.id) { playbackState?.toPlayProgress() },
             playTrackingMode = playTrackingMode,
         )
     }.stateIn(scope, SharingStarted.Eagerly, consumeSavedState())
@@ -58,26 +60,26 @@ class PlayClickTrackViewModelImpl(
     override fun onTogglePlayStop() {
         val state = state.value ?: return
         if (state.isPlaying) {
-            playerServiceAccess.stop()
+            player.stop()
         } else {
-            playerServiceAccess.start(config.id)
+            player.play(config.id)
         }
     }
 
     override fun onTogglePlayPause() {
         val state = state.value ?: return
         if (state.isPaused) {
-            playerServiceAccess.resume()
+            player.play()
         } else {
-            playerServiceAccess.pause()
+            player.pause()
         }
     }
 
     override fun onTogglePlayTrackingMode() = userPreferences.playTrackingMode.edit { !it }
 
-    override fun onProgressDragStart() = playerServiceAccess.pause()
+    override fun onProgressDragStart() = player.pause()
 
-    override fun onProgressDrop(progress: Double) = playerServiceAccess.start(config.id, progress)
+    override fun onProgressDrop(progress: Double) = player.setProgress(progress)
 
     override fun onEditClick() = navigation.pushIfUnique(ScreenConfiguration.EditClickTrack(config.id, isInitialEdit = false))
 

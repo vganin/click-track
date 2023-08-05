@@ -47,8 +47,8 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastAny
 import com.vsevolodganin.clicktrack.model.ClickTrack
-import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.interval
+import com.vsevolodganin.clicktrack.player.PlaybackPosition
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableRect
@@ -521,7 +521,7 @@ private fun Preview() {
     ClickTrackView(
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,
-        progress = PlayProgress(1.seconds),
+        progress = PlayProgress(isPaused = true, position = PlaybackPosition(1.seconds)),
         modifier = Modifier.fillMaxSize()
     )
 }

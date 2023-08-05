@@ -5,12 +5,12 @@ import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaFormat
 import android.media.MediaMuxer
+import com.vsevolodganin.clicktrack.audio.PcmResampler
 import com.vsevolodganin.clicktrack.audio.SoundBank
 import com.vsevolodganin.clicktrack.audio.SoundSourceProvider
 import com.vsevolodganin.clicktrack.audio.UserSelectedSounds
-import com.vsevolodganin.clicktrack.audio.bytesPerFrame
-import com.vsevolodganin.clicktrack.audio.frameRate
 import com.vsevolodganin.clicktrack.model.ClickTrack
+import com.vsevolodganin.clicktrack.player.toBytes
 import com.vsevolodganin.clicktrack.player.toPlayerEvents
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
 import kotlinx.coroutines.Dispatchers
@@ -20,13 +20,13 @@ import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
 import java.io.File
-import kotlin.time.DurationUnit
 
 @Inject
 class ExportToAudioFile(
     private val application: Application,
     private val soundBank: SoundBank,
     private val userSelectedSounds: UserSelectedSounds,
+    private val pcmResampler: PcmResampler,
 ) {
     suspend fun export(clickTrack: ClickTrack, onProgress: suspend (Float) -> Unit): File? {
         val soundSourceProvider = SoundSourceProvider(userSelectedSounds.get())
@@ -142,22 +142,12 @@ class ExportToAudioFile(
     }
 
     private fun ClickTrack.render(soundSourceProvider: SoundSourceProvider): Sequence<Byte> {
-        val playerEvents = toPlayerEvents()
-        return sequence {
-            for (event in playerEvents) {
-                // TODO: Should resample?
-                val soundData = event.soundType
-                    ?.let(soundSourceProvider::provide)
-                    ?.let(soundBank::get)
-                    ?: continue
-
-                val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * soundData.frameRate).toInt()
-                val framesOfSound = (soundData.data.size / soundData.bytesPerFrame).coerceAtMost(maxFramesCount)
-                val framesOfSilence = maxFramesCount - framesOfSound
-
-                yieldAll(soundData.data.asSequence().take(framesOfSound * soundData.bytesPerFrame))
-                yieldAll(sequence { repeat(framesOfSilence * soundData.bytesPerFrame) { yield(0) } })
-            }
-        }
+        return toPlayerEvents().toBytes(
+            bitDepth = 16,
+            sampleRate = 44100,
+            resampler = pcmResampler,
+            soundSourceProvider = soundSourceProvider,
+            soundBank = soundBank,
+        )
     }
 }

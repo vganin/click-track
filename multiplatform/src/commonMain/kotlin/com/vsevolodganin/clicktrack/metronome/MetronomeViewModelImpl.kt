@@ -6,8 +6,10 @@ import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.NotePattern
-import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
+import com.vsevolodganin.clicktrack.player.Player
+import com.vsevolodganin.clicktrack.player.play
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import com.vsevolodganin.clicktrack.ui.piece.toPlayProgress
 import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
@@ -26,7 +28,7 @@ class MetronomeViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: ScreenStackNavigation,
     private val userPreferences: UserPreferencesRepository,
-    private val playerServiceAccess: PlayerServiceAccess,
+    private val player: Player,
     private val bpmMeter: BpmMeter,
 ) : MetronomeViewModel, ComponentContext by componentContext {
 
@@ -45,14 +47,14 @@ class MetronomeViewModelImpl(
             areOptionsExpanded,
             userPreferences.metronomeBpm.flow,
             userPreferences.metronomePattern.flow,
-            playerServiceAccess.playbackState(),
+            player.playbackState,
         ) { areOptionsExpanded, bpm, pattern, playbackState ->
             val isPlaying = playbackState?.id is ClickTrackId.Builtin.Metronome
             MetronomeState(
                 bpm = bpm,
                 pattern = pattern,
                 isPlaying = isPlaying,
-                progress = grabIf(isPlaying) { playbackState?.progress },
+                progress = grabIf(isPlaying) { playbackState?.toPlayProgress() },
                 areOptionsExpanded = areOptionsExpanded,
             )
         }.stateIn(scope, SharingStarted.Eagerly, initialState)
@@ -82,9 +84,9 @@ class MetronomeViewModelImpl(
     override fun onTogglePlay() {
         val state = state.value ?: return
         if (state.isPlaying) {
-            playerServiceAccess.stop()
+            player.stop()
         } else {
-            playerServiceAccess.start(ClickTrackId.Builtin.Metronome)
+            player.play(ClickTrackId.Builtin.Metronome)
         }
     }
 

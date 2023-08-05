@@ -27,12 +27,13 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.bpm
+import com.vsevolodganin.clicktrack.player.PlaybackPosition
 import com.vsevolodganin.clicktrack.polyrhythm.PolyrhythmsState
 import com.vsevolodganin.clicktrack.polyrhythm.PolyrhythmsViewModel
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
+import com.vsevolodganin.clicktrack.ui.piece.PlayProgress
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
 import com.vsevolodganin.clicktrack.ui.piece.PolyrhythmCircle
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
@@ -207,7 +208,7 @@ private fun Preview() = ClickTrackTheme {
                         layer2 = 2
                     ),
                     isPlaying = true,
-                    playableProgress = PlayProgress(100.milliseconds)
+                    playableProgress = PlayProgress(isPaused = true, position = PlaybackPosition(100.milliseconds))
                 )
             )
 

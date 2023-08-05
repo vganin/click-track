@@ -4,8 +4,10 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
-import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
+import com.vsevolodganin.clicktrack.player.Player
+import com.vsevolodganin.clicktrack.player.play
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import com.vsevolodganin.clicktrack.ui.piece.toPlayProgress
 import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
@@ -22,20 +24,20 @@ class PolyrhythmsViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: ScreenStackNavigation,
     private val userPreferences: UserPreferencesRepository,
-    private val playerServiceAccess: PlayerServiceAccess,
+    private val player: Player,
 ) : PolyrhythmsViewModel, ComponentContext by componentContext {
 
     private val scope = coroutineScope()
 
     override val state: StateFlow<PolyrhythmsState?> = combine(
         userPreferences.polyrhythm.flow,
-        playerServiceAccess.playbackState()
+        player.playbackState,
     ) { twoLayerPolyrhythm, playbackState ->
         val isPlaying = playbackState?.id == TwoLayerPolyrhythmId
         PolyrhythmsState(
             twoLayerPolyrhythm = twoLayerPolyrhythm,
             isPlaying = isPlaying,
-            playableProgress = grabIf(isPlaying) { playbackState?.progress }
+            playableProgress = grabIf(isPlaying) { playbackState?.toPlayProgress() }
         )
     }.stateIn(scope, SharingStarted.Eagerly, consumeSavedState())
 
@@ -48,9 +50,9 @@ class PolyrhythmsViewModelImpl(
     override fun onTogglePlay() {
         val state = state.value ?: return
         if (state.isPlaying) {
-            playerServiceAccess.stop()
+            player.stop()
         } else {
-            playerServiceAccess.start(TwoLayerPolyrhythmId)
+            player.play(TwoLayerPolyrhythmId)
         }
     }
 

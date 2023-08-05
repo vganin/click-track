@@ -54,6 +54,22 @@ class PcmResampler {
         return outputStream.toByteArray()
     }
 
+    fun mix(lhs: ByteArray, rhs: ByteArray): ByteArray {
+        val (longer, shorter) = if (lhs.size > rhs.size) {
+            lhs to rhs
+        } else {
+            rhs to lhs
+        }
+        val result = ByteArray(longer.size)
+        for (index in shorter.indices) {
+            result[index] = (longer[index] / 2 + shorter[index] / 2).toByte()
+        }
+        for (index in shorter.size..longer.lastIndex) {
+            result[index] = (longer[index] / 2).toByte()
+        }
+        return result
+    }
+
     private class OutputStreamProcessor(private val outputStream: OutputStream) : AudioProcessor {
 
         override fun process(audioEvent: AudioEvent): Boolean {

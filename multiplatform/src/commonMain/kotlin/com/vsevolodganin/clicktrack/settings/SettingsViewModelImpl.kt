@@ -6,7 +6,6 @@ import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.language.LanguageStore
 import com.vsevolodganin.clicktrack.settings.debug.KotlinCrash
-import com.vsevolodganin.clicktrack.settings.debug.NativeCrash
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
@@ -24,7 +23,6 @@ class SettingsViewModelImpl(
     private val userPreferences: UserPreferencesRepository,
     private val languageStore: LanguageStore,
     private val kotlinCrashProvider: () -> KotlinCrash,
-    private val nativeCrashProvider: () -> NativeCrash,
 ) : SettingsViewModel, ComponentContext by componentContext {
 
     private val scope = coroutineScope()
@@ -65,9 +63,5 @@ class SettingsViewModelImpl(
 
     override fun onKotlinCrashClick() {
         kotlinCrashProvider()()
-    }
-
-    override fun onNativeCrashClick() {
-        nativeCrashProvider()()
     }
 }

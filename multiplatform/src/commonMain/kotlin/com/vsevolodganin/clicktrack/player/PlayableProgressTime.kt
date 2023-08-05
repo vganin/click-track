@@ -1,25 +1,13 @@
-package com.vsevolodganin.clicktrack.model
+package com.vsevolodganin.clicktrack.player
 
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
-import com.arkivanov.essenty.parcelable.TypeParceler
-import com.vsevolodganin.clicktrack.utils.time.DurationParceler
 import kotlinx.datetime.Clock
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 import kotlin.time.toDuration
-
-@Parcelize
-@TypeParceler<Duration, DurationParceler>
-data class PlayProgress(
-    private val position: Duration,
-    val isPaused: Boolean = false,
-    private val emissionTime: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow()
-) : Parcelable {
-    val realPosition: Duration get() = if (isPaused) position else position + emissionTime.elapsedNow()
-}
 
 @Parcelize
 data class PlayableProgressTimeMark(private val startedAtMillis: Long) : TimeMark, Parcelable {

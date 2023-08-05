@@ -27,6 +27,5 @@ abstract class ApplicationComponent(
     abstract val themeManager: ThemeManager
     abstract val soundsPreloader: SoundPreloader
 
-    @get:Provides
-    val BuildConfigImpl.buildConfig: BuildConfig get() = this
+    val BuildConfigImpl.buildConfig: BuildConfig @Provides get() = this
 }

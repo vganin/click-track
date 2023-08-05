@@ -12,31 +12,15 @@ fun MediaFormat.pcmEncoding(): Int {
     }
 }
 
-fun MediaFormat.channelCount(): Int {
-    return getInteger(MediaFormat.KEY_CHANNEL_COUNT)
-}
+fun MediaFormat.channelCount(): Int = getInteger(MediaFormat.KEY_CHANNEL_COUNT)
 
-fun MediaFormat.sampleRate(): Int {
-    return getInteger(MediaFormat.KEY_SAMPLE_RATE)
-}
+fun MediaFormat.sampleRate(): Int = getInteger(MediaFormat.KEY_SAMPLE_RATE)
 
-fun MediaFormat.bitDepth(): Int {
-    return when (val pcmEncoding = pcmEncoding()) {
-        AudioFormat.ENCODING_PCM_8BIT -> 8
-        AudioFormat.ENCODING_PCM_16BIT -> 16
-        AudioFormat.ENCODING_PCM_24BIT_PACKED -> 24
-        AudioFormat.ENCODING_PCM_32BIT,
-        AudioFormat.ENCODING_PCM_FLOAT -> 32
-        AudioFormat.ENCODING_INVALID -> throw IllegalArgumentException("Bad audio format $pcmEncoding")
-        else -> throw IllegalArgumentException("Bad audio format $pcmEncoding")
-    }
-}
+fun MediaFormat.bitDepth(): Int = AudioFormatHelper.pcmEncodingToBitDepth(pcmEncoding())
 
-fun MediaFormat.bytesPerSample(): Int = bitDepth() / 8
+fun MediaFormat.bytesPerSample(): Int = AudioFormatHelper.bytesPerSample(bitDepth())
 
-fun MediaFormat.bytesPerSecond(): Int {
-    return sampleRate() * bytesPerSample() * channelCount()
-}
+fun MediaFormat.bytesPerSecond(): Int = sampleRate() * bytesPerSample() * channelCount()
 
 private fun <T> MediaFormat.getOptional(key: String, getter: MediaFormat.(String) -> T): T? {
     return if (containsKey(key)) {

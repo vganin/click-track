@@ -1,5 +1,7 @@
 package com.vsevolodganin.clicktrack.audio
 
+import com.vsevolodganin.clicktrack.utils.media.AudioFormatHelper
+
 class PcmData(
     val bitDepth: Int,
     val sampleRate: Int,
@@ -7,6 +9,6 @@ class PcmData(
     val data: ByteArray,
 )
 
-val PcmData.bytesPerSample: Int get() = bitDepth / 8
+val PcmData.bytesPerSample: Int get() = AudioFormatHelper.bytesPerSample(bitDepth)
 val PcmData.bytesPerFrame: Int get() = bytesPerSample * channelCount
 val PcmData.frameRate: Int get() = sampleRate / channelCount

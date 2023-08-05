@@ -1,5 +1,11 @@
 package com.vsevolodganin.clicktrack.player
 
+import com.vsevolodganin.clicktrack.audio.PcmData
+import com.vsevolodganin.clicktrack.audio.PcmResampler
+import com.vsevolodganin.clicktrack.audio.SoundBank
+import com.vsevolodganin.clicktrack.audio.SoundSourceProvider
+import com.vsevolodganin.clicktrack.audio.bytesPerFrame
+import com.vsevolodganin.clicktrack.audio.frameRate
 import com.vsevolodganin.clicktrack.model.AbstractPolyrhythm
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.ClickSoundType
@@ -17,17 +23,18 @@ import com.vsevolodganin.clicktrack.utils.math.times
 import com.vsevolodganin.clicktrack.utils.math.toRational
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.DurationUnit
 
 class PlayerEvent(
     val duration: Duration,
-    val soundType: ClickSoundType?
+    vararg val soundTypes: ClickSoundType
 ) {
     fun copy(
         duration: Duration = this.duration,
-        soundType: ClickSoundType? = this.soundType
+        vararg soundTypes: ClickSoundType = this.soundTypes
     ) = PlayerEvent(
         duration = duration,
-        soundType = soundType
+        soundTypes = soundTypes
     )
 }
 
@@ -57,7 +64,7 @@ fun Cue.toPlayerEvents(tempoOffset: BeatsPerMinuteDiff): Sequence<PlayerEvent> {
             yield(
                 soundEvent(
                     duration = bpmInterval * column.untilNext,
-                    soundType = soundType,
+                    soundType,
                 )
             )
         }
@@ -85,18 +92,66 @@ fun TwoLayerPolyrhythm.toPlayerEvents(): Sequence<PlayerEvent> {
         }
 
         for (column in polyrhythm.columns) {
-            val soundType = when {
-                column.indices.contains(0) -> ClickSoundType.STRONG
-                else -> ClickSoundType.WEAK
+            val soundTypes = column.indices.map { index ->
+                when (index) {
+                    0 -> ClickSoundType.STRONG
+                    else -> ClickSoundType.WEAK
+                }
             }
 
             yield(
                 soundEvent(
                     duration = bpmInterval * column.untilNext,
-                    soundType = soundType,
+                    soundTypes = soundTypes.toTypedArray(),
                 )
             )
         }
+    }
+}
+
+fun Sequence<PlayerEvent>.toBytes(
+    bitDepth: Int,
+    sampleRate: Int,
+    resampler: PcmResampler,
+    soundSourceProvider: SoundSourceProvider,
+    soundBank: SoundBank,
+): Sequence<Byte> = sequence {
+    for (event in this@toBytes) {
+        val soundData = event.soundTypes
+            .asSequence()
+            .mapNotNull(soundSourceProvider::provide)
+            .mapNotNull(soundBank::get)
+            .map { pcm ->
+                PcmData(
+                    bitDepth = bitDepth,
+                    sampleRate = sampleRate,
+                    channelCount = 1,
+                    data = resampler.resample(
+                        inputData = pcm.data,
+                        inputBitDepth = pcm.bitDepth,
+                        inputSampleRate = pcm.sampleRate,
+                        inputChannelCount = pcm.channelCount,
+                        outputBitDepth = bitDepth,
+                        outputSampleRate = sampleRate
+                    )
+                )
+            }
+            .reduceOrNull { lhs, rhs ->
+                PcmData(
+                    bitDepth = bitDepth,
+                    sampleRate = sampleRate,
+                    channelCount = 1,
+                    data = resampler.mix(lhs.data, rhs.data)
+                )
+            }
+            ?: continue
+
+        val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * soundData.frameRate).toInt()
+        val framesOfSound = (soundData.data.size / soundData.bytesPerFrame).coerceAtMost(maxFramesCount)
+        val framesOfSilence = maxFramesCount - framesOfSound
+
+        yieldAll(soundData.data.asSequence().take(framesOfSound * soundData.bytesPerFrame))
+        yieldAll(sequence { repeat(framesOfSilence * soundData.bytesPerFrame) { yield(0) } })
     }
 }
 
@@ -123,8 +178,8 @@ private fun Sequence<PlayerEvent>.withDuration(duration: Duration): Sequence<Pla
     }
 }
 
-private fun soundEvent(duration: Duration, soundType: ClickSoundType) = PlayerEvent(duration, soundType)
-private fun delayEvent(duration: Duration) = PlayerEvent(duration, null)
+private fun soundEvent(duration: Duration, vararg soundTypes: ClickSoundType) = PlayerEvent(duration, *soundTypes)
+private fun delayEvent(duration: Duration) = PlayerEvent(duration)
 
 private object Const {
     val CLICK_MIN_DELTA = 1.milliseconds

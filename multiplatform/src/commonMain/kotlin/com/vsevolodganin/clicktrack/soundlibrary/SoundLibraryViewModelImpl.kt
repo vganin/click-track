@@ -12,7 +12,8 @@ import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.model.UriClickSounds
 import com.vsevolodganin.clicktrack.model.UserClickSounds
-import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
+import com.vsevolodganin.clicktrack.player.Player
+import com.vsevolodganin.clicktrack.player.play
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
@@ -36,7 +37,7 @@ class SoundLibraryViewModelImpl(
     private val userPreferences: UserPreferencesRepository,
     private val clickSoundsRepository: ClickSoundsRepository,
     private val documentMetadataHelper: DocumentMetadataHelper,
-    private val playerServiceAccess: PlayerServiceAccess,
+    private val player: Player,
     private val soundChooser: SoundChooser,
 ) : SoundLibraryViewModel, ComponentContext by componentContext {
 
@@ -45,7 +46,7 @@ class SoundLibraryViewModelImpl(
     override val state: StateFlow<SoundLibraryState?> = combine(
         userPreferences.selectedSoundsId.flow,
         clickSoundsRepository.getAll(),
-        playerServiceAccess.playbackState().map { it?.id }.distinctUntilChanged()
+        player.playbackState.map { it?.id }.distinctUntilChanged()
     ) { selectedId, userItems, playingId ->
         SoundLibraryState(buildList {
             this += BuiltinClickSounds.values().map { it.toItem(selectedId) }
@@ -79,7 +80,7 @@ class SoundLibraryViewModelImpl(
         lifecycle.doOnPause {
             val state = state.value ?: return@doOnPause
             if (state.items.any { it.optionalCast<SelectableClickSoundsItem.UserDefined>()?.isPlaying == true }) {
-                playerServiceAccess.stop()
+                player.stop()
             }
         }
     }
@@ -121,9 +122,9 @@ class SoundLibraryViewModelImpl(
             ?: return
 
         if (testedItem.isPlaying) {
-            playerServiceAccess.stop()
+            player.stop()
         } else {
-            playerServiceAccess.start(ClickTrackId.Builtin.ClickSoundsTest(id), soundsId = id)
+            player.play(ClickTrackId.Builtin.ClickSoundsTest(id))
         }
     }
 

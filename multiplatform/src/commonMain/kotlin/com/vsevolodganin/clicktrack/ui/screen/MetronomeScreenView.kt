@@ -43,12 +43,13 @@ import com.vsevolodganin.clicktrack.metronome.MetronomeViewModel
 import com.vsevolodganin.clicktrack.metronome.metronomeClickTrack
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.NotePattern
-import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.bpm
+import com.vsevolodganin.clicktrack.player.PlaybackPosition
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.piece.BpmWheel
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
+import com.vsevolodganin.clicktrack.ui.piece.PlayProgress
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
 import com.vsevolodganin.clicktrack.ui.piece.SubdivisionsChooser
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
@@ -240,7 +241,7 @@ private fun Preview() = ClickTrackTheme {
                 MetronomeState(
                     bpm = 90.bpm,
                     pattern = NotePattern.QUINTUPLET_X2,
-                    progress = PlayProgress(100.milliseconds),
+                    progress = PlayProgress(isPaused = true, position = PlaybackPosition(100.milliseconds)),
                     isPlaying = false,
                     areOptionsExpanded = false,
                 )

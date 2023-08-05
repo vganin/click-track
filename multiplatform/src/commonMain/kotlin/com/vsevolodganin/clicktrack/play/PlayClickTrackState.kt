@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.play
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
-import com.vsevolodganin.clicktrack.model.PlayProgress
+import com.vsevolodganin.clicktrack.ui.piece.PlayProgress
 
 @Parcelize
 data class PlayClickTrackState(

@@ -99,9 +99,6 @@ private fun Content(viewModel: SettingsViewModel) {
                 Button(onClick = viewModel::onKotlinCrashClick) {
                     Text("Kotlin crash")
                 }
-                Button(onClick = viewModel::onNativeCrashClick) {
-                    Text("Native crash")
-                }
             }
         }
     }
@@ -148,7 +145,6 @@ private fun Preview() = ClickTrackTheme {
             override fun onLanguageChange(language: AppLanguage) = Unit
             override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
             override fun onKotlinCrashClick() = Unit
-            override fun onNativeCrashClick() = Unit
         }
     )
 }
