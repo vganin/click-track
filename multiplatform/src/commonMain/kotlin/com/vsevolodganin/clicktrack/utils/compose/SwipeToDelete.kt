@@ -1,6 +1,7 @@
+@file:Suppress("DEPRECATION") // TODO: Migrate to AnchoredDraggable
+
 package com.vsevolodganin.clicktrack.utils.compose
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.MutableTransitionState
@@ -28,6 +29,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import dev.icerock.moko.resources.compose.colorResource
 
 @Composable

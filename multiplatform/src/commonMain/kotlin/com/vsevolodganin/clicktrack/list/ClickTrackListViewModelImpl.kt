@@ -1,11 +1,11 @@
 package com.vsevolodganin.clicktrack.list
 
-import ClickTrack.multiplatform.MR
 import com.arkivanov.decompose.ComponentContext
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
 import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.DefaultCue

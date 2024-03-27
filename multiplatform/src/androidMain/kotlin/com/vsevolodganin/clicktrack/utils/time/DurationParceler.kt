@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.utils.time
 
 import android.os.Parcel
-import com.arkivanov.essenty.parcelable.Parceler
+import kotlinx.parcelize.Parceler
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.DurationUnit

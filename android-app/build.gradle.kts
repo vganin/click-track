@@ -13,7 +13,6 @@ plugins {
     kotlin("android")
     kotlin("plugin.serialization")
     kotlin("plugin.parcelize")
-    id("de.timfreiheit.resourceplaceholders")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
 }
@@ -78,27 +77,25 @@ android {
                 nativeSymbolUploadEnabled = true
             }
         }
-
-        create("perftest") {
-            initWith(getByName("release"))
-            applicationIdSuffix = ".perftest"
-            signingConfig = signingConfigs.getByName("debug")
-        }
     }
 
     buildFeatures {
         compose = true
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
 
-        freeCompilerArgs = freeCompilerArgs + listOf(
+        freeCompilerArgs += listOf(
             "-opt-in=kotlin.ExperimentalStdlibApi",
             "-opt-in=kotlin.time.ExperimentalTime",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
@@ -152,10 +149,6 @@ android {
             "UnusedMaterialScaffoldPaddingParameter",
         )
     }
-}
-
-resourcePlaceholders {
-    files = listOf("xml/shortcuts.xml")
 }
 
 dependencies {

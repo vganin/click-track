@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.storage
 
-import com.squareup.sqldelight.runtime.coroutines.asFlow
+import app.cash.sqldelight.coroutines.asFlow
 import com.vsevolodganin.clicktrack.Database
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
@@ -10,7 +10,6 @@ import com.vsevolodganin.clicktrack.model.UriClickSounds
 import com.vsevolodganin.clicktrack.model.UserClickSounds
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject

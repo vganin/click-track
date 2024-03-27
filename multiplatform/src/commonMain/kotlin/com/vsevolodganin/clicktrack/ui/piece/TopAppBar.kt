@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.AppBarDefaults
 import androidx.compose.material.Colors
@@ -9,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import dev.icerock.moko.resources.compose.colorResource
 
 @Composable

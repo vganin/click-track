@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
+import androidx.compose.ui.window.PopupProperties
 import kotlin.math.max
 import kotlin.math.min
 
@@ -80,9 +81,11 @@ actual fun DropdownMenu(
         }
 
         Popup(
-            focusable = true,
+            popupPositionProvider = popupPositionProvider,
             onDismissRequest = onDismissRequest,
-            popupPositionProvider = popupPositionProvider
+            properties = PopupProperties(focusable = true),
+            onPreviewKeyEvent = { false },
+            onKeyEvent = { false }
         ) {
             DropdownMenuContent(
                 expandedStates = expandedStates,

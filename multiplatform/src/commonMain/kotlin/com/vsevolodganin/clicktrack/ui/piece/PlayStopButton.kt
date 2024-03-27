@@ -104,7 +104,7 @@ private fun iconAsset(a: Offset, b: Offset, c: Offset, d: Offset): ImageVector {
                 .lineTo(c)
                 .lineTo(d)
                 .close()
-                .getNodes(),
+                .nodes,
             fill = SolidColor(Color.White)
         )
         .build()

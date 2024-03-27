@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		09C2E6B6A4B7C1746488FE60 /* Pods_ClickTrack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1D53B0EA9F03701E67DF125 /* Pods_ClickTrack.framework */; };
 		4F3ABD9D293187EA00DB6023 /* ClickTrackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3ABD9C293187EA00DB6023 /* ClickTrackApp.swift */; };
 		4F3ABD9F293187EA00DB6023 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3ABD9E293187EA00DB6023 /* ContentView.swift */; };
 		4F3ABDA1293187EA00DB6023 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3ABDA0293187EA00DB6023 /* Assets.xcassets */; };
 		4F3ABDA4293187EA00DB6023 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3ABDA3293187EA00DB6023 /* Preview Assets.xcassets */; };
+		4FBD90C71BFC3F827448AC2F /* Pods_ClickTrack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1D53B0EA9F03701E67DF125 /* Pods_ClickTrack.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,11 +27,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		4F3ABD96293187EA00DB6023 /* Frameworks */ = {
+		0444A912D05438301350F401 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				09C2E6B6A4B7C1746488FE60 /* Pods_ClickTrack.framework in Frameworks */,
+				4FBD90C71BFC3F827448AC2F /* Pods_ClickTrack.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,9 +102,9 @@
 			buildPhases = (
 				F56226A4B7446DE99774125B /* [CP] Check Pods Manifest.lock */,
 				4F3ABD95293187EA00DB6023 /* Sources */,
-				4F3ABD96293187EA00DB6023 /* Frameworks */,
 				4F3ABD97293187EA00DB6023 /* Resources */,
-				4F91FCF029F1DEF2008C8D81 /* ShellScript */,
+				89774DA68A362F87E297C2E6 /* [CP] Embed Pods Frameworks */,
+				0444A912D05438301350F401 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -161,22 +161,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		4F91FCF029F1DEF2008C8D81 /* ShellScript */ = {
+		89774DA68A362F87E297C2E6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ClickTrack/Pods-ClickTrack-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			inputPaths = (
-			);
+			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ClickTrack/Pods-ClickTrack-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT/../\" :multiplatform:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=$BUILT_PRODUCTS_DIR \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=$CONTENTS_FOLDER_PATH\\\n    -Pkotlin.native.cocoapods.platform=$PLATFORM_NAME \\\n    -Pkotlin.native.cocoapods.archs=\"$ARCHS\" \\\n    -Pkotlin.native.cocoapods.configuration=$CONFIGURATION \n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ClickTrack/Pods-ClickTrack-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		F56226A4B7446DE99774125B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;

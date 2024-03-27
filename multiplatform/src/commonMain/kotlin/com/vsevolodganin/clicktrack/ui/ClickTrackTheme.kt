@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -16,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.ui.piece.SystemUiSetup
 import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
 import com.vsevolodganin.clicktrack.utils.compose.DarkPreview

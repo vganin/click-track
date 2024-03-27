@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.model
 
-import ClickTrack.multiplatform.MR
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import dev.icerock.moko.resources.StringResource
 
 enum class BuiltinClickSounds(

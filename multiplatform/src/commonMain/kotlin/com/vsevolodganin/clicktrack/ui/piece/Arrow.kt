@@ -46,28 +46,28 @@ fun arrowVectorResource(direction: ArrowDirection): ImageVector {
                         .lineTo(1f, 0f)
                         .lineTo(2f, 2f)
                         .close()
-                        .getNodes()
+                        .nodes
 
                     DOWN -> PathBuilder()
                         .moveTo(0f, 0f)
                         .lineTo(2f, 0f)
                         .lineTo(1f, 2f)
                         .close()
-                        .getNodes()
+                        .nodes
 
                     LEFT -> PathBuilder()
                         .moveTo(2f, 0f)
                         .lineTo(0f, 1f)
                         .lineTo(2f, 2f)
                         .close()
-                        .getNodes()
+                        .nodes
 
                     RIGHT -> PathBuilder()
                         .moveTo(0f, 0f)
                         .lineTo(2f, 1f)
                         .lineTo(0f, 2f)
                         .close()
-                        .getNodes()
+                        .nodes
                 },
                 fill = SolidColor(Color.Black)
             )

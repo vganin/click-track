@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.settings.SettingsState
 import com.vsevolodganin.clicktrack.settings.SettingsViewModel
@@ -56,7 +56,7 @@ private fun Content(viewModel: SettingsViewModel) {
         ListChooser(
             title = stringResource(MR.strings.settings_theme),
             value = state.theme.displayValue(),
-            variants = Theme.values().map {
+            variants = Theme.entries.map {
                 ListChooserItem(
                     value = it, displayValue = it.displayValue(), description = it.description()
                 )
@@ -69,7 +69,7 @@ private fun Content(viewModel: SettingsViewModel) {
         ListChooser(
             title = stringResource(MR.strings.settings_language),
             value = state.language.displayValue(),
-            variants = AppLanguage.values().map {
+            variants = AppLanguage.entries.map {
                 ListChooserItem(
                     value = it, displayValue = it.displayValue(), description = null
                 )

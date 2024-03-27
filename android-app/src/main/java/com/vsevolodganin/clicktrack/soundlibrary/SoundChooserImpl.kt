@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION") // FIXME: Look into Parcelize not working with K2
+
 package com.vsevolodganin.clicktrack.soundlibrary
 
 import android.app.Activity

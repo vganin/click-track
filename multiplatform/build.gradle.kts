@@ -7,7 +7,6 @@ import javax.xml.parsers.DocumentBuilderFactory
 plugins {
     id("clicktrack.multiplatform.android")
     id("clicktrack.multiplatform.ios")
-    id("clicktrack.svg2compose")
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
@@ -37,6 +36,7 @@ kotlin {
                 optIn("kotlinx.coroutines.FlowPreview")
                 optIn("kotlinx.coroutines.InternalCoroutinesApi")
                 optIn("kotlinx.coroutines.ObsoleteCoroutinesApi")
+                optIn("kotlin.experimental.ExperimentalNativeApi")
             }
         }
 
@@ -57,8 +57,8 @@ kotlin {
                 api(libs.kotlininject.runtime)
                 api(libs.sqldelight.runtime)
                 api(libs.sqldelight.coroutines)
-                api(libs.multiplatformsettings)
-                api(libs.multiplatformsettings.coroutines)
+                api(libs.multiplatformSettings)
+                api(libs.multiplatformSettings.coroutines)
             }
         }
 
@@ -72,9 +72,6 @@ kotlin {
             dependencies {
                 api(compose.uiTooling)
                 api(compose.preview)
-                // FIXME: Shouldn't need below
-                api("androidx.compose.ui:ui-tooling-preview:1.4.2")
-                api("androidx.compose.ui:ui-tooling:1.4.2")
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.constraintLayout.compose)
                 api(libs.androidx.dataStore)
@@ -107,7 +104,6 @@ kotlin {
 
         framework {
             baseName = "ClickTrackMultiplatform"
-            isStatic = true
         }
 
         podfile = rootProject.file("ios-app/Podfile")
@@ -119,13 +115,16 @@ android {
 }
 
 multiplatformResources {
-    disableStaticFrameworkWarning = true
+    resourcesPackage.set("com.vsevolodganin.clicktrack.generated.resources")
+    resourcesClassName.set("MR")
 }
 
 sqldelight {
-    database("Database") {
-        packageName = "com.vsevolodganin.clicktrack"
-        schemaOutputDirectory = file("src/commonTest/sqldelight/schema")
+    databases {
+        create("Database") {
+            packageName = "com.vsevolodganin.clicktrack"
+            schemaOutputDirectory = file("src/commonTest/sqldelight/schema")
+        }
     }
 }
 
@@ -134,7 +133,6 @@ dependencies {
     for (configName in arrayOf(
         "kspCommonMainMetadata",
         "kspAndroid",
-        "kspIosX64",
         "kspIosArm64",
         "kspIosSimulatorArm64"
     )) {
