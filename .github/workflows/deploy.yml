@@ -2,8 +2,8 @@ name: Deploy
 on:
   workflow_dispatch:
 jobs:
-  deploy-google-play:
-    name: Deploy to Google Play
+  google-play:
+    name: Google Play
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
