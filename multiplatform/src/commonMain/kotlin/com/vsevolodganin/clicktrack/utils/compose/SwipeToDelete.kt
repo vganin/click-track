@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION") // TODO: Migrate to AnchoredDraggable
+
 package com.vsevolodganin.clicktrack.utils.compose
 
 import androidx.compose.animation.AnimatedVisibility

@@ -1,7 +1,5 @@
 package com.vsevolodganin.clicktrack.model
 
-import com.arkivanov.essenty.parcelable.Parcelable
-import com.arkivanov.essenty.parcelable.Parcelize
 import com.vsevolodganin.clicktrack.model.NotePatternGroup.DISPLACED
 import com.vsevolodganin.clicktrack.model.NotePatternGroup.QUINTUPLET
 import com.vsevolodganin.clicktrack.model.NotePatternGroup.SEPTUPLET
@@ -9,6 +7,8 @@ import com.vsevolodganin.clicktrack.model.NotePatternGroup.STRAIGHT
 import com.vsevolodganin.clicktrack.model.NotePatternGroup.TRIPLET
 import com.vsevolodganin.clicktrack.utils.math.Rational
 import com.vsevolodganin.clicktrack.utils.math.over
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
 import kotlinx.serialization.Serializable
 
 enum class NotePatternGroup {

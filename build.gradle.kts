@@ -40,7 +40,7 @@ allprojects {
         compilerOptions {
             val allKotlinWarningsAsErrors: String? by project
             allWarningsAsErrors.set(allKotlinWarningsAsErrors?.toBoolean() ?: true)
-            freeCompilerArgs.set(listOf("-Xexpect-actual-classes"))
+            freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
 }

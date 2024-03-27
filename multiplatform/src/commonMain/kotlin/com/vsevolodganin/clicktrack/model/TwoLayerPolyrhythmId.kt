@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.model
 
-import com.arkivanov.essenty.parcelable.Parcelize
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
 
 @Parcelize
 object TwoLayerPolyrhythmId : PlayableId

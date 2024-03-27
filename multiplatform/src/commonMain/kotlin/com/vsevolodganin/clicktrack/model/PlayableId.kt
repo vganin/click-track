@@ -1,5 +1,5 @@
 package com.vsevolodganin.clicktrack.model
 
-import com.arkivanov.essenty.parcelable.Parcelable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
 
 sealed interface PlayableId : Parcelable

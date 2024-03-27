@@ -1,18 +1,18 @@
 [versions]
 accompanist = "0.34.0"
+composeCompiler = "1.5.11"
 decompose = "2.2.2-compose-experimental"
 kotlin = "1.9.23"
 kotlinInject = "0.6.3"
 kotlinx-coroutines = "1.8.0"
 kotlinx-serialization = "1.6.3"
 ksp = "1.9.23-1.0.19"
-moko-resources = "0.24.0-alpha-5"
-sqldelight = "2.0.1"
-multiplatformSettings = "1.1.1"
 mockk = "1.13.10"
+moko-resources = "0.24.0-alpha-5"
+multiplatformSettings = "1.1.1"
+sqldelight = "2.0.1"
 
 [libraries]
-accompanist-insets = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 android-gradlePlugin = "com.android.tools.build:gradle:8.2.2"
 androidx-activity-compose = "androidx.activity:activity-compose:1.8.2"
@@ -58,7 +58,7 @@ timber = "com.jakewharton.timber:timber:5.0.1"
 uuid = "com.benasher44:uuid:0.8.4"
 
 [bundles]
-accompanist = ["accompanist-insets", "accompanist-systemUiController"]
+accompanist = ["accompanist-systemUiController"]
 decompose = ["decompose-core", "decompose-compose"]
 kotlinx-coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-android"]
 kotlinx-serialization = ["kotlinx-serialization-core", "kotlinx-serialization-json"]

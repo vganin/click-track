@@ -9,7 +9,8 @@ import com.vsevolodganin.clicktrack.utils.compose.isSystemInLandscape
 
 @Composable
 actual fun SystemUiSetup() {
-    val systemUiController = rememberSystemUiController()
+    // TODO: Support edge-to-edge mode
+    @Suppress("DEPRECATION") val systemUiController = rememberSystemUiController()
     val isDarkTheme = isSystemInDarkTheme()
     val isLandscape = isSystemInLandscape()
     DisposableEffect(systemUiController, isDarkTheme, isLandscape) {

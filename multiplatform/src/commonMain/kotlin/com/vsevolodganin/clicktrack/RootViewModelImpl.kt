@@ -33,6 +33,7 @@ class RootViewModelImpl(
 
     private fun implementScreenStackBackCallback() {
         val callback = BackCallback(isEnabled = screenStackState.value.backStack.isNotEmpty(), onBack = screenStackNavigation::pop)
+        @Suppress("DEPRECATION") // FIXME: Implement cancellation
         screenStackState.subscribe { state ->
             callback.isEnabled = state.backStack.isNotEmpty()
         }

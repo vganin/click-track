@@ -1,8 +1,8 @@
 package com.vsevolodganin.clicktrack.utils.resources
 
 import android.os.Parcel
-import com.arkivanov.essenty.parcelable.Parceler
 import dev.icerock.moko.resources.FileResource
+import kotlinx.parcelize.Parceler
 
 actual class FileResourceParceler : Parceler<FileResource> {
 

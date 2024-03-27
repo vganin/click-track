@@ -20,7 +20,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContactSupport
+import androidx.compose.material.icons.automirrored.filled.ContactSupport
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Settings
@@ -102,7 +102,7 @@ fun DrawerView(viewModel: DrawerViewModel) {
         )
 
         DrawerButton(
-            icon = rememberVectorPainter(Icons.Filled.ContactSupport),
+            icon = rememberVectorPainter(Icons.AutoMirrored.Filled.ContactSupport),
             label = stringResource(MR.strings.drawer_about),
             isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
             action = viewModel::navigateToAbout

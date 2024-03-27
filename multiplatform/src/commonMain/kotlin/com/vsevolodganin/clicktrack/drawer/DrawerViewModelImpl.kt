@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.drawer
 
+import com.arkivanov.decompose.Cancellation
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.essenty.lifecycle.subscribe
 import com.vsevolodganin.clicktrack.ScreenConfiguration
@@ -34,9 +35,10 @@ class DrawerViewModelImpl(
     }
 
     init {
+        var cancellation: Cancellation? = null
         lifecycle.subscribe(
-            onCreate = { screenStackState.value.subscribe(onScreenStackChange) },
-            onDestroy = { screenStackState.value.unsubscribe(onScreenStackChange) }
+            onCreate = { cancellation = screenStackState.value.observe(onScreenStackChange) },
+            onDestroy = { cancellation?.cancel() }
         )
     }
 

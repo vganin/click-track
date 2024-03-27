@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
+import androidx.compose.ui.window.PopupProperties
 import kotlin.math.max
 
 // TODO: Temporary implementation from Compose Desktop:
@@ -117,8 +118,10 @@ private fun AlertDialog(
                 popupContentSize: IntSize
             ): IntOffset = IntOffset.Zero
         },
-        focusable = true,
         onDismissRequest = onDismissRequest,
+        properties = PopupProperties(focusable = true),
+        onPreviewKeyEvent = { false },
+        onKeyEvent = { false }
     ) {
         Box(
             modifier = Modifier
@@ -258,7 +261,7 @@ private fun ColumnScope.AlertDialogBaselineLayout(
                 textPlaceable.height + textOffset - firstTextBaseline
             } else {
                 textPlaceable.height + textOffset - firstTextBaseline -
-                        ((titlePlaceable?.height ?: 0) - lastTitleBaseline)
+                    ((titlePlaceable?.height ?: 0) - lastTitleBaseline)
             }
         } ?: 0
 
@@ -294,7 +297,7 @@ private fun AlertDialogFlowRow(
         // Return whether the placeable can be added to the current sequence.
         fun canAddToCurrentSequence(placeable: Placeable) =
             currentSequence.isEmpty() || currentMainAxisSize + mainAxisSpacing.roundToPx() +
-                    placeable.width <= constraints.maxWidth
+                placeable.width <= constraints.maxWidth
 
         // Store current sequence information and start a new sequence.
         fun startNewSequence() {
@@ -346,7 +349,7 @@ private fun AlertDialogFlowRow(
             sequences.fastForEachIndexed { i, placeables ->
                 val childrenMainAxisSizes = IntArray(placeables.size) { j ->
                     placeables[j].width +
-                            if (j < placeables.lastIndex) mainAxisSpacing.roundToPx() else 0
+                        if (j < placeables.lastIndex) mainAxisSpacing.roundToPx() else 0
                 }
                 val arrangement = Arrangement.Bottom
                 // TODO(soboleva): rtl support
