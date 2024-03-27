@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 jobs:
   android:
+    name: Android
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,6 +23,7 @@ jobs:
           testReleaseUnitTest
           :multiplatform:verifySqlDelightMigration
   ios:
+    name: iOS
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
