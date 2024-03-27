@@ -1,12 +1,12 @@
 package com.vsevolodganin.clicktrack.training
 
-import ClickTrack.multiplatform.MR
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.DefaultBeatsDuration
 import com.vsevolodganin.clicktrack.model.DefaultMeasuresDuration

@@ -1,11 +1,11 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable

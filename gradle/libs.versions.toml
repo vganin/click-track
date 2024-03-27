@@ -1,44 +1,44 @@
 [versions]
-accompanist = "0.30.1"
-decompose = "2.0.0-compose-experimental-alpha-02"
-kotlin = "1.8.20"
-kotlininject = "0.6.1"
-kotlinx-coroutines = "1.6.4"
-kotlinx-serialization = "1.5.0"
-ksp = "1.8.20-1.0.11"
-moko-resources = "0.21.2"
-sqldelight = "1.5.5"
-multiplatformsettings = "1.0.0"
-mockk = "1.13.5"
+accompanist = "0.34.0"
+decompose = "2.2.2-compose-experimental"
+kotlin = "1.9.23"
+kotlinInject = "0.6.3"
+kotlinx-coroutines = "1.8.0"
+kotlinx-serialization = "1.6.3"
+ksp = "1.9.23-1.0.19"
+moko-resources = "0.24.0-alpha-5"
+sqldelight = "2.0.1"
+multiplatformSettings = "1.1.1"
+mockk = "1.13.10"
 
 [libraries]
 accompanist-insets = { module = "com.google.accompanist:accompanist-insets-ui", version.ref = "accompanist" }
 accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
-android-gradlePlugin = "com.android.tools.build:gradle:7.4.2"
-androidx-activity-compose = "androidx.activity:activity-compose:1.7.1"
+android-gradlePlugin = "com.android.tools.build:gradle:8.2.2"
+androidx-activity-compose = "androidx.activity:activity-compose:1.8.2"
 androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"
 androidx-constraintLayout-compose = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
-androidx-core = "androidx.core:core-ktx:1.9.0"
+androidx-core = "androidx.core:core-ktx:1.12.0"
 androidx-dataStore = "androidx.datastore:datastore-preferences:1.0.0"
-androidx-fragment = "androidx.fragment:fragment-ktx:1.5.7"
-androidx-media = "androidx.media:media:1.6.0"
+androidx-fragment = "androidx.fragment:fragment-ktx:1.6.2"
+androidx-media = "androidx.media:media:1.7.0"
 androidx-splashScreen = "androidx.core:core-splashscreen:1.0.1"
-androidx-workManager = "androidx.work:work-runtime-ktx:2.8.1"
+androidx-workManager = "androidx.work:work-runtime-ktx:2.9.0"
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
 decompose-core = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
-firebase-bom = "com.google.firebase:firebase-bom:31.5.0"
+firebase-bom = "com.google.firebase:firebase-bom:32.8.0"
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-firebase-crashlytics-gradlePlugin = "com.google.firebase:firebase-crashlytics-gradle:2.9.5"
+firebase-crashlytics-gradlePlugin = "com.google.firebase:firebase-crashlytics-gradle:2.9.9"
 firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
-gms-gradlePlugin = "com.google.gms:google-services:4.3.15"
+gms-gradlePlugin = "com.google.gms:google-services:4.4.1"
 googlePlay-core = "com.google.android.play:core-ktx:1.8.1"
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-kotlininject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlininject" }
-kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlininject" }
+kotlininject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
+kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlinInject" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
+kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.5.0"
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
@@ -46,18 +46,16 @@ mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 moko-resources = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
 moko-resources-gradlePlugin = { module = "dev.icerock.moko:resources-generator", version.ref = "moko-resources" }
-multiplatformsettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformsettings" }
-multiplatformsettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformsettings" }
-oboe = "com.google.oboe:oboe:1.7.0"
-resourcePlaceholders-gradlePlugin = "de.timfreiheit.resourceplaceholders:placeholders:0.4"
+multiplatformSettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
+multiplatformSettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
+oboe = "com.google.oboe:oboe:1.8.1"
 simpleIcons = "br.com.devsrsouza.compose.icons:simple-icons:1.1.0"
-sqldelight-androidDriver = { module = "com.squareup.sqldelight:android-driver", version.ref = "sqldelight" }
-sqldelight-coroutines = { module = "com.squareup.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
-sqldelight-nativeDriver = { module = "com.squareup.sqldelight:native-driver", version.ref = "sqldelight" }
-sqldelight-runtime = { module = "com.squareup.sqldelight:runtime", version.ref = "sqldelight" }
-svg2compose = "com.github.DevSrSouza:svg-to-compose:0.8.1"
+sqldelight-androidDriver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+sqldelight-nativeDriver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
 timber = "com.jakewharton.timber:timber:5.0.1"
-uuid = "com.benasher44:uuid:0.7.0"
+uuid = "com.benasher44:uuid:0.8.4"
 
 [bundles]
 accompanist = ["accompanist-insets", "accompanist-systemUiController"]
@@ -66,9 +64,9 @@ kotlinx-coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-android"]
 kotlinx-serialization = ["kotlinx-serialization-core", "kotlinx-serialization-json"]
 
 [plugins]
-jetbrains-compose = "org.jetbrains.compose:1.4.0"
-kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version = "0.7.0" }
+jetbrains-compose = "org.jetbrains.compose:1.6.1"
+kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version = "0.7.6" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 properties = "net.saliman.properties:1.5.2"
-sqldelight = { id = "com.squareup.sqldelight", version.ref = "sqldelight" }
-versions = "com.github.ben-manes.versions:0.46.0"
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+versions = "com.github.ben-manes.versions:0.51.0"

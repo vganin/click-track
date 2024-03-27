@@ -1,7 +1,9 @@
+import com.android.build.gradle.AppExtension
+
 plugins {
     id("com.android.application")
 }
 
-android {
+configure<AppExtension> {
     applyAndroidCommon()
 }

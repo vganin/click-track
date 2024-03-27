@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.di.module
 
 import android.app.Application
-import com.squareup.sqldelight.android.AndroidSqliteDriver
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.vsevolodganin.clicktrack.Database
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import me.tatarka.inject.annotations.Provides

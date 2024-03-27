@@ -1,8 +1,8 @@
 package com.vsevolodganin.clicktrack.storage
 
-import com.squareup.sqldelight.runtime.coroutines.asFlow
-import com.squareup.sqldelight.runtime.coroutines.mapToList
-import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.vsevolodganin.clicktrack.Database
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.migration.CanMigrate
@@ -10,9 +10,10 @@ import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.premade.PreMadeClickTracks
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
@@ -35,7 +36,7 @@ class ClickTrackRepository(
 
     fun getAll(): Flow<List<ClickTrackWithDatabaseId>> {
         return database.sqlClickTrackQueries.getAll().asFlow()
-            .mapToList()
+            .mapToList(Dispatchers.IO)
             .map { it.map { elem -> elem.toCommon() } }
     }
 
@@ -45,7 +46,7 @@ class ClickTrackRepository(
 
     fun getById(id: ClickTrackId.Database): Flow<ClickTrackWithDatabaseId?> {
         return database.sqlClickTrackQueries.getById(id.value).asFlow()
-            .mapToOneOrNull()
+            .mapToOneOrNull(Dispatchers.IO)
             .map { it?.toCommon() }
     }
 

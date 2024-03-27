@@ -1,15 +1,11 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+
 plugins {
     kotlin("multiplatform")
 }
 
-kotlin {
-    ios()
+configure<KotlinMultiplatformExtension> {
+    iosArm64()
     iosSimulatorArm64()
-
-    sourceSets {
-        val iosMain by getting
-        val iosSimulatorArm64Main by getting
-
-        iosSimulatorArm64Main.dependsOn(iosMain)
-    }
+    applyDefaultHierarchyTemplate()
 }

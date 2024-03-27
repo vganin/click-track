@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.edit.EditCueState
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.DefaultBeatsDuration
 import com.vsevolodganin.clicktrack.model.DefaultMeasuresDuration

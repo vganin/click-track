@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.play.PlayClickTrackState
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModel
 import com.vsevolodganin.clicktrack.play.isPaused

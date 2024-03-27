@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -51,6 +50,7 @@ import com.vsevolodganin.clicktrack.edit.EditClickTrackState
 import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModel
 import com.vsevolodganin.clicktrack.edit.EditCueState
 import com.vsevolodganin.clicktrack.edit.toEditState
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern

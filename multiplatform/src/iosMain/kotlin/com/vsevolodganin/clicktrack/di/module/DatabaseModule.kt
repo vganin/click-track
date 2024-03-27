@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.di.module
 
-import com.squareup.sqldelight.drivers.native.NativeSqliteDriver
+import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import com.vsevolodganin.clicktrack.Database
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import me.tatarka.inject.annotations.Provides

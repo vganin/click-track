@@ -1,11 +1,11 @@
 package com.vsevolodganin.clicktrack.ui
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DrawerValue
@@ -77,12 +77,18 @@ private fun RootView(
 
             if (isPush) {
                 slideIntoContainer(
-                    towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec
-                ) with slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Left, animationSpec = animationSpec)
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = animationSpec
+                ) togetherWith slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec
+                )
             } else {
                 slideIntoContainer(
-                    towards = AnimatedContentScope.SlideDirection.Right, animationSpec = animationSpec
-                ) with slideOutOfContainer(towards = AnimatedContentScope.SlideDirection.Right, animationSpec = animationSpec)
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = animationSpec
+                ) togetherWith slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec
+                )
             }
         }, contentKey = ActiveScreen::config
     ) { screen ->

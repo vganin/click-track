@@ -6,7 +6,6 @@ import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStack
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.ScreenStackState
-import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.utils.decompose.resetTo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +13,6 @@ import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-@MainControllerScope
 @Inject
 class DrawerViewModelImpl(
     @Assisted componentContext: ComponentContext,

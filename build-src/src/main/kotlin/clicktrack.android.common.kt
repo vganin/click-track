@@ -1,7 +1,7 @@
 import com.android.build.gradle.BaseExtension
 
 fun BaseExtension.applyAndroidCommon() {
-    compileSdkVersion(33)
+    compileSdkVersion(34)
 
     defaultConfig {
         minSdk = 21

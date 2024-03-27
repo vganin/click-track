@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -47,6 +46,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TextInputSession
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.utils.compose.Preview
 import dev.icerock.moko.resources.compose.stringResource
 import kotlin.time.Duration

@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -31,16 +30,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.drawer.DrawerState
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
-import com.vsevolodganin.clicktrack.icons.ClickTrackIcons
-import com.vsevolodganin.clicktrack.icons.clicktrackicons.Metronome
-import com.vsevolodganin.clicktrack.icons.clicktrackicons.Polyrhythm
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import com.vsevolodganin.clicktrack.utils.compose.statusBars
+import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -66,28 +65,28 @@ fun DrawerView(viewModel: DrawerViewModel) {
         Spacer(modifier = Modifier.height(12.dp))
 
         DrawerButton(
-            icon = ClickTrackIcons.Metronome,
+            icon = painterResource(MR.images.metronome),
             label = stringResource(MR.strings.drawer_metronome),
             isSelected = state.selectedItem == DrawerState.SelectedItem.METRONOME,
             action = viewModel::navigateToMetronome
         )
 
         DrawerButton(
-            icon = Icons.Filled.FitnessCenter,
+            icon = rememberVectorPainter(Icons.Filled.FitnessCenter),
             label = stringResource(MR.strings.drawer_training),
             isSelected = state.selectedItem == DrawerState.SelectedItem.TRAINING,
             action = viewModel::navigateToTraining
         )
 
         DrawerButton(
-            icon = ClickTrackIcons.Polyrhythm,
+            icon = painterResource(MR.images.polyrhythm),
             label = stringResource(MR.strings.drawer_polyrhythms),
             isSelected = state.selectedItem == DrawerState.SelectedItem.POLYRHYTHMS,
             action = viewModel::navigateToPolyrhythms
         )
 
         DrawerButton(
-            icon = Icons.Filled.LibraryMusic,
+            icon = rememberVectorPainter(Icons.Filled.LibraryMusic),
             label = stringResource(MR.strings.drawer_sound_library),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SOUND_LIBRARY,
             action = viewModel::navigateToSoundLibrary
@@ -96,14 +95,14 @@ fun DrawerView(viewModel: DrawerViewModel) {
         Spacer(modifier = Modifier.weight(1f))
 
         DrawerButton(
-            icon = Icons.Filled.Settings,
+            icon = rememberVectorPainter(Icons.Filled.Settings),
             label = stringResource(MR.strings.drawer_settings),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SETTINGS,
             action = viewModel::navigateToSettings
         )
 
         DrawerButton(
-            icon = Icons.Filled.ContactSupport,
+            icon = rememberVectorPainter(Icons.Filled.ContactSupport),
             label = stringResource(MR.strings.drawer_about),
             isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
             action = viewModel::navigateToAbout
@@ -115,7 +114,7 @@ fun DrawerView(viewModel: DrawerViewModel) {
 
 @Composable
 private fun DrawerButton(
-    icon: ImageVector,
+    icon: Painter,
     label: String,
     isSelected: Boolean,
     action: () -> Unit,
@@ -143,7 +142,7 @@ private fun DrawerButton(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(
-                    imageVector = icon,
+                    painter = icon,
                     contentDescription = null, // decorative
                     tint = textAndIconColor,
                     modifier = Modifier.size(24.dp)

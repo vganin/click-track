@@ -9,7 +9,7 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetClass="com.vsevolodganin.clicktrack.MainActivity"
-            android:targetPackage="com.vsevolodganin.clicktrack">
+            android:targetPackage="com.vsevolodganin.clicktrack.debug">
             <extra
                 android:name="destination"
                 android:value="metronome" />

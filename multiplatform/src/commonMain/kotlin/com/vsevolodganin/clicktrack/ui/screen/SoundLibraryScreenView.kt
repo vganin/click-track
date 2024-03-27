@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
-import ClickTrack.multiplatform.MR
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundType
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
