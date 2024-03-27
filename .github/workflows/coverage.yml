@@ -1,4 +1,4 @@
-name: report coverage
+name: Coverage
 on:
   push:
     branches: [ master ]
@@ -10,7 +10,7 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 jobs:
-  run:
+  report:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -40,7 +40,7 @@ jobs:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: d911211e98e25a98f2fa644c9526d062
           filename: click-track-coverage-badge.json
-          label: coverage
+          label: Coverage
           message: ${{ env.COVERAGE }}%
           valColorRange: ${{ env.COVERAGE }}
           minColorRange: 0
