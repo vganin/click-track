@@ -1,6 +1,7 @@
-package com.vsevolodganin.clicktrack.audio
+package com.vsevolodganin.clicktrack.primitiveaudio
 
 import android.content.res.AssetFileDescriptor
+import android.media.AudioFormat
 import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaExtractor
@@ -8,6 +9,7 @@ import android.media.MediaFormat
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
 import com.vsevolodganin.clicktrack.utils.media.channelCount
+import com.vsevolodganin.clicktrack.utils.media.pcmEncoding
 import com.vsevolodganin.clicktrack.utils.media.sampleRate
 import me.tatarka.inject.annotations.Inject
 import timber.log.Timber
@@ -16,8 +18,9 @@ import kotlin.math.min
 
 @ApplicationScope
 @Inject
-class AudioDecoder() {
-    fun extractPcm(afd: AssetFileDescriptor, maxSeconds: Int): Pcm16Data? {
+class PrimitiveAudioExtractor {
+
+    fun extractPcm(afd: AssetFileDescriptor, maxSeconds: Int): PrimitiveAudioData? {
         val mediaExtractor = MediaExtractor()
 
         try {
@@ -38,7 +41,7 @@ class AudioDecoder() {
         return null
     }
 
-    private fun extractPcm(mediaExtractor: MediaExtractor, trackIndex: Int, trackFormat: MediaFormat, maxSeconds: Int): Pcm16Data? {
+    private fun extractPcm(mediaExtractor: MediaExtractor, trackIndex: Int, trackFormat: MediaFormat, maxSeconds: Int): PrimitiveAudioData? {
         var codec: MediaCodec? = null
 
         return try {
@@ -101,10 +104,11 @@ class AudioDecoder() {
                 }
             }
 
-            Pcm16Data(
+            PrimitiveAudioData(
+                bytes = resultByteBuffer.array().copyOf(resultByteBuffer.position()),
+                encoding = audioFormatEncodingToCommon(outputTrackFormat.pcmEncoding()) ?: return null,
                 sampleRate = outputTrackFormat.sampleRate(),
                 channelCount = outputTrackFormat.channelCount(),
-                data = resultByteBuffer.array().copyOf(resultByteBuffer.position()),
             )
         } finally {
             try {
@@ -112,6 +116,18 @@ class AudioDecoder() {
             } finally {
                 codec?.release()
             }
+        }
+    }
+
+    private fun audioFormatEncodingToCommon(encoding: Int): PrimitiveAudioData.Encoding? = when (encoding) {
+        AudioFormat.ENCODING_PCM_8BIT -> PrimitiveAudioData.Encoding.PCM_8BIT
+        AudioFormat.ENCODING_PCM_16BIT -> PrimitiveAudioData.Encoding.PCM_16BIT
+        AudioFormat.ENCODING_PCM_24BIT_PACKED -> PrimitiveAudioData.Encoding.PCM_24BIT_PACKED
+        AudioFormat.ENCODING_PCM_32BIT -> PrimitiveAudioData.Encoding.PCM_32BIT
+        AudioFormat.ENCODING_PCM_FLOAT -> PrimitiveAudioData.Encoding.PCM_FLOAT
+        else -> {
+            Timber.e("Unknown PCM encoding: $encoding")
+            null
         }
     }
 }

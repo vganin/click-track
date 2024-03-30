@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.audio
+package com.vsevolodganin.clicktrack.soundlibrary
 
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType

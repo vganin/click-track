@@ -22,15 +22,13 @@ class MainApplication : Application() {
             strictMode()
         }
 
-        NativeLibraries.init(this)
+        NativeLibraries.init()
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
 
         component.themeManager.start()
-
-        component.soundsPreloader.preload()
     }
 
     private fun strictMode() {

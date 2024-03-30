@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.player
 
-import com.vsevolodganin.clicktrack.audio.SoundSourceProvider
+import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
 import com.vsevolodganin.clicktrack.utils.collection.toRoundRobin
 import kotlin.time.Duration
 
