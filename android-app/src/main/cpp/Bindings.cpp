@@ -78,7 +78,7 @@ Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nati
 }
 
 JNIEXPORT void JNICALL
-Java_com_vsevolodganin_clicktrack_NativeLibrariesKt_nativeSetGLobalLogger(
+Java_com_vsevolodganin_clicktrack_NativeLibrariesKt_nativeSetGlobalLogger(
         JNIEnv* env,
         jclass clazz,
         jobject logger

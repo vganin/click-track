@@ -72,6 +72,7 @@ kotlin {
             dependencies {
                 api(compose.uiTooling)
                 api(compose.preview)
+                api(libs.androidx.annotation)
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.constraintLayout.compose)
                 api(libs.androidx.dataStore)

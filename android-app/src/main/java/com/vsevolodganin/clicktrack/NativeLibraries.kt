@@ -12,8 +12,8 @@ class NativeLibraries(
     fun init() {
         System.loadLibrary("oboe")
         System.loadLibrary("clicktrack")
-        nativeSetGLobalLogger(logger)
+        nativeSetGlobalLogger(logger)
     }
 }
 
-private external fun nativeSetGLobalLogger(logger: Logger)
+private external fun nativeSetGlobalLogger(logger: Logger)

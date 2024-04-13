@@ -31,7 +31,7 @@ android {
 
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
-        versionCode = 53
+        versionCode = 54
         versionName = "$baseVersion ($currentDate)"
 
         resourceConfigurations += setOf("en", "ru")
@@ -61,9 +61,7 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
-            if (keystorePropertiesFile.exists()) {
-                signingConfig = signingConfigs.getByName("release")
-            }
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
 
             configure<CrashlyticsExtension> {
                 nativeSymbolUploadEnabled = true
@@ -148,6 +146,7 @@ dependencies {
     implementation(libs.bundles.kotlinx.serialization)
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.annotation)
     implementation(libs.androidx.splashScreen)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.media)
