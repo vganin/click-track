@@ -63,7 +63,9 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
-            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
 
             configure<CrashlyticsExtension> {
                 nativeSymbolUploadEnabled = true
