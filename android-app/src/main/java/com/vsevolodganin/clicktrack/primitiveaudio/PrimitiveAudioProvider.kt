@@ -7,8 +7,8 @@ import android.net.Uri
 import androidx.annotation.RawRes
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
+import com.vsevolodganin.clicktrack.utils.log.Logger
 import me.tatarka.inject.annotations.Inject
-import timber.log.Timber
 
 @ApplicationScope
 @Inject
@@ -16,12 +16,13 @@ class PrimitiveAudioProvider(
     private val application: Application,
     private val audioDecoder: PrimitiveAudioExtractor,
     private val contentResolver: ContentResolver,
+    private val logger: Logger,
 ) {
     fun get(sound: ClickSoundSource): PrimitiveAudioData? {
         return try {
             load(sound)
         } catch (t: Throwable) {
-            Timber.e("Failed to load $sound", t)
+            logger.logError(TAG, "Failed to load $sound", t)
             null
         }
     }
@@ -46,6 +47,7 @@ class PrimitiveAudioProvider(
     }
 
     private companion object Const {
+        const val TAG = "PrimitiveAudioProvider"
         const val MAX_SECONDS = 2
     }
 }

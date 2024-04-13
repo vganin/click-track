@@ -12,13 +12,13 @@ import com.vsevolodganin.clicktrack.primitiveaudio.bytesPerFrame
 import com.vsevolodganin.clicktrack.primitiveaudio.framesPerSecond
 import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
 import com.vsevolodganin.clicktrack.soundlibrary.UserSelectedSounds
+import com.vsevolodganin.clicktrack.utils.log.Logger
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import timber.log.Timber
 import java.io.File
 import kotlin.time.DurationUnit
 
@@ -27,6 +27,7 @@ class ExportToAudioFile(
     private val application: Application,
     private val soundBank: PrimitiveAudioProvider,
     private val userSelectedSounds: UserSelectedSounds,
+    private val logger: Logger
 ) {
     suspend fun export(clickTrack: ClickTrack, onProgress: suspend (Float) -> Unit): File? {
         val soundSourceProvider = SoundSourceProvider(userSelectedSounds.get())
@@ -119,14 +120,14 @@ class ExportToAudioFile(
                 null
             }
         } catch (t: Throwable) {
-            Timber.e(t, "Failed to export track")
+            logger.logError(TAG, "Failed to export track", t)
             outputFile?.delete()
             null
         } finally {
             try {
                 codec?.stop()
             } catch (t: Throwable) {
-                Timber.e(t, "Failed to stop code")
+                logger.logError(TAG, "Failed to stop codec", t)
             } finally {
                 codec?.release()
             }
@@ -134,7 +135,7 @@ class ExportToAudioFile(
             try {
                 muxer?.stop()
             } catch (t: Throwable) {
-                Timber.e(t, "Failed to stop muxer")
+                logger.logError(TAG, "Failed to stop muxer", t)
             } finally {
                 muxer?.release()
             }
@@ -159,5 +160,9 @@ class ExportToAudioFile(
                 yieldAll(sequence { repeat(framesOfSilence * soundData.bytesPerFrame) { yield(0) } })
             }
         }
+    }
+
+    private companion object {
+        const val TAG = "ExportToAudioFile"
     }
 }

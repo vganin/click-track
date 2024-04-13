@@ -19,6 +19,7 @@ import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
 import com.vsevolodganin.clicktrack.utils.coroutine.collectLatestFirst
 import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
 import com.vsevolodganin.clicktrack.utils.grabIf
+import com.vsevolodganin.clicktrack.utils.log.Logger
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
@@ -38,7 +39,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
-import timber.log.Timber
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -51,6 +51,7 @@ class Player(
     private val playableContentProvider: PlayableContentProvider,
     private val userSelectedSounds: UserSelectedSounds,
     latencyTracker: LatencyTracker,
+    private val logger: Logger
 ) {
     data class Input(
         val id: PlayableId,
@@ -139,7 +140,7 @@ class Player(
         val duration = clickTrack.durationInTime
 
         if (duration == Duration.ZERO) {
-            Timber.w("Tried to play track with zero duration, exiting")
+            logger.logError(TAG, "Tried to play track with zero duration, exiting")
             return@withContext
         }
 
@@ -170,7 +171,7 @@ class Player(
         val duration = twoLayerPolyrhythm.durationInTime
 
         if (duration == Duration.ZERO) {
-            Timber.w("Tried to play polyrhythm with zero duration, exiting")
+            logger.logError(TAG, "Tried to play polyrhythm with zero duration, exiting")
             return@withContext
         }
 
@@ -309,6 +310,8 @@ class Player(
     }
 
     private companion object Const {
+        const val TAG = "Player"
+
         const val PREFETCH_SIZE = 100
 
         // Higher means lower precision when correcting UI for latency

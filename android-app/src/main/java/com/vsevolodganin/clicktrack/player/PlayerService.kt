@@ -38,7 +38,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
-import timber.log.Timber
 import com.vsevolodganin.clicktrack.multiplatform.R as MR
 
 class PlayerService : Service() {
@@ -89,6 +88,8 @@ class PlayerService : Service() {
         private const val ACTION_STOP = "stop"
         private const val ACTION_PAUSE = "pause"
         private const val ACTION_RESUME = "resume"
+
+        private const val TAG = "PlayerService"
     }
 
     @Parcelize
@@ -170,7 +171,7 @@ class PlayerService : Service() {
             ACTION_PAUSE -> state.update { it?.copy(isPaused = true) }
             ACTION_RESUME -> state.update { it?.copy(isPaused = false) }
             else -> {
-                Timber.w("Undefined intent received = $intent, flags = $flags, startId = $startId")
+                component.logger.logError(TAG, "Undefined intent received = $intent, flags = $flags, startId = $startId")
                 state.value = null
             }
         }

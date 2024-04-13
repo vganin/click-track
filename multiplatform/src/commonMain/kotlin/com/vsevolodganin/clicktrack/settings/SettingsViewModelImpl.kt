@@ -10,6 +10,7 @@ import com.vsevolodganin.clicktrack.settings.debug.NativeCrash
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import com.vsevolodganin.clicktrack.utils.log.Logger
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -25,6 +26,7 @@ class SettingsViewModelImpl(
     private val languageStore: LanguageStore,
     private val kotlinCrashProvider: () -> KotlinCrash,
     private val nativeCrashProvider: () -> NativeCrash,
+    private val logger: Logger,
 ) : SettingsViewModel, ComponentContext by componentContext {
 
     private val scope = coroutineScope()
@@ -69,5 +71,9 @@ class SettingsViewModelImpl(
 
     override fun onNativeCrashClick() {
         nativeCrashProvider()()
+    }
+
+    override fun onNonFatalClick() {
+        logger.logError("TEST", "This is test non-fatal")
     }
 }

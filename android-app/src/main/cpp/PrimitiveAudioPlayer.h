@@ -6,12 +6,15 @@
 #include <vector>
 
 #include "PrimitiveAudio.h"
+#include "Logger.h"
 
 class PrimitiveAudioPlayer {
 public:
     explicit PrimitiveAudioPlayer();
 
     ~PrimitiveAudioPlayer();
+
+    void setLogger(Logger* logger);
 
     void prepare();
 
@@ -63,6 +66,8 @@ private:
 
     bool openStream();
     bool startStream();
+
+    Logger* logger_;
 
     std::shared_ptr<oboe::AudioStream> audioStream_;
 

@@ -102,6 +102,9 @@ private fun Content(viewModel: SettingsViewModel) {
                 Button(onClick = viewModel::onNativeCrashClick) {
                     Text("Native crash")
                 }
+                Button(onClick = viewModel::onNonFatalClick) {
+                    Text("Non-fatal")
+                }
             }
         }
     }
@@ -149,6 +152,7 @@ private fun Preview() = ClickTrackTheme {
             override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
             override fun onKotlinCrashClick() = Unit
             override fun onNativeCrashClick() = Unit
+            override fun onNonFatalClick() = Unit
         }
     )
 }

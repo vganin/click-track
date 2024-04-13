@@ -12,4 +12,5 @@ interface SettingsViewModel {
     fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean)
     fun onKotlinCrashClick()
     fun onNativeCrashClick()
+    fun onNonFatalClick()
 }
