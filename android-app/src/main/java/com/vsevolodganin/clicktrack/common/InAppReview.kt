@@ -7,11 +7,11 @@ import com.google.android.play.core.review.ReviewManager
 import com.vsevolodganin.clicktrack.analytics.AnalyticsLogger
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import com.vsevolodganin.clicktrack.utils.log.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import timber.log.Timber
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -22,6 +22,7 @@ class InAppReview(
     private val activity: Activity,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val analyticsLogger: AnalyticsLogger,
+    private val logger: Logger,
 ) {
     fun tryLaunchRequestReview() {
         GlobalScope.launch(Dispatchers.Main) {
@@ -39,7 +40,7 @@ class InAppReview(
                 analyticsLogger.logEvent("review_requested")
             }
         } catch (t: Throwable) {
-            Timber.e(t, "Failed to request review")
+            logger.logError(TAG, "Failed to request review", t)
         }
     }
 
@@ -58,6 +59,7 @@ class InAppReview(
     private fun nowMilliseconds(): Long = System.currentTimeMillis()
 
     private companion object Const {
+        const val TAG = "InAppReview"
         val REVIEW_REQUEST_PERIOD = 7.days
     }
 }

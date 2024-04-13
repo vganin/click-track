@@ -77,4 +77,13 @@ Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nati
     return player.getLatencyMs();
 }
 
+JNIEXPORT void JNICALL
+Java_com_vsevolodganin_clicktrack_NativeLibrariesKt_nativeSetGLobalLogger(
+        JNIEnv* env,
+        jclass clazz,
+        jobject logger
+) {
+    player.setLogger(new Logger{env, logger});
+}
+
 } // extern "C"

@@ -6,7 +6,6 @@ import android.os.StrictMode
 import com.vsevolodganin.clicktrack.di.component.ApplicationComponent
 import com.vsevolodganin.clicktrack.di.component.create
 import com.vsevolodganin.clicktrack.utils.cast
-import timber.log.Timber
 
 class MainApplication : Application() {
 
@@ -22,13 +21,10 @@ class MainApplication : Application() {
             strictMode()
         }
 
-        NativeLibraries.init()
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
+        component.apply {
+            nativeLibraries.init()
+            themeManager.start()
         }
-
-        component.themeManager.start()
     }
 
     private fun strictMode() {

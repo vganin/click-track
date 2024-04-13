@@ -11,6 +11,7 @@ import com.vsevolodganin.clicktrack.player.Player
 import com.vsevolodganin.clicktrack.primitiveaudio.PrimitiveAudioPlayer
 import com.vsevolodganin.clicktrack.primitiveaudio.PrimitiveAudioPlayerImpl
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import com.vsevolodganin.clicktrack.utils.log.Logger
 import kotlinx.coroutines.CoroutineScope
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
@@ -35,6 +36,7 @@ abstract class PlayerServiceComponent(
     abstract val notificationChannels: NotificationChannels
     abstract val audioFocusManager: AudioFocusManager
     abstract val latencyTracker: LatencyTracker
+    abstract val logger: Logger
 
     @get:Provides
     val PrimitiveAudioPlayerImpl.binding: PrimitiveAudioPlayer get() = this

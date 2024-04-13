@@ -135,16 +135,6 @@ android {
             // FIXME(https://issuetracker.google.com/issues/189967522)
             "DialogFragmentCallbacksDetector",
 
-            // FIXME(https://github.com/JakeWharton/timber/issues/408)
-            "LogNotTimber",
-            "StringFormatInTimber",
-            "ThrowableNotAtBeginning",
-            "BinaryOperationInTimber",
-            "TimberArgCount",
-            "TimberArgTypes",
-            "TimberTagLength",
-            "TimberExceptionLogging",
-
             // Not used on purpose
             "UnusedMaterialScaffoldPaddingParameter",
         )
@@ -169,6 +159,5 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.core)
-    implementation(libs.timber)
     ksp(libs.kotlininject.compiler)
 }

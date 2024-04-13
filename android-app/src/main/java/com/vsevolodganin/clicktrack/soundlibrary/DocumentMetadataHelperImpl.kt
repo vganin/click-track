@@ -3,11 +3,14 @@ package com.vsevolodganin.clicktrack.soundlibrary
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
+import com.vsevolodganin.clicktrack.utils.log.Logger
 import me.tatarka.inject.annotations.Inject
-import timber.log.Timber
 
 @Inject
-class DocumentMetadataHelperImpl(private val contentResolver: ContentResolver) : DocumentMetadataHelper {
+class DocumentMetadataHelperImpl(
+    private val contentResolver: ContentResolver,
+    private val logger: Logger
+) : DocumentMetadataHelper {
 
     override fun isAccessible(uri: String): Boolean {
         return try {
@@ -38,8 +41,12 @@ class DocumentMetadataHelperImpl(private val contentResolver: ContentResolver) :
                 }
             }
         } catch (e: SecurityException) {
-            Timber.e(e, "Failed to get display name for URI: $uri")
+            logger.logError(TAG, "Failed to get display name for URI: $uri", e)
             null
         }
+    }
+
+    private companion object {
+        const val TAG = "DocumentMetadataHelperImpl"
     }
 }

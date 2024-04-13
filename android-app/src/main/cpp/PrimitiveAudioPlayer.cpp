@@ -17,10 +17,10 @@ DataCallbackResult PrimitiveAudioPlayer::OboeDataCallback::onAudioReady(
 ) {
     StreamState streamState = oboeStream->getState();
     if (streamState != StreamState::Open && streamState != StreamState::Started) {
-        __android_log_print(ANDROID_LOG_ERROR, TAG, "onAudioReady: streamState: %d", streamState);
-    }
-    if (streamState == StreamState::Disconnected) {
-        __android_log_print(ANDROID_LOG_ERROR, TAG, "onAudioReady: streamState: Disconnected");
+        parent_->logger_->logError(
+                TAG,
+                "onAudioReady: streamState: " + std::string{convertToText(streamState)}
+        );
     }
 
     memset(audioData, 0, static_cast<size_t>(numFrames) * static_cast<size_t>(parent_->channelCount_) * sizeof(float));
@@ -38,19 +38,34 @@ void PrimitiveAudioPlayer::OboeErrorCallback::onErrorAfterClose(
         AudioStream* oboeStream,
         Result error
 ) {
-    __android_log_print(ANDROID_LOG_INFO, TAG, "onErrorAfterClose: %d", error);
+    parent_->logger_->logError(
+            TAG,
+            "onErrorAfterClose: " + std::string{convertToText(error)}
+    );
 
     parent_->openStream();
     parent_->startStream();
 }
 
 PrimitiveAudioPlayer::PrimitiveAudioPlayer()
-        : channelCount_(0),
+        : logger_(nullptr),
+          channelCount_(0),
           sampleRate_(0),
           numPrimitiveAudios_(0) {}
 
 PrimitiveAudioPlayer::~PrimitiveAudioPlayer() {
     release();
+    setLogger(nullptr);
+}
+
+void PrimitiveAudioPlayer::setLogger(Logger* logger) {
+    __android_log_print(ANDROID_LOG_INFO, TAG, "setLogger");
+
+    if (logger_ != nullptr) {
+        delete logger_;
+    }
+
+    logger_ = logger;
 }
 
 void PrimitiveAudioPlayer::prepare() {
@@ -108,8 +123,10 @@ void PrimitiveAudioPlayer::play(int index) {
     if (index >= 0 && index < numPrimitiveAudios_) {
         primitiveAudios_[index]->setPlayMode();
     } else {
-        throw std::runtime_error{
-                "Wrong index passed: " + std::to_string(index) + ". Source num was " + std::to_string(numPrimitiveAudios_)};
+        logger_->logError(
+                TAG,
+                "Wrong index passed: " + std::to_string(index) + ". Source num was " + std::to_string(numPrimitiveAudios_)
+        );
     }
 }
 
@@ -119,19 +136,22 @@ void PrimitiveAudioPlayer::stop(int index) {
     if (index >= 0 && index < numPrimitiveAudios_) {
         primitiveAudios_[index]->setStopMode();
     } else {
-        throw std::runtime_error{
-                "Wrong index passed: " + std::to_string(index) + ". Source num was " + std::to_string(numPrimitiveAudios_)};
+        logger_->logError(
+                TAG,
+                "Wrong index passed: " + std::to_string(index) + ". Source num was " + std::to_string(numPrimitiveAudios_)
+        );
     }
 }
 
 int PrimitiveAudioPlayer::getLatencyMs() {
+    __android_log_print(ANDROID_LOG_INFO, TAG, "getLatencyMs");
+
     if (audioStream_) {
         const auto result = audioStream_->calculateLatencyMillis();
         if (result != Result::OK) {
-            __android_log_print(
-                    ANDROID_LOG_ERROR,
+            logger_->logError(
                     TAG,
-                    "calculateLatencyMillis failed. Error: %s", convertToText(result.error())
+                    "calculateLatencyMillis failed. Error: " + std::string{convertToText(result.error())}
             );
             return result.value();
         } else {
@@ -143,7 +163,7 @@ int PrimitiveAudioPlayer::getLatencyMs() {
 }
 
 bool PrimitiveAudioPlayer::openStream() {
-    __android_log_print(ANDROID_LOG_INFO, TAG, "openStream()");
+    __android_log_print(ANDROID_LOG_INFO, TAG, "openStream");
 
     dataCallback_ = std::make_shared<OboeDataCallback>(this);
     errorCallback_ = std::make_shared<OboeErrorCallback>(this);
@@ -159,10 +179,9 @@ bool PrimitiveAudioPlayer::openStream() {
 
     Result result = builder.openStream(audioStream_);
     if (result != Result::OK) {
-        __android_log_print(
-                ANDROID_LOG_ERROR,
+        logger_->logError(
                 TAG,
-                "openStream failed. Error: %s", convertToText(result)
+                "openStream failed. Error: " + std::string{convertToText(result)}
         );
         return false;
     }
@@ -173,10 +192,9 @@ bool PrimitiveAudioPlayer::openStream() {
     static constexpr int32_t bufferSizeInBursts = 2; // Use 2 bursts as the buffer size (double buffer)
     result = audioStream_->setBufferSizeInFrames(audioStream_->getFramesPerBurst() * bufferSizeInBursts);
     if (result != Result::OK) {
-        __android_log_print(
-                ANDROID_LOG_WARN,
+        logger_->logError(
                 TAG,
-                "setBufferSizeInFrames failed. Error: %s", convertToText(result)
+                "setBufferSizeInFrames failed. Error: " + std::string{convertToText(result)}
         );
     }
 
@@ -186,6 +204,8 @@ bool PrimitiveAudioPlayer::openStream() {
 }
 
 bool PrimitiveAudioPlayer::startStream() {
+    __android_log_print(ANDROID_LOG_INFO, TAG, "startStream");
+
     int tryCount = 0;
     while (tryCount < 3) {
         bool wasOpenSuccessful = true;
@@ -197,10 +217,9 @@ bool PrimitiveAudioPlayer::startStream() {
         if (wasOpenSuccessful) {
             Result result = audioStream_->requestStart();
             if (result != Result::OK) {
-                __android_log_print(
-                        ANDROID_LOG_ERROR,
+                logger_->logError(
                         TAG,
-                        "requestStart failed. Error: %s", convertToText(result)
+                        "requestStart failed. Error: " + std::string{convertToText(result)}
                 );
                 audioStream_->close();
                 audioStream_.reset();

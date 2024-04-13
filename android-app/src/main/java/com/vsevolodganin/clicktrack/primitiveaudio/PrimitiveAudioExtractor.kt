@@ -7,19 +7,20 @@ import android.media.MediaCodecList
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import com.vsevolodganin.clicktrack.utils.log.Logger
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
 import com.vsevolodganin.clicktrack.utils.media.channelCount
 import com.vsevolodganin.clicktrack.utils.media.pcmEncoding
 import com.vsevolodganin.clicktrack.utils.media.sampleRate
 import me.tatarka.inject.annotations.Inject
-import timber.log.Timber
 import java.nio.ByteBuffer
 import kotlin.math.min
 
 @ApplicationScope
 @Inject
-class PrimitiveAudioExtractor {
-
+class PrimitiveAudioExtractor(
+    private val logger: Logger
+) {
     fun extractPcm(afd: AssetFileDescriptor, maxSeconds: Int): PrimitiveAudioData? {
         val mediaExtractor = MediaExtractor()
 
@@ -33,7 +34,7 @@ class PrimitiveAudioExtractor {
                 }
             }
         } catch (t: Throwable) {
-            Timber.e(t, "Failed to extract PCM")
+            logger.logError(TAG, "Failed to extract PCM", t)
         } finally {
             mediaExtractor.release()
         }
@@ -126,8 +127,12 @@ class PrimitiveAudioExtractor {
         AudioFormat.ENCODING_PCM_32BIT -> PrimitiveAudioData.Encoding.PCM_32BIT
         AudioFormat.ENCODING_PCM_FLOAT -> PrimitiveAudioData.Encoding.PCM_FLOAT
         else -> {
-            Timber.e("Unknown PCM encoding: $encoding")
+            logger.logError(TAG, "Unknown PCM encoding: $encoding")
             null
         }
+    }
+
+    private companion object {
+        const val TAG = "PrimitiveAudioExtractor"
     }
 }

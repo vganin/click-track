@@ -1,9 +1,19 @@
 package com.vsevolodganin.clicktrack
 
-object NativeLibraries {
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import com.vsevolodganin.clicktrack.utils.log.Logger
+import me.tatarka.inject.annotations.Inject
 
+@ApplicationScope
+@Inject
+class NativeLibraries(
+    private val logger: Logger
+) {
     fun init() {
         System.loadLibrary("oboe")
         System.loadLibrary("clicktrack")
+        nativeSetGLobalLogger(logger)
     }
 }
+
+private external fun nativeSetGLobalLogger(logger: Logger)
