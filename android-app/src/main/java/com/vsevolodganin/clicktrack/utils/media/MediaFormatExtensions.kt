@@ -26,9 +26,7 @@ fun MediaFormat.bytesPerSample(): Int {
         AudioFormat.ENCODING_PCM_16BIT -> 2
         AudioFormat.ENCODING_PCM_24BIT_PACKED -> 3
         AudioFormat.ENCODING_PCM_32BIT,
-        AudioFormat.ENCODING_PCM_FLOAT,
-        -> 4
-        AudioFormat.ENCODING_INVALID -> throw IllegalArgumentException("Bad audio format $pcmEncoding")
+        AudioFormat.ENCODING_PCM_FLOAT -> 4
         else -> throw IllegalArgumentException("Bad audio format $pcmEncoding")
     }
 }

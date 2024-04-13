@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.di.component
 
-import com.vsevolodganin.clicktrack.audio.SoundPreloader
 import com.vsevolodganin.clicktrack.common.BuildConfig
 import com.vsevolodganin.clicktrack.common.BuildConfigImpl
 import com.vsevolodganin.clicktrack.di.module.ApplicationModule
@@ -25,7 +24,6 @@ abstract class ApplicationComponent(
 
     abstract val userPreferences: UserPreferencesRepository
     abstract val themeManager: ThemeManager
-    abstract val soundsPreloader: SoundPreloader
 
     @get:Provides
     val BuildConfigImpl.buildConfig: BuildConfig get() = this

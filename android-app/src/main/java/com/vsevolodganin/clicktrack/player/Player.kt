@@ -1,7 +1,5 @@
 package com.vsevolodganin.clicktrack.player
 
-import com.vsevolodganin.clicktrack.audio.SoundSourceProvider
-import com.vsevolodganin.clicktrack.audio.UserSelectedSounds
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
 import com.vsevolodganin.clicktrack.model.ClickSounds
@@ -14,6 +12,8 @@ import com.vsevolodganin.clicktrack.model.PlayableProgressTimeMark
 import com.vsevolodganin.clicktrack.model.PlayableProgressTimeSource
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
+import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
+import com.vsevolodganin.clicktrack.soundlibrary.UserSelectedSounds
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
 import com.vsevolodganin.clicktrack.utils.coroutine.collectLatestFirst
@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.withIndex
@@ -286,9 +285,7 @@ class Player(
 
     private suspend fun soundSourceProvider(soundsId: ClickSoundsId?): SoundSourceProvider {
         val soundsFlow = if (soundsId != null) soundsById(soundsId) else userSelectedSounds.get()
-        val soundsState = soundsFlow
-            .onEach { sounds -> sounds?.asIterable?.forEach(soundPool::warmup) }
-            .stateIn(GlobalScope)
+        val soundsState = soundsFlow.stateIn(GlobalScope)
         return SoundSourceProvider(soundsState)
     }
 

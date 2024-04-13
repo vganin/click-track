@@ -14,6 +14,8 @@ ij_kotlin_line_break_after_multiline_when_entry = false
 ij_c_indent_namespace_members = 0
 ij_c_space_after_pointer_in_declaration = true
 ij_c_space_before_pointer_in_declaration = false
+ij_c_space_after_reference_in_declaration = true
+ij_c_space_before_reference_in_declaration = false
 
 [{*.json,*.yaml,*.yml}]
 indent_size = 2

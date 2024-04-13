@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.audio
+package com.vsevolodganin.clicktrack.primitiveaudio
 
 import android.app.Application
 import android.content.ContentResolver
@@ -12,41 +12,36 @@ import timber.log.Timber
 
 @ApplicationScope
 @Inject
-class SoundBank(
+class PrimitiveAudioProvider(
     private val application: Application,
-    private val audioDecoder: AudioDecoder,
+    private val audioDecoder: PrimitiveAudioExtractor,
     private val contentResolver: ContentResolver,
 ) {
-    private val lock = Any()
-    private val cache = mutableMapOf<ClickSoundSource, Pcm16Data>()
-
-    fun get(sound: ClickSoundSource): Pcm16Data? = synchronized(lock) {
-        return cache.getOrPut(sound) {
-            try {
-                load(sound) ?: return null
-            } catch (t: Throwable) {
-                Timber.e("Failed to load $sound", t)
-                return null
-            }
+    fun get(sound: ClickSoundSource): PrimitiveAudioData? {
+        return try {
+            load(sound)
+        } catch (t: Throwable) {
+            Timber.e("Failed to load $sound", t)
+            null
         }
     }
 
-    private fun load(sound: ClickSoundSource): Pcm16Data? {
+    private fun load(sound: ClickSoundSource): PrimitiveAudioData? {
         return when (sound) {
             is ClickSoundSource.Bundled -> load(sound.audioResource.rawResId)
             is ClickSoundSource.Uri -> load(sound.value)
         }
     }
 
-    private fun load(@RawRes resId: Int): Pcm16Data? {
+    private fun load(@RawRes resId: Int): PrimitiveAudioData? {
         return application.resources.openRawResourceFd(resId).use(::load)
     }
 
-    private fun load(uri: String): Pcm16Data? {
+    private fun load(uri: String): PrimitiveAudioData? {
         return contentResolver.openAssetFileDescriptor(Uri.parse(uri), "r")?.use(::load)
     }
 
-    private fun load(afd: AssetFileDescriptor): Pcm16Data? {
+    private fun load(afd: AssetFileDescriptor): PrimitiveAudioData? {
         return audioDecoder.extractPcm(afd, MAX_SECONDS)
     }
 
