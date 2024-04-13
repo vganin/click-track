@@ -32,7 +32,7 @@ jobs:
           status: draft
       - run: |
           version_code=$(cat android-app/version-code)
-          git checkout -b bump-app-version/$version_code
+          git checkout -b bump-app-version/android/$version_code
           git add .
           git commit -m "Bump Android app version code to $version_code"
           gh pr create -B master -H bump-app-version/$version_code \
