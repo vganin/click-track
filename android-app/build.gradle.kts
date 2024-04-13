@@ -26,12 +26,14 @@ if (keystorePropertiesFile.exists()) {
 val baseVersion = "1.1.1"
 val currentDate = SimpleDateFormat("yyyyMMdd").format(Date())!!
 
+val versionCodeFile = file("version-code")
+
 android {
     namespace = "com.vsevolodganin.clicktrack"
 
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
-        versionCode = 54
+        versionCode = versionCodeFile.readText().trim().toInt()
         versionName = "$baseVersion ($currentDate)"
 
         resourceConfigurations += setOf("en", "ru")
@@ -161,4 +163,11 @@ dependencies {
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.core)
     ksp(libs.kotlininject.compiler)
+}
+
+tasks.register("bumpAppVersionCode") {
+    doLast {
+        val versionCode = versionCodeFile.readText().trim().toInt()
+        versionCodeFile.writeText("${versionCode + 1}")
+    }
 }

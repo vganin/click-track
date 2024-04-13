@@ -1,6 +1,9 @@
 name: Deploy
 on:
   workflow_dispatch:
+concurrency:
+  group: "deploy"
+  cancel-in-progress: false
 jobs:
   google-play:
     name: Google Play
@@ -10,6 +13,7 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 17
+      - run: ./gradlew -s :android-app:bumpAppVersionCode
       - run: ./gradlew -s :android-app:bundleRelease :android-app:uploadCrashlyticsSymbolFileRelease
       - uses: r0adkll/sign-android-release@v1
         id: sign_app
@@ -26,3 +30,17 @@ jobs:
           releaseFiles: ${{ steps.sign_app.outputs.signedReleaseFile }}
           track: internal
           status: draft
+      - run: |
+          version_code=$(cat android-app/version-code)
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git checkout -b bump-android-version-code/$version_code
+          git add .
+          git commit -m "Bump Android app version code to $version_code"
+          git push origin HEAD
+          gh pr create -B master -H bump-android-version-code/$version_code \
+              --title "Bump Android app version code to $version_code" \
+              --body "Bumped Android app version code to $version_code as a result of new successful [deployment](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
+          gh pr merge --auto --rebase
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
