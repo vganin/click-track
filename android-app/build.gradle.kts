@@ -23,7 +23,7 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(keystorePropertiesFile.inputStream())
 }
 
-val baseVersion = "1.1.0"
+val baseVersion = "1.1.1"
 val currentDate = SimpleDateFormat("yyyyMMdd").format(Date())!!
 
 android {
@@ -31,7 +31,7 @@ android {
 
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
-        versionCode = 52
+        versionCode = 53
         versionName = "$baseVersion ($currentDate)"
 
         resourceConfigurations += setOf("en", "ru")
