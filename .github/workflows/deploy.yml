@@ -31,8 +31,10 @@ jobs:
           track: internal
           status: draft
       - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          version_code=$(cat android-app/version-code)
+          git checkout -b bump-app-version/$version_code
           git add .
-          git commit -m "Bump app version code"
-          git push
+          git commit -m "Bump Android app version code to $version_code"
+          gh pr create -B master -H bump-app-version/$version_code \
+              --title "Bump Android app version code to $version_code" \
+              --body "Bumped Android app version code to $version_code as a result of new successful [deploy](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})."
