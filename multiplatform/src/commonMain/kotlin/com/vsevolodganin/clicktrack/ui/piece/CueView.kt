@@ -8,10 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DragIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,28 +38,33 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun CueView(
     value: EditCueState,
-    displayPosition: Int,
     onNameChange: (String) -> Unit,
     onBpmChange: (Int) -> Unit,
     onTimeSignatureChange: (TimeSignature) -> Unit,
     onDurationChange: (CueDuration) -> Unit,
     onDurationTypeChange: (CueDuration.Type) -> Unit,
     onPatternChange: (NotePattern) -> Unit,
+    dragHandleModifier: Modifier = Modifier,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.padding(8.dp)) {
         var expanded by rememberSaveable { mutableStateOf(false) }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(MR.strings.cue_position, displayPosition),
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(8.dp),
-                style = MaterialTheme.typography.h5
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.DragIndicator,
+                contentDescription = null,
+                modifier = dragHandleModifier
             )
 
-            SimpleSpacer(width = 8.dp)
+            Text(
+                text = stringResource(MR.strings.cue_position, value.displayPosition),
+                modifier = Modifier.align(Alignment.CenterVertically),
+                style = MaterialTheme.typography.h5
+            )
 
             TextField(
                 value = value.name,
@@ -119,6 +127,7 @@ private fun Preview() {
     CueView(
         value = EditCueState(
             name = "",
+            displayPosition = "1",
             bpm = 999,
             timeSignature = TimeSignature(3, 4),
             activeDurationType = CueDuration.Type.TIME,
@@ -128,7 +137,6 @@ private fun Preview() {
             pattern = NotePattern.STRAIGHT_X1,
             errors = setOf(EditCueState.Error.BPM)
         ),
-        displayPosition = 1,
         onNameChange = {},
         onBpmChange = {},
         onTimeSignatureChange = {},

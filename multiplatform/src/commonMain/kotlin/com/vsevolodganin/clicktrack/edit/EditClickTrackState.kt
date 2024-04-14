@@ -22,6 +22,7 @@ data class EditClickTrackState(
 @Parcelize
 data class EditCueState(
     val id: String = uuid4().toString(),
+    val displayPosition: String,
     val name: String,
     val bpm: Int,
     val timeSignature: TimeSignature,

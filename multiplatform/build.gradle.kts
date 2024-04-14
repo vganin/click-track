@@ -59,6 +59,7 @@ kotlin {
                 api(libs.sqldelight.coroutines)
                 api(libs.multiplatformSettings)
                 api(libs.multiplatformSettings.coroutines)
+                api(libs.reorderable)
             }
         }
 
