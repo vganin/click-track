@@ -113,6 +113,14 @@ kotlin {
 
 android {
     namespace = "com.vsevolodganin.clicktrack.multiplatform"
+
+    buildFeatures {
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+    }
 }
 
 multiplatformResources {
