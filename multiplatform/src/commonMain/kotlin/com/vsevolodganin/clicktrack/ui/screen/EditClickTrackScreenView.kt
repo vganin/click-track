@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -68,6 +69,9 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.ReorderableItemScope
+import sh.calvin.reorderable.rememberReorderableLazyColumnState
 import kotlin.math.absoluteValue
 
 @Composable
@@ -123,6 +127,14 @@ private fun Content(
     listState: LazyListState,
 ) {
     val contentPadding = 8.dp
+
+    // This is a number of non draggable items before cues to offset indices correctly
+    val numberOfNonDraggableItems = 3
+
+    val reorderableLazyColumnState = rememberReorderableLazyColumnState(listState) { from, to ->
+        viewModel.onCueMove(from.index - numberOfNonDraggableItems, to.index - numberOfNonDraggableItems)
+    }
+
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
@@ -152,13 +164,15 @@ private fun Content(
         }
 
         itemsIndexed(items = state.cues, key = { _, cue -> cue.id }) { index, cue ->
-            CueListItem(
-                viewModel = viewModel,
-                cue = cue,
-                index = index,
-                contentPadding = contentPadding,
-                elevation = 1.dp,
-            )
+            ReorderableItem(reorderableLazyListState = reorderableLazyColumnState, key = cue.id) { isDragging ->
+                CueListItem(
+                    viewModel = viewModel,
+                    cue = cue,
+                    index = index,
+                    contentPadding = contentPadding,
+                    elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp).value,
+                )
+            }
         }
 
         padWithFabSpace()
@@ -272,7 +286,7 @@ private fun tempoDiffText(tempoDiff: BeatsPerMinuteDiff): String {
 }
 
 @Composable
-private fun CueListItem(
+private fun ReorderableItemScope.CueListItem(
     viewModel: EditClickTrackViewModel,
     cue: EditCueState,
     index: Int,
@@ -291,13 +305,15 @@ private fun CueListItem(
         ) {
             CueView(
                 value = cue,
-                displayPosition = index + 1,
                 onNameChange = { viewModel.onCueNameChange(index, it) },
                 onBpmChange = { viewModel.onCueBpmChange(index, it) },
                 onTimeSignatureChange = { viewModel.onCueTimeSignatureChange(index, it) },
                 onDurationChange = { viewModel.onCueDurationChange(index, it) },
                 onDurationTypeChange = { viewModel.onCueDurationTypeChange(index, it) },
                 onPatternChange = { viewModel.onCuePatternChange(index, it) },
+                dragHandleModifier = Modifier.draggableHandle(
+                    onDragStopped = { viewModel.onCueMoveFinished() }
+                )
             )
         }
     }
@@ -326,6 +342,8 @@ private fun Preview() = ClickTrackTheme {
             override fun onCueDurationChange(index: Int, duration: CueDuration) = Unit
             override fun onCueDurationTypeChange(index: Int, durationType: CueDuration.Type) = Unit
             override fun onCuePatternChange(index: Int, pattern: NotePattern) = Unit
+            override fun onCueMove(from: Int, to: Int) = Unit
+            override fun onCueMoveFinished() = Unit
         }
     )
 }

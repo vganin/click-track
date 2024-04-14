@@ -11,6 +11,7 @@ import com.vsevolodganin.clicktrack.model.DefaultCue
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
+import com.vsevolodganin.clicktrack.utils.collection.immutable.move
 import com.vsevolodganin.clicktrack.utils.collection.immutable.remove
 import com.vsevolodganin.clicktrack.utils.collection.immutable.replace
 import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
@@ -76,7 +77,7 @@ class EditClickTrackViewModelImpl(
     }
 
     override fun onAddNewCueClick() {
-        reduceState { copy(cues = cues + DefaultCue.toEditState()) }
+        reduceState { copy(cues = cues + DefaultCue.toEditState(index = cues.size)) }
     }
 
     override fun onCueRemove(index: Int) {
@@ -127,6 +128,16 @@ class EditClickTrackViewModelImpl(
                 cue.copy(errors = validationResult.cueValidationResults[index].errors)
             })
         }
+    }
+
+    override fun onCueMoveFinished() {
+        reduceState {
+            copy(cues = cues.mapIndexed { index, cue -> cue.copy(displayPosition = (index + 1).toString()) })
+        }
+    }
+
+    override fun onCueMove(from: Int, to: Int) {
+        reduceState { copy(cues = cues.move(from, to)) }
     }
 
     private fun reduceState(reduce: EditClickTrackState.() -> EditClickTrackState) {

@@ -13,12 +13,13 @@ fun ClickTrackWithDatabaseId.toEditState(showForwardButton: Boolean) = EditClick
     name = value.name,
     loop = value.loop,
     tempoDiff = value.tempoDiff,
-    cues = value.cues.map { it.toEditState() },
-    showForwardButton = showForwardButton
+    cues = value.cues.mapIndexed { index, cue -> cue.toEditState(index) },
+    showForwardButton = showForwardButton,
 )
 
-fun Cue.toEditState() = EditCueState(
+fun Cue.toEditState(index: Int) = EditCueState(
     name = name.orEmpty(),
+    displayPosition = (index + 1).toString(),
     bpm = bpm.value,
     timeSignature = timeSignature,
     activeDurationType = duration.type,
