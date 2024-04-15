@@ -8,18 +8,20 @@ import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
 import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
+import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.model.DefaultCue
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
+import com.vsevolodganin.clicktrack.utils.collection.immutable.move
 import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.pushIfUnique
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import com.vsevolodganin.clicktrack.utils.resources.StringResolver
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Assisted
@@ -36,14 +38,18 @@ class ClickTrackListViewModelImpl(
 ) : ClickTrackListViewModel, ComponentContext by componentContext {
 
     private val scope = coroutineScope()
+    private val _state: MutableStateFlow<ClickTrackListState> = MutableStateFlow(consumeSavedState() ?: ClickTrackListState(emptyList()))
 
-    override val state: StateFlow<ClickTrackListState> =
-        clickTrackRepository.getAll()
-            .map(::ClickTrackListState)
-            .stateIn(scope, SharingStarted.Eagerly, consumeSavedState() ?: ClickTrackListState(emptyList()))
+    override val state: StateFlow<ClickTrackListState> = _state
 
     init {
         registerSaveStateFor(state)
+
+        scope.launch {
+            clickTrackRepository.getAll()
+                .map(::ClickTrackListState)
+                .collect { _state.value = it }
+        }
     }
 
     override fun onAddClick() {
@@ -70,6 +76,16 @@ class ClickTrackListViewModelImpl(
     }
 
     override fun onMenuClick() = drawerNavigation.openDrawer()
+
+    override fun onItemMove(from: Int, to: Int) {
+        _state.update {
+            it.copy(items = it.items.move(from, to))
+        }
+    }
+
+    override fun onItemMoveFinished() {
+        clickTrackRepository.updateOrdering(_state.value.items.map(ClickTrackWithDatabaseId::id))
+    }
 
     private fun defaultNewClickTrack(suggestedNewClickTrackName: String) = ClickTrack(
         name = suggestedNewClickTrackName,

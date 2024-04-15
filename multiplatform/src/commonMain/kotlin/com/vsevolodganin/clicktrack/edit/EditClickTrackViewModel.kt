@@ -21,6 +21,6 @@ interface EditClickTrackViewModel {
     fun onCueDurationChange(index: Int, duration: CueDuration)
     fun onCueDurationTypeChange(index: Int, durationType: CueDuration.Type)
     fun onCuePatternChange(index: Int, pattern: NotePattern)
-    fun onCueMove(from: Int, to: Int)
-    fun onCueMoveFinished()
+    fun onItemMove(from: Int, to: Int)
+    fun onItemMoveFinished()
 }

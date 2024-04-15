@@ -133,7 +133,7 @@ sqldelight {
     databases {
         create("Database") {
             packageName = "com.vsevolodganin.clicktrack"
-            schemaOutputDirectory = file("src/commonTest/sqldelight/schema")
+            schemaOutputDirectory = file("src/commonMain/sqldelight/schema")
         }
     }
 }
