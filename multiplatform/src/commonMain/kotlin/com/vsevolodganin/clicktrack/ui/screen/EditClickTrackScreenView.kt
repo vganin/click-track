@@ -132,7 +132,7 @@ private fun Content(
     val numberOfNonDraggableItems = 3
 
     val reorderableLazyColumnState = rememberReorderableLazyColumnState(listState) { from, to ->
-        viewModel.onCueMove(from.index - numberOfNonDraggableItems, to.index - numberOfNonDraggableItems)
+        viewModel.onItemMove(from.index - numberOfNonDraggableItems, to.index - numberOfNonDraggableItems)
     }
 
     LazyColumn(
@@ -312,7 +312,7 @@ private fun ReorderableItemScope.CueListItem(
                 onDurationTypeChange = { viewModel.onCueDurationTypeChange(index, it) },
                 onPatternChange = { viewModel.onCuePatternChange(index, it) },
                 dragHandleModifier = Modifier.draggableHandle(
-                    onDragStopped = { viewModel.onCueMoveFinished() }
+                    onDragStopped = { viewModel.onItemMoveFinished() }
                 )
             )
         }
@@ -342,8 +342,8 @@ private fun Preview() = ClickTrackTheme {
             override fun onCueDurationChange(index: Int, duration: CueDuration) = Unit
             override fun onCueDurationTypeChange(index: Int, durationType: CueDuration.Type) = Unit
             override fun onCuePatternChange(index: Int, pattern: NotePattern) = Unit
-            override fun onCueMove(from: Int, to: Int) = Unit
-            override fun onCueMoveFinished() = Unit
+            override fun onItemMove(from: Int, to: Int) = Unit
+            override fun onItemMoveFinished() = Unit
         }
     )
 }

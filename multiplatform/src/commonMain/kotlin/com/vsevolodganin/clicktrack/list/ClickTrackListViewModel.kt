@@ -9,4 +9,6 @@ interface ClickTrackListViewModel {
     fun onItemClick(id: ClickTrackId.Database)
     fun onItemRemove(id: ClickTrackId.Database)
     fun onMenuClick()
+    fun onItemMove(from: Int, to: Int)
+    fun onItemMoveFinished()
 }

@@ -130,13 +130,13 @@ class EditClickTrackViewModelImpl(
         }
     }
 
-    override fun onCueMoveFinished() {
+    override fun onItemMoveFinished() {
         reduceState {
             copy(cues = cues.mapIndexed { index, cue -> cue.copy(displayPosition = (index + 1).toString()) })
         }
     }
 
-    override fun onCueMove(from: Int, to: Int) {
+    override fun onItemMove(from: Int, to: Int) {
         reduceState { copy(cues = cues.move(from, to)) }
     }
 
