@@ -59,6 +59,7 @@ kotlin {
                 api(libs.sqldelight.coroutines)
                 api(libs.multiplatformSettings)
                 api(libs.multiplatformSettings.coroutines)
+                api(libs.reorderable)
             }
         }
 
@@ -132,7 +133,7 @@ sqldelight {
     databases {
         create("Database") {
             packageName = "com.vsevolodganin.clicktrack"
-            schemaOutputDirectory = file("src/commonTest/sqldelight/schema")
+            schemaOutputDirectory = file("src/commonMain/sqldelight/schema")
         }
     }
 }

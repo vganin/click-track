@@ -29,7 +29,7 @@ class ClickTrackRepository(
     override fun migrate(fromVersion: Int, toVersion: Int) {
         if (fromVersion == UserPreferencesRepository.Const.NO_APP_VERSION_CODE) {
             for (clickTrack in PreMadeClickTracks.DATA) {
-                insertIfHasNoSuchName(clickTrack)
+                insert(clickTrack)
             }
         }
     }
@@ -37,7 +37,11 @@ class ClickTrackRepository(
     fun getAll(): Flow<List<ClickTrackWithDatabaseId>> {
         return database.sqlClickTrackQueries.getAll().asFlow()
             .mapToList(Dispatchers.IO)
-            .map { it.map { elem -> elem.toCommon() } }
+            .map { listOfCLickTracks ->
+                listOfCLickTracks
+                    .sortedBy { it.ordinal }
+                    .map { it.toCommon() }
+            }
     }
 
     fun getAllNames(): List<String> {
@@ -51,24 +55,17 @@ class ClickTrackRepository(
     }
 
     fun insert(clickTrack: ClickTrack): ClickTrackId.Database {
-        return database.sqlClickTrackQueries.transactionWithResult {
-            database.sqlClickTrackQueries.insert(
-                name = clickTrack.name,
-                serializedValue = json.encodeToString(clickTrack)
-            )
-            database.sqlClickTrackQueries.lastRowId().executeAsOne()
+        return database.sqlClickTrackQueries.run {
+            transactionWithResult {
+                val count = getCount().executeAsOne()
+                insert(
+                    name = clickTrack.name,
+                    serializedValue = json.encodeToString(clickTrack),
+                    ordinal = count
+                )
+                lastRowId().executeAsOne()
+            }
         }.let(ClickTrackId::Database)
-    }
-
-    private fun insertIfHasNoSuchName(clickTrack: ClickTrack) {
-        database.sqlClickTrackQueries.transaction {
-            val allNames = database.sqlClickTrackQueries.getAllNames().executeAsList()
-            if (clickTrack.name in allNames) return@transaction
-            database.sqlClickTrackQueries.insert(
-                name = clickTrack.name,
-                serializedValue = json.encodeToString(clickTrack)
-            )
-        }
     }
 
     fun update(id: ClickTrackId.Database, clickTrack: ClickTrack) {
@@ -77,6 +74,16 @@ class ClickTrackRepository(
             name = clickTrack.name,
             serializedValue = clickTrack.serializeToString()
         )
+    }
+
+    fun updateOrdering(ordering: List<ClickTrackId.Database>) {
+        database.sqlClickTrackQueries.apply {
+            transaction {
+                ordering.forEachIndexed { index, id ->
+                    updateOrdering(index.toLong(), id.value)
+                }
+            }
+        }
     }
 
     fun remove(id: ClickTrackId.Database) {

@@ -35,28 +35,31 @@ import dev.icerock.moko.resources.compose.stringResource
 @Composable
 fun CueView(
     value: EditCueState,
-    displayPosition: Int,
     onNameChange: (String) -> Unit,
     onBpmChange: (Int) -> Unit,
     onTimeSignatureChange: (TimeSignature) -> Unit,
     onDurationChange: (CueDuration) -> Unit,
     onDurationTypeChange: (CueDuration.Type) -> Unit,
     onPatternChange: (NotePattern) -> Unit,
+    dragHandleModifier: Modifier = Modifier,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.padding(8.dp)) {
+    Column(modifier = modifier.padding(vertical = 8.dp)) {
         var expanded by rememberSaveable { mutableStateOf(false) }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = stringResource(MR.strings.cue_position, displayPosition),
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(8.dp),
-                style = MaterialTheme.typography.h5
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            DragHandle(
+                modifier = dragHandleModifier
             )
 
-            SimpleSpacer(width = 8.dp)
+            Text(
+                text = stringResource(MR.strings.cue_position, value.displayPosition),
+                modifier = Modifier.align(Alignment.CenterVertically),
+                style = MaterialTheme.typography.h5
+            )
 
             TextField(
                 value = value.name,
@@ -119,6 +122,7 @@ private fun Preview() {
     CueView(
         value = EditCueState(
             name = "",
+            displayPosition = "1",
             bpm = 999,
             timeSignature = TimeSignature(3, 4),
             activeDurationType = CueDuration.Type.TIME,
@@ -128,7 +132,6 @@ private fun Preview() {
             pattern = NotePattern.STRAIGHT_X1,
             errors = setOf(EditCueState.Error.BPM)
         ),
-        displayPosition = 1,
         onNameChange = {},
         onBpmChange = {},
         onTimeSignatureChange = {},

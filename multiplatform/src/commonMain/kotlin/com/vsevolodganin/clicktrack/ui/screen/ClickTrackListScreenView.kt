@@ -2,12 +2,15 @@ package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
@@ -20,6 +23,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.generated.resources.MR
@@ -30,6 +34,7 @@ import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
+import com.vsevolodganin.clicktrack.ui.piece.DragHandle
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
@@ -39,6 +44,8 @@ import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyColumnState
 
 @Composable
 fun ClickTrackListScreenView(
@@ -63,12 +70,31 @@ fun ClickTrackListScreenView(
 private fun Content(viewModel: ClickTrackListViewModel) {
     val state by viewModel.state.collectAsState()
 
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    val numberOfNonDraggableItems = 1
+    val lazyListState = rememberLazyListState()
+    val reorderableLazyListState = rememberReorderableLazyColumnState(lazyListState) { from, to ->
+        viewModel.onItemMove(from.index - numberOfNonDraggableItems, to.index - numberOfNonDraggableItems)
+    }
+
+    LazyColumn(
+        state = lazyListState,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        item {
+            // FIXME: Dummy item to workaround https://github.com/Calvin-LL/Reorderable/issues/4
+            Spacer(Modifier.height(1.dp))
+        }
+
         items(items = state.items, key = ClickTrackWithId::id) { clickTrack ->
-            ClickTrackListItem(
-                viewModel = viewModel,
-                clickTrack = clickTrack,
-            )
+            ReorderableItem(reorderableLazyListState = reorderableLazyListState, key = clickTrack.id) {
+                ClickTrackListItem(
+                    viewModel = viewModel,
+                    clickTrack = clickTrack,
+                    dragHandleModifier = Modifier.draggableHandle(
+                        onDragStopped = { viewModel.onItemMoveFinished() }
+                    )
+                )
+            }
         }
 
         padWithFabSpace()
@@ -90,9 +116,10 @@ private fun TopBar(viewModel: ClickTrackListViewModel) {
 }
 
 @Composable
-private fun LazyItemScope.ClickTrackListItem(
+private fun ClickTrackListItem(
     viewModel: ClickTrackListViewModel,
     clickTrack: ClickTrackWithDatabaseId,
+    dragHandleModifier: Modifier,
 ) {
     val contentPadding = 8.dp
 
@@ -109,14 +136,23 @@ private fun LazyItemScope.ClickTrackListItem(
                     clickTrack = clickTrack.value,
                     drawTextMarks = false,
                     modifier = Modifier
-                        .fillParentMaxWidth()
+                        .fillMaxWidth()
                         .height(100.dp)
                         .clickable(onClick = { viewModel.onItemClick(clickTrack.id) }),
                 )
-                Text(
-                    text = clickTrack.value.name,
-                    modifier = Modifier.padding(8.dp)
-                )
+
+                Row(
+                    modifier = Modifier.align(Alignment.CenterStart),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    DragHandle(
+                        modifier = dragHandleModifier
+                    )
+
+                    Text(
+                        text = clickTrack.value.name,
+                    )
+                }
             }
         }
     }
@@ -140,6 +176,8 @@ fun ClickTrackListPreview() = ClickTrackTheme {
             override fun onItemClick(id: ClickTrackId.Database) = Unit
             override fun onItemRemove(id: ClickTrackId.Database) = Unit
             override fun onMenuClick() = Unit
+            override fun onItemMove(from: Int, to: Int) = Unit
+            override fun onItemMoveFinished() = Unit
         }
     )
 }
