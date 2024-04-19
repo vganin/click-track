@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -128,7 +130,10 @@ private fun ClickTrackListItem(
         contentPadding = contentPadding
     ) {
         Card(
-            modifier = Modifier.padding(contentPadding),
+            modifier = Modifier
+                .padding(contentPadding)
+                .fillMaxWidth()
+                .height(100.dp),
             elevation = 2.dp
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
@@ -136,9 +141,14 @@ private fun ClickTrackListItem(
                     clickTrack = clickTrack.value,
                     drawTextMarks = false,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
+                        .fillMaxSize()
                         .clickable(onClick = { viewModel.onItemClick(clickTrack.id) }),
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
                 )
 
                 Row(
