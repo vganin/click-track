@@ -25,7 +25,7 @@ class SettingsViewModelImpl(
     private val userPreferences: UserPreferencesRepository,
     private val languageStore: LanguageStore,
     private val kotlinCrashProvider: () -> KotlinCrash,
-    private val nativeCrashProvider: () -> NativeCrash,
+    private val nativeCrashProvider: Lazy<NativeCrash>,
     private val logger: Logger,
 ) : SettingsViewModel, ComponentContext by componentContext {
 
@@ -65,12 +65,16 @@ class SettingsViewModelImpl(
         userPreferences.ignoreAudioFocus.value = ignoreAudioFocus
     }
 
-    override fun onKotlinCrashClick() {
+    override fun onKotlinExceptionClick() {
         kotlinCrashProvider()()
     }
 
-    override fun onNativeCrashClick() {
-        nativeCrashProvider()()
+    override fun onNativeExceptionCrashClick() {
+        nativeCrashProvider.value.exception()
+    }
+
+    override fun onNativeDanglingReferenceCrashClick() {
+        nativeCrashProvider.value.danglingReference()
     }
 
     override fun onNonFatalClick() {

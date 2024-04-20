@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.settings.debug
 
-fun interface NativeCrash {
-    operator fun invoke()
+interface NativeCrash {
+    fun exception()
+    fun danglingReference()
 }
