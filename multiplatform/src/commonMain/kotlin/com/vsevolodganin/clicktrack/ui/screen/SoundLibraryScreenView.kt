@@ -41,10 +41,11 @@ import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.soundlibrary.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.soundlibrary.SoundLibraryState
 import com.vsevolodganin.clicktrack.soundlibrary.SoundLibraryViewModel
-import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopIcon
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
+import com.vsevolodganin.clicktrack.ui.theme.CommonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import dev.icerock.moko.resources.compose.stringResource
@@ -147,7 +148,7 @@ private fun UserDefinedSoundsItem(
                 .fillMaxWidth()
                 .padding(contentPadding)
                 .clickable(onClick = { viewModel.onItemClick(item.id) }),
-            elevation = 2.dp
+            elevation = CommonCardElevation.Normal
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,

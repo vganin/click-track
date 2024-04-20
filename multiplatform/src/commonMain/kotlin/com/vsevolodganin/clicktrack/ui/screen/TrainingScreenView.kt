@@ -28,13 +28,13 @@ import com.vsevolodganin.clicktrack.training.TrainingEditState
 import com.vsevolodganin.clicktrack.training.TrainingEditState.TrainingMode
 import com.vsevolodganin.clicktrack.training.TrainingEndingKind
 import com.vsevolodganin.clicktrack.training.TrainingViewModel
-import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.piece.BpmInputField
 import com.vsevolodganin.clicktrack.ui.piece.CueDurationView
 import com.vsevolodganin.clicktrack.ui.piece.DropdownSelector
 import com.vsevolodganin.clicktrack.ui.piece.DurationPicker
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

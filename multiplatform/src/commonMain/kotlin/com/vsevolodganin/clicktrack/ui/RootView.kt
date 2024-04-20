@@ -34,6 +34,7 @@ import com.vsevolodganin.clicktrack.ui.screen.PolyrhythmsScreenView
 import com.vsevolodganin.clicktrack.ui.screen.SettingsScreenView
 import com.vsevolodganin.clicktrack.ui.screen.SoundLibraryScreenView
 import com.vsevolodganin.clicktrack.ui.screen.TrainingScreenView
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.ForcedHapticFeedback
 import androidx.compose.material.DrawerState as ComposeDrawerState
 

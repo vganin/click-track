@@ -1,4 +1,4 @@
-package com.vsevolodganin.clicktrack.ui
+package com.vsevolodganin.clicktrack.ui.theme
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme

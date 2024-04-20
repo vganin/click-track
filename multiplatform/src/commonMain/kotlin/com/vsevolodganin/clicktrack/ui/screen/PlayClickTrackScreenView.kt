@@ -41,12 +41,12 @@ import com.vsevolodganin.clicktrack.play.PlayClickTrackState
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModel
 import com.vsevolodganin.clicktrack.play.isPaused
 import com.vsevolodganin.clicktrack.play.isPlaying
-import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.piece.PlayButtons
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.AlertDialog
 import com.vsevolodganin.clicktrack.utils.compose.DropdownMenu
 import com.vsevolodganin.clicktrack.utils.compose.DropdownMenuItem

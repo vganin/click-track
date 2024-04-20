@@ -32,7 +32,7 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.Angle
 import com.vsevolodganin.clicktrack.utils.compose.AngleSector
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat

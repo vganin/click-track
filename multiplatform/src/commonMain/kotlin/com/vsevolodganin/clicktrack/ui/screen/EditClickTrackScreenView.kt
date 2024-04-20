@@ -1,7 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -27,6 +26,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -56,13 +56,15 @@ import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
-import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
 import com.vsevolodganin.clicktrack.ui.piece.CueView
 import com.vsevolodganin.clicktrack.ui.piece.ExpandableChevron
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
+import com.vsevolodganin.clicktrack.ui.theme.CommonCardElevation
+import com.vsevolodganin.clicktrack.ui.theme.commonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import dev.icerock.moko.resources.compose.stringResource
@@ -140,14 +142,18 @@ private fun Content(
         modifier = Modifier.fillMaxSize(),
     ) {
         stickyHeader {
-            TextField(
-                value = state.name,
-                onValueChange = viewModel::onNameChange,
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text(text = stringResource(MR.strings.edit_click_track_title_hint)) },
-                textStyle = MaterialTheme.typography.h6,
-                colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
-            )
+            Surface(
+                elevation = CommonCardElevation.Normal
+            ) {
+                TextField(
+                    value = state.name,
+                    onValueChange = viewModel::onNameChange,
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text(text = stringResource(MR.strings.edit_click_track_title_hint)) },
+                    textStyle = MaterialTheme.typography.h6,
+                    colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
+                )
+            }
         }
 
         item {
@@ -170,7 +176,7 @@ private fun Content(
                     cue = cue,
                     index = index,
                     contentPadding = contentPadding,
-                    elevation = animateDpAsState(if (isDragging) 4.dp else 1.dp).value,
+                    elevation = commonCardElevation(isDragging),
                 )
             }
         }
@@ -191,7 +197,8 @@ private fun OptionsItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(contentPadding)
+            .padding(contentPadding),
+        elevation = CommonCardElevation.Normal
     ) {
         Column {
             Row(

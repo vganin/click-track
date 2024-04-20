@@ -27,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.list.ClickTrackListState
@@ -34,13 +35,14 @@ import com.vsevolodganin.clicktrack.list.ClickTrackListViewModel
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithId
-import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.piece.DragHandle
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_2
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
+import com.vsevolodganin.clicktrack.ui.theme.commonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import dev.icerock.moko.resources.compose.stringResource
@@ -88,13 +90,14 @@ private fun Content(viewModel: ClickTrackListViewModel) {
         }
 
         items(items = state.items, key = ClickTrackWithId::id) { clickTrack ->
-            ReorderableItem(reorderableLazyListState = reorderableLazyListState, key = clickTrack.id) {
+            ReorderableItem(reorderableLazyListState = reorderableLazyListState, key = clickTrack.id) { isDragging ->
                 ClickTrackListItem(
                     viewModel = viewModel,
                     clickTrack = clickTrack,
                     dragHandleModifier = Modifier.draggableHandle(
                         onDragStopped = { viewModel.onItemMoveFinished() }
-                    )
+                    ),
+                    elevation = commonCardElevation(isDragging)
                 )
             }
         }
@@ -122,6 +125,7 @@ private fun ClickTrackListItem(
     viewModel: ClickTrackListViewModel,
     clickTrack: ClickTrackWithDatabaseId,
     dragHandleModifier: Modifier,
+    elevation: Dp,
 ) {
     val contentPadding = 8.dp
 
@@ -134,7 +138,7 @@ private fun ClickTrackListItem(
                 .padding(contentPadding)
                 .fillMaxWidth()
                 .height(100.dp),
-            elevation = 2.dp
+            elevation = elevation
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 ClickTrackView(

@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.drawer.DrawerState
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.generated.resources.MR
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import com.vsevolodganin.clicktrack.utils.compose.statusBars

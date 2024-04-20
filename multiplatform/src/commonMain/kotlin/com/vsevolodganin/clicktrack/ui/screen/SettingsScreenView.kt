@@ -20,11 +20,11 @@ import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.settings.SettingsState
 import com.vsevolodganin.clicktrack.settings.SettingsViewModel
 import com.vsevolodganin.clicktrack.theme.Theme
-import com.vsevolodganin.clicktrack.ui.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.settings.BooleanChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooserItem
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import com.vsevolodganin.clicktrack.utils.platform.isDebug
 import dev.icerock.moko.resources.compose.stringResource
