@@ -25,6 +25,7 @@
         android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:gwpAsanMode="always"
         tools:targetApi="tiramisu">
 
         <activity

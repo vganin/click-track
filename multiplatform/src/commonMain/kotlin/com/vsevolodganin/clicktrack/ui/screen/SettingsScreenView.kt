@@ -96,11 +96,14 @@ private fun Content(viewModel: SettingsViewModel) {
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(onClick = viewModel::onKotlinCrashClick) {
-                    Text("Kotlin crash")
+                Button(onClick = viewModel::onKotlinExceptionClick) {
+                    Text("Kotlin exception crash")
                 }
-                Button(onClick = viewModel::onNativeCrashClick) {
-                    Text("Native crash")
+                Button(onClick = viewModel::onNativeExceptionCrashClick) {
+                    Text("Native exception crash")
+                }
+                Button(onClick = viewModel::onNativeDanglingReferenceCrashClick) {
+                    Text("Native dangling reference crash")
                 }
                 Button(onClick = viewModel::onNonFatalClick) {
                     Text("Non-fatal")
@@ -150,8 +153,9 @@ private fun Preview() = ClickTrackTheme {
             override fun onThemeChange(theme: Theme) = Unit
             override fun onLanguageChange(language: AppLanguage) = Unit
             override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
-            override fun onKotlinCrashClick() = Unit
-            override fun onNativeCrashClick() = Unit
+            override fun onKotlinExceptionClick() = Unit
+            override fun onNativeExceptionCrashClick() = Unit
+            override fun onNativeDanglingReferenceCrashClick() = Unit
             override fun onNonFatalClick() = Unit
         }
     )

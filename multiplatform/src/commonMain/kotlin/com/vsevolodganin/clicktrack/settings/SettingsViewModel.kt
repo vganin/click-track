@@ -10,7 +10,8 @@ interface SettingsViewModel {
     fun onThemeChange(theme: Theme)
     fun onLanguageChange(language: AppLanguage)
     fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean)
-    fun onKotlinCrashClick()
-    fun onNativeCrashClick()
+    fun onKotlinExceptionClick()
+    fun onNativeExceptionCrashClick()
+    fun onNativeDanglingReferenceCrashClick()
     fun onNonFatalClick()
 }

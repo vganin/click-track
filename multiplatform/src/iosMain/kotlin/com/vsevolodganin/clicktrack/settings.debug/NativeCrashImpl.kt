@@ -6,5 +6,6 @@ import platform.Foundation.raise
 
 @Inject
 class NativeCrashImpl : NativeCrash {
-    override operator fun invoke() = NSException.raise("Test", "Test")
+    override fun exception() = NSException.raise("Test", "Test")
+    override fun danglingReference() = TODO("Unimplemented")
 }

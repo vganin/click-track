@@ -1,3 +1,4 @@
 package com.vsevolodganin.clicktrack.utils.native
 
-external fun nativeCrash()
+external fun nativeExceptionCrash()
+external fun nativeDanglingReferenceCrash()
