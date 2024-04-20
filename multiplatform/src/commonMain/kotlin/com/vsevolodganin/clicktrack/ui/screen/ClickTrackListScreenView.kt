@@ -148,7 +148,7 @@ private fun ClickTrackListItem(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(color = MaterialTheme.colors.surface.copy(alpha = 0.7f))
+                        .background(color = MaterialTheme.colors.surface.copy(alpha = 0.25f))
                 )
 
                 Row(
