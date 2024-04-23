@@ -60,6 +60,6 @@ class InAppReview(
 
     private companion object Const {
         const val TAG = "InAppReview"
-        val REVIEW_REQUEST_PERIOD = 7.days
+        val REVIEW_REQUEST_PERIOD = 30.days
     }
 }
