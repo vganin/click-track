@@ -148,6 +148,8 @@ dependencies {
     )) {
         add(configName, libs.kotlininject.compiler)
     }
+
+    coreLibraryDesugaring(libs.desugarJdkLibs)
 }
 
 tasks.register("printLineCoverage") {

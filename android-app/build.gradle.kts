@@ -87,11 +87,6 @@ android {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
     kotlinOptions {
         jvmTarget = "17"
 
@@ -161,4 +156,6 @@ dependencies {
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.core)
     ksp(libs.kotlininject.compiler)
+
+    coreLibraryDesugaring(libs.desugarJdkLibs)
 }

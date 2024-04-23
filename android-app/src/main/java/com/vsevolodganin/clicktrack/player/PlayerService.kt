@@ -18,6 +18,7 @@ import androidx.core.app.NotificationCompat.FLAG_FOREGROUND_SERVICE
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.ServiceCompat
+import androidx.core.content.IntentCompat
 import androidx.core.content.res.ResourcesCompat
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.applicationComponent
@@ -164,7 +165,7 @@ class PlayerService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
-            ACTION_START -> state.value = intent.getParcelableExtraCompat(EXTRA_START_ARGUMENTS)
+            ACTION_START -> state.value = IntentCompat.getParcelableExtra(intent, EXTRA_START_ARGUMENTS, State::class.java)
                 ?: throw RuntimeException("No start arguments were supplied")
 
             ACTION_STOP -> state.value = null
@@ -358,14 +359,5 @@ class PlayerService : Service() {
     private fun mediaSessionPlaybackStateBuilder(): PlaybackStateCompat.Builder {
         return PlaybackStateCompat.Builder()
             .setActions(PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PAUSE or PlaybackStateCompat.ACTION_STOP)
-    }
-
-    private inline fun <reified T : Parcelable> Intent.getParcelableExtraCompat(name: String): T? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getParcelableExtra(name, T::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            getParcelableExtra(name)
-        }
     }
 }
