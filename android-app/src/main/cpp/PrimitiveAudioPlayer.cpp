@@ -94,19 +94,17 @@ void PrimitiveAudioPlayer::release() {
 }
 
 int PrimitiveAudioPlayer::loadAndGetIndex(
-        const void* const bytes,
-        const int32_t length,
+        const float* const samples,
+        const int32_t samplesNumber,
         const int channelCount,
-        const int encoding,
         const int32_t sampleRate
 ) {
     __android_log_print(ANDROID_LOG_INFO, TAG, "loadAndGetIndex");
 
     const auto audio = new PrimitiveAudio(
-            bytes,
-            length,
+            samples,
+            samplesNumber,
             channelCount,
-            encoding,
             sampleRate
     );
 

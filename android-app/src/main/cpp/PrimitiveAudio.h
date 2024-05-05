@@ -10,12 +10,10 @@ struct AudioProperties {
 
 class PrimitiveAudio {
 public:
-    /** @param encoding should be the same as `PrimitiveAudioData.Encoding.nativeIndex` */
     explicit PrimitiveAudio(
-            const void* const bytes,
-            const int32_t length,
+            const float* const samples,
+            const int32_t samplesNumber,
             const int channelCount,
-            const int encoding,
             const int32_t sampleRate
     );
 
@@ -40,7 +38,7 @@ public:
 private:
     AudioProperties audioProperties_;
 
-    float* sampleData_;
+    const float* sampleData_;
     int32_t numSamples_;
 
     int32_t curSampleIndex_;

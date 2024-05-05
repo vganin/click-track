@@ -21,14 +21,14 @@ import kotlin.math.min
 class PrimitiveAudioExtractor(
     private val logger: Logger
 ) {
-    fun extractPcm(afd: AssetFileDescriptor, maxSeconds: Int): PrimitiveAudioData? {
+    fun extract(afd: AssetFileDescriptor, maxSeconds: Int): PrimitiveAudioData? {
         val mediaExtractor = MediaExtractor()
 
         try {
             mediaExtractor.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
             for (trackIndex in 0 until mediaExtractor.trackCount) {
                 val trackFormat = mediaExtractor.getTrackFormat(trackIndex)
-                val trackMime = trackFormat.getString(MediaFormat.KEY_MIME)!!
+                val trackMime = trackFormat.getString(MediaFormat.KEY_MIME) ?: continue
                 if (trackMime.startsWith("audio/")) {
                     return extractPcm(mediaExtractor, trackIndex, trackFormat, maxSeconds)
                 }
@@ -121,11 +121,11 @@ class PrimitiveAudioExtractor(
     }
 
     private fun audioFormatEncodingToCommon(encoding: Int): PrimitiveAudioData.Encoding? = when (encoding) {
-        AudioFormat.ENCODING_PCM_8BIT -> PrimitiveAudioData.Encoding.PCM_8BIT
-        AudioFormat.ENCODING_PCM_16BIT -> PrimitiveAudioData.Encoding.PCM_16BIT
-        AudioFormat.ENCODING_PCM_24BIT_PACKED -> PrimitiveAudioData.Encoding.PCM_24BIT_PACKED
-        AudioFormat.ENCODING_PCM_32BIT -> PrimitiveAudioData.Encoding.PCM_32BIT
-        AudioFormat.ENCODING_PCM_FLOAT -> PrimitiveAudioData.Encoding.PCM_FLOAT
+        AudioFormat.ENCODING_PCM_8BIT -> PrimitiveAudioData.Encoding.PCM_UNSIGNED_8BIT
+        AudioFormat.ENCODING_PCM_16BIT -> PrimitiveAudioData.Encoding.PCM_SIGNED_16BIT_LITTLE_ENDIAN
+        AudioFormat.ENCODING_PCM_24BIT_PACKED -> PrimitiveAudioData.Encoding.PCM_SIGNED_24BIT_LITTLE_ENDIAN
+        AudioFormat.ENCODING_PCM_32BIT -> PrimitiveAudioData.Encoding.PCM_SIGNED_32BIT_LITTLE_ENDIAN
+        AudioFormat.ENCODING_PCM_FLOAT -> PrimitiveAudioData.Encoding.PCM_FLOAT_32BIT_LITTLE_ENDIAN
         else -> {
             logger.logError(TAG, "Unknown PCM encoding: $encoding")
             null

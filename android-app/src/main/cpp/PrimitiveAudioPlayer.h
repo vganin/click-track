@@ -21,10 +21,9 @@ public:
     void release();
 
     int loadAndGetIndex(
-            const void* const bytes,
-            const int32_t length,
+            const float* const samples,
+            const int32_t samplesNumber,
             const int channelCount,
-            const int encoding,
             const int32_t sampleRate
     );
 

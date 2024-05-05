@@ -18,9 +18,9 @@ class PrimitiveAudioProvider(
     private val contentResolver: ContentResolver,
     private val logger: Logger,
 ) {
-    fun get(sound: ClickSoundSource): PrimitiveAudioData? {
+    fun get(sound: ClickSoundSource): PrimitiveFloatAudioData? {
         return try {
-            load(sound)
+            load(sound)?.let(PrimitiveFloatAudioData::from)
         } catch (t: Throwable) {
             logger.logError(TAG, "Failed to load $sound", t)
             null
@@ -43,7 +43,7 @@ class PrimitiveAudioProvider(
     }
 
     private fun load(afd: AssetFileDescriptor): PrimitiveAudioData? {
-        return audioDecoder.extractPcm(afd, MAX_SECONDS)
+        return audioDecoder.extract(afd, MAX_SECONDS)
     }
 
     private companion object Const {
