@@ -11,8 +11,8 @@ class PrimitiveAudioPlayerImpl : PrimitiveAudioPlayer {
 
     override fun release() = nativeRelease()
 
-    override fun loadAndGetIndex(data: PrimitiveAudioData): Int =
-        data.run { nativeLoadAndGetIndex(bytes, bytes.size, encoding.nativeIndex, sampleRate, channelCount) }
+    override fun loadAndGetIndex(data: PrimitiveFloatAudioData): Int =
+        data.run { nativeLoadAndGetIndex(samples, samples.size, sampleRate, channelCount) }
 
     override fun play(index: Int) = nativePlay(index)
 
@@ -23,7 +23,7 @@ class PrimitiveAudioPlayerImpl : PrimitiveAudioPlayer {
 
 private external fun nativePrepare()
 private external fun nativeRelease()
-private external fun nativeLoadAndGetIndex(bytes: ByteArray, length: Int, encodingIndex: Int, sampleRate: Int, channelCount: Int): Int
+private external fun nativeLoadAndGetIndex(samples: FloatArray, samplesNumber: Int, sampleRate: Int, channelCount: Int): Int
 private external fun nativePlay(index: Int)
 private external fun nativeStop(index: Int)
 private external fun nativeGetLatencyMs(): Int

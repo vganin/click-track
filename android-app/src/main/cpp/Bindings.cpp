@@ -8,8 +8,7 @@ static PrimitiveAudioPlayer player;
 
 } // namespace
 
-extern "C" {
-
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nativePrepare(
         JNIEnv* env,
@@ -18,6 +17,7 @@ Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nati
     player.prepare();
 }
 
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nativeRelease(
         JNIEnv* env,
@@ -26,31 +26,35 @@ Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nati
     player.release();
 }
 
+extern "C"
 JNIEXPORT jint JNICALL
 Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nativeLoadAndGetIndex(
         JNIEnv* env,
         jclass clazz,
-        jbyteArray bytes,
-        jint length,
-        jint encoding_index,
+        jfloatArray samples,
+        jint samplesNumber,
         jint sample_rate,
         jint channel_count
 ) {
-    auto bytesPtr = env->GetPrimitiveArrayCritical(bytes, 0);
+    auto samplesPtr = env->GetFloatArrayElements(samples, 0);
+
+    auto samplesCopy = new float[samplesNumber];
+
+    std::memcpy(samplesCopy, samplesPtr, samplesNumber * sizeof(float));
+
+    env->ReleaseFloatArrayElements(samples, samplesPtr, 0);
 
     const auto index = player.loadAndGetIndex(
-            bytesPtr,
-            length,
+            samplesCopy,
+            samplesNumber,
             channel_count,
-            encoding_index,
             sample_rate
     );
-
-    env->ReleasePrimitiveArrayCritical(bytes, bytesPtr, 0);
 
     return index;
 }
 
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nativePlay(
         JNIEnv* env,
@@ -60,6 +64,7 @@ Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nati
     player.play(index);
 }
 
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nativeStop(
         JNIEnv* env,
@@ -69,6 +74,7 @@ Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nati
     player.stop(index);
 }
 
+extern "C"
 JNIEXPORT jint JNICALL
 Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nativeGetLatencyMs(
         JNIEnv* env,
@@ -77,6 +83,7 @@ Java_com_vsevolodganin_clicktrack_primitiveaudio_PrimitiveAudioPlayerImplKt_nati
     return player.getLatencyMs();
 }
 
+extern "C"
 JNIEXPORT void JNICALL
 Java_com_vsevolodganin_clicktrack_NativeLibrariesKt_nativeSetGlobalLogger(
         JNIEnv* env,
@@ -85,5 +92,3 @@ Java_com_vsevolodganin_clicktrack_NativeLibrariesKt_nativeSetGlobalLogger(
 ) {
     player.setLogger(new Logger{env, logger});
 }
-
-} // extern "C"

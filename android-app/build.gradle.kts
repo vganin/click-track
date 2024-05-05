@@ -8,6 +8,7 @@ import java.util.Properties
 @Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
     id("clicktrack.android.application")
+    id("clicktrack.include-in-coverage")
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.ksp)
     kotlin("android")
@@ -87,6 +88,11 @@ android {
         kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     kotlinOptions {
         jvmTarget = "17"
 
@@ -156,6 +162,9 @@ dependencies {
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.core)
     ksp(libs.kotlininject.compiler)
+
+    testImplementation(kotlin("test"))
+    testImplementation(libs.testParameterInjector)
 
     coreLibraryDesugaring(libs.desugarJdkLibs)
 }

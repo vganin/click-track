@@ -6,6 +6,7 @@ kotlin = "1.9.23"
 kotlinInject = "0.6.3"
 kotlinx-coroutines = "1.8.0"
 kotlinx-serialization = "1.6.3"
+kover = "0.7.6"
 ksp = "1.9.23-1.0.19"
 mockk = "1.13.10"
 moko-resources = "0.24.0-alpha-5"
@@ -41,6 +42,7 @@ kotlininject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", ver
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.5.0"
+kotlinx-kover-gradlePlugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
@@ -57,6 +59,7 @@ sqldelight-androidDriver = { module = "app.cash.sqldelight:android-driver", vers
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-nativeDriver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
 sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
+testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:1.16"
 uuid = "com.benasher44:uuid:0.8.4"
 
 [bundles]
@@ -67,7 +70,7 @@ kotlinx-serialization = ["kotlinx-serialization-core", "kotlinx-serialization-js
 
 [plugins]
 jetbrains-compose = "org.jetbrains.compose:1.6.1"
-kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version = "0.7.6" }
+kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 properties = "net.saliman.properties:1.5.2"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

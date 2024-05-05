@@ -8,7 +8,7 @@ import android.media.MediaMuxer
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.player.toPlayerEvents
 import com.vsevolodganin.clicktrack.primitiveaudio.PrimitiveAudioProvider
-import com.vsevolodganin.clicktrack.primitiveaudio.bytesPerFrame
+import com.vsevolodganin.clicktrack.primitiveaudio.framesNumber
 import com.vsevolodganin.clicktrack.primitiveaudio.framesPerSecond
 import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
 import com.vsevolodganin.clicktrack.soundlibrary.UserSelectedSounds
@@ -74,7 +74,7 @@ class ExportToAudioFile(
                 if (!endOfInput) {
                     val inputBufferIndex = codec.dequeueInputBuffer(0L)
                     if (inputBufferIndex >= 0) {
-                        val inputBuffer = codec.getInputBuffer(inputBufferIndex)!!
+                        val inputBuffer = codec.getInputBuffer(inputBufferIndex)!!.asFloatBuffer()
                         val presentationTimeUs = (bytesWritten.toDouble() / outputFormat.bytesPerSecond() * 1_000_000L).toLong()
 
                         while (trackByteIterator.hasNext() && inputBuffer.hasRemaining()) {
@@ -142,7 +142,7 @@ class ExportToAudioFile(
         }
     }
 
-    private fun ClickTrack.render(soundSourceProvider: SoundSourceProvider): Sequence<Byte> {
+    private fun ClickTrack.render(soundSourceProvider: SoundSourceProvider): Sequence<Float> {
         val playerEvents = toPlayerEvents()
         return sequence {
             for (event in playerEvents) {
@@ -153,11 +153,11 @@ class ExportToAudioFile(
                     ?: continue
 
                 val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * soundData.framesPerSecond).toInt()
-                val framesOfSound = (soundData.bytes.size / soundData.bytesPerFrame).coerceAtMost(maxFramesCount)
+                val framesOfSound = soundData.framesNumber.coerceAtMost(maxFramesCount)
                 val framesOfSilence = maxFramesCount - framesOfSound
 
-                yieldAll(soundData.bytes.asSequence().take(framesOfSound * soundData.bytesPerFrame))
-                yieldAll(sequence { repeat(framesOfSilence * soundData.bytesPerFrame) { yield(0) } })
+                yieldAll(soundData.samples.asSequence().take(framesOfSound))
+                yieldAll(sequence { repeat(framesOfSilence) { yield(0f) } })
             }
         }
     }

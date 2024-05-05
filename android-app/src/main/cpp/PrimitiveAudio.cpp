@@ -12,7 +12,7 @@ using namespace RESAMPLER_OUTER_NAMESPACE::resampler;
 class ResampleBlock {
 public:
     int32_t sampleRate;
-    float* buffer;
+    const float* buffer;
     int32_t numSamples;
 };
 
@@ -33,7 +33,7 @@ void resampleData_(const ResampleBlock& input, ResampleBlock* output, int numCha
             MultiChannelResampler::Quality::Medium
     );
 
-    float* inputBuffer = input.buffer; // multi-channel buffer to be consumed
+    const float* inputBuffer = input.buffer; // multi-channel buffer to be consumed
     float* outputBuffer = new float[numOutFramesAllocated]; // multi-channel buffer to be filled
     output->buffer = outputBuffer;
 
@@ -58,87 +58,13 @@ void resampleData_(const ResampleBlock& input, ResampleBlock* output, int numCha
 } // namespace
 
 PrimitiveAudio::PrimitiveAudio(
-        const void* const bytes,
-        const int32_t length,
+        const float* const samples,
+        const int32_t samplesNumber,
         const int channelCount,
-        const int encoding,
         const int32_t sampleRate
-) : curSampleIndex_(0), isPlaying_(false) {
+) : curSampleIndex_(0), isPlaying_(false), sampleData_(samples), numSamples_(samplesNumber) {
     audioProperties_.channelCount = channelCount;
     audioProperties_.sampleRate = sampleRate;
-
-    switch (encoding) {
-        case 0: { // PrimitiveAudioData.Encoding.PCM_8BIT
-            static constexpr float kSampleFullScale = (float) 0x80;
-            static constexpr float kInverseScale = 1.0f / kSampleFullScale;
-            using data_type = int8_t;
-
-            numSamples_ = length / sizeof(data_type);
-            sampleData_ = new float[numSamples_];
-            const auto data_converted = reinterpret_cast<const data_type* const>(bytes);
-            for (int i = 0; i < numSamples_; ++i) {
-                // PCM8 is unsigned, so we need to make it signed before scaling/converting
-                sampleData_[i] = ((float) data_converted[i] - kSampleFullScale) * kInverseScale;
-            }
-            break;
-        }
-        case 1: { // PrimitiveAudioData.Encoding.PCM_16BIT
-            static constexpr float kSampleFullScale = (float) 0x8000;
-            static constexpr float kInverseScale = 1.0f / kSampleFullScale;
-            using data_type = int16_t;
-
-            numSamples_ = length / sizeof(data_type);
-            sampleData_ = new float[numSamples_];
-
-            const auto data_converted = reinterpret_cast<const data_type* const>(bytes);
-            for (int i = 0; i < numSamples_; ++i) {
-                sampleData_[i] = data_converted[i] * kInverseScale;
-            }
-            break;
-        }
-        case 2: { // PrimitiveAudioData.Encoding.PCM_24BIT
-            static constexpr float kSampleFullScale = (float) 0x80000000;
-            static constexpr float kInverseScale = 1.0f / kSampleFullScale;
-            using data_type = int32_t;
-
-            numSamples_ = length / sizeof(data_type);
-            sampleData_ = new float[numSamples_];
-
-            const auto data_converted = reinterpret_cast<const data_type* const>(bytes);
-            for (int i = 0; i < numSamples_; ++i) {
-                sampleData_[i] = data_converted[i] * kInverseScale;
-            }
-            break;
-        }
-        case 3: { // PrimitiveAudioData.Encoding.PCM_32BIT
-            static constexpr float kSampleFullScale = (float) 0x80000000;
-            static constexpr float kInverseScale = 1.0f / kSampleFullScale;
-            using data_type = int32_t;
-
-            numSamples_ = length / sizeof(data_type);
-            sampleData_ = new float[numSamples_];
-
-            const auto data_converted = reinterpret_cast<const data_type* const>(bytes);
-            for (int i = 0; i < numSamples_; ++i) {
-                sampleData_[i] = data_converted[i] * kInverseScale;
-            }
-            break;
-        }
-        case 4: { // PrimitiveAudioData.Encoding.PCM_FLOAT
-            using data_type = float;
-
-            numSamples_ = length / sizeof(data_type);
-            sampleData_ = new float[numSamples_];
-
-            const auto data_converted = reinterpret_cast<const data_type* const>(bytes);
-            for (int i = 0; i < numSamples_; ++i) {
-                sampleData_[i] = data_converted[i];
-            }
-            break;
-        }
-        default:
-            throw std::runtime_error{"Invalid encoding was passed: " + std::to_string(encoding)};
-    }
 }
 
 PrimitiveAudio::~PrimitiveAudio() {

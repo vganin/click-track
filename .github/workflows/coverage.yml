@@ -25,14 +25,14 @@ jobs:
           java-version: 17
       - name: Generate coverage output
         run: |
-          ./gradlew :multiplatform:koverHtmlReportRelease
-          echo "COVERAGE=$(./gradlew -q :multiplatform:printLineCoverage)" >> $GITHUB_ENV
+          ./gradlew :koverHtmlReport
+          echo "COVERAGE=$(./gradlew -q :printLineCoverage)" >> $GITHUB_ENV
       - name: Configure Pages
         uses: actions/configure-pages@v3
       - name: Upload coverage artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: multiplatform/build/reports/kover/htmlRelease
+          path: build/reports/kover/html
       - name: Deploy coverage report
         id: coverage-deployment
         uses: actions/deploy-pages@v2
