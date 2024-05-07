@@ -6,6 +6,7 @@ add_library(
         clicktrack SHARED
 
         Bindings.cpp
+        ResamplerBindings.cpp
         Logger.cpp
         NativeCrash.cpp
         PrimitiveAudioPlayer.cpp
