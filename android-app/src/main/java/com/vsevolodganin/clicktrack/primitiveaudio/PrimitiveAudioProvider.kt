@@ -14,7 +14,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class PrimitiveAudioProvider(
     private val application: Application,
-    private val audioDecoder: PrimitiveAudioExtractor,
+    private val primitiveAudioExtractor: PrimitiveAudioExtractor,
     private val contentResolver: ContentResolver,
     private val logger: Logger,
 ) {
@@ -43,7 +43,7 @@ class PrimitiveAudioProvider(
     }
 
     private fun load(afd: AssetFileDescriptor): PrimitiveAudioData? {
-        return audioDecoder.extract(afd, MAX_SECONDS)
+        return primitiveAudioExtractor.extract(afd, MAX_SECONDS)
     }
 
     private companion object Const {

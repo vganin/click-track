@@ -1,50 +1,52 @@
 package com.vsevolodganin.clicktrack.export
 
 import android.app.Application
+import android.media.AudioFormat
 import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaFormat
 import android.media.MediaMuxer
+import android.os.Build
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.player.toPlayerEvents
-import com.vsevolodganin.clicktrack.primitiveaudio.PrimitiveAudioProvider
-import com.vsevolodganin.clicktrack.primitiveaudio.framesNumber
-import com.vsevolodganin.clicktrack.primitiveaudio.framesPerSecond
+import com.vsevolodganin.clicktrack.primitiveaudio.PrimitiveAudioMonoRenderer
+import com.vsevolodganin.clicktrack.primitiveaudio.convertDurationToSamplesNumber
+import com.vsevolodganin.clicktrack.primitiveaudio.convertSamplesNumberToDuration
 import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
 import com.vsevolodganin.clicktrack.soundlibrary.UserSelectedSounds
 import com.vsevolodganin.clicktrack.utils.log.Logger
-import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
+import com.vsevolodganin.clicktrack.utils.media.pcmEncoding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import java.io.File
-import kotlin.time.DurationUnit
+import java.nio.ByteOrder
 
 @Inject
 class ExportToAudioFile(
     private val application: Application,
-    private val soundBank: PrimitiveAudioProvider,
+    primitiveAudioMonoRendererFactory: (targetSampleRate: Int) -> PrimitiveAudioMonoRenderer,
     private val userSelectedSounds: UserSelectedSounds,
     private val logger: Logger
 ) {
-    suspend fun export(clickTrack: ClickTrack, onProgress: suspend (Float) -> Unit): File? {
-        val soundSourceProvider = SoundSourceProvider(userSelectedSounds.get())
+    private val primitiveAudioMonoRenderer = primitiveAudioMonoRendererFactory(SAMPLE_RATE)
 
-        // TODO: Should resample sounds to user desired sample rate and channel count
-        val strongSound = userSelectedSounds.get().value?.strongBeat?.let(soundBank::get) ?: return null
-        val targetSampleRate = strongSound.sampleRate
-        val targetChannelCount = strongSound.channelCount
+    suspend fun export(clickTrack: ClickTrack, reportProgress: suspend (Float) -> Unit): File? {
+        val soundSourceProvider = SoundSourceProvider(userSelectedSounds.get())
 
         var muxer: MediaMuxer? = null
         var codec: MediaCodec? = null
         var outputFile: File? = null
 
         return try {
-            val outputFormat = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, targetSampleRate, targetChannelCount)
+            var outputFormat = MediaFormat.createAudioFormat(MediaFormat.MIMETYPE_AUDIO_AAC, SAMPLE_RATE, CHANNEL_COUNT)
                 .apply {
-                    setInteger(MediaFormat.KEY_BIT_RATE, 96 * 1024)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        setInteger(MediaFormat.KEY_PCM_ENCODING, AudioFormat.ENCODING_PCM_FLOAT)
+                    }
+                    setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE)
                 }
 
             outputFile = withContext(Dispatchers.IO) {
@@ -57,14 +59,15 @@ class ExportToAudioFile(
             codec = MediaCodec.createByCodecName(codecName).apply {
                 configure(outputFormat, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
                 start()
+                outputFormat = getOutputFormat()
             }
 
-            val trackByteSequence = clickTrack.render(soundSourceProvider)
-            val trackByteIterator = trackByteSequence.iterator()
-            val bytesToWrite = trackByteSequence.count()
+            val trackSampleSequence = primitiveAudioMonoRenderer.renderToMonoSamples(clickTrack.toPlayerEvents(), soundSourceProvider)
+            val trackSampleIterator = trackSampleSequence.iterator()
+            val samplesToWrite = convertDurationToSamplesNumber(clickTrack.durationInTime, SAMPLE_RATE)
             val bufferInfo = MediaCodec.BufferInfo()
 
-            var bytesWritten = 0L
+            var samplesWritten = 0
             var endOfInput = false
             var endOfOutput = false
 
@@ -74,25 +77,45 @@ class ExportToAudioFile(
                 if (!endOfInput) {
                     val inputBufferIndex = codec.dequeueInputBuffer(0L)
                     if (inputBufferIndex >= 0) {
-                        val inputBuffer = codec.getInputBuffer(inputBufferIndex)!!.asFloatBuffer()
-                        val presentationTimeUs = (bytesWritten.toDouble() / outputFormat.bytesPerSecond() * 1_000_000L).toLong()
+                        val inputBuffer = codec.getInputBuffer(inputBufferIndex)!!
+                        val presentationTimeUs = convertSamplesNumberToDuration(samplesWritten, SAMPLE_RATE).inWholeNanoseconds
 
-                        while (trackByteIterator.hasNext() && inputBuffer.hasRemaining()) {
-                            inputBuffer.put(trackByteIterator.next())
-                            ++bytesWritten
+                        val bytesWritten = when (outputFormat.pcmEncoding()) {
+                            AudioFormat.ENCODING_PCM_FLOAT -> {
+                                val sampleBuffer = inputBuffer.order(ByteOrder.nativeOrder()).asFloatBuffer()
+                                while (trackSampleIterator.hasNext() && sampleBuffer.hasRemaining()) {
+                                    sampleBuffer.put(trackSampleIterator.next())
+                                    ++samplesWritten
+                                }
+                                sampleBuffer.position() * Float.SIZE_BYTES
+                            }
+                            AudioFormat.ENCODING_PCM_16BIT -> {
+                                val sampleBuffer = inputBuffer.order(ByteOrder.nativeOrder()).asShortBuffer()
+                                while (trackSampleIterator.hasNext() && sampleBuffer.hasRemaining()) {
+                                    val nextFloatSample = trackSampleIterator.next()
+                                    val nextShortSample = (nextFloatSample * Short.MAX_VALUE).toInt().toShort()
+                                    sampleBuffer.put(nextShortSample)
+                                    ++samplesWritten
+                                }
+                                sampleBuffer.position() * Short.SIZE_BYTES
+                            }
+                            else -> {
+                                logger.logError(TAG, "Unsupported encoding")
+                                return null
+                            }
                         }
 
-                        onProgress(bytesWritten.toFloat() / bytesToWrite)
-
-                        endOfInput = !trackByteIterator.hasNext()
+                        endOfInput = !trackSampleIterator.hasNext()
 
                         codec.queueInputBuffer(
                             inputBufferIndex,
                             0,
-                            inputBuffer.position(),
+                            bytesWritten,
                             presentationTimeUs,
                             if (endOfInput) MediaCodec.BUFFER_FLAG_END_OF_STREAM else 0
                         )
+
+                        reportProgress(samplesWritten.toFloat() / samplesToWrite)
                     }
                 }
 
@@ -142,27 +165,11 @@ class ExportToAudioFile(
         }
     }
 
-    private fun ClickTrack.render(soundSourceProvider: SoundSourceProvider): Sequence<Float> {
-        val playerEvents = toPlayerEvents()
-        return sequence {
-            for (event in playerEvents) {
-                // TODO: Should resample?
-                val soundData = event.soundType
-                    ?.let(soundSourceProvider::provide)
-                    ?.let(soundBank::get)
-                    ?: continue
-
-                val maxFramesCount = (event.duration.toDouble(DurationUnit.SECONDS) * soundData.framesPerSecond).toInt()
-                val framesOfSound = soundData.framesNumber.coerceAtMost(maxFramesCount)
-                val framesOfSilence = maxFramesCount - framesOfSound
-
-                yieldAll(soundData.samples.asSequence().take(framesOfSound))
-                yieldAll(sequence { repeat(framesOfSilence) { yield(0f) } })
-            }
-        }
-    }
-
     private companion object {
         const val TAG = "ExportToAudioFile"
+
+        private const val SAMPLE_RATE = 44100
+        private const val CHANNEL_COUNT = 1
+        private const val BIT_RATE = 96 * 1024
     }
 }

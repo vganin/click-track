@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration
@@ -17,7 +18,7 @@ import kotlin.time.Duration.Companion.seconds
 @PlayerServiceScope
 @Inject
 class LatencyTracker(
-    private val pcmPlayer: PrimitiveAudioPlayer
+    private val primitiveAudioPlayer: PrimitiveAudioPlayer
 ) {
 
     private var latencyMeasureJob: Job? = null
@@ -28,8 +29,10 @@ class LatencyTracker(
     fun start() {
         latencyMeasureJob?.cancel()
         latencyMeasureJob = GlobalScope.launch(Dispatchers.Main) {
-            _latencyState.value = pcmPlayer.getLatencyMs().milliseconds
-            delay(1.seconds)
+            while (isActive) {
+                _latencyState.value = primitiveAudioPlayer.getLatencyMs().milliseconds
+                delay(1.seconds)
+            }
         }
     }
 
