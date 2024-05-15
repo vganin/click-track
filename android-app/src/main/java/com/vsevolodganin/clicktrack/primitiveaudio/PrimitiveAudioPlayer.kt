@@ -110,7 +110,12 @@ class PrimitiveAudioPlayer(
     }
 
     fun getLatencyMs(): Int {
-        // TODO: Implement
+        try {
+            val getLatencyMethod = AudioTrack::class.java.getMethod("getLatency")
+            return getLatencyMethod.invoke(audioTrack) as Int - BUFFER_LENGTH_IN_SECONDS.seconds.inWholeMilliseconds.toInt()
+        } catch (throwable: Throwable) {
+            logger.logError(TAG, "Failed to get latency using getLatency method", throwable)
+        }
         return 0
     }
 
