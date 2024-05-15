@@ -85,8 +85,8 @@ class ExportToAudioFile(
                                 val sampleBuffer = inputBuffer.order(ByteOrder.nativeOrder()).asFloatBuffer()
                                 while (trackSampleIterator.hasNext() && sampleBuffer.hasRemaining()) {
                                     sampleBuffer.put(trackSampleIterator.next())
-                                    ++samplesWritten
                                 }
+                                samplesWritten += sampleBuffer.position()
                                 sampleBuffer.position() * Float.SIZE_BYTES
                             }
                             AudioFormat.ENCODING_PCM_16BIT -> {
@@ -95,8 +95,8 @@ class ExportToAudioFile(
                                     val nextFloatSample = trackSampleIterator.next()
                                     val nextShortSample = (nextFloatSample * Short.MAX_VALUE).toInt().toShort()
                                     sampleBuffer.put(nextShortSample)
-                                    ++samplesWritten
                                 }
+                                samplesWritten += sampleBuffer.position()
                                 sampleBuffer.position() * Short.SIZE_BYTES
                             }
                             else -> {
