@@ -61,7 +61,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
 
         val temporaryFile = component.exportToAudioFile.export(
             clickTrack = clickTrack.value,
-            onProgress = {
+            reportProgress = {
                 setForeground(foregroundInfo(clickTrack, it))
             }
         ) ?: return Result.failure()

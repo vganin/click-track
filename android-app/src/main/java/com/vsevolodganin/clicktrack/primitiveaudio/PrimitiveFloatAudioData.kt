@@ -64,6 +64,3 @@ class PrimitiveFloatAudioData(
         }
     }
 }
-
-val PrimitiveFloatAudioData.framesNumber: Int get() = samples.size / channelCount
-val PrimitiveFloatAudioData.framesPerSecond: Int get() = sampleRate / channelCount

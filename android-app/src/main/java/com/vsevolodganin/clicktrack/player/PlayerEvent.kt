@@ -20,7 +20,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class PlayerEvent(
     val duration: Duration,
-    val soundType: ClickSoundType?
+    val soundType: ClickSoundType? // Null is case of silent pause
 ) {
     fun copy(
         duration: Duration = this.duration,
@@ -98,6 +98,27 @@ fun TwoLayerPolyrhythm.toPlayerEvents(): Sequence<PlayerEvent> {
             )
         }
     }
+}
+
+fun Sequence<PlayerEvent>.startingAt(startAt: Duration): Sequence<PlayerEvent> {
+    var runningDuration = Duration.ZERO
+    var dropCount = 0
+    for (event in this) {
+        if (runningDuration >= startAt) {
+            break
+        }
+        dropCount += 1
+        runningDuration += event.duration
+    }
+
+    return sequence {
+        yield(delayEvent(duration = (runningDuration - startAt).coerceAtLeast(Duration.ZERO)))
+        yieldAll(drop(dropCount))
+    }
+}
+
+fun Sequence<PlayerEvent>.loop(loop: Boolean): Sequence<PlayerEvent> {
+    return if (loop) toRoundRobin() else this
 }
 
 private fun Sequence<PlayerEvent>.withDuration(duration: Duration): Sequence<PlayerEvent> {

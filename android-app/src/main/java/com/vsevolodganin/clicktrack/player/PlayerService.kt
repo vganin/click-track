@@ -131,8 +131,6 @@ class PlayerService : Service() {
 
         component = PlayerServiceComponent::class.create(applicationComponent)
 
-        component.primitiveAudioPlayer.prepare()
-
         mediaSession = MediaSessionCompat(this@PlayerService, "ClickTrackMediaSession").apply {
             setPlaybackState(mediaSessionPlaybackStateBuilder().build())
             setCallback(object : MediaSessionCompat.Callback() {
@@ -160,7 +158,6 @@ class PlayerService : Service() {
         mediaSession.release()
         disposePlayer()
         component.latencyTracker.stop()
-        component.primitiveAudioPlayer.release()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

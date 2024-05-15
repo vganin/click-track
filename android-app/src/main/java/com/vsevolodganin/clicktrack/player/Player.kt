@@ -12,10 +12,10 @@ import com.vsevolodganin.clicktrack.model.PlayableProgressTimeMark
 import com.vsevolodganin.clicktrack.model.PlayableProgressTimeSource
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
+import com.vsevolodganin.clicktrack.primitiveaudio.PrimitiveAudioPlayer
 import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
 import com.vsevolodganin.clicktrack.soundlibrary.UserSelectedSounds
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
-import com.vsevolodganin.clicktrack.utils.collection.sequence.prefetch
 import com.vsevolodganin.clicktrack.utils.coroutine.collectLatestFirst
 import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
 import com.vsevolodganin.clicktrack.utils.grabIf
@@ -46,12 +46,12 @@ import kotlin.time.Duration.Companion.milliseconds
 @Inject
 class Player(
     private val playerDispatcher: PlayerDispatcher,
-    private val soundPool: PlayerSoundPool,
+    private val primitiveAudioPlayer: PrimitiveAudioPlayer,
     private val clickSoundsRepository: ClickSoundsRepository,
     private val playableContentProvider: PlayableContentProvider,
     private val userSelectedSounds: UserSelectedSounds,
     latencyTracker: LatencyTracker,
-    private val logger: Logger
+    private val logger: Logger,
 ) {
     data class Input(
         val id: PlayableId,
@@ -70,13 +70,6 @@ class Player(
         } finally {
             withContext(NonCancellable) {
                 playbackState.value = null
-
-                // Delaying superfluous sound pool stops in order to avoid
-                // race condition on some Android versions which causes
-                // audio stream to shut down without any notification.
-                // For more info see https://github.com/google/oboe/issues/1315
-                delay(500)
-                soundPool.stopAll()
             }
         }
     }
@@ -225,31 +218,22 @@ class Player(
         reportProgress: (Duration) -> Unit,
         soundSourceProvider: SoundSourceProvider,
     ) {
-        val actualStartAt = if (startAt >= durationInTime) {
+        val durationInTime = durationInTime
+        val startingAt = if (startAt >= durationInTime) {
             if (loop) Duration.ZERO else return
         } else {
             startAt
         }
 
-        val schedule = toPlayerEvents()
-            .toActions(
-                soundSourceProvider = soundSourceProvider,
-                soundPool = soundPool,
-            )
-            .withSideEffect(atIndex = 0) {
-                reportProgress(Duration.ZERO)
-            }
-            .loop(loop)
-            .let {
-                if (actualStartAt > Duration.ZERO) {
-                    it.startingAt(actualStartAt).withSideEffect(atIndex = 0) { reportProgress(actualStartAt) }
-                } else {
-                    it
-                }
-            }
-            .prefetch(PREFETCH_SIZE)
-
-        PlayerSequencer.play(schedule)
+        primitiveAudioPlayer.play(
+            startingAt = startingAt,
+            singleIterationDuration = durationInTime,
+            playerEvents = toPlayerEvents()
+                .loop(loop)
+                .startingAt(startingAt),
+            reportProgress = reportProgress,
+            soundSourceProvider = soundSourceProvider
+        )
     }
 
     private suspend fun TwoLayerPolyrhythm.play(
@@ -257,31 +241,22 @@ class Player(
         reportProgress: (Duration) -> Unit,
         soundSourceProvider: SoundSourceProvider,
     ) {
-        val actualStartAt = if (startAt >= durationInTime) {
+        val durationInTime = durationInTime
+        val startingAt = if (startAt >= durationInTime) {
             Duration.ZERO
         } else {
             startAt
         }
 
-        val schedule = toPlayerEvents()
-            .toActions(
-                soundSourceProvider = soundSourceProvider,
-                soundPool = soundPool,
-            )
-            .withSideEffect(atIndex = 0) { reportProgress(Duration.ZERO) }
-            .toList()
-            .asSequence()
-            .loop(true)
-            .let {
-                if (actualStartAt > Duration.ZERO) {
-                    it.startingAt(actualStartAt).withSideEffect(atIndex = 0) { reportProgress(actualStartAt) }
-                } else {
-                    it
-                }
-            }
-            .prefetch(PREFETCH_SIZE)
-
-        PlayerSequencer.play(schedule)
+        primitiveAudioPlayer.play(
+            startingAt = startingAt,
+            singleIterationDuration = durationInTime,
+            playerEvents = toPlayerEvents()
+                .loop(true)
+                .startingAt(startingAt),
+            reportProgress = reportProgress,
+            soundSourceProvider = soundSourceProvider
+        )
     }
 
     private suspend fun soundSourceProvider(soundsId: ClickSoundsId?): SoundSourceProvider {
@@ -311,8 +286,6 @@ class Player(
 
     private companion object Const {
         const val TAG = "Player"
-
-        const val PREFETCH_SIZE = 100
 
         // Higher means lower precision when correcting UI for latency
         // Lower means higher precision but more progress bar jumps due to more frequent updates
