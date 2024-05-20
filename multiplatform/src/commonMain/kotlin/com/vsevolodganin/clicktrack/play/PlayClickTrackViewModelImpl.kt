@@ -77,7 +77,12 @@ class PlayClickTrackViewModelImpl(
 
     override fun onProgressDragStart() = playerServiceAccess.pause()
 
-    override fun onProgressDrop(progress: Double) = playerServiceAccess.start(config.id, progress)
+    override fun onProgressDrop(progress: Double) {
+        val state = state.value ?: return
+        if (state.isPlaying) {
+            playerServiceAccess.start(config.id, progress)
+        }
+    }
 
     override fun onEditClick() = navigation.pushIfUnique(ScreenConfiguration.EditClickTrack(config.id, isInitialEdit = false))
 
