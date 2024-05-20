@@ -31,12 +31,12 @@ class NotificationChannels(
     private fun createChannel(
         id: String,
         @StringRes nameRes: Int,
-        importance: Int = NotificationManagerCompat.IMPORTANCE_MIN,
-        vibrationEnabled: Boolean = false,
+        importance: Int = NotificationManagerCompat.IMPORTANCE_DEFAULT,
     ) {
         val channel = NotificationChannelCompat.Builder(id, importance)
             .setName(application.getString(nameRes))
-            .setVibrationEnabled(vibrationEnabled)
+            .setVibrationEnabled(false)
+            .setSound(null, null)
             .build()
         notificationManager.createNotificationChannel(channel)
     }

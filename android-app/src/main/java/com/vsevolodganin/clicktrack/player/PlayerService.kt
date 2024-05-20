@@ -317,7 +317,7 @@ class PlayerService : Service() {
             .setContentText(contentText)
             .setContentIntent(launchAppIntent)
             .setDeleteIntent(stopIntent)
-            .setPriority(NotificationCompat.PRIORITY_MIN)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setVisibility(VISIBILITY_PUBLIC)
             .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
             .setOngoing(true)
