@@ -72,6 +72,8 @@ class PrimitiveAudioPlayer(
                 .forEach { samples ->
                     var samplesWritten = 0
                     while (samplesWritten < samples.size) {
+                        yield()
+
                         val result = audioTrack.write(
                             samples,
                             samplesWritten,

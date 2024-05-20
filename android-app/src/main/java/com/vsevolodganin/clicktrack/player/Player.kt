@@ -16,20 +16,16 @@ import com.vsevolodganin.clicktrack.primitiveaudio.PrimitiveAudioPlayer
 import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
 import com.vsevolodganin.clicktrack.soundlibrary.UserSelectedSounds
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
-import com.vsevolodganin.clicktrack.utils.coroutine.collectLatestFirst
-import com.vsevolodganin.clicktrack.utils.flow.takeUntilSignal
 import com.vsevolodganin.clicktrack.utils.grabIf
 import com.vsevolodganin.clicktrack.utils.log.Logger
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.NonCancellable
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -64,7 +60,7 @@ class Player(
 
     suspend fun play(input: Flow<Input>) {
         try {
-            input.collectLatestFirst { (id, startAtProgress, soundsId) ->
+            input.collectLatest { (id, startAtProgress, soundsId) ->
                 play(id, startAtProgress, soundsId)
             }
         } finally {
@@ -91,7 +87,7 @@ class Player(
             is ClickTrackId -> {
                 playableContentProvider.clickTrackFlow(id)
                     .withIndex()
-                    .collectLatestFirst inner@{ (index, clickTrack) ->
+                    .collectLatest inner@{ (index, clickTrack) ->
                         clickTrack ?: return@inner
                         pausable(if (index == 0) startAtProgress else null) { progress ->
                             play(id, clickTrack, progress, soundsId)
@@ -102,7 +98,7 @@ class Player(
             TwoLayerPolyrhythmId -> {
                 playableContentProvider.twoLayerPolyrhythmFlow()
                     .withIndex()
-                    .collectLatestFirst { (index, polyrhythm) ->
+                    .collectLatest { (index, polyrhythm) ->
                         pausable(if (index == 0) startAtProgress else null) { progress ->
                             play(polyrhythm, progress, soundsId)
                         }
@@ -113,13 +109,11 @@ class Player(
 
     private suspend inline fun pausable(startAt: Double?, crossinline play: suspend (startAt: Double?) -> Unit) {
         var savedProgress: Double? = startAt
-        val stopSignal = Channel<Unit>()
-        pausedState.takeUntilSignal(stopSignal.consumeAsFlow()).collectLatest { isPaused ->
+        pausedState.collectLatest { isPaused ->
             if (isPaused) {
                 savedProgress = playbackState.value?.realProgress
             } else {
                 play(savedProgress)
-                stopSignal.send(Unit)
             }
         }
     }
