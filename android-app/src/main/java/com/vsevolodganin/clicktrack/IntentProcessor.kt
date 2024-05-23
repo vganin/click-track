@@ -10,7 +10,10 @@ import me.tatarka.inject.annotations.Inject
 @MainControllerScope
 @Inject
 class IntentProcessor(
-    private val navigation: ScreenStackNavigation
+    private val navigation: ScreenStackNavigation,
+    @Suppress("Unused") // FIXME: Workaround for shortcuts navigation bug.
+    // By requesting stack state, we force it to subscribe to navigation
+    private val stackState: ScreenStackState,
 ) {
     fun process(intent: Intent) {
         when (intent.action) {
