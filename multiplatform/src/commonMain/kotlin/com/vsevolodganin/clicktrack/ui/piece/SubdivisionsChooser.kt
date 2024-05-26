@@ -9,6 +9,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -56,18 +57,22 @@ fun SubdivisionsChooser(
         }
     }
 
-    Row(modifier) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         val layoutModifier = Modifier.weight(1f)
+        val layoutArrangement = Arrangement.spacedBy(4.dp)
         val noteValue = timeSignature.noteValue
         val reallyExpanded = alwaysExpanded || expanded
 
         when (noteValue) {
-            1 -> WholeNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, reallyExpanded)
-            in 2..3 -> HalfNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, reallyExpanded)
-            in 4..7 -> QuarterNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, reallyExpanded)
-            in 8..15 -> EighthNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, reallyExpanded)
-            in 16..31 -> SixteenthNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, reallyExpanded)
-            in 32..Int.MAX_VALUE -> ThirtySecondNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier)
+            1 -> WholeNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, layoutArrangement, reallyExpanded)
+            in 2..3 -> HalfNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, layoutArrangement, reallyExpanded)
+            in 4..7 -> QuarterNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, layoutArrangement, reallyExpanded)
+            in 8..15 -> EighthNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, layoutArrangement, reallyExpanded)
+            in 16..31 -> SixteenthNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, layoutArrangement, reallyExpanded)
+            in 32..Int.MAX_VALUE -> ThirtySecondNoteLayout(pattern, collapsingOnSubdivisionChoose, layoutModifier, layoutArrangement)
             else -> error("Non-positive note value")
         }
 
@@ -88,13 +93,20 @@ private fun WholeNoteLayout(
     pattern: NotePattern,
     onSubdivisionChoose: (NotePattern) -> Unit,
     modifier: Modifier,
+    arrangement: Arrangement.HorizontalOrVertical,
     expanded: Boolean,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = arrangement
+    ) {
         val rowModifier = Modifier.fillMaxWidth()
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.STRAIGHT) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X1,
@@ -135,7 +147,10 @@ private fun WholeNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.TRIPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X1,
@@ -170,7 +185,10 @@ private fun WholeNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.QUINTUPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X1,
@@ -199,7 +217,10 @@ private fun WholeNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.SEPTUPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X1,
@@ -228,7 +249,10 @@ private fun WholeNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.DISPLACED) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X1,
@@ -269,13 +293,20 @@ private fun HalfNoteLayout(
     pattern: NotePattern,
     onSubdivisionChoose: (NotePattern) -> Unit,
     modifier: Modifier,
+    arrangement: Arrangement.HorizontalOrVertical,
     expanded: Boolean,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = arrangement
+    ) {
         val rowModifier = Modifier.fillMaxWidth()
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.STRAIGHT) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X1,
@@ -310,7 +341,10 @@ private fun HalfNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.TRIPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X1,
@@ -345,7 +379,10 @@ private fun HalfNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.QUINTUPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X1,
@@ -374,7 +411,10 @@ private fun HalfNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.SEPTUPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X1,
@@ -403,7 +443,10 @@ private fun HalfNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.DISPLACED) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X1,
@@ -444,13 +487,20 @@ private fun QuarterNoteLayout(
     pattern: NotePattern,
     onSubdivisionChoose: (NotePattern) -> Unit,
     modifier: Modifier,
+    arrangement: Arrangement.HorizontalOrVertical,
     expanded: Boolean,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = arrangement
+    ) {
         val rowModifier = Modifier.fillMaxWidth()
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.STRAIGHT) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X1,
@@ -479,7 +529,10 @@ private fun QuarterNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.TRIPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X1,
@@ -508,7 +561,10 @@ private fun QuarterNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.QUINTUPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X1,
@@ -537,7 +593,10 @@ private fun QuarterNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.SEPTUPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X1,
@@ -566,7 +625,10 @@ private fun QuarterNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.DISPLACED) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X1,
@@ -601,13 +663,20 @@ private fun EighthNoteLayout(
     pattern: NotePattern,
     onSubdivisionChoose: (NotePattern) -> Unit,
     modifier: Modifier,
+    arrangement: Arrangement.HorizontalOrVertical,
     expanded: Boolean,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = arrangement
+    ) {
         val rowModifier = Modifier.fillMaxWidth()
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.STRAIGHT) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X1,
@@ -630,7 +699,10 @@ private fun EighthNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.TRIPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X1,
@@ -653,7 +725,10 @@ private fun EighthNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.QUINTUPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X1,
@@ -676,7 +751,10 @@ private fun EighthNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.SEPTUPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X1,
@@ -699,7 +777,10 @@ private fun EighthNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.DISPLACED) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X1,
@@ -728,13 +809,20 @@ private fun SixteenthNoteLayout(
     pattern: NotePattern,
     onSubdivisionChoose: (NotePattern) -> Unit,
     modifier: Modifier,
+    arrangement: Arrangement.HorizontalOrVertical,
     expanded: Boolean,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = arrangement
+    ) {
         val rowModifier = Modifier.fillMaxWidth()
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.STRAIGHT) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X1,
@@ -751,7 +839,10 @@ private fun SixteenthNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.TRIPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X1,
@@ -768,7 +859,10 @@ private fun SixteenthNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.QUINTUPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X1,
@@ -785,7 +879,10 @@ private fun SixteenthNoteLayout(
         }
 
         RowAnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.SEPTUPLET) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X1,
@@ -802,7 +899,10 @@ private fun SixteenthNoteLayout(
         }
 
         AnimatedVisibility(visible = expanded || pattern.group == NotePatternGroup.DISPLACED) {
-            Row(modifier = rowModifier) {
+            Row(
+                modifier = rowModifier,
+                horizontalArrangement = arrangement,
+            ) {
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X1,
@@ -825,8 +925,12 @@ private fun ThirtySecondNoteLayout(
     pattern: NotePattern,
     onSubdivisionChoose: (NotePattern) -> Unit,
     modifier: Modifier,
+    arrangement: Arrangement.HorizontalOrVertical,
 ) {
-    Row(modifier = modifier.fillMaxWidth()) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = arrangement,
+    ) {
         SubdivisionItem(
             actualPattern = pattern,
             expectedPattern = NotePattern.STRAIGHT_X1,
@@ -884,7 +988,6 @@ private fun RowScope.SubdivisionItem(
         modifier = Modifier
             .weight(1f)
             .height(50.dp)
-            .padding(2.dp)
             .selectableBorder(isSelected)
             .clickable(onClick = onClick)
             .padding(8.dp),
@@ -898,12 +1001,17 @@ private fun RowScope.SubdivisionItem(
 }
 
 @Composable
-private fun RowAnimatedVisibility(visible: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) = AnimatedVisibility(
-    visible = visible,
-    enter = fadeIn() + expandVertically(),
-    exit = fadeOut() + shrinkVertically(),
-    content = content
-)
+private fun RowAnimatedVisibility(
+    visible: Boolean,
+    content: @Composable AnimatedVisibilityScope.() -> Unit,
+) {
+    AnimatedVisibility(
+        visible = visible,
+        enter = fadeIn() + expandVertically(),
+        exit = fadeOut() + shrinkVertically(),
+        content = content
+    )
+}
 
 @Preview
 @Composable

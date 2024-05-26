@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.ClickTrackValidator
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteOffset
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.DefaultCue
 import com.vsevolodganin.clicktrack.model.NotePattern
@@ -60,60 +61,54 @@ class EditClickTrackViewModelImpl(
 
     override fun onForwardClick() = navigation.replaceCurrent(ScreenConfiguration.PlayClickTrack(config.id))
 
-    override fun onNameChange(name: String) {
-        reduceState { copy(name = name) }
+    override fun onNameChange(name: String) = reduceState {
+        copy(name = name)
     }
 
-    override fun onLoopChange(loop: Boolean) {
-        reduceState { copy(loop = loop) }
+    override fun onLoopChange(loop: Boolean) = reduceState {
+        copy(loop = loop)
     }
 
-    override fun onTempoDiffIncrementClick() {
-        reduceState { copy(tempoDiff = this.tempoDiff + 1) }
+    override fun onTempoOffsetChange(offset: Int) = reduceState {
+        copy(tempoOffset = BeatsPerMinuteOffset(offset))
     }
 
-    override fun onTempoDiffDecrementClick() {
-        reduceState { copy(tempoDiff = this.tempoDiff - 1) }
+    override fun onAddNewCueClick() = reduceState {
+        copy(cues = cues + DefaultCue.toEditState(index = cues.size))
     }
 
-    override fun onAddNewCueClick() {
-        reduceState { copy(cues = cues + DefaultCue.toEditState(index = cues.size)) }
+    override fun onCueRemove(index: Int) = reduceState {
+        copy(cues = cues.remove(index))
     }
 
-    override fun onCueRemove(index: Int) {
-        reduceState { copy(cues = cues.remove(index)) }
+    override fun onCueNameChange(index: Int, name: String) = reduceState {
+        copy(cues = cues.replace(index) { it.copy(name = name) })
     }
 
-    override fun onCueNameChange(index: Int, name: String) {
-        reduceState { copy(cues = cues.replace(index) { it.copy(name = name) }) }
+    override fun onCueBpmChange(index: Int, bpm: Int) = reduceState {
+        copy(cues = cues.replace(index) { it.copy(bpm = bpm) })
     }
 
-    override fun onCueBpmChange(index: Int, bpm: Int) {
-        reduceState { copy(cues = cues.replace(index) { it.copy(bpm = bpm) }) }
+    override fun onCueTimeSignatureChange(index: Int, timeSignature: TimeSignature) = reduceState {
+        copy(cues = cues.replace(index) { it.copy(timeSignature = timeSignature) })
     }
 
-    override fun onCueTimeSignatureChange(index: Int, timeSignature: TimeSignature) {
-        reduceState { copy(cues = cues.replace(index) { it.copy(timeSignature = timeSignature) }) }
+    override fun onCueDurationChange(index: Int, duration: CueDuration) = reduceState {
+        copy(cues = cues.replace(index) {
+            when (duration) {
+                is CueDuration.Beats -> it.copy(beats = duration)
+                is CueDuration.Measures -> it.copy(measures = duration)
+                is CueDuration.Time -> it.copy(time = duration)
+            }
+        })
     }
 
-    override fun onCueDurationChange(index: Int, duration: CueDuration) {
-        reduceState {
-            copy(cues = cues.replace(index) {
-                when (duration) {
-                    is CueDuration.Beats -> it.copy(beats = duration)
-                    is CueDuration.Measures -> it.copy(measures = duration)
-                    is CueDuration.Time -> it.copy(time = duration)
-                }
-            })
-        }
+    override fun onCueDurationTypeChange(index: Int, durationType: CueDuration.Type) = reduceState {
+        copy(cues = cues.replace(index) { it.copy(activeDurationType = durationType) })
     }
 
-    override fun onCueDurationTypeChange(index: Int, durationType: CueDuration.Type) {
-        reduceState { copy(cues = cues.replace(index) { it.copy(activeDurationType = durationType) }) }
-    }
-
-    override fun onCuePatternChange(index: Int, pattern: NotePattern) {
-        reduceState { copy(cues = cues.replace(index) { it.copy(pattern = pattern) }) }
+    override fun onCuePatternChange(index: Int, pattern: NotePattern) = reduceState {
+        copy(cues = cues.replace(index) { it.copy(pattern = pattern) })
     }
 
     private fun onEditStateChange(editState: EditClickTrackState?) {

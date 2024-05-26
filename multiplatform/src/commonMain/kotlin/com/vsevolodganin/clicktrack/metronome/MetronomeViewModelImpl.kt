@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.metronome
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
-import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteOffset
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
@@ -75,7 +75,7 @@ class MetronomeViewModelImpl(
         areOptionsExpanded.value = false
     }
 
-    override fun onBpmChange(bpmDiff: BeatsPerMinuteDiff) {
+    override fun onBpmChange(bpmDiff: BeatsPerMinuteOffset) {
         userPreferences.metronomeBpm.edit { it + bpmDiff }
     }
 

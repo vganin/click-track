@@ -119,6 +119,7 @@ fun ClickTrackView(
         }
 
         // Wakelock on playing
+        // FIXME: Should be im model layer
         if (progress != null) {
             KeepScreenOn()
         }
@@ -294,7 +295,11 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
         var currentTimestamp = Duration.ZERO
         var currentX = 0f
         for (cue in cues) {
-            result += Mark(x = currentX, color = primaryMarkColor, summary = { CueSummaryView(cue) })
+            result += Mark(
+                x = currentX,
+                color = primaryMarkColor,
+                summary = { CueSummaryView(cue, tempoOffset) }
+            )
             if (drawAllBeatsMarks) {
                 for (i in 1 until cue.timeSignature.noteCount) {
                     result += Mark(
@@ -304,7 +309,7 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
                     )
                 }
             }
-            val nextTimestamp = currentTimestamp + cue.durationAsTimeWithBpmOffset(tempoDiff)
+            val nextTimestamp = currentTimestamp + cue.durationAsTimeWithBpmOffset(tempoOffset)
             currentX = nextTimestamp.toX(duration, width)
             currentTimestamp = nextTimestamp
         }

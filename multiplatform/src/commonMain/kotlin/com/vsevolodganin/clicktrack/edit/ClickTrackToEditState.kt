@@ -12,7 +12,7 @@ fun ClickTrackWithDatabaseId.toEditState(showForwardButton: Boolean) = EditClick
     id = id,
     name = value.name,
     loop = value.loop,
-    tempoDiff = value.tempoDiff,
+    tempoOffset = value.tempoOffset,
     cues = value.cues.mapIndexed { index, cue -> cue.toEditState(index) },
     showForwardButton = showForwardButton,
 )

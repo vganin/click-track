@@ -26,7 +26,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
-import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteOffset
 import com.vsevolodganin.clicktrack.model.bpm
 import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.detectRadialDragGesture
@@ -52,7 +52,7 @@ fun BpmWheel(
 @Composable
 fun BpmWheel(
     value: BeatsPerMinute,
-    onValueChange: (BeatsPerMinuteDiff) -> Unit,
+    onValueChange: (BeatsPerMinuteOffset) -> Unit,
     modifier: Modifier = Modifier,
     sensitivity: Float = 0.08f,
 ) {
@@ -65,7 +65,7 @@ fun BpmWheel(
             val intChange = newFloatState.roundToInt() - floatState.roundToInt()
             floatState = newFloatState
             if (intChange != 0) {
-                onValueChange(BeatsPerMinuteDiff(intChange))
+                onValueChange(BeatsPerMinuteOffset(intChange))
             }
         },
         modifier = modifier.aspectRatio(1f)
