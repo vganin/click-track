@@ -15,6 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.vsevolodganin.clicktrack.model.BeatsPerMinute
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteOffset
 import com.vsevolodganin.clicktrack.model.Cue
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.TimeSignature
@@ -23,20 +25,20 @@ import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.widthInByText
 
 @Composable
-fun CueSummaryView(cue: Cue) {
+fun CueSummaryView(cue: Cue, tempoOffset: BeatsPerMinuteOffset) {
     val cueName = cue.name
     if (cueName.isNullOrBlank()) {
-        BriefSummary(cue)
+        BriefSummary(cue, tempoOffset)
     } else {
-        DetailedSummary(cueName, cue)
+        DetailedSummary(cueName, cue, tempoOffset)
     }
 }
 
 @Composable
-private fun BriefSummary(cue: Cue) {
+private fun BriefSummary(cue: Cue, tempoOffset: BeatsPerMinuteOffset) {
     Row {
         Text(
-            text = cue.bpm.value.toString(),
+            text = tempoToText(cue.bpm, tempoOffset),
             modifier = Modifier.align(Alignment.CenterVertically),
             fontSize = 12.sp
         )
@@ -51,7 +53,7 @@ private fun BriefSummary(cue: Cue) {
 }
 
 @Composable
-private fun DetailedSummary(title: String, cue: Cue) {
+private fun DetailedSummary(title: String, cue: Cue, tempoOffset: BeatsPerMinuteOffset) {
     Column {
         val textStyle = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.SemiBold)
         Text(
@@ -61,8 +63,15 @@ private fun DetailedSummary(title: String, cue: Cue) {
             overflow = TextOverflow.Ellipsis,
             maxLines = 1
         )
-        BriefSummary(cue)
+        BriefSummary(cue, tempoOffset)
     }
+}
+
+private fun tempoToText(tempo: BeatsPerMinute, tempoOffset: BeatsPerMinuteOffset): String {
+    return StringBuilder().apply {
+        append((tempo + tempoOffset).value)
+        if (tempoOffset.value != 0) append('*')
+    }.toString()
 }
 
 @Preview
@@ -73,6 +82,7 @@ private fun Preview() {
             bpm = 60.bpm,
             timeSignature = TimeSignature(3, 4),
             duration = CueDuration.Beats(4),
-        )
+        ),
+        tempoOffset = BeatsPerMinuteOffset(13),
     )
 }
