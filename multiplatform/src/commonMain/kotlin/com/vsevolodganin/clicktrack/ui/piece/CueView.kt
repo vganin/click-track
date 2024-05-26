@@ -4,10 +4,8 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -29,7 +27,6 @@ import com.vsevolodganin.clicktrack.model.DefaultTimeDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.utils.compose.Preview
-import com.vsevolodganin.clicktrack.utils.compose.SimpleSpacer
 import dev.icerock.moko.resources.compose.stringResource
 
 @Composable
@@ -44,7 +41,7 @@ fun CueView(
     dragHandleModifier: Modifier = Modifier,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.padding(vertical = 8.dp)) {
+    Column(modifier = modifier.padding(8.dp)) {
         var expanded by rememberSaveable { mutableStateOf(false) }
 
         Row(
@@ -77,24 +74,23 @@ fun CueView(
 
         AnimatedVisibility(visible = expanded) {
             Column(
+                modifier = Modifier.padding(top = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                SimpleSpacer(height = 8.dp)
-
                 CueDurationView(
                     value = value.duration,
                     onValueChange = onDurationChange,
                     onTypeChange = onDurationTypeChange,
                 )
 
-                Row {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     TimeSignatureView(
                         value = value.timeSignature,
                         onValueChange = onTimeSignatureChange,
                         modifier = Modifier.align(Alignment.CenterVertically)
                     )
-
-                    Spacer(modifier = Modifier.width(16.dp))
 
                     BpmInputField(
                         value = value.bpm,

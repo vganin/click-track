@@ -5,7 +5,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.Arrangement.SpaceBetween
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -129,8 +129,6 @@ private fun Content(
     state: EditClickTrackState,
     listState: LazyListState,
 ) {
-    val contentPadding = 8.dp
-
     // This is a number of non draggable items before cues to offset indices correctly
     val numberOfNonDraggableItems = 3
 
@@ -166,7 +164,6 @@ private fun Content(
                 viewModel = viewModel,
                 loop = state.loop,
                 tempoOffset = state.tempoOffset,
-                contentPadding = contentPadding,
             )
         }
 
@@ -176,7 +173,6 @@ private fun Content(
                     viewModel = viewModel,
                     cue = cue,
                     index = index,
-                    contentPadding = contentPadding,
                     elevation = commonCardElevation(isDragging),
                 )
             }
@@ -191,28 +187,28 @@ private fun OptionsItem(
     viewModel: EditClickTrackViewModel,
     loop: Boolean,
     tempoOffset: BeatsPerMinuteOffset,
-    contentPadding: Dp,
 ) {
     var optionsExpanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(contentPadding),
+            .padding(8.dp),
         elevation = CommonCardElevation.Normal
     ) {
-        Column {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = CenterVertically,
             ) {
-                Spacer(modifier = Modifier.width(8.dp))
-
                 Text(
                     text = stringResource(MR.strings.edit_click_track_options),
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.h6
                 )
-
-                Spacer(modifier = Modifier.weight(1f))
 
                 IconButton(
                     onClick = { optionsExpanded = !optionsExpanded },
@@ -226,7 +222,9 @@ private fun OptionsItem(
                 enter = fadeIn() + expandVertically(expandFrom = Bottom),
                 exit = fadeOut() + shrinkVertically(shrinkTowards = Bottom),
             ) {
-                Column {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     LoopItem(viewModel, loop)
                     TempoOffsetItem(viewModel, tempoOffset)
                 }
@@ -241,14 +239,12 @@ private fun LoopItem(
     loop: Boolean,
 ) {
     Row {
-        Spacer(modifier = Modifier.width(8.dp))
-
         Text(
             text = stringResource(MR.strings.edit_click_track_loop),
-            modifier = Modifier.align(CenterVertically)
+            modifier = Modifier
+                .align(CenterVertically)
+                .weight(1f)
         )
-
-        Spacer(modifier = Modifier.weight(1f))
 
         Checkbox(
             checked = loop,
@@ -263,8 +259,7 @@ private fun TempoOffsetItem(
     tempoOffset: BeatsPerMinuteOffset,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-        horizontalArrangement = SpaceBetween,
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = CenterVertically
     ) {
         var floatTempoOffset by remember(tempoOffset) {
@@ -303,17 +298,16 @@ private fun ReorderableItemScope.CueListItem(
     viewModel: EditClickTrackViewModel,
     cue: EditCueState,
     index: Int,
-    contentPadding: Dp,
     elevation: Dp,
     modifier: Modifier = Modifier,
 ) {
     SwipeToDelete(
         onDeleted = { viewModel.onCueRemove(index) },
         modifier = modifier,
-        contentPadding = contentPadding,
+        contentPadding = 8.dp,
     ) {
         Card(
-            modifier = Modifier.padding(contentPadding),
+            modifier = Modifier.padding(8.dp),
             elevation = elevation,
         ) {
             CueView(
