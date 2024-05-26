@@ -291,6 +291,9 @@ private fun TempoOffsetItem(
         BpmInputField(
             value = floatTempoOffset.roundToInt(),
             onValueChange = viewModel::onTempoOffsetChange,
+            showSign = true,
+            allowedNumbersRange = -999..999,
+            fallbackNumber = 0
         )
     }
 }
