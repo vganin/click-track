@@ -304,7 +304,7 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
                     )
                 }
             }
-            val nextTimestamp = currentTimestamp + cue.durationAsTimeWithBpmOffset(tempoDiff)
+            val nextTimestamp = currentTimestamp + cue.durationAsTimeWithBpmOffset(tempoOffset)
             currentX = nextTimestamp.toX(duration, width)
             currentTimestamp = nextTimestamp
         }

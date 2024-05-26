@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.edit
 
 import com.benasher44.uuid.uuid4
-import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteOffset
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
@@ -14,7 +14,7 @@ data class EditClickTrackState(
     val id: ClickTrackId.Database,
     val name: String,
     val loop: Boolean,
-    val tempoDiff: BeatsPerMinuteDiff,
+    val tempoOffset: BeatsPerMinuteOffset,
     val cues: List<EditCueState>,
     val showForwardButton: Boolean,
 ) : Parcelable

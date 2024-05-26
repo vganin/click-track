@@ -41,7 +41,7 @@ import com.vsevolodganin.clicktrack.metronome.MetronomeState
 import com.vsevolodganin.clicktrack.metronome.MetronomeTimeSignature
 import com.vsevolodganin.clicktrack.metronome.MetronomeViewModel
 import com.vsevolodganin.clicktrack.metronome.metronomeClickTrack
-import com.vsevolodganin.clicktrack.model.BeatsPerMinuteDiff
+import com.vsevolodganin.clicktrack.model.BeatsPerMinuteOffset
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.model.bpm
@@ -250,7 +250,7 @@ private fun Preview() = ClickTrackTheme {
             override fun onToggleOptions() = Unit
             override fun onOptionsExpandedChange(isOpened: Boolean) = Unit
             override fun onPatternChoose(pattern: NotePattern) = Unit
-            override fun onBpmChange(bpmDiff: BeatsPerMinuteDiff) = Unit
+            override fun onBpmChange(bpmDiff: BeatsPerMinuteOffset) = Unit
             override fun onTogglePlay() = Unit
             override fun onBpmMeterClick() = Unit
         }

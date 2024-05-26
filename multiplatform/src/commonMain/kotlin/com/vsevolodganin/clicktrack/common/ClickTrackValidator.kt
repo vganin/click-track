@@ -27,7 +27,7 @@ class ClickTrackValidator(private val bpmValidator: BpmValidator) {
             validClickTrack = ClickTrack(
                 name = editClickTrackState.name.trim(),
                 loop = editClickTrackState.loop,
-                tempoDiff = editClickTrackState.tempoDiff,
+                tempoOffset = editClickTrackState.tempoOffset,
                 cues = cueValidationResults.map(CueValidationResult::validCue),
             ),
             cueValidationResults = cueValidationResults,

@@ -24,8 +24,8 @@ data class BeatsPerMinute(val value: Int) : Parcelable, Comparable<BeatsPerMinut
     override fun compareTo(other: BeatsPerMinute): Int = value.compareTo(other.value)
     operator fun plus(o: BeatsPerMinute): BeatsPerMinute = (value + o.value).bpm
     operator fun minus(o: BeatsPerMinute): BeatsPerMinute = (value - o.value).bpm
-    operator fun plus(o: BeatsPerMinuteDiff): BeatsPerMinute = (value + o.value).bpm
-    operator fun minus(o: BeatsPerMinuteDiff): BeatsPerMinute = (value - o.value).bpm
+    operator fun plus(o: BeatsPerMinuteOffset): BeatsPerMinute = (value + o.value).bpm
+    operator fun minus(o: BeatsPerMinuteOffset): BeatsPerMinute = (value - o.value).bpm
 }
 
 fun BeatsPerMinute(beatCount: Int, timelapse: Duration): BeatsPerMinute {
