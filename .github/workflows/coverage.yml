@@ -20,9 +20,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Setup JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
           java-version: 17
+          cache: 'gradle'
       - name: Generate coverage output
         run: |
           ./gradlew :koverHtmlReport
