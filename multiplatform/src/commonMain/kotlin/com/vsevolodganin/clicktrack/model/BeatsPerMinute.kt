@@ -13,6 +13,8 @@ data class BeatsPerMinute(val value: Int) : Parcelable, Comparable<BeatsPerMinut
 
     companion object {
         val VALID_TEMPO_RANGE = 1..999
+        val MAX = VALID_TEMPO_RANGE.last.bpm
+        val MIN = VALID_TEMPO_RANGE.first.bpm
     }
 
     init {
