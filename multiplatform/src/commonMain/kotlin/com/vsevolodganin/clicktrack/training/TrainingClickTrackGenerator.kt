@@ -123,19 +123,28 @@ class TrainingClickTrackGenerator() {
             var runningTempo = startingTempo
 
             while (runningDuration < endingTime) {
-                val segmentLengthAsTime = segmentLength.asTimeGiven(runningTempo, DefaultTimeSignature)
-                val segmentLengthCoerced = if (runningDuration + segmentLengthAsTime <= endingTime) {
-                    segmentLength
+                if (runningTempo < BeatsPerMinute.MAX) {
+                    val segmentLengthAsTime = segmentLength.asTimeGiven(runningTempo, DefaultTimeSignature)
+                    val segmentLengthCoerced = if (runningDuration + segmentLengthAsTime <= endingTime) {
+                        segmentLength
+                    } else {
+                        CueDuration.Time(endingTime - runningDuration)
+                    }
+                    this += Cue(
+                        bpm = runningTempo,
+                        timeSignature = DefaultTimeSignature,
+                        duration = segmentLengthCoerced,
+                    )
+                    runningDuration += segmentLengthAsTime
+                    runningTempo += tempoIncrement
                 } else {
-                    CueDuration.Time(endingTime - runningDuration)
+                    this += Cue(
+                        bpm = runningTempo,
+                        timeSignature = DefaultTimeSignature,
+                        duration = CueDuration.Time(endingTime - runningDuration),
+                    )
+                    runningDuration = endingTime
                 }
-                this += Cue(
-                    bpm = runningTempo,
-                    timeSignature = DefaultTimeSignature,
-                    duration = segmentLengthCoerced,
-                )
-                runningDuration += segmentLengthAsTime
-                runningTempo += tempoIncrement
             }
         }
     }
