@@ -82,7 +82,7 @@ private fun Content(viewModel: ClickTrackListViewModel) {
 
     LazyColumn(
         state = lazyListState,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         item {
             // FIXME: Dummy item to workaround https://github.com/Calvin-LL/Reorderable/issues/4
@@ -95,9 +95,9 @@ private fun Content(viewModel: ClickTrackListViewModel) {
                     viewModel = viewModel,
                     clickTrack = clickTrack,
                     dragHandleModifier = Modifier.draggableHandle(
-                        onDragStopped = { viewModel.onItemMoveFinished() }
+                        onDragStopped = { viewModel.onItemMoveFinished() },
                     ),
-                    elevation = commonCardElevation(isDragging)
+                    elevation = commonCardElevation(isDragging),
                 )
             }
         }
@@ -131,14 +131,14 @@ private fun ClickTrackListItem(
 
     SwipeToDelete(
         onDeleted = { viewModel.onItemRemove(clickTrack.id) },
-        contentPadding = contentPadding
+        contentPadding = contentPadding,
     ) {
         Card(
             modifier = Modifier
                 .padding(contentPadding)
                 .fillMaxWidth()
                 .height(100.dp),
-            elevation = elevation
+            elevation = elevation,
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 ClickTrackView(
@@ -152,15 +152,15 @@ private fun ClickTrackListItem(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(color = MaterialTheme.colors.surface.copy(alpha = 0.25f))
+                        .background(color = MaterialTheme.colors.surface.copy(alpha = 0.25f)),
                 )
 
                 Row(
                     modifier = Modifier.align(Alignment.CenterStart),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     DragHandle(
-                        modifier = dragHandleModifier
+                        modifier = dragHandleModifier,
                     )
 
                     Text(
@@ -174,24 +174,33 @@ private fun ClickTrackListItem(
 
 @ScreenPreview
 @Composable
-fun ClickTrackListPreview() = ClickTrackTheme {
-    ClickTrackListScreenView(
-        viewModel = object : ClickTrackListViewModel {
-            override val state: StateFlow<ClickTrackListState> = MutableStateFlow(
-                ClickTrackListState(
-                    listOf(
-                        PREVIEW_CLICK_TRACK_1,
-                        PREVIEW_CLICK_TRACK_2,
-                    )
+fun ClickTrackListPreview() =
+    ClickTrackTheme {
+        ClickTrackListScreenView(
+            viewModel = object : ClickTrackListViewModel {
+                override val state: StateFlow<ClickTrackListState> = MutableStateFlow(
+                    ClickTrackListState(
+                        listOf(
+                            PREVIEW_CLICK_TRACK_1,
+                            PREVIEW_CLICK_TRACK_2,
+                        ),
+                    ),
                 )
-            )
 
-            override fun onAddClick() = Unit
-            override fun onItemClick(id: ClickTrackId.Database) = Unit
-            override fun onItemRemove(id: ClickTrackId.Database) = Unit
-            override fun onMenuClick() = Unit
-            override fun onItemMove(from: Int, to: Int) = Unit
-            override fun onItemMoveFinished() = Unit
-        }
-    )
-}
+                override fun onAddClick() = Unit
+
+                override fun onItemClick(id: ClickTrackId.Database) = Unit
+
+                override fun onItemRemove(id: ClickTrackId.Database) = Unit
+
+                override fun onMenuClick() = Unit
+
+                override fun onItemMove(
+                    from: Int,
+                    to: Int,
+                ) = Unit
+
+                override fun onItemMoveFinished() = Unit
+            },
+        )
+    }

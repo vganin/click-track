@@ -4,6 +4,14 @@ import com.vsevolodganin.clicktrack.utils.keep.Keep
 
 @Keep
 interface Logger {
-    fun logError(tag: String, message: String)
-    fun logError(tag: String, message: String, throwable: Throwable?)
+    fun logError(
+        tag: String,
+        message: String,
+    )
+
+    fun logError(
+        tag: String,
+        message: String,
+        throwable: Throwable?,
+    )
 }

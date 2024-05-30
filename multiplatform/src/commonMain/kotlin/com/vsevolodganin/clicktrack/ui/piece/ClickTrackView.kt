@@ -110,6 +110,7 @@ fun ClickTrackView(
 
         // Marks
         val marks = clickTrack.asMarks(widthPx, drawAllBeatsMarks)
+
         fun Float.transformXAndPixelAlign(): Float {
             return ((this + translateX) * scaleX).roundToInt().toFloat()
         }
@@ -141,8 +142,9 @@ fun ClickTrackView(
                     onProgressDrop = { progress ->
                         isProgressCaptured = false
                         onProgressDrop(progress.value.toDouble() / widthPx)
-                    })
-                .size(width, height)
+                    },
+                )
+                .size(width, height),
         ) {
             withTransform(transformBlock = {
                 // Transform only Y because X transformation needs post pixel alignment
@@ -165,7 +167,7 @@ fun ClickTrackView(
                         color = progressLineColor,
                         strokeWidth = progressLineWidth,
                         start = Offset(progressX, 0f),
-                        end = Offset(progressX, size.height)
+                        end = Offset(progressX, size.height),
                     )
                 }
             })
@@ -239,9 +241,11 @@ private fun progressLinePosition(
         if (!progress.isPaused) {
             val animationDuration = (totalDuration - progressTimePosition).coerceAtLeast(Duration.ZERO)
             animatableProgressLinePosition.animateTo(
-                targetValue = totalWidthPx, animationSpec = tween(
-                    durationMillis = animationDuration.inWholeMilliseconds.toInt(), easing = LinearEasing
-                )
+                targetValue = totalWidthPx,
+                animationSpec = tween(
+                    durationMillis = animationDuration.inWholeMilliseconds.toInt(),
+                    easing = LinearEasing,
+                ),
             )
         }
     }
@@ -263,14 +267,16 @@ private fun progressLineWidth(
         }
         val animSpec: AnimationSpec<Float> = when (isProgressCaptured) {
             true -> spring(
-                dampingRatio = Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessLow
+                dampingRatio = Spring.DampingRatioHighBouncy,
+                stiffness = Spring.StiffnessLow,
             )
 
             false -> spring()
         }
 
         animatableWidth.animateTo(
-            targetValue = newProgressLineWidth, animationSpec = animSpec
+            targetValue = newProgressLineWidth,
+            animationSpec = animSpec,
         )
     }
 
@@ -284,7 +290,10 @@ private data class Mark(
 )
 
 @Composable
-private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<Mark> {
+private fun ClickTrack.asMarks(
+    width: Float,
+    drawAllBeatsMarks: Boolean,
+): List<Mark> {
     val primaryMarkColor = MaterialTheme.colors.onSurface
     val secondaryMarkColor = primaryMarkColor.copy(alpha = ContentAlpha.medium)
 
@@ -298,7 +307,7 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
             result += Mark(
                 x = currentX,
                 color = primaryMarkColor,
-                summary = { CueSummaryView(cue, tempoOffset) }
+                summary = { CueSummaryView(cue, tempoOffset) },
             )
             if (drawAllBeatsMarks) {
                 for (i in 1 until cue.timeSignature.noteCount) {
@@ -318,7 +327,10 @@ private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<M
     }
 }
 
-private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
+private fun Duration.toX(
+    totalDuration: Duration,
+    viewWidth: Float,
+): Float {
     return if (totalDuration == Duration.ZERO || viewWidth == 0f) {
         0f
     } else {
@@ -335,128 +347,130 @@ private fun Modifier.clickTrackGestures(
     onGestureEnded: () -> Unit,
     onProgressDragStart: suspend (progress: AnimatableFloat) -> Unit,
     onProgressDrop: suspend (progress: AnimatableFloat) -> Unit,
-): Modifier = composed {
-    if ((progressDragAndDropEnabled && progressPosition != null) || viewportZoomAndPanEnabled) {
-        val hapticFeedback = LocalHapticFeedback.current
-        val coroutineScope = rememberCoroutineScope()
-        var progressDragInProgress by remember { mutableStateOf(false) }
+): Modifier =
+    composed {
+        if ((progressDragAndDropEnabled && progressPosition != null) || viewportZoomAndPanEnabled) {
+            val hapticFeedback = LocalHapticFeedback.current
+            val coroutineScope = rememberCoroutineScope()
+            var progressDragInProgress by remember { mutableStateOf(false) }
 
-        this
-            .pointerInput(Unit) {
-                awaitEachGesture {
-                    awaitFirstDown(requireUnconsumed = false)
-                    onGestureStarted()
-                    @Suppress("ControlFlowWithEmptyBody") // Waiting for all pointers to go up
-                    while (awaitPointerEvent().changes.fastAny(PointerInputChange::pressed));
-                    onGestureEnded()
+            this
+                .pointerInput(Unit) {
+                    awaitEachGesture {
+                        awaitFirstDown(requireUnconsumed = false)
+                        onGestureStarted()
+                        @Suppress("ControlFlowWithEmptyBody") // Waiting for all pointers to go up
+                        while (awaitPointerEvent().changes.fastAny(PointerInputChange::pressed)
+                            );
+                        onGestureEnded()
+                    }
                 }
-            }
-            .pointerInput(
-                progressDragAndDropEnabled,
-                progressPosition
-            ) {
-                if (progressDragAndDropEnabled && progressPosition != null) {
-                    detectDragGesturesAfterLongPress(
-                        onDragStart = {
-                            progressDragInProgress = true
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                            coroutineScope.launch {
-                                onProgressDragStart(progressPosition)
-                            }
-                        },
-                        onDragEnd = {
-                            progressDragInProgress = false
-                            coroutineScope.launch {
-                                onProgressDrop(progressPosition)
-                            }
-                        },
-                        onDragCancel = {
-                            progressDragInProgress = false
-                            coroutineScope.launch {
-                                onProgressDrop(progressPosition)
-                            }
-                        },
-                        onDrag = { _, dragAmount ->
-                            val currentViewportTransformations = viewportState.transformations
-                            val snapTo = progressPosition.value + dragAmount.x / currentViewportTransformations.scaleX
-                            coroutineScope.launch {
-                                progressPosition.snapTo(snapTo)
-                            }
-                        }
-                    )
+                .pointerInput(
+                    progressDragAndDropEnabled,
+                    progressPosition,
+                ) {
+                    if (progressDragAndDropEnabled && progressPosition != null) {
+                        detectDragGesturesAfterLongPress(
+                            onDragStart = {
+                                progressDragInProgress = true
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                                coroutineScope.launch {
+                                    onProgressDragStart(progressPosition)
+                                }
+                            },
+                            onDragEnd = {
+                                progressDragInProgress = false
+                                coroutineScope.launch {
+                                    onProgressDrop(progressPosition)
+                                }
+                            },
+                            onDragCancel = {
+                                progressDragInProgress = false
+                                coroutineScope.launch {
+                                    onProgressDrop(progressPosition)
+                                }
+                            },
+                            onDrag = { _, dragAmount ->
+                                val currentViewportTransformations = viewportState.transformations
+                                val snapTo = progressPosition.value + dragAmount.x / currentViewportTransformations.scaleX
+                                coroutineScope.launch {
+                                    progressPosition.snapTo(snapTo)
+                                }
+                            },
+                        )
+                    }
                 }
-            }
-            .pointerInput(viewportZoomAndPanEnabled, progressDragInProgress) {
-                if (viewportZoomAndPanEnabled && !progressDragInProgress) {
-                    detectTapGestures(
-                        onDoubleTap = { offset ->
-                            val currentViewportTransformations = viewportState.transformations
-                            val viewport = viewportState.value
-                            val bounds = viewportState.bounds
-                            val newScale = if (currentViewportTransformations.scaleX < DETAILED_SCALE) DETAILED_SCALE else BASE_SCALE
-                            val newWidth = bounds.width / newScale
-                            val newLeft = viewport.left - (newWidth - viewport.width) * (offset.x - bounds.left) / bounds.width
-                            val newRight = newLeft + newWidth
+                .pointerInput(viewportZoomAndPanEnabled, progressDragInProgress) {
+                    if (viewportZoomAndPanEnabled && !progressDragInProgress) {
+                        detectTapGestures(
+                            onDoubleTap = { offset ->
+                                val currentViewportTransformations = viewportState.transformations
+                                val viewport = viewportState.value
+                                val bounds = viewportState.bounds
+                                val newScale = if (currentViewportTransformations.scaleX < DETAILED_SCALE) DETAILED_SCALE else BASE_SCALE
+                                val newWidth = bounds.width / newScale
+                                val newLeft = viewport.left - (newWidth - viewport.width) * (offset.x - bounds.left) / bounds.width
+                                val newRight = newLeft + newWidth
 
-                            coroutineScope.launch {
-                                viewportState.animateTo(
-                                    newLeft = newLeft.coerceIn(bounds.left, bounds.right - newWidth),
-                                    newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
-                                )
-                            }
-                        }
-                    )
+                                coroutineScope.launch {
+                                    viewportState.animateTo(
+                                        newLeft = newLeft.coerceIn(bounds.left, bounds.right - newWidth),
+                                        newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
+                                    )
+                                }
+                            },
+                        )
+                    }
                 }
-            }
-            .pointerInput(viewportZoomAndPanEnabled, progressDragInProgress) {
-                if (viewportZoomAndPanEnabled && !progressDragInProgress) {
-                    val velocityTracker = VelocityTracker()
-                    detectTransformGesturesWithEndCallbacks(
-                        panZoomLock = false,
-                        onGesture = { centroid, pan, zoom, _ ->
-                            val currentViewportTransformations = viewportState.transformations
-                            val viewport = viewportState.value
-                            val bounds = viewportState.bounds
-                            val newWidth = (viewport.width / zoom).coerceAtMost(bounds.width)
-                            val newLeft = viewport.left -
-                                (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width -
-                                pan.x / currentViewportTransformations.scaleX
-                            val newRight = newLeft + newWidth
+                .pointerInput(viewportZoomAndPanEnabled, progressDragInProgress) {
+                    if (viewportZoomAndPanEnabled && !progressDragInProgress) {
+                        val velocityTracker = VelocityTracker()
+                        detectTransformGesturesWithEndCallbacks(
+                            panZoomLock = false,
+                            onGesture = { centroid, pan, zoom, _ ->
+                                val currentViewportTransformations = viewportState.transformations
+                                val viewport = viewportState.value
+                                val bounds = viewportState.bounds
+                                val newWidth = (viewport.width / zoom).coerceAtMost(bounds.width)
+                                val newLeft = viewport.left -
+                                    (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width -
+                                    pan.x / currentViewportTransformations.scaleX
+                                val newRight = newLeft + newWidth
 
-                            if (zoom == 1f) {
-                                velocityTracker.addPosition(
-                                    timeMillis = Clock.System.now().toEpochMilliseconds(),
-                                    position = centroid
-                                )
-                            } else {
+                                if (zoom == 1f) {
+                                    velocityTracker.addPosition(
+                                        timeMillis = Clock.System.now().toEpochMilliseconds(),
+                                        position = centroid,
+                                    )
+                                } else {
+                                    velocityTracker.resetTracking()
+                                }
+
+                                coroutineScope.launch {
+                                    viewportState.snapTo(
+                                        newLeft = newLeft.coerceIn(bounds.left, bounds.right - newWidth),
+                                        newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
+                                    )
+                                }
+                            },
+                            onGestureEnd = {
+                                val currentViewportTransformations = viewportState.transformations
+                                val velocity = -velocityTracker
+                                    .calculateVelocity()
+                                    .run { Offset(x, y) } / currentViewportTransformations.scaleX
                                 velocityTracker.resetTracking()
-                            }
 
-                            coroutineScope.launch {
-                                viewportState.snapTo(
-                                    newLeft = newLeft.coerceIn(bounds.left, bounds.right - newWidth),
-                                    newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
-                                )
-                            }
-                        },
-                        onGestureEnd = {
-                            val currentViewportTransformations = viewportState.transformations
-                            val velocity = -velocityTracker
-                                .calculateVelocity()
-                                .run { Offset(x, y) } / currentViewportTransformations.scaleX
-                            velocityTracker.resetTracking()
-
-                            coroutineScope.launch {
-                                viewportState.animateDecay(velocity)
-                            }
-                        }
-                    )
+                                coroutineScope.launch {
+                                    viewportState.animateDecay(velocity)
+                                }
+                            },
+                        )
+                    }
                 }
-            }
-    } else {
-        this
+        } else {
+            this
+        }
     }
-}
 
 @Composable
 private fun PlayTrackingModeImpl(
@@ -506,7 +520,10 @@ private val AnimatableRect.transformations
         }
     }
 
-private suspend fun AnimatableRect.animateTo(left: Float, scale: Float) {
+private suspend fun AnimatableRect.animateTo(
+    left: Float,
+    scale: Float,
+) {
     val newWidth = bounds.width / scale
     val newRight = left + newWidth
     animateTo(
@@ -527,6 +544,6 @@ private fun Preview() {
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,
         progress = PlayProgress(1.seconds),
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     )
 }

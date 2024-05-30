@@ -20,14 +20,14 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class PlayerEvent(
     val duration: Duration,
-    val soundType: ClickSoundType? // Null is case of silent pause
+    val soundType: ClickSoundType?, // Null is case of silent pause
 ) {
     fun copy(
         duration: Duration = this.duration,
-        soundType: ClickSoundType? = this.soundType
+        soundType: ClickSoundType? = this.soundType,
     ) = PlayerEvent(
         duration = duration,
-        soundType = soundType
+        soundType = soundType,
     )
 }
 
@@ -58,7 +58,7 @@ fun Cue.toPlayerEvents(tempoOffset: BeatsPerMinuteOffset): Sequence<PlayerEvent>
                 soundEvent(
                     duration = bpmInterval * column.untilNext,
                     soundType = soundType,
-                )
+                ),
             )
         }
     }.withDuration(durationAsTimeWithBpmOffset(tempoOffset))
@@ -74,7 +74,7 @@ fun TwoLayerPolyrhythm.toPlayerEvents(): Sequence<PlayerEvent> {
     val layer2NoteLength = layer1 over layer2
     val polyrhythm = AbstractPolyrhythm(
         pattern1 = List(layer1) { NoteEvent(layer1NoteLength, NoteEvent.Type.NOTE) },
-        pattern2 = List(layer2) { NoteEvent(layer2NoteLength, NoteEvent.Type.NOTE) }
+        pattern2 = List(layer2) { NoteEvent(layer2NoteLength, NoteEvent.Type.NOTE) },
     )
 
     return sequence {
@@ -94,7 +94,7 @@ fun TwoLayerPolyrhythm.toPlayerEvents(): Sequence<PlayerEvent> {
                 soundEvent(
                     duration = bpmInterval * column.untilNext,
                     soundType = soundType,
-                )
+                ),
             )
         }
     }
@@ -144,7 +144,11 @@ private fun Sequence<PlayerEvent>.withDuration(duration: Duration): Sequence<Pla
     }
 }
 
-private fun soundEvent(duration: Duration, soundType: ClickSoundType) = PlayerEvent(duration, soundType)
+private fun soundEvent(
+    duration: Duration,
+    soundType: ClickSoundType,
+) = PlayerEvent(duration, soundType)
+
 private fun delayEvent(duration: Duration) = PlayerEvent(duration, null)
 
 private object Const {

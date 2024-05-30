@@ -26,14 +26,14 @@ fun PlayButtons(
         AnimatedVisibility(
             visible = isPlaying,
             enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
-            exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 })
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 }),
         ) {
             Column {
                 PlayPauseButton(
                     isPlaying = !isPaused,
                     onToggle = onTogglePlayPause,
                     modifier = Modifier.size(40.dp),
-                    enableInsets = enableInsets
+                    enableInsets = enableInsets,
                 )
                 SimpleSpacer(height = 8.dp)
             }
@@ -42,7 +42,7 @@ fun PlayButtons(
         PlayStopButton(
             isPlaying = isPlaying,
             onToggle = onTogglePlayStop,
-            enableInsets = enableInsets
+            enableInsets = enableInsets,
         )
     }
 }

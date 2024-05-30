@@ -15,11 +15,10 @@ class AboutViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: ScreenStackNavigation,
     private val linkOpener: LinkOpener,
-    buildConfig: BuildConfig
+    buildConfig: BuildConfig,
 ) : AboutViewModel, ComponentContext by componentContext {
-
     override val state: StateFlow<AboutState> = MutableStateFlow(
-        AboutState(displayVersion = buildConfig.versionName)
+        AboutState(displayVersion = buildConfig.versionName),
     )
 
     override fun onBackClick() = navigation.pop()

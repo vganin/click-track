@@ -11,7 +11,6 @@ import com.vsevolodganin.clicktrack.soundlibrary.SoundLibraryViewModel
 import com.vsevolodganin.clicktrack.training.TrainingViewModel
 
 sealed interface ScreenViewModel {
-
     class ClickTrackList(val value: ClickTrackListViewModel) : ScreenViewModel
 
     class PlayClickTrack(val value: PlayClickTrackViewModel) : ScreenViewModel

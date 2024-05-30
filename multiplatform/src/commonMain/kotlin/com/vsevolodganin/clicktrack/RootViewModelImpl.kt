@@ -19,7 +19,6 @@ class RootViewModelImpl(
     private val screenStackNavigation: ScreenStackNavigation,
     private val screenStackState: ScreenStackState,
 ) : RootViewModel, ComponentContext by componentContext {
-
     private val scope = coroutineScope()
 
     override val drawer get() = drawerViewModel

@@ -18,13 +18,12 @@ import io.mockk.verify
 import kotlin.test.Test
 
 class ScreenViewModelFactoryTest {
-
     @Test
     fun `When click track list config requested, factory should invoke corresponding delegate`() {
         test<(ComponentContext) -> ClickTrackListViewModelImpl, _, _>(
             config = ScreenConfiguration.ClickTrackList,
             screenViewModelFactoryProvider = { screenViewModelFactory(clickTrackListViewModelFactory = it) },
-            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) }
+            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) },
         )
     }
 
@@ -33,7 +32,7 @@ class ScreenViewModelFactoryTest {
         test<(ComponentContext, ScreenConfiguration.PlayClickTrack) -> PlayClickTrackViewModelImpl, _, _>(
             config = ScreenConfiguration.PlayClickTrack(mockk()),
             screenViewModelFactoryProvider = { screenViewModelFactory(playClickTrackViewModelFactory = it) },
-            viewModelFactoryInvoke = { componentContext, config -> invoke(componentContext, config) }
+            viewModelFactoryInvoke = { componentContext, config -> invoke(componentContext, config) },
         )
     }
 
@@ -42,7 +41,7 @@ class ScreenViewModelFactoryTest {
         test<(ComponentContext, ScreenConfiguration.EditClickTrack) -> EditClickTrackViewModelImpl, _, _>(
             config = ScreenConfiguration.EditClickTrack(mockk(), true),
             screenViewModelFactoryProvider = { screenViewModelFactory(editClickTrackViewModelFactory = it) },
-            viewModelFactoryInvoke = { componentContext, config -> invoke(componentContext, config) }
+            viewModelFactoryInvoke = { componentContext, config -> invoke(componentContext, config) },
         )
     }
 
@@ -51,7 +50,7 @@ class ScreenViewModelFactoryTest {
         test<(ComponentContext) -> MetronomeViewModelImpl, _, _>(
             config = ScreenConfiguration.Metronome,
             screenViewModelFactoryProvider = { screenViewModelFactory(metronomeViewModelFactory = it) },
-            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) }
+            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) },
         )
     }
 
@@ -60,7 +59,7 @@ class ScreenViewModelFactoryTest {
         test<(ComponentContext) -> SettingsViewModelImpl, _, _>(
             config = ScreenConfiguration.Settings,
             screenViewModelFactoryProvider = { screenViewModelFactory(settingsViewModelFactory = it) },
-            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) }
+            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) },
         )
     }
 
@@ -69,7 +68,7 @@ class ScreenViewModelFactoryTest {
         test<(ComponentContext) -> SoundLibraryViewModelImpl, _, _>(
             config = ScreenConfiguration.SoundLibrary,
             screenViewModelFactoryProvider = { screenViewModelFactory(soundLibraryViewModelFactory = it) },
-            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) }
+            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) },
         )
     }
 
@@ -78,7 +77,7 @@ class ScreenViewModelFactoryTest {
         test<(ComponentContext) -> TrainingViewModelImpl, _, _>(
             config = ScreenConfiguration.Training,
             screenViewModelFactoryProvider = { screenViewModelFactory(trainingViewModelFactory = it) },
-            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) }
+            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) },
         )
     }
 
@@ -87,7 +86,7 @@ class ScreenViewModelFactoryTest {
         test<(ComponentContext) -> AboutViewModelImpl, _, _>(
             config = ScreenConfiguration.About,
             screenViewModelFactoryProvider = { screenViewModelFactory(aboutViewModelFactory = it) },
-            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) }
+            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) },
         )
     }
 
@@ -96,7 +95,7 @@ class ScreenViewModelFactoryTest {
         test<(ComponentContext) -> PolyrhythmsViewModelImpl, _, _>(
             config = ScreenConfiguration.Polyrhythms,
             screenViewModelFactoryProvider = { screenViewModelFactory(polyrhythmsViewModelFactory = it) },
-            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) }
+            viewModelFactoryInvoke = { componentContext, _ -> invoke(componentContext) },
         )
     }
 
@@ -137,6 +136,6 @@ class ScreenViewModelFactoryTest {
         soundLibraryViewModelFactory = soundLibraryViewModelFactory,
         trainingViewModelFactory = trainingViewModelFactory,
         aboutViewModelFactory = aboutViewModelFactory,
-        polyrhythmsViewModelFactory = polyrhythmsViewModelFactory
+        polyrhythmsViewModelFactory = polyrhythmsViewModelFactory,
     )
 }

@@ -8,7 +8,6 @@ import com.vsevolodganin.clicktrack.di.component.create
 import com.vsevolodganin.clicktrack.utils.cast
 
 class MainApplication : Application() {
-
     lateinit var component: ApplicationComponent
         private set
 
@@ -32,13 +31,13 @@ class MainApplication : Application() {
             StrictMode.ThreadPolicy.Builder()
                 .detectAll()
                 .penaltyLog()
-                .build()
+                .build(),
         )
         StrictMode.setVmPolicy(
             StrictMode.VmPolicy.Builder()
                 .detectAll()
                 .penaltyLog()
-                .build()
+                .build(),
         )
     }
 }

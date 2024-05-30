@@ -25,8 +25,10 @@ class ClickTrackRepository(
     private val database: Database,
     private val json: Json,
 ) : CanMigrate {
-
-    override fun migrate(fromVersion: Int, toVersion: Int) {
+    override fun migrate(
+        fromVersion: Int,
+        toVersion: Int,
+    ) {
         if (fromVersion == UserPreferencesRepository.Const.NO_APP_VERSION_CODE) {
             for (clickTrack in PreMadeClickTracks.DATA) {
                 insert(clickTrack)
@@ -61,18 +63,21 @@ class ClickTrackRepository(
                 insert(
                     name = clickTrack.name,
                     serializedValue = json.encodeToString(clickTrack),
-                    ordinal = count
+                    ordinal = count,
                 )
                 lastRowId().executeAsOne()
             }
         }.let(ClickTrackId::Database)
     }
 
-    fun update(id: ClickTrackId.Database, clickTrack: ClickTrack) {
+    fun update(
+        id: ClickTrackId.Database,
+        clickTrack: ClickTrack,
+    ) {
         database.sqlClickTrackQueries.update(
             id = id.value,
             name = clickTrack.name,
-            serializedValue = clickTrack.serializeToString()
+            serializedValue = clickTrack.serializeToString(),
         )
     }
 
@@ -93,10 +98,11 @@ class ClickTrackRepository(
     private fun StorageClickTrack.toCommon(): ClickTrackWithDatabaseId {
         return ClickTrackWithDatabaseId(
             id = ClickTrackId.Database(id),
-            value = serializedValue.deserializeToClickTrack()
+            value = serializedValue.deserializeToClickTrack(),
         )
     }
 
     private fun ClickTrack.serializeToString(): String = json.encodeToString(this)
+
     private fun String.deserializeToClickTrack(): ClickTrack = json.decodeFromString(this)
 }

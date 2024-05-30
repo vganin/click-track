@@ -16,7 +16,6 @@ abstract class ApplicationComponent :
     SerializationModule,
     DatabaseModule,
     UserPreferencesModule {
-
     @get:Provides
     val BuildConfigImpl.binding: BuildConfig get() = this
 

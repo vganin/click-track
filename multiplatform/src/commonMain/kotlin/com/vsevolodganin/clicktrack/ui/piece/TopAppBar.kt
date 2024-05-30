@@ -26,7 +26,7 @@ fun TopAppBar(
         actions = actions,
         backgroundColor = MaterialTheme.colors.darkAppBar,
         contentColor = MaterialTheme.colors.onDarkAppBarSurface,
-        elevation = elevation
+        elevation = elevation,
     )
 }
 
@@ -46,5 +46,5 @@ internal expect fun TopAppBar(
     actions: @Composable RowScope.() -> Unit,
     backgroundColor: Color,
     contentColor: Color,
-    elevation: Dp
+    elevation: Dp,
 )

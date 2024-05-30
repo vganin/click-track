@@ -14,24 +14,26 @@ import androidx.compose.ui.platform.LocalView
 @Composable
 actual fun ForcedHapticFeedback(content: @Composable () -> Unit) {
     val view = LocalView.current
-    CompositionLocalProvider(LocalHapticFeedback provides object : HapticFeedback {
-        override fun performHapticFeedback(hapticFeedbackType: HapticFeedbackType) {
-            view.performHapticFeedback(
-                when (hapticFeedbackType) {
-                    LongPress -> HapticFeedbackConstants.LONG_PRESS
-                    TextHandleMove -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                        HapticFeedbackConstants.TEXT_HANDLE_MOVE
-                    } else {
-                        return
-                    }
+    CompositionLocalProvider(
+        LocalHapticFeedback provides object : HapticFeedback {
+            override fun performHapticFeedback(hapticFeedbackType: HapticFeedbackType) {
+                view.performHapticFeedback(
+                    when (hapticFeedbackType) {
+                        LongPress -> HapticFeedbackConstants.LONG_PRESS
+                        TextHandleMove -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                            HapticFeedbackConstants.TEXT_HANDLE_MOVE
+                        } else {
+                            return
+                        }
 
-                    else -> return
-                },
-                @Suppress("DEPRECATION") // TODO: Fix deprecation
-                HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING
-            )
-        }
-    }) {
+                        else -> return
+                    },
+                    @Suppress("DEPRECATION") // TODO: Fix deprecation
+                    HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING,
+                )
+            }
+        },
+    ) {
         content()
     }
 }

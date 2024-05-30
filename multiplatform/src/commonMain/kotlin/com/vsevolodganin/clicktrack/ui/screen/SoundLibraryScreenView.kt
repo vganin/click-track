@@ -94,7 +94,7 @@ private fun Content(
 @Composable
 private fun ClicksSoundsItem(
     viewModel: SoundLibraryViewModel,
-    item: SelectableClickSoundsItem
+    item: SelectableClickSoundsItem,
 ) {
     when (item) {
         is SelectableClickSoundsItem.Builtin -> BuiltinClickSoundsItem(viewModel, item)
@@ -111,7 +111,7 @@ private fun BuiltinClickSoundsItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = { viewModel.onItemClick(item.id) })
-            .padding(start = 8.dp)
+            .padding(start = 8.dp),
     ) {
         RadioButton(
             selected = item.selected,
@@ -127,7 +127,7 @@ private fun BuiltinClickSoundsItem(
                 .fillMaxWidth()
                 .align(CenterVertically),
             textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.subtitle1
+            style = MaterialTheme.typography.subtitle1,
         )
     }
 }
@@ -148,7 +148,7 @@ private fun UserDefinedSoundsItem(
                 .fillMaxWidth()
                 .padding(contentPadding)
                 .clickable(onClick = { viewModel.onItemClick(item.id) }),
-            elevation = CommonCardElevation.Normal
+            elevation = CommonCardElevation.Normal,
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -156,7 +156,7 @@ private fun UserDefinedSoundsItem(
                 RadioButton(
                     selected = item.selected,
                     onClick = { viewModel.onItemClick(item.id) },
-                    Modifier.align(CenterVertically)
+                    Modifier.align(CenterVertically),
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -176,7 +176,7 @@ private fun UserDefinedSoundsItem(
                         OutlinedButton(
                             onClick = { viewModel.onItemSoundSelect(item.id, ClickSoundType.STRONG) },
                             modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.secondary)
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.secondary),
                         ) {
                             Text(
                                 text = item.strongBeatValue,
@@ -198,7 +198,7 @@ private fun UserDefinedSoundsItem(
                         OutlinedButton(
                             onClick = { viewModel.onItemSoundSelect(item.id, ClickSoundType.WEAK) },
                             modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.secondary)
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.secondary),
                         ) {
                             Text(
                                 text = item.weakBeatValue,
@@ -218,7 +218,7 @@ private fun UserDefinedSoundsItem(
                         Icon(
                             imageVector = Icons.Default.Error,
                             contentDescription = null,
-                            tint = MaterialTheme.colors.error
+                            tint = MaterialTheme.colors.error,
                         )
                     }
                 } else {
@@ -236,42 +236,51 @@ private fun UserDefinedSoundsItem(
 
 @ScreenPreview
 @Composable
-private fun Preview() = ClickTrackTheme {
-    SoundLibraryScreenView(
-        viewModel = object : SoundLibraryViewModel {
-            override val state: StateFlow<SoundLibraryState?> = MutableStateFlow(
-                SoundLibraryState(
-                    items = listOf(
-                        SelectableClickSoundsItem.Builtin(
-                            data = BuiltinClickSounds.BEEP,
-                            selected = true
+private fun Preview() =
+    ClickTrackTheme {
+        SoundLibraryScreenView(
+            viewModel = object : SoundLibraryViewModel {
+                override val state: StateFlow<SoundLibraryState?> = MutableStateFlow(
+                    SoundLibraryState(
+                        items = listOf(
+                            SelectableClickSoundsItem.Builtin(
+                                data = BuiltinClickSounds.BEEP,
+                                selected = true,
+                            ),
+                            SelectableClickSoundsItem.UserDefined(
+                                id = ClickSoundsId.Database(0L),
+                                strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
+                                weakBeatValue = "/audio/audio/audio/audio/weak.mp3",
+                                hasError = false,
+                                isPlaying = true,
+                                selected = false,
+                            ),
+                            SelectableClickSoundsItem.UserDefined(
+                                id = ClickSoundsId.Database(1L),
+                                strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
+                                weakBeatValue = "no_access.mp3",
+                                hasError = true,
+                                isPlaying = false,
+                                selected = false,
+                            ),
                         ),
-                        SelectableClickSoundsItem.UserDefined(
-                            id = ClickSoundsId.Database(0L),
-                            strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
-                            weakBeatValue = "/audio/audio/audio/audio/weak.mp3",
-                            hasError = false,
-                            isPlaying = true,
-                            selected = false
-                        ),
-                        SelectableClickSoundsItem.UserDefined(
-                            id = ClickSoundsId.Database(1L),
-                            strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
-                            weakBeatValue = "no_access.mp3",
-                            hasError = true,
-                            isPlaying = false,
-                            selected = false
-                        )
                     ),
                 )
-            )
 
-            override fun onBackClick() = Unit
-            override fun onAddNewClick() = Unit
-            override fun onItemClick(id: ClickSoundsId) = Unit
-            override fun onItemRemove(id: ClickSoundsId.Database) = Unit
-            override fun onItemSoundSelect(id: ClickSoundsId.Database, type: ClickSoundType) = Unit
-            override fun onItemSoundTestToggle(id: ClickSoundsId.Database) = Unit
-        }
-    )
-}
+                override fun onBackClick() = Unit
+
+                override fun onAddNewClick() = Unit
+
+                override fun onItemClick(id: ClickSoundsId) = Unit
+
+                override fun onItemRemove(id: ClickSoundsId.Database) = Unit
+
+                override fun onItemSoundSelect(
+                    id: ClickSoundsId.Database,
+                    type: ClickSoundType,
+                ) = Unit
+
+                override fun onItemSoundTestToggle(id: ClickSoundsId.Database) = Unit
+            },
+        )
+    }

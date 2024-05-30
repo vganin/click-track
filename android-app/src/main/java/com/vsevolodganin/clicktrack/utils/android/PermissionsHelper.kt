@@ -12,22 +12,24 @@ import me.tatarka.inject.annotations.Inject
 @MainControllerScope
 @Inject
 class PermissionsHelper(
-    activity: AppCompatActivity
+    activity: AppCompatActivity,
 ) {
     // FIXME: Fix process restoration case
 
     private val resultChannel = Channel<Map<String, Boolean>>()
     private val launcher = activity.registerForActivityResult(RequestMultiplePermissions(), resultChannel::trySend)
 
-    suspend fun requestPermission(permission: String): Boolean? = coroutineScope {
-        requestPermissions(arrayOf(permission))[permission]
-    }
-
-    suspend fun requestPermissions(permissions: Array<String>): Map<String, Boolean> = coroutineScope {
-        val resultAsync = async(start = CoroutineStart.UNDISPATCHED) {
-            resultChannel.receive()
+    suspend fun requestPermission(permission: String): Boolean? =
+        coroutineScope {
+            requestPermissions(arrayOf(permission))[permission]
         }
-        launcher.launch(permissions)
-        resultAsync.await()
-    }
+
+    suspend fun requestPermissions(permissions: Array<String>): Map<String, Boolean> =
+        coroutineScope {
+            val resultAsync = async(start = CoroutineStart.UNDISPATCHED) {
+                resultChannel.receive()
+            }
+            launcher.launch(permissions)
+            resultAsync.await()
+        }
 }

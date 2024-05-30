@@ -13,17 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun DragHandle(
-    modifier: Modifier = Modifier
-) {
+fun DragHandle(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier.size(38.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Icon(
             imageVector = Icons.Default.DragIndicator,
             contentDescription = null,
-            tint = LocalContentColor.current.copy(alpha = ContentAlpha.medium)
+            tint = LocalContentColor.current.copy(alpha = ContentAlpha.medium),
         )
     }
 }

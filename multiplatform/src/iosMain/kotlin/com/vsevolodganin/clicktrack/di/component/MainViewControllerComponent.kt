@@ -24,10 +24,9 @@ import me.tatarka.inject.annotations.Provides
 @Component
 abstract class MainViewControllerComponent(
     @Component protected val applicationComponent: ApplicationComponent,
-    @get:Provides protected val componentContext: ComponentContext
+    @get:Provides protected val componentContext: ComponentContext,
 ) : ViewModelModule,
     MigrationModule {
-
     abstract val rootViewModel: RootViewModel
     abstract val migrationManager: MigrationManager
 

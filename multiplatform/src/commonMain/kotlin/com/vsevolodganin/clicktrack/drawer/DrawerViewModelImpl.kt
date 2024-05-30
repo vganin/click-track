@@ -20,12 +20,11 @@ class DrawerViewModelImpl(
     private val navigation: ScreenStackNavigation,
     screenStackState: Lazy<ScreenStackState>, // Lazy to avoid cyclic dependency initialization
 ) : DrawerViewModel, ComponentContext by componentContext {
-
     private val _state: MutableStateFlow<DrawerState> = MutableStateFlow(
         DrawerState(
             isOpened = false,
             selectedItem = null,
-        )
+        ),
     )
 
     override val state: StateFlow<DrawerState> = _state
@@ -38,7 +37,7 @@ class DrawerViewModelImpl(
         var cancellation: Cancellation? = null
         lifecycle.subscribe(
             onCreate = { cancellation = screenStackState.value.observe(onScreenStackChange) },
-            onDestroy = { cancellation?.cancel() }
+            onDestroy = { cancellation?.cancel() },
         )
     }
 
@@ -73,7 +72,8 @@ class DrawerViewModelImpl(
             ScreenConfiguration.Polyrhythms -> DrawerState.SelectedItem.POLYRHYTHMS
             ScreenConfiguration.ClickTrackList,
             is ScreenConfiguration.EditClickTrack,
-            is ScreenConfiguration.PlayClickTrack -> null
+            is ScreenConfiguration.PlayClickTrack,
+            -> null
         }
     }
 }

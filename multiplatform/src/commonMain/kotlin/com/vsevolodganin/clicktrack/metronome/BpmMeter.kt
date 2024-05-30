@@ -7,7 +7,6 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Inject
 class BpmMeter {
-
     private val samples: Array<Long?> = Array(HISTORY_SIZE) { null }
     private var index: Int = 0
 

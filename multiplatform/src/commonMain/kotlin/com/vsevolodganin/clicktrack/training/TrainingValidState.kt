@@ -15,7 +15,6 @@ data class TrainingValidState(
     val tempoChange: BeatsPerMinute,
     val ending: Ending,
 ) {
-
     @Serializable
     sealed interface Ending {
         val kind: TrainingEndingKind
@@ -29,7 +28,9 @@ data class TrainingValidState(
 
         @Serializable
         @SerialName("com.vsevolodganin.clicktrack.state.redux.TrainingPersistableState.Ending.ByTime") // For backward compatibility
-        class ByTime(@Serializable(with = DurationSerializer::class) val duration: Duration) : Ending {
+        class ByTime(
+            @Serializable(with = DurationSerializer::class) val duration: Duration,
+        ) : Ending {
             override val kind: TrainingEndingKind
                 get() = TrainingEndingKind.BY_TIME
         }

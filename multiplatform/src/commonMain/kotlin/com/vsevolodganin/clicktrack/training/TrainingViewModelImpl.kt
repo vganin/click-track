@@ -39,11 +39,10 @@ class TrainingViewModelImpl(
     private val newClickTrackNameSuggester: NewClickTrackNameSuggester,
     private val trainingClickTrackGenerator: TrainingClickTrackGenerator,
 ) : TrainingViewModel, ComponentContext by componentContext {
-
     private val scope = coroutineScope()
 
     private val _state: MutableStateFlow<TrainingEditState> = MutableStateFlow(
-        userPreferences.trainingState.value.toEditState()
+        userPreferences.trainingState.value.toEditState(),
     )
 
     override val state: StateFlow<TrainingEditState> = _state
@@ -64,7 +63,7 @@ class TrainingViewModelImpl(
             val suggestedName = newClickTrackNameSuggester.suggest(
                 withContext(Dispatchers.Main) {
                     stringResolver.resolve(MR.strings.general_unnamed_training_click_track_template)
-                }
+                },
             )
             val newClickTrack = trainingClickTrackGenerator.generate(trainingState, suggestedName)
             val newClickTrackId = clickTrackRepository.insert(newClickTrack)
@@ -149,8 +148,9 @@ class TrainingViewModelImpl(
         )
     }
 
-    private fun TrainingValidState.Ending.toEditState(): TrainingEditState.Ending = when (this) {
-        is TrainingValidState.Ending.ByTempo -> TrainingEditState.Ending.ByTempo(endingTempo.value)
-        is TrainingValidState.Ending.ByTime -> TrainingEditState.Ending.ByTime(duration)
-    }
+    private fun TrainingValidState.Ending.toEditState(): TrainingEditState.Ending =
+        when (this) {
+            is TrainingValidState.Ending.ByTempo -> TrainingEditState.Ending.ByTempo(endingTempo.value)
+            is TrainingValidState.Ending.ByTime -> TrainingEditState.Ending.ByTime(duration)
+        }
 }

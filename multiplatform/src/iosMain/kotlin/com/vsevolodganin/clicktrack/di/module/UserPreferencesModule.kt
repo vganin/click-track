@@ -7,7 +7,6 @@ import kotlinx.coroutines.Dispatchers
 import me.tatarka.inject.annotations.Provides
 
 interface UserPreferencesModule {
-
     @Provides
     fun provideUserPreferences(): FlowSettings {
         return NSUserDefaultsSettings.Factory().create("user_preferences").toFlowSettings(Dispatchers.Default)

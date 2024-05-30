@@ -19,9 +19,12 @@ import kotlin.math.min
 @ApplicationScope
 @Inject
 class PrimitiveAudioExtractor(
-    private val logger: Logger
+    private val logger: Logger,
 ) {
-    fun extract(afd: AssetFileDescriptor, maxSeconds: Int): PrimitiveAudioData? {
+    fun extract(
+        afd: AssetFileDescriptor,
+        maxSeconds: Int,
+    ): PrimitiveAudioData? {
         val mediaExtractor = MediaExtractor()
 
         try {
@@ -42,7 +45,12 @@ class PrimitiveAudioExtractor(
         return null
     }
 
-    private fun extractPcm(mediaExtractor: MediaExtractor, trackIndex: Int, trackFormat: MediaFormat, maxSeconds: Int): PrimitiveAudioData? {
+    private fun extractPcm(
+        mediaExtractor: MediaExtractor,
+        trackIndex: Int,
+        trackFormat: MediaFormat,
+        maxSeconds: Int,
+    ): PrimitiveAudioData? {
         var codec: MediaCodec? = null
 
         return try {
@@ -76,7 +84,7 @@ class PrimitiveAudioExtractor(
                             0,
                             sampleSize,
                             mediaExtractor.sampleTime,
-                            if (endOfInput) MediaCodec.BUFFER_FLAG_END_OF_STREAM else 0
+                            if (endOfInput) MediaCodec.BUFFER_FLAG_END_OF_STREAM else 0,
                         )
                         mediaExtractor.advance()
                     }
@@ -120,17 +128,18 @@ class PrimitiveAudioExtractor(
         }
     }
 
-    private fun audioFormatEncodingToCommon(encoding: Int): PrimitiveAudioData.Encoding? = when (encoding) {
-        AudioFormat.ENCODING_PCM_8BIT -> PrimitiveAudioData.Encoding.PCM_UNSIGNED_8BIT
-        AudioFormat.ENCODING_PCM_16BIT -> PrimitiveAudioData.Encoding.PCM_SIGNED_16BIT_LITTLE_ENDIAN
-        AudioFormat.ENCODING_PCM_24BIT_PACKED -> PrimitiveAudioData.Encoding.PCM_SIGNED_24BIT_LITTLE_ENDIAN
-        AudioFormat.ENCODING_PCM_32BIT -> PrimitiveAudioData.Encoding.PCM_SIGNED_32BIT_LITTLE_ENDIAN
-        AudioFormat.ENCODING_PCM_FLOAT -> PrimitiveAudioData.Encoding.PCM_FLOAT_32BIT_LITTLE_ENDIAN
-        else -> {
-            logger.logError(TAG, "Unknown PCM encoding: $encoding")
-            null
+    private fun audioFormatEncodingToCommon(encoding: Int): PrimitiveAudioData.Encoding? =
+        when (encoding) {
+            AudioFormat.ENCODING_PCM_8BIT -> PrimitiveAudioData.Encoding.PCM_UNSIGNED_8BIT
+            AudioFormat.ENCODING_PCM_16BIT -> PrimitiveAudioData.Encoding.PCM_SIGNED_16BIT_LITTLE_ENDIAN
+            AudioFormat.ENCODING_PCM_24BIT_PACKED -> PrimitiveAudioData.Encoding.PCM_SIGNED_24BIT_LITTLE_ENDIAN
+            AudioFormat.ENCODING_PCM_32BIT -> PrimitiveAudioData.Encoding.PCM_SIGNED_32BIT_LITTLE_ENDIAN
+            AudioFormat.ENCODING_PCM_FLOAT -> PrimitiveAudioData.Encoding.PCM_FLOAT_32BIT_LITTLE_ENDIAN
+            else -> {
+                logger.logError(TAG, "Unknown PCM encoding: $encoding")
+                null
+            }
         }
-    }
 
     private companion object {
         const val TAG = "PrimitiveAudioExtractor"

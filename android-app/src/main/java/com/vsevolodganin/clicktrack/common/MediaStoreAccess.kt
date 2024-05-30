@@ -11,7 +11,6 @@ import java.io.File
 
 @Inject
 class MediaStoreAccess(private val resolver: ContentResolver) {
-
     fun addAudioFile(file: File): Uri? {
         val audioCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             MediaStore.Audio.Media.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)

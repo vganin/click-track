@@ -18,20 +18,23 @@ import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.UP
 import com.vsevolodganin.clicktrack.utils.compose.Preview
 
 enum class ArrowDirection {
-    UP, DOWN, LEFT, RIGHT
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
 }
 
 @Composable
 fun Arrow(
     direction: ArrowDirection,
     modifier: Modifier = Modifier,
-    tint: Color = LocalContentColor.current
+    tint: Color = LocalContentColor.current,
 ) {
     Icon(
         imageVector = arrowVectorResource(direction),
         contentDescription = null,
         modifier = modifier,
-        tint = tint
+        tint = tint,
     )
 }
 
@@ -69,7 +72,7 @@ fun arrowVectorResource(direction: ArrowDirection): ImageVector {
                         .close()
                         .nodes
                 },
-                fill = SolidColor(Color.Black)
+                fill = SolidColor(Color.Black),
             )
             .build()
     }

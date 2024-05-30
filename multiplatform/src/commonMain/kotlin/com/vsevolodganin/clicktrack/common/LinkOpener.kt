@@ -7,5 +7,6 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 expect class LinkOpener {
     fun url(url: String)
+
     fun email(email: String)
 }

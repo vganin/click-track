@@ -5,6 +5,11 @@ data class DrawerState(
     val selectedItem: SelectedItem?,
 ) {
     enum class SelectedItem {
-        METRONOME, TRAINING, SETTINGS, SOUND_LIBRARY, ABOUT, POLYRHYTHMS
+        METRONOME,
+        TRAINING,
+        SETTINGS,
+        SOUND_LIBRARY,
+        ABOUT,
+        POLYRHYTHMS,
     }
 }

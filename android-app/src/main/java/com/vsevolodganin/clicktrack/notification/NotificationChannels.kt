@@ -12,7 +12,7 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class NotificationChannels(
     private val application: Application,
-    private val notificationManager: NotificationManagerCompat
+    private val notificationManager: NotificationManagerCompat,
 ) {
     val playingNow = "playing_now"
     val export = "export"

@@ -16,7 +16,8 @@ import androidx.compose.ui.unit.IntOffset
 import kotlin.math.roundToInt
 
 enum class RevealValue {
-    Hidden, Revealed
+    Hidden,
+    Revealed,
 }
 
 @Composable
@@ -30,7 +31,7 @@ fun SwipeToReveal(
     val revealOffsetPx = with(LocalDensity.current) { revealOffset.toPx() }
     val anchors = mapOf(
         0f to RevealValue.Hidden,
-        -revealOffsetPx to RevealValue.Revealed
+        -revealOffsetPx to RevealValue.Revealed,
     )
 
     Box(
@@ -38,7 +39,7 @@ fun SwipeToReveal(
             state = state,
             anchors = anchors,
             orientation = Orientation.Horizontal,
-        )
+        ),
     ) {
         revealed()
         Box(

@@ -7,7 +7,6 @@ import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
 interface MigrationModule {
-
     @Provides
     @IntoSet
     @MainControllerScope

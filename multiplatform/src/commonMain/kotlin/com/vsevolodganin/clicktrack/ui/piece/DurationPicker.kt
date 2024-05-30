@@ -177,7 +177,7 @@ fun DurationPicker(
                 if (action == ImeAction.Done) {
                     focusManager.clearFocus()
                 }
-            }
+            },
         )
     } else if (!isFocused && textInputSession.value != null) {
         textInputSession.value?.let(inputService::stopInput)
@@ -213,7 +213,7 @@ fun DurationPicker(
                     textInputSession.value?.showSoftwareKeyboard()
                 }
             }
-            .padding(8.dp)
+            .padding(8.dp),
     ) {
         Text(
             text = formatInternalState(),
@@ -238,8 +238,8 @@ private fun RowScope.CloseIcon(onClick: () -> Unit) {
             .clickable(
                 onClick = onClick,
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = false)
-            )
+                indication = rememberRipple(bounded = false),
+            ),
     ) {
         Icon(imageVector = Icons.Default.Close, contentDescription = null)
     }
@@ -255,7 +255,7 @@ private const val MINUTES_PER_HOUR = 60L
 private fun Preview() {
     val sharedState = remember {
         mutableStateOf(
-            1.hours + 2.minutes + 3.seconds + 4.milliseconds
+            1.hours + 2.minutes + 3.seconds + 4.milliseconds,
         )
     }
     Column {

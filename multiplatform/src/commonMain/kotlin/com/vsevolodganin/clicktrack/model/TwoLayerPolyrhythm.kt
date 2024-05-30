@@ -15,7 +15,6 @@ data class TwoLayerPolyrhythm(
     val layer1: Int,
     val layer2: Int,
 ) : Parcelable {
-
     @IgnoredOnParcel
     val durationInTime: Duration by lazy {
         bpm.interval * layer1

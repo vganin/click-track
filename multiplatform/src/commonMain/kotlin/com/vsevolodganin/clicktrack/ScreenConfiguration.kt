@@ -5,7 +5,6 @@ import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
 import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
 
 sealed interface ScreenConfiguration : Parcelable {
-
     @Parcelize
     object ClickTrackList : ScreenConfiguration
 

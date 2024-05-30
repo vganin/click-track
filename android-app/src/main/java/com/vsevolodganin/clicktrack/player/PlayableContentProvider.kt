@@ -21,7 +21,7 @@ import com.vsevolodganin.clicktrack.multiplatform.R as MR
 class PlayableContentProvider(
     private val application: Application,
     private val clickTrackRepository: ClickTrackRepository,
-    private val userPreferences: UserPreferencesRepository
+    private val userPreferences: UserPreferencesRepository,
 ) {
     fun clickTrackFlow(id: ClickTrackId): Flow<ClickTrack?> {
         return when (id) {

@@ -41,7 +41,7 @@ fun <T> ListChooser(
 
     SettingItem(
         title = title,
-        modifier = modifier.clickable { showChooser = true }
+        modifier = modifier.clickable { showChooser = true },
     ) {
         Text(text = value, modifier = Modifier.alpha(ContentAlpha.medium))
     }
@@ -54,7 +54,7 @@ fun <T> ListChooser(
             dismissButton = {
                 TextButton(
                     onClick = { showChooser = false },
-                    shape = RectangleShape
+                    shape = RectangleShape,
                 ) {
                     Text(text = stringResource(MR.strings.general_cancel).uppercase())
                 }
@@ -65,7 +65,7 @@ fun <T> ListChooser(
                     onChoose = { value ->
                         showChooser = false
                         onChoose(value)
-                    }
+                    },
                 )
             },
         )
@@ -79,12 +79,13 @@ private fun <T> DialogContent(
 ) {
     Column {
         variants.forEachIndexed { index, item ->
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    onChoose(item.value)
-                }
-                .padding(8.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onChoose(item.value)
+                    }
+                    .padding(8.dp),
             ) {
                 Text(text = item.displayValue)
                 if (item.description != null) {

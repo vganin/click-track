@@ -44,7 +44,7 @@ fun CueDurationView(
                     EditBeatsView(
                         value = value,
                         onValueChange = onValueChange,
-                        modifier = commonCueDurationModifier
+                        modifier = commonCueDurationModifier,
                     )
                 }
 
@@ -52,7 +52,7 @@ fun CueDurationView(
                     EditMeasuresView(
                         value = value,
                         onValueChange = onValueChange,
-                        modifier = commonCueDurationModifier
+                        modifier = commonCueDurationModifier,
                     )
                 }
 
@@ -60,7 +60,7 @@ fun CueDurationView(
                     EditTimeView(
                         value = value,
                         onValueChange = onValueChange,
-                        modifier = commonCueDurationModifier
+                        modifier = commonCueDurationModifier,
                     )
                 }
             }
@@ -80,7 +80,7 @@ private fun DurationTypeDropdown(
             onValueChange(selectedValue)
         },
         toString = { it.stringResource() },
-        modifier = Modifier.width(140.dp)
+        modifier = Modifier.width(140.dp),
     )
 }
 
@@ -93,7 +93,7 @@ private fun EditBeatsView(
     NumberInputField(
         value = value.value,
         onValueChange = { onValueChange(CueDuration.Beats(it)) },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -106,7 +106,7 @@ private fun EditMeasuresView(
     NumberInputField(
         value = value.value,
         onValueChange = { onValueChange(CueDuration.Measures(it)) },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -119,7 +119,7 @@ private fun EditTimeView(
     DurationPicker(
         value = value.value,
         onValueChange = { onValueChange(CueDuration.Time(it)) },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 

@@ -16,7 +16,7 @@ import kotlin.time.toDuration
 data class PlayProgress(
     private val position: Duration,
     val isPaused: Boolean = false,
-    private val emissionTime: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow()
+    private val emissionTime: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow(),
 ) : Parcelable {
     val realPosition: Duration get() = if (isPaused) position else position + emissionTime.elapsedNow()
 }

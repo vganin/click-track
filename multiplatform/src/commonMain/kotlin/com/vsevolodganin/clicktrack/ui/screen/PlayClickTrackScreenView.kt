@@ -77,12 +77,12 @@ fun PlayClickTrackScreenView(
 @Composable
 private fun Content(
     viewModel: PlayClickTrackViewModel,
-    state: PlayClickTrackState
+    state: PlayClickTrackState,
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.surface)
+            .background(MaterialTheme.colors.surface),
     ) {
         ClickTrackView(
             clickTrack = state.clickTrack.value,
@@ -93,7 +93,7 @@ private fun Content(
             onProgressDragStart = viewModel::onProgressDragStart,
             onProgressDrop = viewModel::onProgressDrop,
             viewportPanEnabled = true,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -114,7 +114,7 @@ private fun TopBar(
                     viewModel.onEditClick()
                     editEnabled = false
                 },
-                enabled = editEnabled
+                enabled = editEnabled,
             ) {
                 Icon(imageVector = Icons.Default.Edit, contentDescription = null)
             }
@@ -139,7 +139,7 @@ private fun TopBar(
                     confirmButton = {
                         TextButton(
                             onClick = viewModel::onRemoveClick,
-                            shape = RectangleShape
+                            shape = RectangleShape,
                         ) {
                             Text(text = stringResource(MR.strings.general_ok).uppercase())
                         }
@@ -147,7 +147,7 @@ private fun TopBar(
                     dismissButton = {
                         TextButton(
                             onClick = dismiss,
-                            shape = RectangleShape
+                            shape = RectangleShape,
                         ) {
                             Text(text = stringResource(MR.strings.general_cancel).uppercase())
                         }
@@ -162,7 +162,7 @@ private fun TopBar(
 private fun OverflowMenu(
     viewModel: PlayClickTrackViewModel,
     state: PlayClickTrackState,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
 ) {
     val coroutineScope = rememberCoroutineScope()
     var showDropdown by remember { mutableStateOf(false) }
@@ -182,7 +182,7 @@ private fun OverflowMenu(
                 val snackbarResult = snackbarHostState.showSnackbar(
                     message = startedExportMessage,
                     duration = SnackbarDuration.Short,
-                    actionLabel = cancelActionLabel
+                    actionLabel = cancelActionLabel,
                 )
                 if (snackbarResult == SnackbarResult.ActionPerformed) {
                     viewModel.onCancelExportClick()
@@ -197,12 +197,12 @@ private fun OverflowMenu(
 @Composable
 private fun BottomBar(
     viewModel: PlayClickTrackViewModel,
-    state: PlayClickTrackState
+    state: PlayClickTrackState,
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .navigationBarsPadding()
+            .navigationBarsPadding(),
     ) {
         PlayButtons(
             isPlaying = state.isPlaying,
@@ -218,7 +218,7 @@ private fun BottomBar(
                 onClick = viewModel::onTogglePlayTrackingMode,
                 modifier = Modifier
                     .align(Alignment.BottomStart)
-                    .padding(start = 8.dp)
+                    .padding(start = 8.dp),
             ) {
                 Checkbox(checked = state.playTrackingMode, onCheckedChange = null)
                 Spacer(Modifier.width(8.dp))
@@ -230,27 +230,37 @@ private fun BottomBar(
 
 @ScreenPreview
 @Composable
-private fun Preview() = ClickTrackTheme {
-    PlayClickTrackScreenView(
-        viewModel = object : PlayClickTrackViewModel {
-            override val state: StateFlow<PlayClickTrackState?> = MutableStateFlow(
-                PlayClickTrackState(
-                    clickTrack = PREVIEW_CLICK_TRACK_1,
-                    playProgress = null,
-                    playTrackingMode = true,
+private fun Preview() =
+    ClickTrackTheme {
+        PlayClickTrackScreenView(
+            viewModel = object : PlayClickTrackViewModel {
+                override val state: StateFlow<PlayClickTrackState?> = MutableStateFlow(
+                    PlayClickTrackState(
+                        clickTrack = PREVIEW_CLICK_TRACK_1,
+                        playProgress = null,
+                        playTrackingMode = true,
+                    ),
                 )
-            )
 
-            override fun onBackClick() = Unit
-            override fun onTogglePlayStop() = Unit
-            override fun onTogglePlayPause() = Unit
-            override fun onTogglePlayTrackingMode() = Unit
-            override fun onProgressDragStart() = Unit
-            override fun onProgressDrop(progress: Double) = Unit
-            override fun onEditClick() = Unit
-            override fun onRemoveClick() = Unit
-            override fun onExportClick() = Unit
-            override fun onCancelExportClick() = Unit
-        }
-    )
-}
+                override fun onBackClick() = Unit
+
+                override fun onTogglePlayStop() = Unit
+
+                override fun onTogglePlayPause() = Unit
+
+                override fun onTogglePlayTrackingMode() = Unit
+
+                override fun onProgressDragStart() = Unit
+
+                override fun onProgressDrop(progress: Double) = Unit
+
+                override fun onEditClick() = Unit
+
+                override fun onRemoveClick() = Unit
+
+                override fun onExportClick() = Unit
+
+                override fun onCancelExportClick() = Unit
+            },
+        )
+    }

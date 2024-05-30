@@ -23,14 +23,17 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class PlayerServiceAccessImpl(
     private val activity: Activity,
-    lifecycleOwner: LifecycleOwner
+    lifecycleOwner: LifecycleOwner,
 ) : PlayerServiceAccess {
     private val scope = lifecycleOwner.coroutineScope()
 
     private val binderState = MutableStateFlow<PlayerServiceBinder?>(null)
 
     private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+        override fun onServiceConnected(
+            name: ComponentName,
+            service: IBinder,
+        ) {
             binderState.value = service as PlayerServiceBinder
         }
 
@@ -48,8 +51,11 @@ class PlayerServiceAccessImpl(
         }
         .shareIn(scope, SharingStarted.Eagerly, replay = 1)
 
-    override fun start(id: PlayableId, atProgress: Double?, soundsId: ClickSoundsId?) =
-        PlayerService.start(activity, id, atProgress, soundsId)
+    override fun start(
+        id: PlayableId,
+        atProgress: Double?,
+        soundsId: ClickSoundsId?,
+    ) = PlayerService.start(activity, id, atProgress, soundsId)
 
     override fun pause() = PlayerService.pause(activity)
 

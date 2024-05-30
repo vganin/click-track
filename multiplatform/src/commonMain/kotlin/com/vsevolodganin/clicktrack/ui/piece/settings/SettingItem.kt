@@ -28,23 +28,23 @@ fun SettingItem(
     Row(
         modifier = modifier
             .defaultMinSize(minHeight = 56.dp)
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         Column(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .weight(1f)
+                .weight(1f),
         ) {
             Text(text = title)
 
             if (description != null) {
                 Spacer(modifier = Modifier.height(4.dp))
                 CompositionLocalProvider(
-                    LocalContentAlpha provides ContentAlpha.medium
+                    LocalContentAlpha provides ContentAlpha.medium,
                 ) {
                     Text(
                         text = description,
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.caption,
                     )
                 }
             }

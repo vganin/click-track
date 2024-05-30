@@ -61,7 +61,7 @@ actual fun DropdownMenu(
     onDismissRequest: () -> Unit,
     modifier: Modifier,
     offset: DpOffset,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     val expandedStates = remember { MutableTransitionState(false) }
     expandedStates.targetState = expanded
@@ -75,7 +75,7 @@ actual fun DropdownMenu(
         // See: https://github.com/JetBrains/compose-jb/issues/1388
         val popupPositionProvider = DesktopDropdownMenuPositionProvider(
             offset,
-            density
+            density,
         ) { parentBounds, menuBounds ->
             transformOriginState.value = calculateTransformOrigin(parentBounds, menuBounds)
         }
@@ -85,13 +85,13 @@ actual fun DropdownMenu(
             onDismissRequest = onDismissRequest,
             properties = PopupProperties(focusable = true),
             onPreviewKeyEvent = { false },
-            onKeyEvent = { false }
+            onKeyEvent = { false },
         ) {
             DropdownMenuContent(
                 expandedStates = expandedStates,
                 transformOriginState = transformOriginState,
                 modifier = modifier,
-                content = content
+                content = content,
             )
         }
     }
@@ -104,7 +104,7 @@ actual fun DropdownMenuItem(
     enabled: Boolean,
     contentPadding: PaddingValues,
     interactionSource: MutableInteractionSource,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     DropdownMenuItemContent(
         onClick = onClick,
@@ -112,7 +112,7 @@ actual fun DropdownMenuItem(
         enabled = enabled,
         contentPadding = contentPadding,
         interactionSource = interactionSource,
-        content = content
+        content = content,
     )
 }
 
@@ -120,13 +120,13 @@ actual fun DropdownMenuItem(
 private data class DesktopDropdownMenuPositionProvider(
     val contentOffset: DpOffset,
     val density: Density,
-    val onPositionCalculated: (IntRect, IntRect) -> Unit = { _, _ -> }
+    val onPositionCalculated: (IntRect, IntRect) -> Unit = { _, _ -> },
 ) : PopupPositionProvider {
     override fun calculatePosition(
         anchorBounds: IntRect,
         windowSize: IntSize,
         layoutDirection: LayoutDirection,
-        popupContentSize: IntSize
+        popupContentSize: IntSize,
     ): IntOffset {
         // The min margin above and below the menu, relative to the screen.
         val verticalMargin = with(density) { MenuVerticalMargin.roundToPx() }
@@ -154,7 +154,7 @@ private data class DesktopDropdownMenuPositionProvider(
         val toDisplayBottom = windowSize.height - popupContentSize.height - verticalMargin
         var y = sequenceOf(toBottom, toTop, toCenter, toDisplayBottom).firstOrNull {
             it >= verticalMargin &&
-                    it + popupContentSize.height <= windowSize.height - verticalMargin
+                it + popupContentSize.height <= windowSize.height - verticalMargin
         } ?: toTop
 
         // Desktop specific vertical position checking
@@ -173,7 +173,7 @@ private data class DesktopDropdownMenuPositionProvider(
 
         onPositionCalculated(
             anchorBounds,
-            IntRect(x, y, x + popupContentSize.width, y + popupContentSize.height)
+            IntRect(x, y, x + popupContentSize.width, y + popupContentSize.height),
         )
         return IntOffset(x, y)
     }
@@ -181,7 +181,7 @@ private data class DesktopDropdownMenuPositionProvider(
 
 private fun calculateTransformOrigin(
     parentBounds: IntRect,
-    menuBounds: IntRect
+    menuBounds: IntRect,
 ): TransformOrigin {
     val pivotX = when {
         menuBounds.left >= parentBounds.right -> 0f
@@ -190,9 +190,9 @@ private fun calculateTransformOrigin(
         else -> {
             val intersectionCenter =
                 (
-                        max(parentBounds.left, menuBounds.left) +
-                                min(parentBounds.right, menuBounds.right)
-                        ) / 2
+                    max(parentBounds.left, menuBounds.left) +
+                        min(parentBounds.right, menuBounds.right)
+                ) / 2
             (intersectionCenter - menuBounds.left).toFloat() / menuBounds.width
         }
     }
@@ -203,9 +203,9 @@ private fun calculateTransformOrigin(
         else -> {
             val intersectionCenter =
                 (
-                        max(parentBounds.top, menuBounds.top) +
-                                min(parentBounds.bottom, menuBounds.bottom)
-                        ) / 2
+                    max(parentBounds.top, menuBounds.top) +
+                        min(parentBounds.bottom, menuBounds.bottom)
+                ) / 2
             (intersectionCenter - menuBounds.top).toFloat() / menuBounds.height
         }
     }
@@ -217,7 +217,7 @@ private fun DropdownMenuContent(
     expandedStates: MutableTransitionState<Boolean>,
     transformOriginState: MutableState<TransformOrigin>,
     modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     // Menu open/close animation.
     val transition = updateTransition(expandedStates, "DropDownMenu")
@@ -228,16 +228,16 @@ private fun DropdownMenuContent(
                 // Dismissed to expanded
                 tween(
                     durationMillis = InTransitionDuration,
-                    easing = LinearOutSlowInEasing
+                    easing = LinearOutSlowInEasing,
                 )
             } else {
                 // Expanded to dismissed.
                 tween(
                     durationMillis = 1,
-                    delayMillis = OutTransitionDuration - 1
+                    delayMillis = OutTransitionDuration - 1,
                 )
             }
-        }
+        },
     ) {
         if (it) {
             // Menu is expanded.
@@ -257,7 +257,7 @@ private fun DropdownMenuContent(
                 // Expanded to dismissed.
                 tween(durationMillis = OutTransitionDuration)
             }
-        }
+        },
     ) {
         if (it) {
             // Menu is expanded.
@@ -274,14 +274,14 @@ private fun DropdownMenuContent(
             this.alpha = alpha
             transformOrigin = transformOriginState.value
         },
-        elevation = MenuElevation
+        elevation = MenuElevation,
     ) {
         Column(
             modifier = modifier
                 .padding(vertical = DropdownMenuVerticalPadding)
                 .width(IntrinsicSize.Max)
                 .verticalScroll(rememberScrollState()),
-            content = content
+            content = content,
         )
     }
 }
@@ -293,7 +293,7 @@ private fun DropdownMenuItemContent(
     enabled: Boolean = true,
     contentPadding: PaddingValues = MenuDefaults.DropdownMenuItemContentPadding,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) {
     // TODO(popam, b/156911853): investigate replacing this Row with ListItem
     Row(
@@ -302,17 +302,17 @@ private fun DropdownMenuItemContent(
                 enabled = enabled,
                 onClick = onClick,
                 interactionSource = interactionSource,
-                indication = rememberRipple(true)
+                indication = rememberRipple(true),
             )
             .fillMaxWidth()
             // Preferred min and max width used during the intrinsic measurement.
             .sizeIn(
                 minWidth = DropdownMenuItemDefaultMinWidth,
                 maxWidth = DropdownMenuItemDefaultMaxWidth,
-                minHeight = DropdownMenuItemDefaultMinHeight
+                minHeight = DropdownMenuItemDefaultMinHeight,
             )
             .padding(contentPadding),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         val typography = MaterialTheme.typography
         ProvideTextStyle(typography.subtitle1) {

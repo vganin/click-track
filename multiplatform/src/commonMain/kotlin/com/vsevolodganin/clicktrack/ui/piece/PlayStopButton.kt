@@ -37,7 +37,8 @@ fun PlayStopButton(
 }
 
 private enum class PlayStopIconState {
-    PLAY, STOP
+    PLAY,
+    STOP,
 }
 
 @Composable
@@ -45,17 +46,15 @@ fun PlayStopIcon(isPlaying: Boolean) {
     val transition = updateTransition(targetState = if (isPlaying) STOP else PLAY)
 
     @Composable
-    fun Transition<PlayStopIconState>.animatePoint(
-        targetValueByState: @Composable (state: PlayStopIconState) -> Offset,
-    ): State<Offset> {
+    fun Transition<PlayStopIconState>.animatePoint(targetValueByState: @Composable (state: PlayStopIconState) -> Offset): State<Offset> {
         return animateOffset(
             transitionSpec = {
                 spring(
                     dampingRatio = Spring.DampingRatioLowBouncy,
-                    stiffness = Spring.StiffnessMedium
+                    stiffness = Spring.StiffnessMedium,
                 )
             },
-            targetValueByState = targetValueByState
+            targetValueByState = targetValueByState,
         )
     }
 
@@ -91,11 +90,16 @@ fun PlayStopIcon(isPlaying: Boolean) {
             pointC,
             pointD,
         ),
-        contentDescription = null
+        contentDescription = null,
     )
 }
 
-private fun iconAsset(a: Offset, b: Offset, c: Offset, d: Offset): ImageVector {
+private fun iconAsset(
+    a: Offset,
+    b: Offset,
+    c: Offset,
+    d: Offset,
+): ImageVector {
     return ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)
         .addPath(
             pathData = PathBuilder()
@@ -105,12 +109,13 @@ private fun iconAsset(a: Offset, b: Offset, c: Offset, d: Offset): ImageVector {
                 .lineTo(d)
                 .close()
                 .nodes,
-            fill = SolidColor(Color.White)
+            fill = SolidColor(Color.White),
         )
         .build()
 }
 
 private fun PathBuilder.moveTo(point: Offset) = moveTo(point.x, point.y)
+
 private fun PathBuilder.lineTo(point: Offset) = lineTo(point.x, point.y)
 
 @Preview

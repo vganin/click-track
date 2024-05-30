@@ -30,14 +30,13 @@ import kotlin.math.roundToInt
 import com.vsevolodganin.clicktrack.multiplatform.R as MR
 
 class ExportWorker(private val appContext: Context, workerParams: WorkerParameters) : CoroutineWorker(appContext, workerParams) {
-
     companion object {
         fun createWorkRequest(clickTrackId: ClickTrackId.Database): OneTimeWorkRequest {
             return OneTimeWorkRequestBuilder<ExportWorker>()
                 .setInputData(
                     workDataOf(
-                        InputKeys.CLICK_TRACK_ID to clickTrackId.value
-                    )
+                        InputKeys.CLICK_TRACK_ID to clickTrackId.value,
+                    ),
                 )
                 .build()
         }
@@ -63,7 +62,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
             clickTrack = clickTrack.value,
             reportProgress = {
                 setForeground(foregroundInfo(clickTrack, it))
-            }
+            },
         ) ?: return Result.failure()
 
         val accessUri = component.mediaStoreAccess.addAudioFile(temporaryFile)
@@ -78,7 +77,10 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
         return Result.success()
     }
 
-    private fun foregroundInfo(clickTrack: ClickTrackWithDatabaseId, progress: Float): ForegroundInfo {
+    private fun foregroundInfo(
+        clickTrack: ClickTrackWithDatabaseId,
+        progress: Float,
+    ): ForegroundInfo {
         val tapIntent = component.intentFactory.navigateClickTrack(clickTrack.id)
 
         val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -100,7 +102,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
                 .addAction(
                     android.R.drawable.ic_delete,
                     appContext.getString(android.R.string.cancel),
-                    component.workManager.createCancelPendingIntent(id)
+                    component.workManager.createCancelPendingIntent(id),
                 )
                 .setGroup(NotificationGroups.EXPORTING)
                 .setProgress(progressResolution, (progress * progressResolution).roundToInt(), false)
@@ -109,16 +111,20 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             } else {
                 0
-            }
+            },
         )
     }
 
-    private fun notifyFinished(clickTrack: ClickTrack, accessUri: Uri) {
+    private fun notifyFinished(
+        clickTrack: ClickTrack,
+        accessUri: Uri,
+    ) {
         val tapIntent = Intent.createChooser(
             Intent(Intent.ACTION_VIEW).apply {
                 flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
                 setDataAndType(accessUri, "audio/*")
-            }, null
+            },
+            null,
         )
 
         val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -138,7 +144,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
                     .setColor(ResourcesCompat.getColor(appContext.resources, MR.color.debug_signature, null))
                     .setContentIntent(PendingIntent.getActivity(appContext, 0, tapIntent, pendingIntentFlags))
                     .setGroup(NotificationGroups.EXPORT_FINISHED)
-                    .build()
+                    .build(),
             )
         }
     }

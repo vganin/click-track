@@ -7,7 +7,6 @@ import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import me.tatarka.inject.annotations.Provides
 
 interface ActivityModule {
-
     @Provides
     @MainControllerScope
     fun provideBaseActivity(activity: MainActivity): Activity = activity

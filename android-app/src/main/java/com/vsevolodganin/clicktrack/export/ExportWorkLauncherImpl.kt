@@ -23,7 +23,7 @@ class ExportWorkLauncherImpl(
         workManager.enqueueUniqueWork(
             clickTrackId.toUniqueWorkName(),
             ExistingWorkPolicy.REPLACE,
-            ExportWorker.createWorkRequest(clickTrackId)
+            ExportWorker.createWorkRequest(clickTrackId),
         )
     }
 

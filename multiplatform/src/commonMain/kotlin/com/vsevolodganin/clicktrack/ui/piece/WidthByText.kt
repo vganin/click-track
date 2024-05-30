@@ -39,7 +39,7 @@ private fun dpByText(
         style = style,
         placeholders = emptyList(),
         density = LocalDensity.current,
-        fontFamilyResolver = LocalFontFamilyResolver.current
+        fontFamilyResolver = LocalFontFamilyResolver.current,
     )
 
     return with(LocalDensity.current) {

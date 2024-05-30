@@ -32,7 +32,7 @@ class PrimitiveAudioMonoRenderer(
                 val totalFramesNumber = convertDurationToFramesNumber(
                     duration = playerEvent.duration,
                     sampleRate = targetSampleRate,
-                    channelCount = audioData.channelCount
+                    channelCount = audioData.channelCount,
                 )
 
                 sequence {
@@ -50,7 +50,6 @@ class PrimitiveAudioMonoRenderer(
             }
     }
 
-
     private fun getAudioData(soundSource: ClickSoundSource): AudioData? {
         return preparedSamples.getOrPut(soundSource) {
             val audioData = primitiveAudioProvider.get(soundSource) ?: return@getOrPut null
@@ -59,9 +58,9 @@ class PrimitiveAudioMonoRenderer(
                     channelCount = audioData.channelCount,
                     inputRate = audioData.sampleRate,
                     outputRate = targetSampleRate,
-                    quality = Resampler.Quality.Medium
+                    quality = Resampler.Quality.Medium,
                 ).resample(audioData.samples),
-                channelCount = audioData.channelCount
+                channelCount = audioData.channelCount,
             )
         }
     }

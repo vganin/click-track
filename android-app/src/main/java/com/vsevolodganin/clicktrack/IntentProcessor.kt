@@ -36,7 +36,6 @@ class IntentProcessor(
 
 @Inject
 class IntentFactory(private val application: Application) {
-
     fun navigate(id: ClickTrackId): Intent? {
         return when (id) {
             is ClickTrackId.Database -> navigateClickTrack(id)

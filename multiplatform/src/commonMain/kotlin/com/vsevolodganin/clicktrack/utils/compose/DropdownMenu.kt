@@ -17,7 +17,7 @@ expect fun DropdownMenu(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     offset: DpOffset = DpOffset(0.dp, 0.dp),
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 )
 
 @Composable
@@ -27,5 +27,5 @@ expect fun DropdownMenuItem(
     enabled: Boolean = true,
     contentPadding: PaddingValues = MenuDefaults.DropdownMenuItemContentPadding,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 )

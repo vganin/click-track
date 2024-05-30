@@ -55,7 +55,10 @@ fun animatePathAsState(path: List<PathNode>): State<List<PathNode>> {
 }
 
 // Paths can morph if same size and same node types at same positions.
-fun canMorph(from: List<PathNode>, to: List<PathNode>): Boolean {
+fun canMorph(
+    from: List<PathNode>,
+    to: List<PathNode>,
+): Boolean {
     if (from.size != to.size) {
         return false
     }
@@ -70,14 +73,22 @@ fun canMorph(from: List<PathNode>, to: List<PathNode>): Boolean {
 }
 
 // Assume paths can morph (see [canMorph]). If not, will throw.
-private fun lerp(fromPath: List<PathNode>, toPath: List<PathNode>, fraction: Float): List<PathNode> {
+private fun lerp(
+    fromPath: List<PathNode>,
+    toPath: List<PathNode>,
+    fraction: Float,
+): List<PathNode> {
     return fromPath.mapIndexed { i, from ->
         val to = toPath[i]
         lerp(from, to, fraction)
     }
 }
 
-private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
+private fun lerp(
+    from: PathNode,
+    to: PathNode,
+    fraction: Float,
+): PathNode {
     return when (from) {
         PathNode.Close -> {
             to as PathNode.Close
@@ -119,28 +130,28 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
         is PathNode.RelativeHorizontalTo -> {
             to as PathNode.RelativeHorizontalTo
             PathNode.RelativeHorizontalTo(
-                lerp(from.dx, to.dx, fraction)
+                lerp(from.dx, to.dx, fraction),
             )
         }
 
         is PathNode.HorizontalTo -> {
             to as PathNode.HorizontalTo
             PathNode.HorizontalTo(
-                lerp(from.x, to.x, fraction)
+                lerp(from.x, to.x, fraction),
             )
         }
 
         is PathNode.RelativeVerticalTo -> {
             to as PathNode.RelativeVerticalTo
             PathNode.RelativeVerticalTo(
-                lerp(from.dy, to.dy, fraction)
+                lerp(from.dy, to.dy, fraction),
             )
         }
 
         is PathNode.VerticalTo -> {
             to as PathNode.VerticalTo
             PathNode.VerticalTo(
-                lerp(from.y, to.y, fraction)
+                lerp(from.y, to.y, fraction),
             )
         }
 
@@ -234,7 +245,7 @@ private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
 private fun PreviewPathMorphing() {
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         var isPlaying by remember { mutableStateOf(false) }
         FloatingActionButton(onClick = { isPlaying = !isPlaying }) {
@@ -243,13 +254,13 @@ private fun PreviewPathMorphing() {
                     "M 10 38 L 10 10 L 21.75 10 L 21.75 38 L 10 38 M 26.25 38 L 26.25 10 L 38 10 L 38 38 L 26.25 38"
                 } else {
                     "M 16 9.85 L 38 23.85 L 38 23.85 L 16 23.957 L 16 9.85 M 16 23.957 L 38 23.85 L 38 23.85 L 16 37.85 L 16 23.957"
-                }
+                },
             )
             Icon(
                 imageVector = ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 48f, viewportHeight = 48f)
                     .addPath(pathData = pathData, fill = SolidColor(Color.White))
                     .build(),
-                contentDescription = null
+                contentDescription = null,
             )
         }
     }

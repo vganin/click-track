@@ -10,7 +10,6 @@ import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface ApplicationModule {
-
     @Provides
     @ApplicationScope
     fun provideAudioManager(application: Application): AudioManager {

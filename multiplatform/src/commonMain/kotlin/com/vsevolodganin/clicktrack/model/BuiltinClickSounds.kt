@@ -14,7 +14,7 @@ enum class BuiltinClickSounds(
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled(MR.files.beep_strong),
             weakBeat = ClickSoundSource.Bundled(MR.files.beep_weak),
-        )
+        ),
     ),
     CLAVES(
         nameResource = MR.strings.sound_library_claves,
@@ -22,7 +22,7 @@ enum class BuiltinClickSounds(
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled(MR.files.claves_strong),
             weakBeat = ClickSoundSource.Bundled(MR.files.claves_weak),
-        )
+        ),
     ),
     COWBELL(
         nameResource = MR.strings.sound_library_cowbell,
@@ -30,7 +30,7 @@ enum class BuiltinClickSounds(
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled(MR.files.cowbell_strong),
             weakBeat = ClickSoundSource.Bundled(MR.files.cowbell_weak),
-        )
+        ),
     ),
     DRUMS(
         nameResource = MR.strings.sound_library_drum_kit,
@@ -38,6 +38,6 @@ enum class BuiltinClickSounds(
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled(MR.files.drumkit_base),
             weakBeat = ClickSoundSource.Bundled(MR.files.drumkit_hat),
-        )
+        ),
     ),
 }

@@ -36,7 +36,6 @@ abstract class MainActivityComponent(
     ViewModelModule,
     MigrationModule,
     GooglePlayModule {
-
     abstract val intentProcessor: IntentProcessor
     abstract val migrationManager: MigrationManager
     abstract val rootViewModel: RootViewModel

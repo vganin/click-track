@@ -28,7 +28,6 @@ class SettingsViewModelImpl(
     private val nativeCrashProvider: Lazy<NativeCrash>,
     private val logger: Logger,
 ) : SettingsViewModel, ComponentContext by componentContext {
-
     private val scope = coroutineScope()
 
     override val state: StateFlow<SettingsState> = combine(
@@ -39,7 +38,7 @@ class SettingsViewModelImpl(
         SettingsState(
             theme = theme,
             ignoreAudioFocus = ignoreAudioFocus,
-            language = language
+            language = language,
         )
     }.stateIn(
         scope = scope,
@@ -47,8 +46,8 @@ class SettingsViewModelImpl(
         initialValue = SettingsState(
             theme = userPreferences.theme.value,
             ignoreAudioFocus = userPreferences.ignoreAudioFocus.value,
-            language = languageStore.appLanguage.value
-        )
+            language = languageStore.appLanguage.value,
+        ),
     )
 
     override fun onBackClick() = navigation.pop()

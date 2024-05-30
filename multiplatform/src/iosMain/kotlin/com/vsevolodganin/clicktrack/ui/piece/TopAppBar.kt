@@ -14,7 +14,7 @@ internal actual fun TopAppBar(
     actions: @Composable RowScope.() -> Unit,
     backgroundColor: Color,
     contentColor: Color,
-    elevation: Dp
+    elevation: Dp,
 ) {
     androidx.compose.material.TopAppBar(
         title = title,
@@ -23,6 +23,6 @@ internal actual fun TopAppBar(
         actions = actions,
         backgroundColor = backgroundColor,
         contentColor = contentColor,
-        elevation = elevation
+        elevation = elevation,
     )
 }

@@ -143,7 +143,7 @@ dependencies {
         "kspCommonMainMetadata",
         "kspAndroid",
         "kspIosArm64",
-        "kspIosSimulatorArm64"
+        "kspIosSimulatorArm64",
     )) {
         add(configName, libs.kotlininject.compiler)
     }

@@ -39,18 +39,19 @@ class SoundLibraryViewModelImpl(
     private val playerServiceAccess: PlayerServiceAccess,
     private val soundChooser: SoundChooser,
 ) : SoundLibraryViewModel, ComponentContext by componentContext {
-
     private val scope = coroutineScope()
 
     override val state: StateFlow<SoundLibraryState?> = combine(
         userPreferences.selectedSoundsId.flow,
         clickSoundsRepository.getAll(),
-        playerServiceAccess.playbackState().map { it?.id }.distinctUntilChanged()
+        playerServiceAccess.playbackState().map { it?.id }.distinctUntilChanged(),
     ) { selectedId, userItems, playingId ->
-        SoundLibraryState(buildList {
-            this += BuiltinClickSounds.values().map { it.toItem(selectedId) }
-            this += userItems.map { it.toItem(selectedId, playingId) }
-        })
+        SoundLibraryState(
+            buildList {
+                this += BuiltinClickSounds.values().map { it.toItem(selectedId) }
+                this += userItems.map { it.toItem(selectedId, playingId) }
+            },
+        )
     }.stateIn(scope, SharingStarted.Eagerly, consumeSavedState())
 
     init {
@@ -64,7 +65,10 @@ class SoundLibraryViewModelImpl(
         )
     }
 
-    private fun UserClickSounds.toItem(selectedId: ClickSoundsId, playingId: PlayableId?): SelectableClickSoundsItem.UserDefined {
+    private fun UserClickSounds.toItem(
+        selectedId: ClickSoundsId,
+        playingId: PlayableId?,
+    ): SelectableClickSoundsItem.UserDefined {
         return SelectableClickSoundsItem.UserDefined(
             id = id,
             strongBeatValue = value.strongBeat.toText(),
@@ -109,7 +113,10 @@ class SoundLibraryViewModelImpl(
         }
     }
 
-    override fun onItemSoundSelect(id: ClickSoundsId.Database, type: ClickSoundType) {
+    override fun onItemSoundSelect(
+        id: ClickSoundsId.Database,
+        type: ClickSoundType,
+    ) {
         scope.launch {
             soundChooser.launchFor(id, type)
         }

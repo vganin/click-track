@@ -26,7 +26,8 @@ fun MediaFormat.bytesPerSample(): Int {
         AudioFormat.ENCODING_PCM_16BIT -> 2
         AudioFormat.ENCODING_PCM_24BIT_PACKED -> 3
         AudioFormat.ENCODING_PCM_32BIT,
-        AudioFormat.ENCODING_PCM_FLOAT -> 4
+        AudioFormat.ENCODING_PCM_FLOAT,
+        -> 4
         else -> throw IllegalArgumentException("Bad audio format $pcmEncoding")
     }
 }
@@ -35,7 +36,10 @@ fun MediaFormat.bytesPerSecond(): Int {
     return sampleRate() * bytesPerSample() * channelCount()
 }
 
-private fun <T> MediaFormat.getOptional(key: String, getter: MediaFormat.(String) -> T): T? {
+private fun <T> MediaFormat.getOptional(
+    key: String,
+    getter: MediaFormat.(String) -> T,
+): T? {
     return if (containsKey(key)) {
         getter.invoke(this, key)
     } else {

@@ -11,14 +11,16 @@ import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.DurationUnit
 
 object DurationSerializer : KSerializer<Duration> {
-
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DurationSerializer", PrimitiveKind.DOUBLE)
 
     override fun deserialize(decoder: Decoder): Duration {
         return decoder.decodeDouble().nanoseconds
     }
 
-    override fun serialize(encoder: Encoder, value: Duration) {
+    override fun serialize(
+        encoder: Encoder,
+        value: Duration,
+    ) {
         encoder.encodeDouble(value.toDouble(DurationUnit.NANOSECONDS))
     }
 }

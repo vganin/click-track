@@ -69,8 +69,8 @@ fun NumberInputField(
         mutableStateOf(
             TextFieldValue(
                 text = text,
-                selection = TextRange(text.length)
-            )
+                selection = TextRange(text.length),
+            ),
         )
     }
 
@@ -116,7 +116,7 @@ fun NumberInputField(
                     // because onValueChange rewrites our effort
                     coroutineDispatcher.launch {
                         textFieldValue = textFieldValue.copy(
-                            selection = TextRange(0, textFieldValue.text.length)
+                            selection = TextRange(0, textFieldValue.text.length),
                         )
                     }
                 } else if (isIntermediateEditText(textFieldValue.text, showSign)) {
@@ -124,7 +124,7 @@ fun NumberInputField(
                         onValueChange(fallbackNumber)
                     }
                     textFieldValue = textFieldValue.copy(
-                        text = valueCoerced.toText(showSign)
+                        text = valueCoerced.toText(showSign),
                     )
                 }
             }
@@ -133,14 +133,14 @@ fun NumberInputField(
         textStyle = LocalTextStyle.current
             .copy(
                 color = LocalContentColor.current,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Done,
         ),
         keyboardActions = KeyboardActions(
-            onDone = { focusManager.clearFocus() }
+            onDone = { focusManager.clearFocus() },
         ),
         singleLine = true,
         maxLines = 1,
@@ -148,7 +148,10 @@ fun NumberInputField(
     )
 }
 
-private fun isIntermediateEditText(text: String, showSign: Boolean): Boolean {
+private fun isIntermediateEditText(
+    text: String,
+    showSign: Boolean,
+): Boolean {
     return text in if (showSign) {
         listOf("-", "+", "")
     } else {

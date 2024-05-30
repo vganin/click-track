@@ -111,10 +111,11 @@ android {
             "-opt-in=androidx.compose.animation.core.InternalAnimationApi",
             "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
             "-opt-in=com.russhwolf.settings.ExperimentalSettingsApi",
-
             // https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/compiler-metrics.md
-            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/reports/compose_metrics",
-            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/reports/compose_metrics"
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/reports/compose_metrics",
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/reports/compose_metrics",
         )
     }
 
@@ -128,10 +129,8 @@ android {
         disable += listOf(
             // FIXME(https://issuetracker.google.com/issues/184830262)
             "NullSafeMutableLiveData",
-
             // FIXME(https://issuetracker.google.com/issues/189967522)
             "DialogFragmentCallbacksDetector",
-
             // Not used on purpose
             "UnusedMaterialScaffoldPaddingParameter",
         )

@@ -63,7 +63,7 @@ fun PolyrhythmsScreenView(
         floatingActionButton = {
             PlayStopButton(
                 isPlaying = state?.isPlaying ?: return@Scaffold,
-                onToggle = viewModel::onTogglePlay
+                onToggle = viewModel::onTogglePlay,
             )
         },
         modifier = modifier,
@@ -75,7 +75,7 @@ fun PolyrhythmsScreenView(
 @Composable
 private fun Content(
     viewModel: PolyrhythmsViewModel,
-    state: PolyrhythmsState
+    state: PolyrhythmsState,
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
         Row {
@@ -97,7 +97,7 @@ private fun Content(
             totalDuration = state.twoLayerPolyrhythm.durationInTime,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(32.dp)
+                .padding(32.dp),
         )
     }
 }
@@ -148,7 +148,7 @@ private fun PolyrhythmCircleWrapper(
         innerDotNumber = layer2,
         modifier = modifier,
         progressAngle = progressAngle?.value,
-        progressVelocity = (FULL_ANGLE_DEGREES / totalDuration.toDouble(DurationUnit.SECONDS)).toFloat()
+        progressVelocity = (FULL_ANGLE_DEGREES / totalDuration.toDouble(DurationUnit.SECONDS)).toFloat(),
     )
 }
 
@@ -177,8 +177,8 @@ private fun progressAngle(
                 targetValue = FULL_ANGLE_DEGREES,
                 animationSpec = tween(
                     durationMillis = animationDuration.coerceAtLeast(Duration.ZERO).inWholeMilliseconds.toInt(),
-                    easing = LinearEasing
-                )
+                    easing = LinearEasing,
+                ),
             )
         }
     }
@@ -196,25 +196,29 @@ private fun Duration.toAngle(totalDuration: Duration): Float {
 
 @ScreenPreview
 @Composable
-private fun Preview() = ClickTrackTheme {
-    PolyrhythmsScreenView(
-        viewModel = object : PolyrhythmsViewModel {
-            override val state: StateFlow<PolyrhythmsState?> = MutableStateFlow(
-                PolyrhythmsState(
-                    twoLayerPolyrhythm = TwoLayerPolyrhythm(
-                        bpm = 120.bpm,
-                        layer1 = 3,
-                        layer2 = 2
+private fun Preview() =
+    ClickTrackTheme {
+        PolyrhythmsScreenView(
+            viewModel = object : PolyrhythmsViewModel {
+                override val state: StateFlow<PolyrhythmsState?> = MutableStateFlow(
+                    PolyrhythmsState(
+                        twoLayerPolyrhythm = TwoLayerPolyrhythm(
+                            bpm = 120.bpm,
+                            layer1 = 3,
+                            layer2 = 2,
+                        ),
+                        isPlaying = true,
+                        playableProgress = PlayProgress(100.milliseconds),
                     ),
-                    isPlaying = true,
-                    playableProgress = PlayProgress(100.milliseconds)
                 )
-            )
 
-            override fun onBackClick() = Unit
-            override fun onTogglePlay() = Unit
-            override fun onLayer1Change(value: Int) = Unit
-            override fun onLayer2Change(value: Int) = Unit
-        }
-    )
-}
+                override fun onBackClick() = Unit
+
+                override fun onTogglePlay() = Unit
+
+                override fun onLayer1Change(value: Int) = Unit
+
+                override fun onLayer2Change(value: Int) = Unit
+            },
+        )
+    }
