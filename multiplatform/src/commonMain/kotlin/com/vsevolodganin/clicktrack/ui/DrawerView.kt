@@ -59,8 +59,8 @@ fun DrawerView(viewModel: DrawerViewModel) {
                         Color.Transparent
                     } else {
                         Color.Black.copy(alpha = 0.4f)
-                    }
-                )
+                    },
+                ),
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -69,28 +69,28 @@ fun DrawerView(viewModel: DrawerViewModel) {
             icon = painterResource(MR.images.metronome),
             label = stringResource(MR.strings.drawer_metronome),
             isSelected = state.selectedItem == DrawerState.SelectedItem.METRONOME,
-            action = viewModel::navigateToMetronome
+            action = viewModel::navigateToMetronome,
         )
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.Filled.FitnessCenter),
             label = stringResource(MR.strings.drawer_training),
             isSelected = state.selectedItem == DrawerState.SelectedItem.TRAINING,
-            action = viewModel::navigateToTraining
+            action = viewModel::navigateToTraining,
         )
 
         DrawerButton(
             icon = painterResource(MR.images.polyrhythm),
             label = stringResource(MR.strings.drawer_polyrhythms),
             isSelected = state.selectedItem == DrawerState.SelectedItem.POLYRHYTHMS,
-            action = viewModel::navigateToPolyrhythms
+            action = viewModel::navigateToPolyrhythms,
         )
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.Filled.LibraryMusic),
             label = stringResource(MR.strings.drawer_sound_library),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SOUND_LIBRARY,
-            action = viewModel::navigateToSoundLibrary
+            action = viewModel::navigateToSoundLibrary,
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -99,14 +99,14 @@ fun DrawerView(viewModel: DrawerViewModel) {
             icon = rememberVectorPainter(Icons.Filled.Settings),
             label = stringResource(MR.strings.drawer_settings),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SETTINGS,
-            action = viewModel::navigateToSettings
+            action = viewModel::navigateToSettings,
         )
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.AutoMirrored.Filled.ContactSupport),
             label = stringResource(MR.strings.drawer_about),
             isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
-            action = viewModel::navigateToAbout
+            action = viewModel::navigateToAbout,
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -131,28 +131,28 @@ private fun DrawerButton(
             .fillMaxWidth()
             .height(48.dp),
         color = backgroundColor,
-        shape = MaterialTheme.shapes.small
+        shape = MaterialTheme.shapes.small,
     ) {
         TextButton(
             onClick = action,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Row(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Icon(
                     painter = icon,
                     contentDescription = null, // decorative
                     tint = textAndIconColor,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(24.dp),
                 )
                 Spacer(Modifier.width(16.dp))
                 Text(
                     text = label,
                     style = MaterialTheme.typography.body2,
-                    color = textAndIconColor
+                    color = textAndIconColor,
                 )
             }
         }
@@ -161,24 +161,32 @@ private fun DrawerButton(
 
 @Preview
 @Composable
-private fun Preview() = ClickTrackTheme {
-    DrawerView(
-        viewModel = object : DrawerViewModel {
-            override val state: StateFlow<DrawerState> = MutableStateFlow(
-                DrawerState(
-                    isOpened = true,
-                    selectedItem = DrawerState.SelectedItem.METRONOME,
+private fun Preview() =
+    ClickTrackTheme {
+        DrawerView(
+            viewModel = object : DrawerViewModel {
+                override val state: StateFlow<DrawerState> = MutableStateFlow(
+                    DrawerState(
+                        isOpened = true,
+                        selectedItem = DrawerState.SelectedItem.METRONOME,
+                    ),
                 )
-            )
 
-            override fun openDrawer() = Unit
-            override fun closeDrawer() = Unit
-            override fun navigateToMetronome() = Unit
-            override fun navigateToTraining() = Unit
-            override fun navigateToPolyrhythms() = Unit
-            override fun navigateToSoundLibrary() = Unit
-            override fun navigateToSettings() = Unit
-            override fun navigateToAbout() = Unit
-        }
-    )
-}
+                override fun openDrawer() = Unit
+
+                override fun closeDrawer() = Unit
+
+                override fun navigateToMetronome() = Unit
+
+                override fun navigateToTraining() = Unit
+
+                override fun navigateToPolyrhythms() = Unit
+
+                override fun navigateToSoundLibrary() = Unit
+
+                override fun navigateToSettings() = Unit
+
+                override fun navigateToAbout() = Unit
+            },
+        )
+    }

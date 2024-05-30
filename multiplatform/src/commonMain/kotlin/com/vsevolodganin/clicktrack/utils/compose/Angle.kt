@@ -7,10 +7,10 @@ const val HALF_ANGLE_DEGREES = 180f
 const val RADIANS_TO_DEGREES = (HALF_ANGLE_DEGREES / PI).toFloat()
 
 fun Float.toDegrees(): Float = this * RADIANS_TO_DEGREES
+
 fun Float.toRadians(): Float = this / HALF_ANGLE_DEGREES * PI.toFloat()
 
 class Angle(val degrees: Float) {
-
     val radians: Float
         get() = degrees.toRadians()
 
@@ -26,7 +26,6 @@ class Angle(val degrees: Float) {
 }
 
 class AngleSector(private val start: Angle, private val end: Angle) {
-
     constructor(startDegrees: Float, endDegrees: Float) : this(Angle(startDegrees), Angle(endDegrees))
 
     operator fun contains(angle: Angle): Boolean {

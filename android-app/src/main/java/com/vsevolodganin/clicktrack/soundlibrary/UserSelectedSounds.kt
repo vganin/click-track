@@ -26,7 +26,7 @@ class UserSelectedSounds(
         .stateIn(
             scope = GlobalScope,
             started = SharingStarted.Eagerly,
-            initialValue = null
+            initialValue = null,
         )
 
     fun get(): StateFlow<ClickSounds?> = cached

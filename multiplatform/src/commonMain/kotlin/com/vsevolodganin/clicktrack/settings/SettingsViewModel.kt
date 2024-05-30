@@ -6,12 +6,20 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface SettingsViewModel {
     val state: StateFlow<SettingsState>
+
     fun onBackClick()
+
     fun onThemeChange(theme: Theme)
+
     fun onLanguageChange(language: AppLanguage)
+
     fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean)
+
     fun onKotlinExceptionClick()
+
     fun onNativeExceptionCrashClick()
+
     fun onNativeDanglingReferenceCrashClick()
+
     fun onNonFatalClick()
 }

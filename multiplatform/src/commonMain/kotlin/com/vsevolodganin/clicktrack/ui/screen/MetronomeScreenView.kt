@@ -92,7 +92,7 @@ private fun AppBar(viewModel: MetronomeViewModel) {
             IconButton(onClick = viewModel::onToggleOptions) {
                 Icon(imageVector = Icons.Default.Tune, contentDescription = null)
             }
-        }
+        },
     )
 }
 
@@ -129,7 +129,7 @@ private fun Content(viewModel: MetronomeViewModel) {
                 drawAllBeatsMarks = true,
                 drawTextMarks = false,
                 progress = state.progress,
-                defaultLineWidth = with(LocalDensity.current) { 1f.dp.toPx() }
+                defaultLineWidth = with(LocalDensity.current) { 1f.dp.toPx() },
             )
         }
 
@@ -147,12 +147,12 @@ private fun Content(viewModel: MetronomeViewModel) {
                     BpmWheel(
                         value = state.bpm,
                         onValueChange = viewModel::onBpmChange,
-                        modifier = Modifier.size(200.dp)
+                        modifier = Modifier.size(200.dp),
                     )
                     PlayStopButton(
                         isPlaying = state.isPlaying,
                         onToggle = viewModel::onTogglePlay,
-                        enableInsets = false
+                        enableInsets = false,
                     )
                 }
 
@@ -166,11 +166,11 @@ private fun Content(viewModel: MetronomeViewModel) {
                         style = LocalTextStyle.current.copy(
                             fontWeight = FontWeight.Black,
                             letterSpacing = 4.sp,
-                        )
+                        ),
                     )
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) { measurables, constraints ->
             val wheel = measurables[0].measure(Constraints())
             val fab = measurables[1].measure(Constraints())
@@ -185,7 +185,7 @@ private fun Content(viewModel: MetronomeViewModel) {
                 // FAB is placed in the middle between wheel's and parent's right borders
                 fab.placeRelative(
                     x = (width * 3 + wheel.width - fab.width * 2) / 4,
-                    y = (height - fab.height) / 2
+                    y = (height - fab.height) / 2,
                 )
             }
         }
@@ -205,9 +205,7 @@ private fun Options(viewModel: MetronomeViewModel) {
 }
 
 @Composable
-private fun backdropState(
-    viewModel: MetronomeViewModel,
-): BackdropScaffoldState {
+private fun backdropState(viewModel: MetronomeViewModel): BackdropScaffoldState {
     val areOptionsExpanded = viewModel.state.collectAsState().value?.areOptionsExpanded ?: false
     val backdropValue = if (areOptionsExpanded) BackdropValue.Revealed else BackdropValue.Concealed
     return rememberBackdropScaffoldState(
@@ -220,7 +218,7 @@ private fun backdropState(
                 }
                 true
             }
-        }
+        },
     ).apply {
         LaunchedEffect(backdropValue) {
             when (backdropValue) {
@@ -233,26 +231,33 @@ private fun backdropState(
 
 @ScreenPreview
 @Composable
-private fun Preview() = ClickTrackTheme {
-    MetronomeScreenView(
-        viewModel = object : MetronomeViewModel {
-            override val state: StateFlow<MetronomeState?> = MutableStateFlow(
-                MetronomeState(
-                    bpm = 90.bpm,
-                    pattern = NotePattern.QUINTUPLET_X2,
-                    progress = PlayProgress(100.milliseconds),
-                    isPlaying = false,
-                    areOptionsExpanded = false,
+private fun Preview() =
+    ClickTrackTheme {
+        MetronomeScreenView(
+            viewModel = object : MetronomeViewModel {
+                override val state: StateFlow<MetronomeState?> = MutableStateFlow(
+                    MetronomeState(
+                        bpm = 90.bpm,
+                        pattern = NotePattern.QUINTUPLET_X2,
+                        progress = PlayProgress(100.milliseconds),
+                        isPlaying = false,
+                        areOptionsExpanded = false,
+                    ),
                 )
-            )
 
-            override fun onBackClick() = Unit
-            override fun onToggleOptions() = Unit
-            override fun onOptionsExpandedChange(isOpened: Boolean) = Unit
-            override fun onPatternChoose(pattern: NotePattern) = Unit
-            override fun onBpmChange(bpmDiff: BeatsPerMinuteOffset) = Unit
-            override fun onTogglePlay() = Unit
-            override fun onBpmMeterClick() = Unit
-        }
-    )
-}
+                override fun onBackClick() = Unit
+
+                override fun onToggleOptions() = Unit
+
+                override fun onOptionsExpandedChange(isOpened: Boolean) = Unit
+
+                override fun onPatternChoose(pattern: NotePattern) = Unit
+
+                override fun onBpmChange(bpmDiff: BeatsPerMinuteOffset) = Unit
+
+                override fun onTogglePlay() = Unit
+
+                override fun onBpmMeterClick() = Unit
+            },
+        )
+    }

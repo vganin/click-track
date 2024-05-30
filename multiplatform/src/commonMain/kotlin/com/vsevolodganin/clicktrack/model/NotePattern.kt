@@ -16,13 +16,12 @@ enum class NotePatternGroup {
     TRIPLET,
     QUINTUPLET,
     SEPTUPLET,
-    DISPLACED
+    DISPLACED,
 }
 
 @Serializable
 @Parcelize
 enum class NotePattern(val events: List<NoteEvent>, val group: NotePatternGroup) : Parcelable {
-
     STRAIGHT_X1(straightPattern(1), STRAIGHT),
     STRAIGHT_X2(straightPattern(2), STRAIGHT),
     STRAIGHT_X4(straightPattern(4), STRAIGHT),
@@ -54,30 +53,37 @@ enum class NotePattern(val events: List<NoteEvent>, val group: NotePatternGroup)
 }
 
 private fun straightPattern(multiplier: Int) = filledPattern(multiplier, 1 over 1)
+
 private fun tripletPattern(multiplier: Int) = filledPattern(multiplier, 2 over 3)
+
 private fun quintupletPattern(multiplier: Int) = filledPattern(multiplier, 4 over 5)
+
 private fun septupletPattern(multiplier: Int) = filledPattern(multiplier, 4 over 7)
 
-private fun filledPattern(multiplier: Int, length: Rational) = mutableListOf<NoteEvent>().apply {
+private fun filledPattern(
+    multiplier: Int,
+    length: Rational,
+) = mutableListOf<NoteEvent>().apply {
     val resultingLength = length.numerator over (length.denominator * multiplier)
     repeat(multiplier) {
         this += NoteEvent(
             length = resultingLength,
-            type = NoteEvent.Type.NOTE
+            type = NoteEvent.Type.NOTE,
         )
     }
 }
 
-private fun displacedPattern(multiplier: Int) = mutableListOf<NoteEvent>().apply {
-    val resultingLength = 1 over (multiplier * 2)
-    repeat(multiplier) {
-        this += NoteEvent(
-            length = resultingLength,
-            type = NoteEvent.Type.REST
-        )
-        this += NoteEvent(
-            length = resultingLength,
-            type = NoteEvent.Type.NOTE
-        )
+private fun displacedPattern(multiplier: Int) =
+    mutableListOf<NoteEvent>().apply {
+        val resultingLength = 1 over (multiplier * 2)
+        repeat(multiplier) {
+            this += NoteEvent(
+                length = resultingLength,
+                type = NoteEvent.Type.REST,
+            )
+            this += NoteEvent(
+                length = resultingLength,
+                type = NoteEvent.Type.NOTE,
+            )
+        }
     }
-}

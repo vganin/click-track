@@ -13,7 +13,6 @@ import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Provides
 
 interface UserPreferencesModule {
-
     @Provides
     fun provideUserPreferences(application: Application): FlowSettings {
         return SharedPreferencesSettings.Factory(application).create("user_preferences")

@@ -29,7 +29,6 @@ class MetronomeViewModelImpl(
     private val playerServiceAccess: PlayerServiceAccess,
     private val bpmMeter: BpmMeter,
 ) : MetronomeViewModel, ComponentContext by componentContext {
-
     private val scope = coroutineScope()
 
     private val areOptionsExpanded: MutableStateFlow<Boolean>

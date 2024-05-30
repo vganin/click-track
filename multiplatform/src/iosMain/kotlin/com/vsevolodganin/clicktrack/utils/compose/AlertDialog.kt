@@ -64,7 +64,7 @@ actual fun AlertDialog(
             Box(Modifier.fillMaxWidth().padding(all = 8.dp)) {
                 AlertDialogFlowRow(
                     mainAxisSpacing = 8.dp,
-                    crossAxisSpacing = 12.dp
+                    crossAxisSpacing = 12.dp,
                 ) {
                     dismissButton?.invoke()
                     confirmButton()
@@ -99,7 +99,7 @@ private fun AlertDialog(
             text = text,
             shape = shape,
             backgroundColor = backgroundColor,
-            contentColor = contentColor
+            contentColor = contentColor,
         )
     }
 }
@@ -107,7 +107,7 @@ private fun AlertDialog(
 @Composable
 private fun AlertDialog(
     onDismissRequest: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Popup(
         popupPositionProvider = object : PopupPositionProvider {
@@ -115,13 +115,13 @@ private fun AlertDialog(
                 anchorBounds: IntRect,
                 windowSize: IntSize,
                 layoutDirection: LayoutDirection,
-                popupContentSize: IntSize
+                popupContentSize: IntSize,
             ): IntOffset = IntOffset.Zero
         },
         onDismissRequest = onDismissRequest,
         properties = PopupProperties(focusable = true),
         onPreviewKeyEvent = { false },
-        onKeyEvent = { false }
+        onKeyEvent = { false },
     ) {
         Box(
             modifier = Modifier
@@ -129,11 +129,11 @@ private fun AlertDialog(
                 .pointerInput(onDismissRequest) {
                     detectTapGestures(onPress = { onDismissRequest() })
                 },
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Surface(
                 modifier = Modifier.requiredWidth(280.dp),
-                elevation = 24.dp
+                elevation = 24.dp,
             ) {
                 content()
             }
@@ -155,7 +155,7 @@ private fun AlertDialogContent(
         modifier = modifier,
         shape = shape,
         color = backgroundColor,
-        contentColor = contentColor
+        contentColor = contentColor,
     ) {
         Column {
             AlertDialogBaselineLayout(
@@ -170,13 +170,13 @@ private fun AlertDialogContent(
                 text = text?.let {
                     @Composable {
                         CompositionLocalProvider(
-                            LocalContentAlpha provides ContentAlpha.medium
+                            LocalContentAlpha provides ContentAlpha.medium,
                         ) {
                             val textStyle = MaterialTheme.typography.body2
                             ProvideTextStyle(textStyle, text)
                         }
                     }
-                }
+                },
             )
             buttons()
         }
@@ -186,7 +186,7 @@ private fun AlertDialogContent(
 @Composable
 private fun ColumnScope.AlertDialogBaselineLayout(
     title: @Composable (() -> Unit)?,
-    text: @Composable (() -> Unit)?
+    text: @Composable (() -> Unit)?,
 ) {
     Layout(
         {
@@ -201,15 +201,15 @@ private fun ColumnScope.AlertDialogBaselineLayout(
                 }
             }
         },
-        Modifier.weight(1f, false)
+        Modifier.weight(1f, false),
     ) { measurables, constraints ->
         // Measure with loose constraints for height as we don't want the text to take up more
         // space than it needs
         val titlePlaceable = measurables.firstOrNull { it.layoutId == "title" }?.measure(
-            constraints.copy(minHeight = 0)
+            constraints.copy(minHeight = 0),
         )
         val textPlaceable = measurables.firstOrNull { it.layoutId == "text" }?.measure(
-            constraints.copy(minHeight = 0)
+            constraints.copy(minHeight = 0),
         )
 
         val layoutWidth = max(titlePlaceable?.width ?: 0, textPlaceable?.width ?: 0)
@@ -278,7 +278,7 @@ private fun ColumnScope.AlertDialogBaselineLayout(
 private fun AlertDialogFlowRow(
     mainAxisSpacing: Dp,
     crossAxisSpacing: Dp,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Layout(content) { measurables, constraints ->
         val sequences = mutableListOf<List<Placeable>>()
@@ -361,7 +361,7 @@ private fun AlertDialogFlowRow(
                 placeables.fastForEachIndexed { j, placeable ->
                     placeable.place(
                         x = mainAxisPositions[j],
-                        y = crossAxisPositions[i]
+                        y = crossAxisPositions[i],
                     )
                 }
             }

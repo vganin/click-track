@@ -46,16 +46,16 @@ fun CueView(
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             DragHandle(
-                modifier = dragHandleModifier
+                modifier = dragHandleModifier,
             )
 
             Text(
                 text = stringResource(MR.strings.cue_position, value.displayPosition),
                 modifier = Modifier.align(Alignment.CenterVertically),
-                style = MaterialTheme.typography.h5
+                style = MaterialTheme.typography.h5,
             )
 
             TextField(
@@ -64,7 +64,7 @@ fun CueView(
                 placeholder = {
                     Text(stringResource(MR.strings.cue_name_hint))
                 },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
 
             IconButton(onClick = { expanded = !expanded }) {
@@ -75,7 +75,7 @@ fun CueView(
         AnimatedVisibility(visible = expanded) {
             Column(
                 modifier = Modifier.padding(top = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 CueDurationView(
                     value = value.duration,
@@ -84,12 +84,12 @@ fun CueView(
                 )
 
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     TimeSignatureView(
                         value = value.timeSignature,
                         onValueChange = onTimeSignatureChange,
-                        modifier = Modifier.align(Alignment.CenterVertically)
+                        modifier = Modifier.align(Alignment.CenterVertically),
                     )
 
                     BpmInputField(
@@ -98,7 +98,7 @@ fun CueView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .align(Alignment.CenterVertically),
-                        isError = EditCueState.Error.BPM in value.errors
+                        isError = EditCueState.Error.BPM in value.errors,
                     )
                 }
 
@@ -126,7 +126,7 @@ private fun Preview() {
             measures = DefaultMeasuresDuration,
             time = DefaultTimeDuration,
             pattern = NotePattern.STRAIGHT_X1,
-            errors = setOf(EditCueState.Error.BPM)
+            errors = setOf(EditCueState.Error.BPM),
         ),
         onNameChange = {},
         onBpmChange = {},

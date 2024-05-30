@@ -97,7 +97,7 @@ fun EditClickTrackScreenView(
                             Icon(imageVector = Icons.Default.Check, contentDescription = null)
                         }
                     }
-                }
+                },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -108,7 +108,7 @@ fun EditClickTrackScreenView(
                     coroutineScope.launch {
                         listState.scrollToItem(listState.layoutInfo.totalItemsCount - 1)
                     }
-                }
+                },
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
@@ -142,7 +142,7 @@ private fun Content(
     ) {
         stickyHeader {
             Surface(
-                elevation = CommonCardElevation.Normal
+                elevation = CommonCardElevation.Normal,
             ) {
                 TextField(
                     value = state.name,
@@ -150,7 +150,7 @@ private fun Content(
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = { Text(text = stringResource(MR.strings.edit_click_track_title_hint)) },
                     textStyle = MaterialTheme.typography.h6,
-                    colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
+                    colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface),
                 )
             }
         }
@@ -194,11 +194,11 @@ private fun OptionsItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        elevation = CommonCardElevation.Normal
+        elevation = CommonCardElevation.Normal,
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -207,7 +207,7 @@ private fun OptionsItem(
                 Text(
                     text = stringResource(MR.strings.edit_click_track_options),
                     modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.h6
+                    style = MaterialTheme.typography.h6,
                 )
 
                 IconButton(
@@ -223,7 +223,7 @@ private fun OptionsItem(
                 exit = fadeOut() + shrinkVertically(shrinkTowards = Bottom),
             ) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     LoopItem(viewModel, loop)
                     TempoOffsetItem(viewModel, tempoOffset)
@@ -243,12 +243,12 @@ private fun LoopItem(
             text = stringResource(MR.strings.edit_click_track_loop),
             modifier = Modifier
                 .align(CenterVertically)
-                .weight(1f)
+                .weight(1f),
         )
 
         Checkbox(
             checked = loop,
-            onCheckedChange = viewModel::onLoopChange
+            onCheckedChange = viewModel::onLoopChange,
         )
     }
 }
@@ -260,7 +260,7 @@ private fun TempoOffsetItem(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = CenterVertically
+        verticalAlignment = CenterVertically,
     ) {
         var floatTempoOffset by remember(tempoOffset) {
             mutableStateOf(tempoOffset.value.toFloat())
@@ -278,7 +278,7 @@ private fun TempoOffsetItem(
                 inactiveTrackColor = MaterialTheme.colors.primary,
                 activeTickColor = contentColorFor(MaterialTheme.colors.primary).copy(alpha = SliderDefaults.TickAlpha),
                 inactiveTickColor = contentColorFor(MaterialTheme.colors.primary).copy(alpha = SliderDefaults.TickAlpha),
-            )
+            ),
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -288,7 +288,7 @@ private fun TempoOffsetItem(
             onValueChange = viewModel::onTempoOffsetChange,
             showSign = true,
             allowedNumbersRange = -999..999,
-            fallbackNumber = 0
+            fallbackNumber = 0,
         )
     }
 }
@@ -319,8 +319,8 @@ private fun ReorderableItemScope.CueListItem(
                 onDurationTypeChange = { viewModel.onCueDurationTypeChange(index, it) },
                 onPatternChange = { viewModel.onCuePatternChange(index, it) },
                 dragHandleModifier = Modifier.draggableHandle(
-                    onDragStopped = { viewModel.onItemMoveFinished() }
-                )
+                    onDragStopped = { viewModel.onItemMoveFinished() },
+                ),
             )
         }
     }
@@ -330,28 +330,64 @@ private val TEMPO_OFFSET_RANGE = -20..20
 
 @ScreenPreview
 @Composable
-private fun Preview() = ClickTrackTheme {
-    EditClickTrackScreenView(
-        viewModel = object : EditClickTrackViewModel {
-            override val state: StateFlow<EditClickTrackState?> = MutableStateFlow(
-                PREVIEW_CLICK_TRACK_1.toEditState(showForwardButton = true)
-            )
+private fun Preview() =
+    ClickTrackTheme {
+        EditClickTrackScreenView(
+            viewModel = object : EditClickTrackViewModel {
+                override val state: StateFlow<EditClickTrackState?> = MutableStateFlow(
+                    PREVIEW_CLICK_TRACK_1.toEditState(showForwardButton = true),
+                )
 
-            override fun onBackClick() = Unit
-            override fun onForwardClick() = Unit
-            override fun onNameChange(name: String) = Unit
-            override fun onLoopChange(loop: Boolean) = Unit
-            override fun onTempoOffsetChange(offset: Int) = Unit
-            override fun onAddNewCueClick() = Unit
-            override fun onCueRemove(index: Int) = Unit
-            override fun onCueNameChange(index: Int, name: String) = Unit
-            override fun onCueBpmChange(index: Int, bpm: Int) = Unit
-            override fun onCueTimeSignatureChange(index: Int, timeSignature: TimeSignature) = Unit
-            override fun onCueDurationChange(index: Int, duration: CueDuration) = Unit
-            override fun onCueDurationTypeChange(index: Int, durationType: CueDuration.Type) = Unit
-            override fun onCuePatternChange(index: Int, pattern: NotePattern) = Unit
-            override fun onItemMove(from: Int, to: Int) = Unit
-            override fun onItemMoveFinished() = Unit
-        }
-    )
-}
+                override fun onBackClick() = Unit
+
+                override fun onForwardClick() = Unit
+
+                override fun onNameChange(name: String) = Unit
+
+                override fun onLoopChange(loop: Boolean) = Unit
+
+                override fun onTempoOffsetChange(offset: Int) = Unit
+
+                override fun onAddNewCueClick() = Unit
+
+                override fun onCueRemove(index: Int) = Unit
+
+                override fun onCueNameChange(
+                    index: Int,
+                    name: String,
+                ) = Unit
+
+                override fun onCueBpmChange(
+                    index: Int,
+                    bpm: Int,
+                ) = Unit
+
+                override fun onCueTimeSignatureChange(
+                    index: Int,
+                    timeSignature: TimeSignature,
+                ) = Unit
+
+                override fun onCueDurationChange(
+                    index: Int,
+                    duration: CueDuration,
+                ) = Unit
+
+                override fun onCueDurationTypeChange(
+                    index: Int,
+                    durationType: CueDuration.Type,
+                ) = Unit
+
+                override fun onCuePatternChange(
+                    index: Int,
+                    pattern: NotePattern,
+                ) = Unit
+
+                override fun onItemMove(
+                    from: Int,
+                    to: Int,
+                ) = Unit
+
+                override fun onItemMoveFinished() = Unit
+            },
+        )
+    }

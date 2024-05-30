@@ -17,7 +17,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var component: MainActivityComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         component = MainActivityComponent::class.create(
             applicationComponent = applicationComponent,
             activity = this,
-            componentContext = defaultComponentContext()
+            componentContext = defaultComponentContext(),
         )
 
         // FIXME: Initializing eagerly for proper registration of Activity Result API

@@ -33,9 +33,10 @@ fun BpmInputField(
                 text = inputText + AnnotatedString(bpmSuffix),
                 offsetMapping = object : OffsetMapping {
                     override fun originalToTransformed(offset: Int): Int = offset
+
                     override fun transformedToOriginal(offset: Int): Int = offset.coerceIn(0..inputText.length)
-                }
+                },
             )
-        }
+        },
     )
 }

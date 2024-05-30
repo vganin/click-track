@@ -20,7 +20,7 @@ suspend fun Animatable<Float, AnimationVector1D>.fling(
         animateTo(
             targetValue = adjustedTarget,
             initialVelocity = initialVelocity,
-            block = block
+            block = block,
         )
     } else {
         animateDecay(

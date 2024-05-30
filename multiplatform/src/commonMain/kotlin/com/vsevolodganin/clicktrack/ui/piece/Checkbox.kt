@@ -22,7 +22,7 @@ fun Checkbox(
         enabled = enabled,
         interactionSource = interactionSource,
         colors = CheckboxDefaults.colors(
-            checkmarkColor = MaterialTheme.colors.onSecondary
-        )
+            checkmarkColor = MaterialTheme.colors.onSecondary,
+        ),
     )
 }

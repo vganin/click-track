@@ -58,7 +58,9 @@ private fun Content(viewModel: SettingsViewModel) {
             value = state.theme.displayValue(),
             variants = Theme.entries.map {
                 ListChooserItem(
-                    value = it, displayValue = it.displayValue(), description = it.description()
+                    value = it,
+                    displayValue = it.displayValue(),
+                    description = it.description(),
                 )
             },
             onChoose = viewModel::onThemeChange,
@@ -71,7 +73,9 @@ private fun Content(viewModel: SettingsViewModel) {
             value = state.language.displayValue(),
             variants = AppLanguage.entries.map {
                 ListChooserItem(
-                    value = it, displayValue = it.displayValue(), description = null
+                    value = it,
+                    displayValue = it.displayValue(),
+                    description = null,
                 )
             },
             onChoose = viewModel::onLanguageChange,
@@ -83,7 +87,7 @@ private fun Content(viewModel: SettingsViewModel) {
             title = stringResource(MR.strings.settings_ignore_audio_focus),
             value = state.ignoreAudioFocus,
             onCheckedChange = viewModel::onIgnoreAudioFocusChange,
-            description = stringResource(MR.strings.settings_ignore_audio_focus_description)
+            description = stringResource(MR.strings.settings_ignore_audio_focus_description),
         )
 
         if (isDebug()) {
@@ -94,7 +98,7 @@ private fun Content(viewModel: SettingsViewModel) {
                     .navigationBarsPadding()
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Button(onClick = viewModel::onKotlinExceptionClick) {
                     Text("Kotlin exception crash")
@@ -114,49 +118,60 @@ private fun Content(viewModel: SettingsViewModel) {
 }
 
 @Composable
-private fun Theme.displayValue(): String = when (this) {
-    Theme.LIGHT -> MR.strings.settings_theme_light
-    Theme.DARK -> MR.strings.settings_theme_dark
-    Theme.SYSTEM -> MR.strings.settings_theme_system
-    Theme.AUTO -> MR.strings.settings_theme_auto
-}.let { stringResource(it) }
+private fun Theme.displayValue(): String =
+    when (this) {
+        Theme.LIGHT -> MR.strings.settings_theme_light
+        Theme.DARK -> MR.strings.settings_theme_dark
+        Theme.SYSTEM -> MR.strings.settings_theme_system
+        Theme.AUTO -> MR.strings.settings_theme_auto
+    }.let { stringResource(it) }
 
 @Composable
-private fun Theme.description(): String? = when (this) {
-    Theme.LIGHT -> null
-    Theme.DARK -> null
-    Theme.SYSTEM -> MR.strings.settings_theme_system_description
-    Theme.AUTO -> MR.strings.settings_theme_auto_description
-}?.let { stringResource(it) }
+private fun Theme.description(): String? =
+    when (this) {
+        Theme.LIGHT -> null
+        Theme.DARK -> null
+        Theme.SYSTEM -> MR.strings.settings_theme_system_description
+        Theme.AUTO -> MR.strings.settings_theme_auto_description
+    }?.let { stringResource(it) }
 
 @Composable
-private fun AppLanguage.displayValue(): String = when (this) {
-    AppLanguage.SYSTEM -> MR.strings.settings_language_system
-    AppLanguage.ENGLISH -> MR.strings.settings_language_system_english
-    AppLanguage.RUSSIAN -> MR.strings.settings_language_system_russian
-}.let { stringResource(it) }
+private fun AppLanguage.displayValue(): String =
+    when (this) {
+        AppLanguage.SYSTEM -> MR.strings.settings_language_system
+        AppLanguage.ENGLISH -> MR.strings.settings_language_system_english
+        AppLanguage.RUSSIAN -> MR.strings.settings_language_system_russian
+    }.let { stringResource(it) }
 
 @ScreenPreview
 @Composable
-private fun Preview() = ClickTrackTheme {
-    SettingsScreenView(
-        viewModel = object : SettingsViewModel {
-            override val state: StateFlow<SettingsState> = MutableStateFlow(
-                SettingsState(
-                    theme = Theme.SYSTEM,
-                    ignoreAudioFocus = false,
-                    language = AppLanguage.SYSTEM,
+private fun Preview() =
+    ClickTrackTheme {
+        SettingsScreenView(
+            viewModel = object : SettingsViewModel {
+                override val state: StateFlow<SettingsState> = MutableStateFlow(
+                    SettingsState(
+                        theme = Theme.SYSTEM,
+                        ignoreAudioFocus = false,
+                        language = AppLanguage.SYSTEM,
+                    ),
                 )
-            )
 
-            override fun onBackClick() = Unit
-            override fun onThemeChange(theme: Theme) = Unit
-            override fun onLanguageChange(language: AppLanguage) = Unit
-            override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
-            override fun onKotlinExceptionClick() = Unit
-            override fun onNativeExceptionCrashClick() = Unit
-            override fun onNativeDanglingReferenceCrashClick() = Unit
-            override fun onNonFatalClick() = Unit
-        }
-    )
-}
+                override fun onBackClick() = Unit
+
+                override fun onThemeChange(theme: Theme) = Unit
+
+                override fun onLanguageChange(language: AppLanguage) = Unit
+
+                override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
+
+                override fun onKotlinExceptionClick() = Unit
+
+                override fun onNativeExceptionCrashClick() = Unit
+
+                override fun onNativeDanglingReferenceCrashClick() = Unit
+
+                override fun onNonFatalClick() = Unit
+            },
+        )
+    }

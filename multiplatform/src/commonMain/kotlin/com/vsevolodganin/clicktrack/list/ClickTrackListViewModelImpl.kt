@@ -36,7 +36,6 @@ class ClickTrackListViewModelImpl(
     private val clickTrackRepository: ClickTrackRepository,
     private val newClickTrackNameSuggester: NewClickTrackNameSuggester,
 ) : ClickTrackListViewModel, ComponentContext by componentContext {
-
     private val scope = coroutineScope()
     private val _state: MutableStateFlow<ClickTrackListState> = MutableStateFlow(consumeSavedState() ?: ClickTrackListState(emptyList()))
 
@@ -57,7 +56,7 @@ class ClickTrackListViewModelImpl(
             val suggestedNewClickTrackName = newClickTrackNameSuggester.suggest(
                 withContext(Dispatchers.Main) {
                     stringResolver.resolve(MR.strings.general_unnamed_click_track_template)
-                }
+                },
             )
             val newClickTrack = defaultNewClickTrack(suggestedNewClickTrackName)
             val newClickTrackId = clickTrackRepository.insert(newClickTrack)
@@ -77,7 +76,10 @@ class ClickTrackListViewModelImpl(
 
     override fun onMenuClick() = drawerNavigation.openDrawer()
 
-    override fun onItemMove(from: Int, to: Int) {
+    override fun onItemMove(
+        from: Int,
+        to: Int,
+    ) {
         _state.update {
             it.copy(items = it.items.move(from, to))
         }
@@ -87,9 +89,10 @@ class ClickTrackListViewModelImpl(
         clickTrackRepository.updateOrdering(_state.value.items.map(ClickTrackWithDatabaseId::id))
     }
 
-    private fun defaultNewClickTrack(suggestedNewClickTrackName: String) = ClickTrack(
-        name = suggestedNewClickTrackName,
-        cues = listOf(DefaultCue),
-        loop = true,
-    )
+    private fun defaultNewClickTrack(suggestedNewClickTrackName: String) =
+        ClickTrack(
+            name = suggestedNewClickTrackName,
+            cues = listOf(DefaultCue),
+            loop = true,
+        )
 }

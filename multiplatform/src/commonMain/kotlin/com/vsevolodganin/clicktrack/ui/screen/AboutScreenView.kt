@@ -49,7 +49,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun AboutScreenView(
     viewModel: AboutViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
         topBar = {
@@ -72,7 +72,7 @@ private fun Content(viewModel: AboutViewModel) {
     Box(
         modifier = Modifier
             .padding(16.dp)
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         Column(
             modifier = Modifier
@@ -90,7 +90,7 @@ private fun Content(viewModel: AboutViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.4f)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(8.dp)),
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -98,11 +98,11 @@ private fun Content(viewModel: AboutViewModel) {
 
             Text(
                 text = stringResource(MR.strings.about_developed_by),
-                style = MaterialTheme.typography.caption
+                style = MaterialTheme.typography.caption,
             )
             Text(
                 text = stringResource(MR.strings.about_developer_name),
-                style = MaterialTheme.typography.h6
+                style = MaterialTheme.typography.h6,
             )
             Row {
                 IconButton(onClick = viewModel::onHomeClick) {
@@ -124,7 +124,7 @@ private fun Content(viewModel: AboutViewModel) {
             )
             Text(
                 text = stringResource(MR.strings.about_logo_developer_name),
-                style = MaterialTheme.typography.subtitle1
+                style = MaterialTheme.typography.subtitle1,
             )
             IconButton(onClick = viewModel::onArtstationClick) {
                 Icon(imageVector = SimpleIcons.Artstation, contentDescription = null)
@@ -146,7 +146,7 @@ private fun Content(viewModel: AboutViewModel) {
                 .align(Alignment.BottomCenter)
                 .alpha(ContentAlpha.medium)
                 .navigationBarsPadding(),
-            style = MaterialTheme.typography.caption
+            style = MaterialTheme.typography.caption,
         )
     }
 }
@@ -158,16 +158,21 @@ private fun Preview() {
         viewModel = object : AboutViewModel {
             override val state: StateFlow<AboutState> = MutableStateFlow(
                 AboutState(
-                    displayVersion = "6.6.6"
-                )
+                    displayVersion = "6.6.6",
+                ),
             )
 
             override fun onBackClick() = Unit
+
             override fun onHomeClick() = Unit
+
             override fun onTwitterClick() = Unit
+
             override fun onEmailClick() = Unit
+
             override fun onArtstationClick() = Unit
+
             override fun onProjectLinkClick() = Unit
-        }
+        },
     )
 }

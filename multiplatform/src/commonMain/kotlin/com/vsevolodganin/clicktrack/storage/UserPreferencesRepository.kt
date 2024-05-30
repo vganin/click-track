@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
@@ -43,6 +42,7 @@ class UserPreferencesRepository(
     interface UserPropertyAccess<T> {
         val flow: Flow<T>
         var value: T
+
         fun edit(transform: (T) -> T)
     }
 
@@ -53,7 +53,7 @@ class UserPreferencesRepository(
 
     val reviewRequestTimestamp: UserPropertyAccess<Long> = UserPropertyAccessWithNoMapping(
         key = PreferenceKey.Long("review_request_timestamp"),
-        defaultValue = REVIEW_NOT_REQUESTED
+        defaultValue = REVIEW_NOT_REQUESTED,
     )
 
     val metronomeBpm: UserPropertyAccess<BeatsPerMinute> = UserPropertyAccessWithMapping(
@@ -67,14 +67,14 @@ class UserPreferencesRepository(
         key = PreferenceKey.String("metronome_pattern"),
         defaultValue = NotePattern.STRAIGHT_X1,
         toExternal = { NotePattern.valueOf(it) },
-        toInternal = { it.toString() }
+        toInternal = { it.toString() },
     )
 
     val theme: UserPropertyAccess<Theme> = UserPropertyAccessWithMapping(
         key = PreferenceKey.String("theme"),
         defaultValue = Theme.SYSTEM,
         toExternal = { Theme.valueOf(it) },
-        toInternal = { it.toString() }
+        toInternal = { it.toString() },
     )
 
     val selectedSoundsId: UserPropertyAccess<ClickSoundsId> = UserPropertyAccessWithMapping(
@@ -133,10 +133,11 @@ class UserPreferencesRepository(
         private val toExternal: (TInternal) -> TExternal,
         private val toInternal: (TExternal) -> TInternal,
     ) : UserPropertyAccess<TExternal> {
-
-        private val _stateFlow = MutableStateFlow(runBlocking {
-            with(key) { settings.get() }?.let(toExternal) ?: defaultValue
-        })
+        private val _stateFlow = MutableStateFlow(
+            runBlocking {
+                with(key) { settings.get() }?.let(toExternal) ?: defaultValue
+            },
+        )
 
         init {
             GlobalScope.launch(Dispatchers.Default, CoroutineStart.UNDISPATCHED) {
@@ -163,9 +164,9 @@ class UserPreferencesRepository(
         key: PreferenceKey<T>,
         defaultValue: T,
     ) : UserPropertyAccessWithMapping<T, T>(
-        key = key,
-        defaultValue = defaultValue,
-        toExternal = { it },
-        toInternal = { it },
-    )
+            key = key,
+            defaultValue = defaultValue,
+            toExternal = { it },
+            toInternal = { it },
+        )
 }

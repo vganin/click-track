@@ -72,26 +72,30 @@ private fun RootView(
     }
 
     updateTransition(targetState = activeScreen, label = "ContentView").AnimatedContent(
-        modifier = modifier, transitionSpec = {
+        modifier = modifier,
+        transitionSpec = {
             val animationSpec = spring(visibilityThreshold = IntOffset.VisibilityThreshold)
             val isPush = targetState.position >= initialState.position
 
             if (isPush) {
                 slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Left, animationSpec = animationSpec
+                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = animationSpec,
                 ) togetherWith slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                    animationSpec = animationSpec
+                    animationSpec = animationSpec,
                 )
             } else {
                 slideIntoContainer(
-                    towards = AnimatedContentTransitionScope.SlideDirection.Right, animationSpec = animationSpec
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = animationSpec,
                 ) togetherWith slideOutOfContainer(
                     towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                    animationSpec = animationSpec
+                    animationSpec = animationSpec,
                 )
             }
-        }, contentKey = ActiveScreen::config
+        },
+        contentKey = ActiveScreen::config,
     ) { screen ->
         RootView(screen.viewModel)
     }
@@ -119,15 +123,18 @@ private fun drawerState(drawerViewModel: DrawerViewModel): ComposeDrawerState {
     val drawerValue by remember {
         derivedStateOf { if (drawerState.isOpened) DrawerValue.Open else DrawerValue.Closed }
     }
-    return rememberDrawerState(initialValue = drawerValue, confirmStateChange = remember {
-        { newDrawerValue ->
-            when (newDrawerValue) {
-                DrawerValue.Closed -> drawerViewModel.closeDrawer()
-                DrawerValue.Open -> drawerViewModel.openDrawer()
+    return rememberDrawerState(
+        initialValue = drawerValue,
+        confirmStateChange = remember {
+            { newDrawerValue ->
+                when (newDrawerValue) {
+                    DrawerValue.Closed -> drawerViewModel.closeDrawer()
+                    DrawerValue.Open -> drawerViewModel.openDrawer()
+                }
+                true
             }
-            true
-        }
-    }).apply {
+        },
+    ).apply {
         LaunchedEffect(drawerValue) {
             when (drawerValue) {
                 DrawerValue.Closed -> close()

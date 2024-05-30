@@ -20,7 +20,6 @@ import com.vsevolodganin.clicktrack.drawer.DrawerViewModelImpl
 import me.tatarka.inject.annotations.Provides
 
 interface ViewModelModule {
-
     @Provides
     @MainControllerScope
     fun provideRootViewModel(rootViewModelImpl: RootViewModelImpl): RootViewModel = rootViewModelImpl
@@ -50,12 +49,13 @@ interface ViewModelModule {
     fun provideScreenStackState(
         componentContext: ComponentContext,
         stackNavigation: ScreenStackNavigation,
-        screenViewModelFactory: ScreenViewModelFactory
-    ): ScreenStackState = componentContext.childStack(
-        source = stackNavigation,
-        initialStack = { listOf(ScreenConfiguration.ClickTrackList) },
-        childFactory = screenViewModelFactory::create,
-    )
+        screenViewModelFactory: ScreenViewModelFactory,
+    ): ScreenStackState =
+        componentContext.childStack(
+            source = stackNavigation,
+            initialStack = { listOf(ScreenConfiguration.ClickTrackList) },
+            childFactory = screenViewModelFactory::create,
+        )
 
     @Provides
     @MainControllerScope

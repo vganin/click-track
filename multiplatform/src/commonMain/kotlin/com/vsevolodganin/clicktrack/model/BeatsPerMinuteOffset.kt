@@ -15,7 +15,10 @@ data class BeatsPerMinuteOffset(
     }
 
     operator fun plus(o: Int) = BeatsPerMinuteOffset(value + o)
+
     operator fun minus(o: Int) = BeatsPerMinuteOffset(value - o)
+
     operator fun plus(o: BeatsPerMinuteOffset) = (value + o.value).bpm
+
     operator fun minus(o: BeatsPerMinuteOffset) = (value - o.value).bpm
 }

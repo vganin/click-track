@@ -9,7 +9,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 class AnimatableRect(val bounds: Rect) {
-
     private val _left = Animatable(bounds.left)
     private val _top = Animatable(bounds.top)
     private val _right = Animatable(bounds.right)
@@ -69,7 +68,10 @@ class AnimatableRect(val bounds: Rect) {
         launch { _bottom.animateDecay(initialVelocity.y, animationSpec) }
     }
 
-    private fun forbidToDeform(width: Float, height: Float) {
+    private fun forbidToDeform(
+        width: Float,
+        height: Float,
+    ) {
         _left.updateBounds(lowerBound = bounds.left, upperBound = (bounds.right - width).coerceAtLeast(bounds.left))
         _top.updateBounds(lowerBound = bounds.top, upperBound = (bounds.bottom - height).coerceAtLeast(bounds.top))
         _right.updateBounds(lowerBound = (bounds.left + width).coerceAtMost(bounds.right), upperBound = bounds.right)

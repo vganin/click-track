@@ -8,11 +8,14 @@ interface PlayerServiceAccess {
     fun start(
         id: PlayableId,
         atProgress: Double? = null,
-        soundsId: ClickSoundsId? = null
+        soundsId: ClickSoundsId? = null,
     )
 
     fun pause()
+
     fun resume()
+
     fun stop()
+
     fun playbackState(): Flow<PlaybackState?>
 }

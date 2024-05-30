@@ -9,9 +9,8 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class DocumentMetadataHelperImpl(
     private val contentResolver: ContentResolver,
-    private val logger: Logger
+    private val logger: Logger,
 ) : DocumentMetadataHelper {
-
     override fun isAccessible(uri: String): Boolean {
         return try {
             contentResolver.query(Uri.parse(uri), null, null, null, null, null)?.use {

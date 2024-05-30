@@ -21,7 +21,7 @@ annotation class PlayerServiceScope
 @PlayerServiceScope
 @Component
 abstract class PlayerServiceComponent(
-    @Component protected val applicationComponent: ApplicationComponent
+    @Component protected val applicationComponent: ApplicationComponent,
 ) : PlayerServiceModule {
     abstract val scope: CoroutineScope
     abstract val player: Player

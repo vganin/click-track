@@ -18,7 +18,10 @@ suspend fun PointerInputScope.detectRadialDragGesture(
     )
 }
 
-private fun angleBetween(from: Offset, to: Offset): Float {
+private fun angleBetween(
+    from: Offset,
+    to: Offset,
+): Float {
     val dot = from.x * to.x + from.y * to.y
     val det = from.x * to.y - from.y * to.x
     return atan2(det, dot).toDegrees()

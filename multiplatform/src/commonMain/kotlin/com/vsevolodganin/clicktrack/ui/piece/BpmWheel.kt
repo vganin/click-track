@@ -68,12 +68,15 @@ fun BpmWheel(
                 onValueChange(BeatsPerMinuteOffset(intChange))
             }
         },
-        modifier = modifier.aspectRatio(1f)
+        modifier = modifier.aspectRatio(1f),
     )
 }
 
 @Composable
-private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Modifier) {
+private fun Wheel(
+    onAngleChange: (diff: Float) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     var buttonAngle by remember { mutableStateOf(90f) }
 
     BoxWithConstraints(modifier) {
@@ -95,7 +98,7 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
                     }
                 },
             shape = CircleShape,
-            color = Color.Transparent
+            color = Color.Transparent,
         ) {
             val wheelWidth = width * WHEEL_WIDTH_MULTIPLIER
             val wheelWidthPx = with(density) { wheelWidth.toPx() }
@@ -106,7 +109,7 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(wheelWidth / 2)
+                    .padding(wheelWidth / 2),
             ) {
                 if (size.maxDimension <= 0) return@Canvas
 
@@ -116,14 +119,14 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
                     sweepAngle = 360f,
                     useCenter = false,
                     style = Stroke(
-                        width = wheelWidthPx
-                    )
+                        width = wheelWidthPx,
+                    ),
                 )
 
                 val buttonSize = Size(wheelWidthPx, wheelWidthPx) * 0.3f
                 val buttonOffset = Offset(
                     x = (cos(buttonAngle.toRadians()) + 1) * center.x - buttonSize.width / 2,
-                    y = (-sin(buttonAngle.toRadians()) + 1) * center.y - buttonSize.height / 2
+                    y = (-sin(buttonAngle.toRadians()) + 1) * center.y - buttonSize.height / 2,
                 )
 
                 drawArc(
@@ -146,6 +149,6 @@ private const val WHEEL_WIDTH_MULTIPLIER = 0.125f
 private fun Preview() {
     BpmWheel(
         state = remember { mutableStateOf(60.bpm) },
-        modifier = Modifier.size(200.dp)
+        modifier = Modifier.size(200.dp),
     )
 }

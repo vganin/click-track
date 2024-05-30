@@ -10,7 +10,8 @@ import com.vsevolodganin.clicktrack.utils.compose.isSystemInLandscape
 @Composable
 actual fun SystemUiSetup() {
     // TODO: Support edge-to-edge mode
-    @Suppress("DEPRECATION") val systemUiController = rememberSystemUiController()
+    @Suppress("DEPRECATION")
+    val systemUiController = rememberSystemUiController()
     val isDarkTheme = isSystemInDarkTheme()
     val isLandscape = isSystemInLandscape()
     DisposableEffect(systemUiController, isDarkTheme, isLandscape) {
@@ -22,7 +23,7 @@ actual fun SystemUiSetup() {
             setNavigationBarColor(
                 color = Color.Transparent,
                 darkIcons = !isDarkTheme && !isLandscape,
-                navigationBarContrastEnforced = false
+                navigationBarContrastEnforced = false,
             )
         }
         onDispose {}

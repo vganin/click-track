@@ -53,7 +53,7 @@ fun <T> DropdownSelector(
                 .focusableBorder()
                 .focusable()
                 .clickable { expanded = !expanded }
-                .padding(8.dp)
+                .padding(8.dp),
         ) {
             Text(
                 text = toString(selectedValue),
@@ -101,6 +101,6 @@ private fun Preview() {
         selectedValue = selectedValue,
         onSelect = { value -> selectedValue = value },
         toString = { it },
-        modifier = Modifier
+        modifier = Modifier,
     )
 }

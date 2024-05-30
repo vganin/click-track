@@ -4,7 +4,7 @@ class Resampler(
     private val channelCount: Int,
     private val inputRate: Int,
     private val outputRate: Int,
-    quality: Quality
+    quality: Quality,
 ) {
     enum class Quality {
         Fastest,
@@ -21,13 +21,14 @@ class Resampler(
         quality.ordinal,
     )
 
-    fun resample(samples: FloatArray): FloatArray = resampleNative(
-        nativePtr,
-        samples,
-        channelCount,
-        inputRate,
-        outputRate,
-    )
+    fun resample(samples: FloatArray): FloatArray =
+        resampleNative(
+            nativePtr,
+            samples,
+            channelCount,
+            inputRate,
+            outputRate,
+        )
 
     protected fun finalize() = destroyNative(nativePtr)
 
@@ -35,7 +36,7 @@ class Resampler(
         channelCount: Int,
         inputRate: Int,
         outputRate: Int,
-        quality: Int
+        quality: Int,
     ): Long
 
     private external fun resampleNative(

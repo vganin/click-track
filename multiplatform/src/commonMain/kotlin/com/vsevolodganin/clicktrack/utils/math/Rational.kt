@@ -15,7 +15,6 @@ data class Rational(
     private val numerator_: Int,
     private val denominator_: Int,
 ) : Parcelable {
-
     @Transient
     @IgnoredOnParcel
     private val gcd: Int = gcd(numerator_, denominator_)
@@ -108,7 +107,10 @@ operator fun Int.div(value: Rational): Int {
     return value / this
 }
 
-fun min(lhs: Rational, rhs: Rational): Rational {
+fun min(
+    lhs: Rational,
+    rhs: Rational,
+): Rational {
     return if (lhs < rhs) lhs else rhs
 }
 

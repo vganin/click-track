@@ -8,12 +8,12 @@ import androidx.compose.ui.tooling.preview.Preview
 @Preview(
     name = "1. Light Theme",
     group = "themes",
-    uiMode = UI_MODE_NIGHT_NO
+    uiMode = UI_MODE_NIGHT_NO,
 )
 @Preview(
     name = "2. Dark Theme",
     group = "themes",
-    uiMode = UI_MODE_NIGHT_YES
+    uiMode = UI_MODE_NIGHT_YES,
 )
 @Preview(
     name = "3. Russian",

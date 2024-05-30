@@ -7,7 +7,6 @@ import me.tatarka.inject.annotations.Inject
 class TrainingStateValidator(
     private val bpmValidator: BpmValidator,
 ) {
-
     class ValidationResult(
         val persistableState: TrainingValidState?,
         val errors: Set<TrainingEditState.Error>,
@@ -47,7 +46,7 @@ class TrainingStateValidator(
                     ending = when (state.activeEndingKind) {
                         TrainingEndingKind.BY_TEMPO -> TrainingValidState.Ending.ByTempo(endingByTempoValidationResult.coercedBpm)
                         TrainingEndingKind.BY_TIME -> TrainingValidState.Ending.ByTime(state.endingByTime.duration)
-                    }
+                    },
                 ),
                 errors = errors,
             )

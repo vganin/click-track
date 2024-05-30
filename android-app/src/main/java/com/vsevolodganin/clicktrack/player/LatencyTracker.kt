@@ -18,9 +18,8 @@ import kotlin.time.Duration.Companion.seconds
 @PlayerServiceScope
 @Inject
 class LatencyTracker(
-    private val primitiveAudioPlayer: PrimitiveAudioPlayer
+    private val primitiveAudioPlayer: PrimitiveAudioPlayer,
 ) {
-
     private var latencyMeasureJob: Job? = null
 
     private val _latencyState = MutableStateFlow(Duration.ZERO)

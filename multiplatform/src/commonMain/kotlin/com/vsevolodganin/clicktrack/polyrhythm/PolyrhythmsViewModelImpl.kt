@@ -24,18 +24,17 @@ class PolyrhythmsViewModelImpl(
     private val userPreferences: UserPreferencesRepository,
     private val playerServiceAccess: PlayerServiceAccess,
 ) : PolyrhythmsViewModel, ComponentContext by componentContext {
-
     private val scope = coroutineScope()
 
     override val state: StateFlow<PolyrhythmsState?> = combine(
         userPreferences.polyrhythm.flow,
-        playerServiceAccess.playbackState()
+        playerServiceAccess.playbackState(),
     ) { twoLayerPolyrhythm, playbackState ->
         val isPlaying = playbackState?.id == TwoLayerPolyrhythmId
         PolyrhythmsState(
             twoLayerPolyrhythm = twoLayerPolyrhythm,
             isPlaying = isPlaying,
-            playableProgress = grabIf(isPlaying) { playbackState?.progress }
+            playableProgress = grabIf(isPlaying) { playbackState?.progress },
         )
     }.stateIn(scope, SharingStarted.Eagerly, consumeSavedState())
 

@@ -14,7 +14,7 @@ import me.tatarka.inject.annotations.Inject
 @PlayerServiceScope
 @Inject
 class AudioFocusManager(
-    private val audioManager: AudioManager
+    private val audioManager: AudioManager,
 ) {
     private val hasFocus = MutableStateFlow(false)
 
@@ -23,7 +23,7 @@ class AudioFocusManager(
             AudioAttributesCompat.Builder()
                 .setUsage(AudioAttributesCompat.USAGE_MEDIA)
                 .setContentType(AudioAttributesCompat.CONTENT_TYPE_SONIFICATION)
-                .build()
+                .build(),
         )
         .setWillPauseWhenDucked(false)
         .setOnAudioFocusChangeListener { focusChange ->

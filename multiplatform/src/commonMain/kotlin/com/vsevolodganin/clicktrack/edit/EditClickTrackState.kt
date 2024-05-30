@@ -34,7 +34,7 @@ data class EditCueState(
     val errors: Set<Error>,
 ) : Parcelable {
     enum class Error {
-        BPM
+        BPM,
     }
 
     val duration: CueDuration

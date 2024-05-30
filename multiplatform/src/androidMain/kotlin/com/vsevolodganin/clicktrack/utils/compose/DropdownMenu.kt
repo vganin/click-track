@@ -14,7 +14,7 @@ actual fun DropdownMenu(
     onDismissRequest: () -> Unit,
     modifier: Modifier,
     offset: DpOffset,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) = androidx.compose.material.DropdownMenu(
     expanded = expanded,
     onDismissRequest = onDismissRequest,
@@ -30,7 +30,7 @@ actual fun DropdownMenuItem(
     enabled: Boolean,
     contentPadding: PaddingValues,
     interactionSource: MutableInteractionSource,
-    content: @Composable RowScope.() -> Unit
+    content: @Composable RowScope.() -> Unit,
 ) = androidx.compose.material.DropdownMenuItem(
     onClick = onClick,
     modifier = modifier,

@@ -39,7 +39,7 @@ fun PlayPauseIcon(isPlaying: Boolean) {
             "M 10 38 L 10 10 L 21.75 10 L 21.75 38 L 10 38 M 26.25 38 L 26.25 10 L 38 10 L 38 38 L 26.25 38"
         } else {
             "M 16 9.85 L 38 23.85 L 38 23.85 L 16 23.957 L 16 9.85 M 16 23.957 L 38 23.85 L 38 23.85 L 16 37.85 L 16 23.957"
-        }
+        },
     )
 
     val imageVector by remember {
@@ -52,16 +52,17 @@ fun PlayPauseIcon(isPlaying: Boolean) {
 
     Icon(
         imageVector = imageVector,
-        contentDescription = null
+        contentDescription = null,
     )
 }
 
 @Preview
 @Composable
-private fun Preview() = ClickTrackTheme {
-    var isPlaying by remember { mutableStateOf(false) }
-    PlayPauseButton(
-        isPlaying = isPlaying,
-        onToggle = { isPlaying = !isPlaying },
-    )
-}
+private fun Preview() =
+    ClickTrackTheme {
+        var isPlaying by remember { mutableStateOf(false) }
+        PlayPauseButton(
+            isPlaying = isPlaying,
+            onToggle = { isPlaying = !isPlaying },
+        )
+    }

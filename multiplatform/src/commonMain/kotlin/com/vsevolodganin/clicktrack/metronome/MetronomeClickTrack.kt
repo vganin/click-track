@@ -19,7 +19,7 @@ fun metronomeClickTrack(
             pattern = pattern,
             timeSignature = MetronomeTimeSignature,
             duration = MetronomeDuration,
-        )
+        ),
     ),
     loop = true,
 )

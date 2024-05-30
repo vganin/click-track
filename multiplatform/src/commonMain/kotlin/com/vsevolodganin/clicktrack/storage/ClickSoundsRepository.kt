@@ -33,18 +33,25 @@ class ClickSoundsRepository(
 
     fun insert(clickSounds: UriClickSounds) {
         database.sqlClickSoundsQueries.insert(
-            serializedValue = json.encodeToString(clickSounds)
+            serializedValue = json.encodeToString(clickSounds),
         )
     }
 
-    fun update(id: ClickSoundsId.Database, clickSounds: UriClickSounds) {
+    fun update(
+        id: ClickSoundsId.Database,
+        clickSounds: UriClickSounds,
+    ) {
         database.sqlClickSoundsQueries.update(
             id = id.value,
-            serializedValue = clickSounds.serializeToString()
+            serializedValue = clickSounds.serializeToString(),
         )
     }
 
-    fun update(id: ClickSoundsId.Database, type: ClickSoundType, source: ClickSoundSource.Uri) {
+    fun update(
+        id: ClickSoundsId.Database,
+        type: ClickSoundType,
+        source: ClickSoundSource.Uri,
+    ) {
         database.sqlClickSoundsQueries.transaction {
             val current = database.sqlClickSoundsQueries.getById(id.value).executeAsOneOrNull()?.toCommon() ?: return@transaction
             val updated = when (type) {
@@ -61,11 +68,13 @@ class ClickSoundsRepository(
         database.sqlClickSoundsQueries.removeById(id.value)
     }
 
-    private fun StorageClickSounds.toCommon() = UserClickSounds(
-        id = ClickSoundsId.Database(id),
-        value = serializedValue.deserializeToClickSounds()
-    )
+    private fun StorageClickSounds.toCommon() =
+        UserClickSounds(
+            id = ClickSoundsId.Database(id),
+            value = serializedValue.deserializeToClickSounds(),
+        )
 
     private fun UriClickSounds.serializeToString(): String = json.encodeToString(this)
+
     private fun String.deserializeToClickSounds(): UriClickSounds = json.decodeFromString(this)
 }

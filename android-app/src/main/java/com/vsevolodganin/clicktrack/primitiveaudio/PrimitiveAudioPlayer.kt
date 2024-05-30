@@ -21,7 +21,7 @@ import kotlin.time.Duration.Companion.seconds
 class PrimitiveAudioPlayer(
     primitiveAudioMonoRendererFactory: (targetSampleRate: Int) -> PrimitiveAudioMonoRenderer,
     audioManager: AudioManager,
-    private val logger: Logger
+    private val logger: Logger,
 ) {
     private val audioSessionId: Int = audioManager.generateAudioSessionId()
 
@@ -47,7 +47,7 @@ class PrimitiveAudioPlayer(
         singleIterationDuration: Duration,
         playerEvents: Sequence<PlayerEvent>,
         reportProgress: (Duration) -> Unit,
-        soundSourceProvider: SoundSourceProvider
+        soundSourceProvider: SoundSourceProvider,
     ) {
         try {
             audioTrack.play()
@@ -64,7 +64,7 @@ class PrimitiveAudioPlayer(
                     }
 
                     override fun onPeriodicNotification(track: AudioTrack) = Unit
-                }
+                },
             )
 
             primitiveAudioMonoRenderer.renderToMonoSamples(playerEvents, soundSourceProvider)
@@ -78,7 +78,7 @@ class PrimitiveAudioPlayer(
                             samples,
                             samplesWritten,
                             samples.size - samplesWritten,
-                            AudioTrack.WRITE_NON_BLOCKING
+                            AudioTrack.WRITE_NON_BLOCKING,
                         )
 
                         if (result == 0) {
@@ -97,8 +97,9 @@ class PrimitiveAudioPlayer(
                 audioTrack.setPlaybackPositionUpdateListener(
                     object : AudioTrack.OnPlaybackPositionUpdateListener {
                         override fun onMarkerReached(track: AudioTrack) = continuation.resume(Unit)
+
                         override fun onPeriodicNotification(track: AudioTrack) = Unit
-                    }
+                    },
                 )
                 if (audioTrack.playbackHeadPosition >= audioTrack.notificationMarkerPosition) {
                     continuation.resume(Unit)

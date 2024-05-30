@@ -11,7 +11,7 @@ import me.tatarka.inject.annotations.Component
 
 @Component
 abstract class ExportWorkerComponent(
-    @Component protected val applicationComponent: ApplicationComponent
+    @Component protected val applicationComponent: ApplicationComponent,
 ) {
     abstract val workManager: WorkManager
     abstract val clickTrackRepository: ClickTrackRepository

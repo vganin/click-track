@@ -12,7 +12,6 @@ data class SoundLibraryState(
 
 @Parcelize
 sealed interface SelectableClickSoundsItem : Parcelable {
-
     val id: ClickSoundsId
 
     @Parcelize

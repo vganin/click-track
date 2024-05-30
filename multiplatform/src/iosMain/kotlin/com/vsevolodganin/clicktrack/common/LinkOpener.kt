@@ -8,7 +8,6 @@ import platform.UIKit.UIApplication
 @MainControllerScope
 @Inject
 actual class LinkOpener {
-
     actual fun url(url: String) {
         UIApplication.sharedApplication.openURL(URLWithString(url)!!)
     }

@@ -16,7 +16,6 @@ data class TrainingEditState(
     val endingByTime: Ending.ByTime,
     val errors: Set<Error>,
 ) {
-
     sealed interface Ending {
         val kind: TrainingEndingKind
 
@@ -32,11 +31,14 @@ data class TrainingEditState(
     }
 
     enum class TrainingMode {
-        INCREASE_TEMPO, DECREASE_TEMPO
+        INCREASE_TEMPO,
+        DECREASE_TEMPO,
     }
 
     enum class Error {
-        STARTING_TEMPO, TEMPO_CHANGE, ENDING_TEMPO
+        STARTING_TEMPO,
+        TEMPO_CHANGE,
+        ENDING_TEMPO,
     }
 
     val segmentLength: CueDuration

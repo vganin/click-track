@@ -104,14 +104,14 @@ fun NumberPicker(
                                 val coercedPoint = coercedAnchors.minByOrNull { abs(it - coercedTarget) }!!
                                 val base = halvedNumbersColumnHeightPx * (target / halvedNumbersColumnHeightPx).toInt()
                                 coercedPoint + base
-                            }
+                            },
                         ).endState.value
 
                         onValueChange(animatedStateValue(endValue))
                         animatedOffset.snapTo(0f)
                     }
-                }
-            )
+                },
+            ),
     ) {
         val spacing = 4.dp
 
@@ -124,7 +124,7 @@ fun NumberPicker(
         Box(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .offset { IntOffset(x = 0, y = coercedAnimatedOffset.roundToInt()) }
+                .offset { IntOffset(x = 0, y = coercedAnimatedOffset.roundToInt()) },
         ) {
             val baseLabelModifier = Modifier.align(Alignment.Center)
             ProvideTextStyle(textStyle) {
@@ -132,18 +132,18 @@ fun NumberPicker(
                     text = (animatedStateValue - 1).toString(),
                     modifier = baseLabelModifier
                         .offset(y = -halvedNumbersColumnHeight)
-                        .alpha(coercedAnimatedOffset / halvedNumbersColumnHeightPx)
+                        .alpha(coercedAnimatedOffset / halvedNumbersColumnHeightPx),
                 )
                 Label(
                     text = animatedStateValue.toString(),
                     modifier = baseLabelModifier
-                        .alpha(1 - abs(coercedAnimatedOffset) / halvedNumbersColumnHeightPx)
+                        .alpha(1 - abs(coercedAnimatedOffset) / halvedNumbersColumnHeightPx),
                 )
                 Label(
                     text = (animatedStateValue + 1).toString(),
                     modifier = baseLabelModifier
                         .offset(y = halvedNumbersColumnHeight)
-                        .alpha(-coercedAnimatedOffset / halvedNumbersColumnHeightPx)
+                        .alpha(-coercedAnimatedOffset / halvedNumbersColumnHeightPx),
                 )
             }
         }
@@ -155,14 +155,17 @@ fun NumberPicker(
 }
 
 @Composable
-private fun Label(text: String, modifier: Modifier) {
+private fun Label(
+    text: String,
+    modifier: Modifier,
+) {
     Text(
         text = text,
         modifier = modifier.pointerInput(Unit) {
             detectTapGestures(onLongPress = {
                 // FIXME: Empty to disable text selection
             })
-        }
+        },
     )
 }
 
@@ -179,7 +182,7 @@ private suspend fun Animatable<Float, AnimationVector1D>.fling(
         animateTo(
             targetValue = adjustedTarget,
             initialVelocity = initialVelocity,
-            block = block
+            block = block,
         )
     } else {
         animateDecay(
@@ -197,7 +200,7 @@ private fun Preview() {
         NumberPicker(
             state = remember { mutableStateOf(9) },
             range = 0..10,
-            modifier = Modifier.align(Alignment.Center)
+            modifier = Modifier.align(Alignment.Center),
         )
     }
 }

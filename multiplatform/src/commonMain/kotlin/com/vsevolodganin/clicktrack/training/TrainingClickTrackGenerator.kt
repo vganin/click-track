@@ -12,8 +12,10 @@ import kotlin.time.Duration
 
 @Inject
 class TrainingClickTrackGenerator() {
-
-    fun generate(trainingState: TrainingValidState, name: String): ClickTrack {
+    fun generate(
+        trainingState: TrainingValidState,
+        name: String,
+    ): ClickTrack {
         return ClickTrack(
             name = name,
             cues = when (trainingState.mode) {
@@ -46,7 +48,7 @@ class TrainingClickTrackGenerator() {
                     )
                 }
             },
-            loop = false
+            loop = false,
         )
     }
 

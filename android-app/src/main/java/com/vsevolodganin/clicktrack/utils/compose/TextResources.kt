@@ -9,7 +9,9 @@ import androidx.compose.ui.platform.LocalContext
 
 @Composable
 @ReadOnlyComposable
-fun textResource(@StringRes id: Int): CharSequence {
+fun textResource(
+    @StringRes id: Int,
+): CharSequence {
     val resources = resources()
     return resources.getText(id)
 }

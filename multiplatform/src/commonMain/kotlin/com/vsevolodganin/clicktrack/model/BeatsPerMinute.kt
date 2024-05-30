@@ -10,7 +10,6 @@ import kotlin.time.Duration.Companion.minutes
 @Serializable
 @Parcelize
 data class BeatsPerMinute(val value: Int) : Parcelable, Comparable<BeatsPerMinute> {
-
     companion object {
         val VALID_TEMPO_RANGE = 1..999
         val MAX = VALID_TEMPO_RANGE.last.bpm
@@ -24,13 +23,20 @@ data class BeatsPerMinute(val value: Int) : Parcelable, Comparable<BeatsPerMinut
     }
 
     override fun compareTo(other: BeatsPerMinute): Int = value.compareTo(other.value)
+
     operator fun plus(o: BeatsPerMinute): BeatsPerMinute = (value + o.value).bpm
+
     operator fun minus(o: BeatsPerMinute): BeatsPerMinute = (value - o.value).bpm
+
     operator fun plus(o: BeatsPerMinuteOffset): BeatsPerMinute = (value + o.value).bpm
+
     operator fun minus(o: BeatsPerMinuteOffset): BeatsPerMinute = (value - o.value).bpm
 }
 
-fun BeatsPerMinute(beatCount: Int, timelapse: Duration): BeatsPerMinute {
+fun BeatsPerMinute(
+    beatCount: Int,
+    timelapse: Duration,
+): BeatsPerMinute {
     return (1.minutes / timelapse * beatCount).roundToInt().bpm
 }
 

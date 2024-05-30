@@ -11,7 +11,6 @@ import me.tatarka.inject.annotations.Provides
 typealias PlayerDispatcher = CoroutineDispatcher
 
 interface PlayerServiceModule {
-
     @Provides
     @PlayerServiceScope
     fun providePlayerServiceCoroutineScope(): CoroutineScope {

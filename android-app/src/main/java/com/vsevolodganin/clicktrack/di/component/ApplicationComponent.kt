@@ -18,13 +18,12 @@ import me.tatarka.inject.annotations.Provides
 @ApplicationScope
 @Component
 abstract class ApplicationComponent(
-    @get:Provides val application: android.app.Application
+    @get:Provides val application: android.app.Application,
 ) : ApplicationModule,
     SerializationModule,
     DatabaseModule,
     UserPreferencesModule,
     FirebaseModule {
-
     abstract val nativeLibraries: NativeLibraries
     abstract val userPreferences: UserPreferencesRepository
     abstract val themeManager: ThemeManager

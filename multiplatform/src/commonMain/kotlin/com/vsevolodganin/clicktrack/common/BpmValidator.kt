@@ -6,7 +6,6 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class BpmValidator {
-
     class ValidationResult(
         val coercedBpm: BeatsPerMinute,
         val hasError: Boolean,
@@ -16,12 +15,12 @@ class BpmValidator {
         return if (value !in BeatsPerMinute.VALID_TEMPO_RANGE) {
             ValidationResult(
                 coercedBpm = value.coerceIn(BeatsPerMinute.VALID_TEMPO_RANGE).bpm,
-                hasError = true
+                hasError = true,
             )
         } else {
             ValidationResult(
                 coercedBpm = value.bpm,
-                hasError = false
+                hasError = false,
             )
         }
     }

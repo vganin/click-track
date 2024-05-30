@@ -10,13 +10,13 @@ data class GenericClickSounds<T : ClickSoundSource>(
     val strongBeat: T?,
     val weakBeat: T?,
 ) : Parcelable {
-
     val asIterable: Iterable<T> get() = listOfNotNull(strongBeat, weakBeat)
 
-    fun beatByType(type: ClickSoundType) = when (type) {
-        ClickSoundType.STRONG -> strongBeat
-        ClickSoundType.WEAK -> weakBeat
-    }
+    fun beatByType(type: ClickSoundType) =
+        when (type) {
+            ClickSoundType.STRONG -> strongBeat
+            ClickSoundType.WEAK -> weakBeat
+        }
 }
 
 typealias ClickSounds = GenericClickSounds<*>

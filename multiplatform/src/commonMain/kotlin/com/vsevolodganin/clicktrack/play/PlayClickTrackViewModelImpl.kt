@@ -34,7 +34,6 @@ class PlayClickTrackViewModelImpl(
     private val userPreferences: UserPreferencesRepository,
     private val exportWorkLauncher: ExportWorkLauncher,
 ) : PlayClickTrackViewModel, ComponentContext by componentContext {
-
     private val scope = coroutineScope()
 
     override val state: StateFlow<PlayClickTrackState?> = combine(

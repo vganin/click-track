@@ -54,10 +54,10 @@ fun SwipeToDelete(
         modifier = modifier,
         exit = shrinkVertically(
             animationSpec = tween(durationMillis = 500),
-            shrinkTowards = Alignment.Top
+            shrinkTowards = Alignment.Top,
         ) + slideOutVertically(
-            targetOffsetY = { -it / 10 }
-        )
+            targetOffsetY = { -it / 10 },
+        ),
     ) {
         SwipeToReveal(
             state = revealState,
@@ -82,7 +82,7 @@ private fun BoxScope.DeleteLayout(
         when (state.targetValue) {
             RevealValue.Hidden -> Color.Transparent
             RevealValue.Revealed -> colorResource(MR.colors.delete)
-        }
+        },
     )
 
     Box(
@@ -93,7 +93,7 @@ private fun BoxScope.DeleteLayout(
             .background(backgroundColor)
             .clipToBounds()
             .padding(horizontal = 24.dp),
-        contentAlignment = Alignment.CenterEnd
+        contentAlignment = Alignment.CenterEnd,
     ) {
         IconButton(onClick = onDelete) {
             Icon(

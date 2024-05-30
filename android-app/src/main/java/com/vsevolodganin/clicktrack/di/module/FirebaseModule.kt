@@ -7,7 +7,6 @@ import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 interface FirebaseModule {
-
     @Provides
     @ApplicationScope
     fun provideFirebase(application: Application): FirebaseAnalytics {

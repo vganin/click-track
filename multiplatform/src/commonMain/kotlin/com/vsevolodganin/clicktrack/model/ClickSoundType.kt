@@ -7,5 +7,6 @@ import kotlinx.serialization.Serializable
 @Parcelize
 @Serializable
 enum class ClickSoundType : Parcelable {
-    STRONG, WEAK
+    STRONG,
+    WEAK,
 }

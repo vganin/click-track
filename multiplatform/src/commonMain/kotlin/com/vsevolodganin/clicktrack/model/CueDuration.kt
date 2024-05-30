@@ -11,7 +11,6 @@ import kotlin.time.Duration
 
 @Serializable
 sealed interface CueDuration : Parcelable {
-
     enum class Type {
         BEATS,
         MEASURES,
@@ -48,7 +47,9 @@ sealed interface CueDuration : Parcelable {
     @Parcelize
     @TypeParceler<Duration, DurationParceler>
     @SerialName("com.vsevolodganin.clicktrack.lib.CueDuration.Time") // For backward compatibility
-    data class Time(@Serializable(DurationSerializer::class) val value: Duration) : CueDuration {
+    data class Time(
+        @Serializable(DurationSerializer::class) val value: Duration,
+    ) : CueDuration {
         init {
             require(value >= Duration.ZERO) { "Time should be non-negative but was: $value" }
         }
@@ -58,7 +59,10 @@ sealed interface CueDuration : Parcelable {
     }
 }
 
-fun CueDuration.asTimeGiven(tempo: BeatsPerMinute, timeSignature: TimeSignature): Duration {
+fun CueDuration.asTimeGiven(
+    tempo: BeatsPerMinute,
+    timeSignature: TimeSignature,
+): Duration {
     return when (this) {
         is CueDuration.Time -> value
         is CueDuration.Beats -> tempo.interval * value

@@ -8,7 +8,6 @@ import dev.icerock.moko.resources.FileResource
 import kotlinx.serialization.Serializable
 
 sealed class ClickSoundSource : Parcelable {
-
     @Parcelize
     @TypeParceler<FileResource, FileResourceParceler>()
     data class Bundled(val audioResource: FileResource) : ClickSoundSource()

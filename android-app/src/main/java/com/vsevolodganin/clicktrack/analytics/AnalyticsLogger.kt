@@ -8,15 +8,17 @@ import me.tatarka.inject.annotations.Inject
 @ApplicationScope
 @Inject
 class AnalyticsLogger(private val firebaseAnalytics: FirebaseAnalytics) {
-
-    fun logEvent(name: String, vararg parameters: Pair<String, String>) {
+    fun logEvent(
+        name: String,
+        vararg parameters: Pair<String, String>,
+    ) {
         firebaseAnalytics.logEvent(
             name,
             Bundle().apply {
                 parameters.forEach { (name, value) ->
                     putString(name, value)
                 }
-            }
+            },
         )
     }
 }

@@ -107,7 +107,10 @@ class Player(
         }
     }
 
-    private suspend inline fun pausable(startAt: Double?, crossinline play: suspend (startAt: Double?) -> Unit) {
+    private suspend inline fun pausable(
+        startAt: Double?,
+        crossinline play: suspend (startAt: Double?) -> Unit,
+    ) {
         var savedProgress: Double? = startAt
         pausedState.collectLatest { isPaused ->
             if (isPaused) {
@@ -146,7 +149,7 @@ class Player(
                     position = it,
                 )
             },
-            soundSourceProvider = soundSourceProvider(soundsId)
+            soundSourceProvider = soundSourceProvider(soundsId),
         )
     }
 
@@ -177,7 +180,7 @@ class Player(
                     position = it,
                 )
             },
-            soundSourceProvider = soundSourceProvider(soundsId)
+            soundSourceProvider = soundSourceProvider(soundsId),
         )
     }
 
@@ -188,7 +191,7 @@ class Player(
         pausedState,
         latencyTracker.latencyState
             .map { LATENCY_RESOLUTION * (it / LATENCY_RESOLUTION).toInt() }
-            .distinctUntilChanged()
+            .distinctUntilChanged(),
     ) { internalPlaybackState, isPaused, latency -> Triple(internalPlaybackState, isPaused, latency) }
         .mapLatest { (internalPlaybackState, isPaused, latency) ->
             if (!isPaused) {
@@ -226,7 +229,7 @@ class Player(
                 .loop(loop)
                 .startingAt(startingAt),
             reportProgress = reportProgress,
-            soundSourceProvider = soundSourceProvider
+            soundSourceProvider = soundSourceProvider,
         )
     }
 
@@ -249,7 +252,7 @@ class Player(
                 .loop(true)
                 .startingAt(startingAt),
             reportProgress = reportProgress,
-            soundSourceProvider = soundSourceProvider
+            soundSourceProvider = soundSourceProvider,
         )
     }
 

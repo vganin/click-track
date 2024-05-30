@@ -68,7 +68,7 @@ fun PolyrhythmCircle(
             val duration = (PROGRESS_LINE_MAX_SWEEP_ANGLE_DEGREES * 1000f / progressVelocity).roundToInt()
             sweepAngle.animateTo(
                 PROGRESS_LINE_MAX_SWEEP_ANGLE_DEGREES,
-                tween(duration, easing = LinearEasing)
+                tween(duration, easing = LinearEasing),
             )
         }
     }
@@ -93,7 +93,7 @@ fun PolyrhythmCircle(
             val start = center
             val end = start + Offset(
                 x = cos(progressAngle.toRadians()) * outerCircleRadius,
-                y = sin(progressAngle.toRadians()) * outerCircleRadius
+                y = sin(progressAngle.toRadians()) * outerCircleRadius,
             )
             val strokeWidth = 2.dp.toPx()
 
@@ -110,7 +110,7 @@ fun PolyrhythmCircle(
                     drawArc(
                         brush = Brush.sweepGradient(
                             0f to Color.Transparent,
-                            sweepAngle.value / FULL_ANGLE_DEGREES to color.copy(alpha = 0.7f)
+                            sweepAngle.value / FULL_ANGLE_DEGREES to color.copy(alpha = 0.7f),
                         ),
                         startAngle = 0f,
                         sweepAngle = sweepAngle.value,
@@ -145,7 +145,7 @@ private fun DrawScope.drawPolyrhythmCircle(
     drawDotAnimations(
         color = secondaryColor,
         dotAnimations = innerDotPulses,
-        radius = innerCircleRadius
+        radius = innerCircleRadius,
     )
 
     drawCircleWithDots(
@@ -158,7 +158,7 @@ private fun DrawScope.drawPolyrhythmCircle(
     drawDotAnimations(
         color = secondaryColor,
         dotAnimations = outerDotPulses,
-        radius = outerCircleRadius
+        radius = outerCircleRadius,
     )
 }
 
@@ -171,22 +171,23 @@ private fun DrawScope.drawCircleWithDots(
     val brush = sweepGradient(
         breadth = 0.08f,
         centerColor = secondaryColor,
-        borderColor = primaryColor.copy(alpha = 0.1f)
+        borderColor = primaryColor.copy(alpha = 0.1f),
     )
 
     val dotsSortedByAngle = dots.sortedBy { it.angle.value }
 
     dotsSortedByAngle.forEachIndexed { index, dot ->
         rotate(dot.angle.value - 90f) {
-            fun drawArc(sweepAngle: Float) = drawArc(
-                brush = brush,
-                startAngle = 0f,
-                sweepAngle = sweepAngle,
-                useCenter = false,
-                style = Stroke(width = STROKE_WIDTH.toPx()),
-                topLeft = center - Offset(circleRadius, circleRadius),
-                size = Size(circleRadius * 2, circleRadius * 2)
-            )
+            fun drawArc(sweepAngle: Float) =
+                drawArc(
+                    brush = brush,
+                    startAngle = 0f,
+                    sweepAngle = sweepAngle,
+                    useCenter = false,
+                    style = Stroke(width = STROKE_WIDTH.toPx()),
+                    topLeft = center - Offset(circleRadius, circleRadius),
+                    size = Size(circleRadius * 2, circleRadius * 2),
+                )
 
             val nextCcwDotAngle = dotsSortedByAngle.getOrNull(index - 1)?.angle?.value
                 ?: (dotsSortedByAngle.last().angle.value - 360)
@@ -201,7 +202,7 @@ private fun DrawScope.drawCircleWithDots(
             drawCircle(
                 brush = brush,
                 radius = DOT_RADIUS.toPx(),
-                center = center + Offset(x = circleRadius, y = 0f)
+                center = center + Offset(x = circleRadius, y = 0f),
             )
         }
     }
@@ -226,7 +227,7 @@ private fun DrawScope.drawDotAnimations(
             drawCircle(
                 color = modulatedColor,
                 radius = DOT_RADIUS.toPx(),
-                center = center
+                center = center,
             )
         }
     }
@@ -289,14 +290,14 @@ private fun dotPulses(
 
             val dotPulse = DotPulse(
                 angle = dotAngle,
-                animationProgress = progressAnimatable.asState()
+                animationProgress = progressAnimatable.asState(),
             )
             pulses += dotPulse
 
             coroutineScope.launch {
                 progressAnimatable.animateTo(
                     targetValue = 1f,
-                    animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+                    animationSpec = tween(durationMillis = 300, easing = LinearEasing),
                 )
                 pulses -= dotPulse
             }
@@ -309,7 +310,7 @@ private fun dotPulses(
 }
 
 private class Dot(
-    val angle: AnimatableFloat
+    val angle: AnimatableFloat,
 )
 
 private class DotPulse(
@@ -317,14 +318,18 @@ private class DotPulse(
     val animationProgress: State<Float>,
 )
 
-private fun sweepGradient(breadth: Float, centerColor: Color, borderColor: Color): Brush {
+private fun sweepGradient(
+    breadth: Float,
+    centerColor: Color,
+    borderColor: Color,
+): Brush {
     return object : ShaderBrush() {
         override fun createShader(size: Size): Shader {
             val center = size.center
             return SweepGradientShader(
                 center = center,
                 colors = listOf(centerColor, borderColor, borderColor, centerColor),
-                colorStops = listOf(0f, breadth, 1f - breadth, 1f)
+                colorStops = listOf(0f, breadth, 1f - breadth, 1f),
             )
         }
     }
@@ -342,7 +347,7 @@ private fun Preview() {
             outerDotNumber = 3,
             innerDotNumber = 4,
             progressAngle = 30f,
-            modifier = Modifier.size(100.dp)
+            modifier = Modifier.size(100.dp),
         )
     }
 }

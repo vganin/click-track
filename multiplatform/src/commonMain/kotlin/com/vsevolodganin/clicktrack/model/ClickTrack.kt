@@ -18,7 +18,6 @@ data class ClickTrack(
     @SerialName("tempoDiff") // Legacy name
     val tempoOffset: BeatsPerMinuteOffset = BeatsPerMinuteOffset.ZERO,
 ) : Parcelable {
-
     @IgnoredOnParcel
     val durationInTime: Duration by lazy {
         cues.map { it.durationAsTimeWithBpmOffset(tempoOffset) }

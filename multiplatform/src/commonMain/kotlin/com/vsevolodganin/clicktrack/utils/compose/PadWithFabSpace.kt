@@ -12,7 +12,7 @@ fun PadWithFabSpace() {
     Spacer(
         modifier = Modifier
             .navigationBarsPadding()
-            .height(Const.FAB_SIZE_WITH_PADDINGS)
+            .height(Const.FAB_SIZE_WITH_PADDINGS),
     )
 }
 

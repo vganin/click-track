@@ -71,29 +71,30 @@ fun TrainingScreenView(
 private fun Content(viewModel: TrainingViewModel) {
     Column(
         modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         val state by viewModel.state.collectAsState()
 
         @Composable
-        fun FormRow(content: @Composable RowScope.() -> Unit) = Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            content = content,
-        )
+        fun FormRow(content: @Composable RowScope.() -> Unit) =
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                content = content,
+            )
 
         val rightColumnModifier = Modifier.width(140.dp)
 
         FormRow {
             Text(
                 text = stringResource(MR.strings.training_starting_tempo),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             BpmInputField(
                 value = state.startingTempo,
                 onValueChange = viewModel::onStartingTempoChange,
                 modifier = rightColumnModifier,
-                isError = TrainingEditState.Error.STARTING_TEMPO in state.errors
+                isError = TrainingEditState.Error.STARTING_TEMPO in state.errors,
             )
         }
 
@@ -102,14 +103,14 @@ private fun Content(viewModel: TrainingViewModel) {
             selectedValue = state.mode,
             onSelect = viewModel::onModeSelect,
             toString = { it.stringResource() },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         CueDurationView(
             value = state.segmentLength,
             onValueChange = viewModel::onSegmentLengthChange,
             onTypeChange = viewModel::onSegmentLengthTypeChange,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         FormRow {
@@ -118,15 +119,15 @@ private fun Content(viewModel: TrainingViewModel) {
                     when (state.mode) {
                         TrainingMode.INCREASE_TEMPO -> MR.strings.training_increase_by
                         TrainingMode.DECREASE_TEMPO -> MR.strings.training_decrease_by
-                    }
+                    },
                 ),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             BpmInputField(
                 value = state.tempoChange,
                 onValueChange = viewModel::onTempoChangeChange,
                 modifier = rightColumnModifier,
-                isError = TrainingEditState.Error.TEMPO_CHANGE in state.errors
+                isError = TrainingEditState.Error.TEMPO_CHANGE in state.errors,
             )
         }
 
@@ -136,7 +137,7 @@ private fun Content(viewModel: TrainingViewModel) {
                 selectedValue = state.activeEndingKind,
                 onSelect = viewModel::onEndingKindChange,
                 toString = { it.stringResource(state.mode) },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             when (val ending = state.ending) {
                 is TrainingEditState.Ending.ByTempo -> {
@@ -144,7 +145,7 @@ private fun Content(viewModel: TrainingViewModel) {
                         value = ending.endingTempo,
                         onValueChange = { viewModel.onEndingChange(TrainingEditState.Ending.ByTempo(it)) },
                         modifier = rightColumnModifier,
-                        isError = TrainingEditState.Error.ENDING_TEMPO in state.errors
+                        isError = TrainingEditState.Error.ENDING_TEMPO in state.errors,
                     )
                 }
 
@@ -166,7 +167,7 @@ private fun TrainingMode.stringResource(): String {
         when (this) {
             TrainingMode.INCREASE_TEMPO -> MR.strings.training_increase_every
             TrainingMode.DECREASE_TEMPO -> MR.strings.training_decrease_every
-        }
+        },
     )
 }
 
@@ -180,40 +181,49 @@ private fun TrainingEndingKind.stringResource(mode: TrainingMode): String {
             }
 
             TrainingEndingKind.BY_TIME -> MR.strings.training_play_for
-        }
+        },
     )
 }
 
 @ScreenPreview
 @Composable
-private fun Preview() = ClickTrackTheme {
-    TrainingScreenView(
-        viewModel = object : TrainingViewModel {
-            override val state: StateFlow<TrainingEditState> = MutableStateFlow(
-                TrainingEditState(
-                    startingTempo = 120,
-                    mode = TrainingMode.INCREASE_TEMPO,
-                    activeSegmentLengthType = CueDuration.Type.MEASURES,
-                    segmentLengthBeats = DefaultBeatsDuration,
-                    segmentLengthMeasures = DefaultMeasuresDuration,
-                    segmentLengthTime = DefaultTimeDuration,
-                    tempoChange = 5,
-                    activeEndingKind = TrainingEndingKind.BY_TEMPO,
-                    endingByTempo = TrainingEditState.Ending.ByTempo(160),
-                    endingByTime = TrainingEditState.Ending.ByTime(5.minutes),
-                    errors = emptySet(),
+private fun Preview() =
+    ClickTrackTheme {
+        TrainingScreenView(
+            viewModel = object : TrainingViewModel {
+                override val state: StateFlow<TrainingEditState> = MutableStateFlow(
+                    TrainingEditState(
+                        startingTempo = 120,
+                        mode = TrainingMode.INCREASE_TEMPO,
+                        activeSegmentLengthType = CueDuration.Type.MEASURES,
+                        segmentLengthBeats = DefaultBeatsDuration,
+                        segmentLengthMeasures = DefaultMeasuresDuration,
+                        segmentLengthTime = DefaultTimeDuration,
+                        tempoChange = 5,
+                        activeEndingKind = TrainingEndingKind.BY_TEMPO,
+                        endingByTempo = TrainingEditState.Ending.ByTempo(160),
+                        endingByTime = TrainingEditState.Ending.ByTime(5.minutes),
+                        errors = emptySet(),
+                    ),
                 )
-            )
 
-            override fun onBackClick() = Unit
-            override fun onAcceptClick() = Unit
-            override fun onStartingTempoChange(startingTempo: Int) = Unit
-            override fun onModeSelect(mode: TrainingMode) = Unit
-            override fun onSegmentLengthChange(segmentLength: CueDuration) = Unit
-            override fun onSegmentLengthTypeChange(segmentLengthType: CueDuration.Type) = Unit
-            override fun onTempoChangeChange(tempoChange: Int) = Unit
-            override fun onEndingChange(ending: TrainingEditState.Ending) = Unit
-            override fun onEndingKindChange(endingKind: TrainingEndingKind) = Unit
-        }
-    )
-}
+                override fun onBackClick() = Unit
+
+                override fun onAcceptClick() = Unit
+
+                override fun onStartingTempoChange(startingTempo: Int) = Unit
+
+                override fun onModeSelect(mode: TrainingMode) = Unit
+
+                override fun onSegmentLengthChange(segmentLength: CueDuration) = Unit
+
+                override fun onSegmentLengthTypeChange(segmentLengthType: CueDuration.Type) = Unit
+
+                override fun onTempoChangeChange(tempoChange: Int) = Unit
+
+                override fun onEndingChange(ending: TrainingEditState.Ending) = Unit
+
+                override fun onEndingKindChange(endingKind: TrainingEndingKind) = Unit
+            },
+        )
+    }

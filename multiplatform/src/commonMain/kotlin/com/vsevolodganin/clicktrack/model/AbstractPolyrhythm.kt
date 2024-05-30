@@ -16,7 +16,10 @@ data class AbstractPolyrhythm internal constructor(val columns: List<Column>, va
     data class Column internal constructor(val indices: List<Int>, val untilNext: Rational)
 }
 
-fun AbstractPolyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): AbstractPolyrhythm {
+fun AbstractPolyrhythm(
+    pattern1: List<NoteEvent>,
+    pattern2: List<NoteEvent>,
+): AbstractPolyrhythm {
     val resultingPattern = mutableListOf<AbstractPolyrhythm.Column>()
 
     val commonLength = lcm(pattern1.length, pattern2.length)
@@ -37,7 +40,7 @@ fun AbstractPolyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): Ab
                 val pattern1EventLength = pattern1NonRestLengthsIterator.next()
                 resultingPattern += AbstractPolyrhythm.Column(
                     indices = listOf(0),
-                    untilNext = min(pattern1EventLength, pattern2RunningLength - pattern1RunningLength)
+                    untilNext = min(pattern1EventLength, pattern2RunningLength - pattern1RunningLength),
                 )
                 pattern1RunningLength += pattern1EventLength
             }
@@ -45,7 +48,7 @@ fun AbstractPolyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): Ab
                 val pattern2EventLength = pattern2NonRestLengthsIterator.next()
                 resultingPattern += AbstractPolyrhythm.Column(
                     indices = listOf(1),
-                    untilNext = min(pattern2EventLength, pattern1RunningLength - pattern2RunningLength)
+                    untilNext = min(pattern2EventLength, pattern1RunningLength - pattern2RunningLength),
                 )
                 pattern2RunningLength += pattern2EventLength
             }
@@ -54,7 +57,7 @@ fun AbstractPolyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): Ab
                 val pattern2EventLength = pattern2NonRestLengthsIterator.next()
                 resultingPattern += AbstractPolyrhythm.Column(
                     indices = listOf(0, 1),
-                    untilNext = min(pattern1EventLength, pattern2EventLength)
+                    untilNext = min(pattern1EventLength, pattern2EventLength),
                 )
                 pattern1RunningLength += pattern1EventLength
                 pattern2RunningLength += pattern2EventLength
@@ -64,7 +67,7 @@ fun AbstractPolyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): Ab
 
     return AbstractPolyrhythm(
         columns = resultingPattern,
-        untilFirst = min(pattern1InitialRestLength, pattern2InitialRestLength)
+        untilFirst = min(pattern1InitialRestLength, pattern2InitialRestLength),
     )
 }
 

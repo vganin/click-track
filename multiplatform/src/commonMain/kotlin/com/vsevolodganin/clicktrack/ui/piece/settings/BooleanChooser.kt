@@ -24,8 +24,8 @@ fun BooleanChooser(
         modifier = modifier.clickable(
             interactionSource = interactionSource,
             indication = LocalIndication.current,
-            onClick = { onCheckedChange(!value) }
-        )
+            onClick = { onCheckedChange(!value) },
+        ),
     ) {
         Switch(
             checked = value,

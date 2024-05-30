@@ -38,7 +38,7 @@ sealed interface PreferenceKey<T> {
 private suspend inline fun <reified T : Any> FlowSettings.removeOrPut(
     key: String,
     value: T?,
-    put: KSuspendFunction2<String, T, Unit>
+    put: KSuspendFunction2<String, T, Unit>,
 ): Unit =
     if (value == null) {
         remove(key)

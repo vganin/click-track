@@ -39,7 +39,7 @@ fun UrlClickableText(
     maxLines: Int = Int.MAX_VALUE,
     inlineContent: Map<String, InlineTextContent> = mapOf(),
     onTextLayout: (TextLayoutResult) -> Unit = {},
-    style: TextStyle = LocalTextStyle.current
+    style: TextStyle = LocalTextStyle.current,
 ) {
     val linkColor = MaterialTheme.colors.primary
     val annotatedText = remember(textWithUrls) {

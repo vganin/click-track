@@ -6,6 +6,6 @@ object PreMadeClickTracks {
     val DATA: List<ClickTrack> = listOf(
         RadioheadParanoidAndroid,
         VaderRebornInFlames,
-        TupletTraining
+        TupletTraining,
     )
 }
