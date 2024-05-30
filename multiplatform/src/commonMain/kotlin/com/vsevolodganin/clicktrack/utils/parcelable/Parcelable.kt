@@ -2,14 +2,22 @@
 
 package com.vsevolodganin.clicktrack.utils.parcelable
 
-import com.arkivanov.essenty.parcelable.IgnoredOnParcel
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parceler
-import com.arkivanov.essenty.parcelable.Parcelize
-import com.arkivanov.essenty.parcelable.TypeParceler
+
+// FIXME: Workarounds problems with K2: https://issuetracker.google.com/issues/315775835#comment16
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+expect annotation class Parcelize()
+
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
+@Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY)
+expect annotation class TypeParceler<T, P : Parceler<in T>>()
+
+@Target(AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.SOURCE)
+expect annotation class IgnoredOnParcel()
 
 typealias Parcelable = Parcelable
-typealias Parcelize = Parcelize
 typealias Parceler<T> = Parceler<T>
-typealias TypeParceler<T, P> = TypeParceler<T, P>
-typealias IgnoredOnParcel = IgnoredOnParcel

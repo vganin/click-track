@@ -10,6 +10,7 @@ plugins {
     id("clicktrack.android.application")
     id("clicktrack.include-in-coverage")
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     kotlin("android")
     kotlin("plugin.serialization")
@@ -82,10 +83,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
     compileOptions {

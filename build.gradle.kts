@@ -3,7 +3,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 @Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
-    alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.jetbrains.compose) apply false
+    alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.properties)
     alias(libs.plugins.versions)
     alias(libs.plugins.kotlinx.kover)

@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../multiplatform"
 
 SPEC CHECKSUMS:
-  ClickTrackMultiplatform: e3345b342e5653c3cce46f7916ecb20cf43831df
+  ClickTrackMultiplatform: 08f422d7a2f27eda2ec583d97ccac5cdcfa8d88a
 
 PODFILE CHECKSUM: 2a1b95b80cd72d9eb63e40bf8b588cc763097149
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2

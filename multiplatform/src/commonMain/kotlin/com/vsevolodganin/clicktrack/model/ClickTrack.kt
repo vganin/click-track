@@ -1,5 +1,3 @@
-@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
-
 package com.vsevolodganin.clicktrack.model
 
 import com.vsevolodganin.clicktrack.utils.parcelable.IgnoredOnParcel
