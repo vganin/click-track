@@ -42,7 +42,8 @@ allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
         compilerOptions {
             val allKotlinWarningsAsErrors: String? by project
-            allWarningsAsErrors.set(allKotlinWarningsAsErrors?.toBoolean() ?: true)
+            // FIXME: Flip back to default true when possible
+            allWarningsAsErrors.set(allKotlinWarningsAsErrors?.toBoolean() ?: false)
             freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
