@@ -1,13 +1,12 @@
 [versions]
 accompanist = "0.34.0"
-composeCompiler = "1.5.11"
 decompose = "2.2.2-compose-experimental"
-kotlin = "1.9.23"
+kotlin = "2.0.0"
 kotlinInject = "0.6.3"
 kotlinx-coroutines = "1.8.0"
 kotlinx-serialization = "1.6.3"
 kover = "0.7.6"
-ksp = "1.9.23-1.0.19"
+ksp = "2.0.0-1.0.21"
 mockk = "1.13.10"
 moko-resources = "0.24.0-alpha-5"
 multiplatformSettings = "1.1.1"
@@ -68,7 +67,8 @@ kotlinx-coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-android"]
 kotlinx-serialization = ["kotlinx-serialization-core", "kotlinx-serialization-json"]
 
 [plugins]
-jetbrains-compose = "org.jetbrains.compose:1.6.1"
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrains-compose = "org.jetbrains.compose:1.6.10"
 kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 properties = "net.saliman.properties:1.5.2"

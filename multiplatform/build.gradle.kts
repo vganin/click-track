@@ -4,10 +4,10 @@ import org.jetbrains.compose.compose
 
 @Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
-    id("clicktrack.multiplatform.android")
-    id("clicktrack.multiplatform.ios")
+    id("clicktrack.multiplatform")
     id("clicktrack.include-in-coverage")
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.ksp)
     kotlin("native.cocoapods")
@@ -117,10 +117,6 @@ android {
     buildFeatures {
         compose = true
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
 }
 
 multiplatformResources {
@@ -139,14 +135,11 @@ sqldelight {
 
 // FIXME(https://github.com/google/ksp/issues/567): Improve KSP declarations
 dependencies {
-    for (configName in arrayOf(
-        "kspCommonMainMetadata",
-        "kspAndroid",
-        "kspIosArm64",
-        "kspIosSimulatorArm64",
-    )) {
-        add(configName, libs.kotlininject.compiler)
-    }
-
     coreLibraryDesugaring(libs.desugarJdkLibs)
+
+    with(libs.kotlininject.compiler) {
+        kspCommonMainMetadata(this)
+        kspAndroid(this)
+        kspIosSimulatorArm64(this)
+    }
 }
