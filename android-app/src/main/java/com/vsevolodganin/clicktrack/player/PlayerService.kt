@@ -20,6 +20,7 @@ import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.ServiceCompat
 import androidx.core.content.IntentCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.media.app.NotificationCompat.MediaStyle
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.applicationComponent
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceComponent
@@ -338,14 +339,20 @@ class PlayerService : Service() {
             .setVisibility(VISIBILITY_PUBLIC)
             .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
             .setOngoing(true)
-            .addAction(0, getString(MR.string.player_service_notification_stop), stopIntent)
+            .addAction(R.drawable.ic_notification_stop, getString(MR.string.player_service_notification_stop), stopIntent)
             .run {
                 if (isPaused) {
-                    addAction(0, getString(MR.string.player_service_notification_resume), resumeIntent)
+                    addAction(R.drawable.ic_notification_play, getString(MR.string.player_service_notification_resume), resumeIntent)
                 } else {
-                    addAction(0, getString(MR.string.player_service_notification_pause), pauseIntent)
+                    addAction(R.drawable.ic_notification_pause, getString(MR.string.player_service_notification_pause), pauseIntent)
                 }
             }
+            .setStyle(
+                MediaStyle()
+                    .setShowCancelButton(true)
+                    .setCancelButtonIntent(stopIntent)
+                    .setShowActionsInCompactView(0, 1)
+            )
 
         if (isNotificationDisplayed) {
             val notification = notificationBuilder
