@@ -1,30 +1,21 @@
-@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
-
 package com.vsevolodganin.clicktrack.utils.math
 
-import com.vsevolodganin.clicktrack.utils.parcelable.IgnoredOnParcel
-import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
-import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlin.time.Duration
 
 @Serializable
-@Parcelize
 data class Rational(
     private val numerator_: Int,
     private val denominator_: Int,
-) : Parcelable {
+) {
     @Transient
-    @IgnoredOnParcel
     private val gcd: Int = gcd(numerator_, denominator_)
 
     @Transient
-    @IgnoredOnParcel
     val numerator: Int = numerator_ / gcd
 
     @Transient
-    @IgnoredOnParcel
     val denominator: Int = denominator_ / gcd
 
     override fun toString(): String {
