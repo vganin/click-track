@@ -7,6 +7,8 @@ import com.vsevolodganin.clicktrack.model.NotePatternGroup.STRAIGHT
 import com.vsevolodganin.clicktrack.model.NotePatternGroup.TRIPLET
 import com.vsevolodganin.clicktrack.utils.math.Rational
 import com.vsevolodganin.clicktrack.utils.math.over
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
 import kotlinx.serialization.Serializable
 
 enum class NotePatternGroup {
@@ -18,7 +20,8 @@ enum class NotePatternGroup {
 }
 
 @Serializable
-enum class NotePattern(val events: List<NoteEvent>, val group: NotePatternGroup) {
+@Parcelize
+enum class NotePattern(val events: List<NoteEvent>, val group: NotePatternGroup) : Parcelable {
     STRAIGHT_X1(straightPattern(1), STRAIGHT),
     STRAIGHT_X2(straightPattern(2), STRAIGHT),
     STRAIGHT_X4(straightPattern(4), STRAIGHT),

@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION") // FIXME: Look into Parcelize not working with K2
+
 package com.vsevolodganin.clicktrack.soundlibrary
 
 import android.app.Activity
@@ -5,10 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.os.Parcelable
 import android.provider.DocumentsContract
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AppCompatActivity
 import com.arkivanov.essenty.statekeeper.StateKeeperOwner
+import com.arkivanov.essenty.statekeeper.consume
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType
@@ -16,9 +20,7 @@ import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
-import kotlinx.serialization.serializer
+import kotlinx.parcelize.Parcelize
 import me.tatarka.inject.annotations.Inject
 
 @MainControllerScope
@@ -29,11 +31,11 @@ class SoundChooserImpl(
     stateKeeperOwner: StateKeeperOwner,
 ) : SoundChooser {
     private val pendingRequestState = MutableStateFlow<OpenAudioRequest?>(
-        stateKeeperOwner.stateKeeper.consume(OpenAudioRequest.SAVED_STATE_KEY, serializer()),
+        stateKeeperOwner.stateKeeper.consume(OpenAudioRequest.SAVED_STATE_KEY),
     )
 
     init {
-        stateKeeperOwner.stateKeeper.register(OpenAudioRequest.SAVED_STATE_KEY, serializer()) {
+        stateKeeperOwner.stateKeeper.register(OpenAudioRequest.SAVED_STATE_KEY) {
             pendingRequestState.value
         }
     }
@@ -71,11 +73,11 @@ class SoundChooserImpl(
         contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
 
-    @Serializable
+    @Parcelize
     private class OpenAudioRequest(
         val id: ClickSoundsId.Database,
         val type: ClickSoundType,
-    ) {
+    ) : Parcelable {
         companion object {
             const val SAVED_STATE_KEY = "open_audio_request"
         }

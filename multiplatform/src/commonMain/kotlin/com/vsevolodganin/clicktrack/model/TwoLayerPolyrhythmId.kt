@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.model
 
-import kotlinx.serialization.Serializable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
 
-@Serializable
+@Parcelize
 object TwoLayerPolyrhythmId : PlayableId

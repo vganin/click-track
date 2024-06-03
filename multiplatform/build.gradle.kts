@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.ksp)
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
+    kotlin("plugin.parcelize")
     id("dev.icerock.mobile.multiplatform-resources")
 }
 
