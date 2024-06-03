@@ -9,7 +9,6 @@ import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
-import android.os.Parcelable
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.ActivityCompat
@@ -18,7 +17,6 @@ import androidx.core.app.NotificationCompat.FLAG_FOREGROUND_SERVICE
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.ServiceCompat
-import androidx.core.content.IntentCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import com.vsevolodganin.clicktrack.R
@@ -39,7 +37,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import com.vsevolodganin.clicktrack.multiplatform.R as MR
 
 class PlayerService : Service() {
@@ -53,7 +53,7 @@ class PlayerService : Service() {
             val arguments = State(id, atProgress, soundsId, isPaused = false)
             val intent = serviceIntent(context).apply {
                 action = ACTION_START
-                putExtra(EXTRA_START_ARGUMENTS, arguments)
+                putExtra(EXTRA_START_ARGUMENTS, Json.Default.encodeToString(arguments))
             }
             context.startService(intent)
         }
@@ -102,13 +102,13 @@ class PlayerService : Service() {
         private const val TAG = "PlayerService"
     }
 
-    @Parcelize
+    @Serializable
     private data class State(
         val id: PlayableId,
         val startAtProgress: Double?,
         val soundsId: ClickSoundsId?,
         val isPaused: Boolean,
-    ) : Parcelable
+    )
 
     private lateinit var component: PlayerServiceComponent
 
@@ -175,7 +175,7 @@ class PlayerService : Service() {
         startId: Int,
     ): Int {
         when (intent?.action) {
-            ACTION_START -> state.value = IntentCompat.getParcelableExtra(intent, EXTRA_START_ARGUMENTS, State::class.java)
+            ACTION_START -> state.value = intent.getStringExtra(EXTRA_START_ARGUMENTS)?.let(Json.Default::decodeFromString)
                 ?: throw RuntimeException("No start arguments were supplied")
 
             ACTION_STOP -> state.value = null

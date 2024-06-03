@@ -14,7 +14,6 @@ plugins {
     alias(libs.plugins.ksp)
     kotlin("android")
     kotlin("plugin.serialization")
-    kotlin("plugin.parcelize")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
 }

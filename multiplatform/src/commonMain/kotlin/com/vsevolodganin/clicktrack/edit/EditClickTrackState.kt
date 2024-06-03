@@ -6,10 +6,9 @@ import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
-import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
-import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
+import kotlinx.serialization.Serializable
 
-@Parcelize
+@Serializable
 data class EditClickTrackState(
     val id: ClickTrackId.Database,
     val name: String,
@@ -17,9 +16,9 @@ data class EditClickTrackState(
     val tempoOffset: BeatsPerMinuteOffset,
     val cues: List<EditCueState>,
     val showForwardButton: Boolean,
-) : Parcelable
+)
 
-@Parcelize
+@Serializable
 data class EditCueState(
     val id: String = uuid4().toString(),
     val displayPosition: String,
@@ -32,7 +31,7 @@ data class EditCueState(
     val time: CueDuration.Time,
     val pattern: NotePattern,
     val errors: Set<Error>,
-) : Parcelable {
+) {
     enum class Error {
         BPM,
     }
