@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 plugins {
@@ -10,13 +9,7 @@ configure<KotlinMultiplatformExtension> {
     applyDefaultHierarchyTemplate()
 
     iosSimulatorArm64()
-
-    androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
-            freeCompilerArgs.addAll("-P", "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=com.vsevolodganin.clicktrack.utils.parcelable.Parcelize")
-        }
-    }
+    androidTarget()
 
     jvmToolchain(17)
 

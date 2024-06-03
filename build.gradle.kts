@@ -43,7 +43,7 @@ allprojects {
         compilerOptions {
             val allKotlinWarningsAsErrors: String? by project
             // FIXME: Flip back to default true when possible
-            allWarningsAsErrors.set(allKotlinWarningsAsErrors?.toBoolean() ?: false)
+            allWarningsAsErrors.set(allKotlinWarningsAsErrors?.toBoolean() ?: true)
             freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }

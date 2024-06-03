@@ -19,6 +19,7 @@ import com.vsevolodganin.clicktrack.drawer.DrawerNavigationImpl
 import com.vsevolodganin.clicktrack.drawer.DrawerNavigationSource
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModelImpl
+import kotlinx.serialization.serializer
 import me.tatarka.inject.annotations.Provides
 
 interface ViewModelModule {
@@ -61,12 +62,12 @@ interface ViewModelModule {
         componentContext: ComponentContext,
         stackNavigation: ScreenStackNavigation,
         screenViewModelFactory: ScreenViewModelFactory,
-    ): ScreenStackState =
-        componentContext.childStack(
-            source = stackNavigation,
-            initialStack = { listOf(ScreenConfiguration.ClickTrackList) },
-            childFactory = screenViewModelFactory::create,
-        )
+    ): ScreenStackState = componentContext.childStack(
+        source = stackNavigation,
+        initialStack = { listOf(ScreenConfiguration.ClickTrackList) },
+        childFactory = screenViewModelFactory::create,
+        serializer = serializer(),
+    )
 
     @Provides
     @MainControllerScope

@@ -51,6 +51,8 @@ import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun SoundLibraryScreenView(
@@ -83,7 +85,7 @@ private fun Content(
     state: SoundLibraryState,
 ) {
     LazyColumn {
-        items(items = state.items, key = SelectableClickSoundsItem::id) { item ->
+        items(items = state.items, key = { Json.Default.encodeToString(it.id) }) { item ->
             ClicksSoundsItem(viewModel, item)
         }
 

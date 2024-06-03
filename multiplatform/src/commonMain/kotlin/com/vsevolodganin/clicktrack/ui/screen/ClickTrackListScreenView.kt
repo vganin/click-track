@@ -34,7 +34,6 @@ import com.vsevolodganin.clicktrack.list.ClickTrackListState
 import com.vsevolodganin.clicktrack.list.ClickTrackListViewModel
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
-import com.vsevolodganin.clicktrack.model.ClickTrackWithId
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.piece.DragHandle
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
@@ -48,6 +47,8 @@ import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyColumnState
 
@@ -89,7 +90,7 @@ private fun Content(viewModel: ClickTrackListViewModel) {
             Spacer(Modifier.height(1.dp))
         }
 
-        items(items = state.items, key = ClickTrackWithId::id) { clickTrack ->
+        items(items = state.items, key = { Json.Default.encodeToString(it.id) }) { clickTrack ->
             ReorderableItem(reorderableLazyListState = reorderableLazyListState, key = clickTrack.id) { isDragging ->
                 ClickTrackListItem(
                     viewModel = viewModel,

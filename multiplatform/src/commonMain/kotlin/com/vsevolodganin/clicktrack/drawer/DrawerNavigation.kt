@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.drawer
 
+import com.arkivanov.decompose.Cancellation
 import com.arkivanov.decompose.router.children.NavigationSource
 import com.arkivanov.decompose.router.children.SimpleNavigation
 
@@ -19,7 +20,5 @@ class DrawerNavigationImpl : DrawerNavigation, DrawerNavigationSource {
 
     override fun closeDrawer() = impl.navigate(false)
 
-    override fun subscribe(observer: (Boolean) -> Unit) = impl.subscribe(observer)
-
-    override fun unsubscribe(observer: (Boolean) -> Unit) = impl.unsubscribe(observer)
+    override fun subscribe(observer: (Boolean) -> Unit): Cancellation = impl.subscribe(observer)
 }
