@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.drawer
 
 import kotlinx.coroutines.flow.StateFlow
 
-interface DrawerViewModel : DrawerNavigation {
+interface DrawerViewModel {
     val state: StateFlow<DrawerState>
 
     fun navigateToMetronome()
@@ -16,4 +16,8 @@ interface DrawerViewModel : DrawerNavigation {
     fun navigateToSettings()
 
     fun navigateToAbout()
+
+    fun openDrawer()
+
+    fun closeDrawer()
 }

@@ -15,18 +15,21 @@ import com.vsevolodganin.clicktrack.ScreenStackState
 import com.vsevolodganin.clicktrack.ScreenViewModelFactory
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
+import com.vsevolodganin.clicktrack.drawer.DrawerNavigationImpl
+import com.vsevolodganin.clicktrack.drawer.DrawerNavigationSource
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModelImpl
 import me.tatarka.inject.annotations.Provides
 
 interface ViewModelModule {
+
     @Provides
     @MainControllerScope
     fun provideRootViewModel(rootViewModelImpl: RootViewModelImpl): RootViewModel = rootViewModelImpl
 
     @Provides
     @MainControllerScope
-    fun provideDrawerNavigation(drawerViewModel: DrawerViewModel): DrawerNavigation = drawerViewModel
+    fun provideDrawerNavigationImpl(): DrawerNavigationImpl = DrawerNavigationImpl()
 
     @Provides
     @MainControllerScope
@@ -42,7 +45,15 @@ interface ViewModelModule {
 
     @Provides
     @MainControllerScope
-    fun provideStackNavigation(): ScreenStackNavigation = StackNavigation()
+    fun provideScreenStackNavigation(): ScreenStackNavigation = StackNavigation()
+
+    @Provides
+    @MainControllerScope
+    fun provideDrawerNavigation(drawerNavigationImpl: DrawerNavigationImpl): DrawerNavigation = drawerNavigationImpl
+
+    @Provides
+    @MainControllerScope
+    fun provideDrawerNavigationSource(drawerNavigationImpl: DrawerNavigationImpl): DrawerNavigationSource = drawerNavigationImpl
 
     @Provides
     @MainControllerScope
