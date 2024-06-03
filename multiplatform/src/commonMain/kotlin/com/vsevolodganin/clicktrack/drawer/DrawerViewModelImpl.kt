@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.drawer
 
 import com.arkivanov.decompose.Cancellation
 import com.arkivanov.decompose.ComponentContext
-import com.arkivanov.essenty.lifecycle.subscribe
+import com.arkivanov.essenty.lifecycle.Lifecycle
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStack
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
@@ -17,8 +17,9 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class DrawerViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val navigation: ScreenStackNavigation,
-    screenStackState: Lazy<ScreenStackState>, // Lazy to avoid cyclic dependency initialization
+    private val stackNavigation: ScreenStackNavigation,
+    private val drawerNavigationSource: DrawerNavigationSource,
+    screenStackState: ScreenStackState,
 ) : DrawerViewModel, ComponentContext by componentContext {
     private val _state: MutableStateFlow<DrawerState> = MutableStateFlow(
         DrawerState(
@@ -34,11 +35,30 @@ class DrawerViewModelImpl(
     }
 
     init {
-        var cancellation: Cancellation? = null
-        lifecycle.subscribe(
-            onCreate = { cancellation = screenStackState.value.observe(onScreenStackChange) },
-            onDestroy = { cancellation?.cancel() },
-        )
+        lifecycle.subscribe(object : Lifecycle.Callbacks {
+            private val callback = ::updateOpenedState
+
+            override fun onCreate() {
+                drawerNavigationSource.subscribe(callback)
+            }
+
+            override fun onDestroy() {
+                drawerNavigationSource.unsubscribe(callback)
+            }
+        })
+
+        lifecycle.subscribe(object : Lifecycle.Callbacks {
+            var cancellation: Cancellation? = null
+
+            override fun onCreate() {
+                cancellation = screenStackState.observe(onScreenStackChange)
+            }
+
+            override fun onDestroy() {
+                cancellation?.cancel()
+                cancellation = null
+            }
+        })
     }
 
     override fun navigateToMetronome() = resetTo(ScreenConfiguration.Metronome)
@@ -55,12 +75,14 @@ class DrawerViewModelImpl(
 
     private fun resetTo(config: ScreenConfiguration) {
         closeDrawer()
-        navigation.resetTo(config)
+        stackNavigation.resetTo(config)
     }
 
-    override fun openDrawer() = _state.update { it.copy(isOpened = true) }
+    override fun openDrawer() = updateOpenedState(isOpened = true)
 
-    override fun closeDrawer() = _state.update { it.copy(isOpened = false) }
+    override fun closeDrawer() = updateOpenedState(isOpened = false)
+
+    private fun updateOpenedState(isOpened: Boolean) = _state.update { it.copy(isOpened = isOpened) }
 
     private fun ScreenConfiguration.toSelectedItem(): DrawerState.SelectedItem? {
         return when (this) {
