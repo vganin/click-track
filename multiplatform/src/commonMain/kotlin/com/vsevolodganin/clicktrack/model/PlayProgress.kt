@@ -1,24 +1,28 @@
 package com.vsevolodganin.clicktrack.model
 
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
+import com.vsevolodganin.clicktrack.utils.parcelable.TypeParceler
+import com.vsevolodganin.clicktrack.utils.time.DurationParceler
 import kotlinx.datetime.Clock
-import kotlinx.serialization.Serializable
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 import kotlin.time.toDuration
 
-@Serializable
+@Parcelize
+@TypeParceler<Duration, DurationParceler>
 data class PlayProgress(
     private val position: Duration,
     val isPaused: Boolean = false,
     private val emissionTime: PlayableProgressTimeMark = PlayableProgressTimeSource.markNow(),
-) {
+) : Parcelable {
     val realPosition: Duration get() = if (isPaused) position else position + emissionTime.elapsedNow()
 }
 
-@Serializable
-data class PlayableProgressTimeMark(private val startedAtMillis: Long) : TimeMark {
+@Parcelize
+data class PlayableProgressTimeMark(private val startedAtMillis: Long) : TimeMark, Parcelable {
     override fun elapsedNow(): Duration {
         return (elapsedRealtimeNanos() - startedAtMillis).toDuration(DurationUnit.NANOSECONDS)
     }

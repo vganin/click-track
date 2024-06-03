@@ -4,7 +4,6 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.essenty.backhandler.BackCallback
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
-import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -17,7 +16,6 @@ import me.tatarka.inject.annotations.Inject
 class RootViewModelImpl(
     private val componentContext: ComponentContext,
     private val drawerViewModel: DrawerViewModel,
-    private val drawerNavigation: DrawerNavigation,
     private val screenStackNavigation: ScreenStackNavigation,
     private val screenStackState: ScreenStackState,
 ) : RootViewModel, ComponentContext by componentContext {
@@ -34,6 +32,7 @@ class RootViewModelImpl(
 
     private fun implementScreenStackBackCallback() {
         val callback = BackCallback(isEnabled = screenStackState.value.backStack.isNotEmpty(), onBack = screenStackNavigation::pop)
+        @Suppress("DEPRECATION") // FIXME: Implement cancellation
         screenStackState.subscribe { state ->
             callback.isEnabled = state.backStack.isNotEmpty()
         }
@@ -41,7 +40,7 @@ class RootViewModelImpl(
     }
 
     private fun implementDrawerBackCallback() {
-        val callback = BackCallback(isEnabled = drawerViewModel.state.value.isOpened, onBack = drawerNavigation::closeDrawer)
+        val callback = BackCallback(isEnabled = drawerViewModel.state.value.isOpened, onBack = drawerViewModel::closeDrawer)
         scope.launch(context = Dispatchers.Unconfined, start = CoroutineStart.UNDISPATCHED) {
             drawerViewModel.state.collect { state ->
                 callback.isEnabled = state.isOpened

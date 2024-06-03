@@ -2,6 +2,7 @@ package com.vsevolodganin.clicktrack.training
 
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
 import com.vsevolodganin.clicktrack.model.CueDuration
+import com.vsevolodganin.clicktrack.utils.time.DurationSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.Duration
@@ -27,7 +28,9 @@ data class TrainingValidState(
 
         @Serializable
         @SerialName("com.vsevolodganin.clicktrack.state.redux.TrainingPersistableState.Ending.ByTime") // For backward compatibility
-        class ByTime(val duration: Duration) : Ending {
+        class ByTime(
+            @Serializable(with = DurationSerializer::class) val duration: Duration,
+        ) : Ending {
             override val kind: TrainingEndingKind
                 get() = TrainingEndingKind.BY_TIME
         }

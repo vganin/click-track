@@ -1,9 +1,10 @@
 package com.vsevolodganin.clicktrack.list
 
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
-import kotlinx.serialization.Serializable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
 
-@Serializable
+@Parcelize
 data class ClickTrackListState(
     val items: List<ClickTrackWithDatabaseId>,
-)
+) : Parcelable

@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.model
 
-import kotlinx.serialization.Serializable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
 
-@Serializable
-sealed interface PlayableId
+sealed interface PlayableId : Parcelable

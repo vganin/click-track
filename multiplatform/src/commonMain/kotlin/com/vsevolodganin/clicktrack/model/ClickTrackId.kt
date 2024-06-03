@@ -1,16 +1,17 @@
 package com.vsevolodganin.clicktrack.model
 
-import kotlinx.serialization.Serializable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
 
-sealed interface ClickTrackId : PlayableId {
-    @Serializable
+sealed interface ClickTrackId : Parcelable, PlayableId {
+    @Parcelize
     data class Database(val value: Long) : ClickTrackId
 
     sealed interface Builtin : ClickTrackId {
-        @Serializable
+        @Parcelize
         object Metronome : Builtin
 
-        @Serializable
+        @Parcelize
         class ClickSoundsTest(val soundsId: ClickSoundsId) : Builtin
     }
 }

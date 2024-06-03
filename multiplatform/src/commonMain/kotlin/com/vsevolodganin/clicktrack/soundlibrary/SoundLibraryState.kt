@@ -2,18 +2,19 @@ package com.vsevolodganin.clicktrack.soundlibrary
 
 import com.vsevolodganin.clicktrack.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
-import kotlinx.serialization.Serializable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
+import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
 
-@Serializable
+@Parcelize
 data class SoundLibraryState(
     val items: List<SelectableClickSoundsItem>,
-)
+) : Parcelable
 
-@Serializable
-sealed interface SelectableClickSoundsItem {
+@Parcelize
+sealed interface SelectableClickSoundsItem : Parcelable {
     val id: ClickSoundsId
 
-    @Serializable
+    @Parcelize
     data class Builtin(
         val data: BuiltinClickSounds,
         val selected: Boolean,
@@ -21,7 +22,7 @@ sealed interface SelectableClickSoundsItem {
         override val id: ClickSoundsId get() = ClickSoundsId.Builtin(data)
     }
 
-    @Serializable
+    @Parcelize
     data class UserDefined(
         override val id: ClickSoundsId.Database,
         val strongBeatValue: String,
