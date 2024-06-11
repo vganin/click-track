@@ -2,7 +2,11 @@ package com.vsevolodganin.clicktrack.drawer
 
 import com.arkivanov.decompose.Cancellation
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.subscribe
 import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.doOnCreate
+import com.arkivanov.essenty.lifecycle.doOnStart
+import com.arkivanov.essenty.lifecycle.doOnStop
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStack
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
@@ -35,30 +39,13 @@ class DrawerViewModelImpl(
     }
 
     init {
-        lifecycle.subscribe(object : Lifecycle.Callbacks {
-            private val callback = ::updateOpenedState
-
-            override fun onCreate() {
-                drawerNavigationSource.subscribe(callback)
-            }
-
-            override fun onDestroy() {
-                drawerNavigationSource.unsubscribe(callback)
-            }
-        })
-
-        lifecycle.subscribe(object : Lifecycle.Callbacks {
+        with (lifecycle) {
             var cancellation: Cancellation? = null
+            doOnStart { cancellation = drawerNavigationSource.subscribe(::updateOpenedState) }
+            doOnStop { cancellation?.cancel() }
+        }
 
-            override fun onCreate() {
-                cancellation = screenStackState.observe(onScreenStackChange)
-            }
-
-            override fun onDestroy() {
-                cancellation?.cancel()
-                cancellation = null
-            }
-        })
+        screenStackState.subscribe(lifecycle, observer = onScreenStackChange)
     }
 
     override fun navigateToMetronome() = resetTo(ScreenConfiguration.Metronome)

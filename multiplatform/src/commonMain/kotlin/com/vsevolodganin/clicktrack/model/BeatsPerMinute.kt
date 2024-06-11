@@ -1,15 +1,12 @@
 package com.vsevolodganin.clicktrack.model
 
-import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
-import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
 import kotlinx.serialization.Serializable
 import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 @Serializable
-@Parcelize
-data class BeatsPerMinute(val value: Int) : Parcelable, Comparable<BeatsPerMinute> {
+data class BeatsPerMinute(val value: Int) : Comparable<BeatsPerMinute> {
     companion object {
         val VALID_TEMPO_RANGE = 1..999
         val MAX = VALID_TEMPO_RANGE.last.bpm

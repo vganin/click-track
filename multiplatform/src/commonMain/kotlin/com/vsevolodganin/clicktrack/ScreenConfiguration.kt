@@ -1,34 +1,34 @@
 package com.vsevolodganin.clicktrack
 
 import com.vsevolodganin.clicktrack.model.ClickTrackId
-import com.vsevolodganin.clicktrack.utils.parcelable.Parcelable
-import com.vsevolodganin.clicktrack.utils.parcelable.Parcelize
+import kotlinx.serialization.Serializable
 
-sealed interface ScreenConfiguration : Parcelable {
-    @Parcelize
+@Serializable
+sealed interface ScreenConfiguration {
+    @Serializable
     object ClickTrackList : ScreenConfiguration
 
-    @Parcelize
+    @Serializable
     data class PlayClickTrack(val id: ClickTrackId.Database) : ScreenConfiguration
 
-    @Parcelize
+    @Serializable
     data class EditClickTrack(val id: ClickTrackId.Database, val isInitialEdit: Boolean) : ScreenConfiguration
 
-    @Parcelize
+    @Serializable
     object Metronome : ScreenConfiguration
 
-    @Parcelize
+    @Serializable
     object Training : ScreenConfiguration
 
-    @Parcelize
+    @Serializable
     object Settings : ScreenConfiguration
 
-    @Parcelize
+    @Serializable
     object SoundLibrary : ScreenConfiguration
 
-    @Parcelize
+    @Serializable
     object About : ScreenConfiguration
 
-    @Parcelize
+    @Serializable
     object Polyrhythms : ScreenConfiguration
 }
