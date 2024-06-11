@@ -12,32 +12,32 @@ enum class BuiltinClickSounds(
         nameResource = MR.strings.sound_library_beep,
         storageKey = "beep",
         sounds = GenericClickSounds(
-            strongBeat = ClickSoundSource.Bundled(MR.files.beep_strong),
-            weakBeat = ClickSoundSource.Bundled(MR.files.beep_weak),
+            strongBeat = ClickSoundSource.Bundled(MR.files.beep_strong_wav),
+            weakBeat = ClickSoundSource.Bundled(MR.files.beep_weak_wav),
         ),
     ),
     CLAVES(
         nameResource = MR.strings.sound_library_claves,
         storageKey = "claves",
         sounds = GenericClickSounds(
-            strongBeat = ClickSoundSource.Bundled(MR.files.claves_strong),
-            weakBeat = ClickSoundSource.Bundled(MR.files.claves_weak),
+            strongBeat = ClickSoundSource.Bundled(MR.files.claves_strong_wav),
+            weakBeat = ClickSoundSource.Bundled(MR.files.claves_weak_wav),
         ),
     ),
     COWBELL(
         nameResource = MR.strings.sound_library_cowbell,
         storageKey = "cowbell",
         sounds = GenericClickSounds(
-            strongBeat = ClickSoundSource.Bundled(MR.files.cowbell_strong),
-            weakBeat = ClickSoundSource.Bundled(MR.files.cowbell_weak),
+            strongBeat = ClickSoundSource.Bundled(MR.files.cowbell_strong_wav),
+            weakBeat = ClickSoundSource.Bundled(MR.files.cowbell_weak_wav),
         ),
     ),
     DRUMS(
         nameResource = MR.strings.sound_library_drum_kit,
         storageKey = "drum kit",
         sounds = GenericClickSounds(
-            strongBeat = ClickSoundSource.Bundled(MR.files.drumkit_base),
-            weakBeat = ClickSoundSource.Bundled(MR.files.drumkit_hat),
+            strongBeat = ClickSoundSource.Bundled(MR.files.drumkit_base_wav),
+            weakBeat = ClickSoundSource.Bundled(MR.files.drumkit_hat_wav),
         ),
     ),
 }
