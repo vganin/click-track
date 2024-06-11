@@ -68,7 +68,7 @@ kotlinx-serialization = ["kotlinx-serialization-core", "kotlinx-serialization-js
 
 [plugins]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-jetbrains-compose = "org.jetbrains.compose:1.6.10"
+jetbrains-compose = "org.jetbrains.compose:1.6.11"
 kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 properties = "net.saliman.properties:1.5.2"
