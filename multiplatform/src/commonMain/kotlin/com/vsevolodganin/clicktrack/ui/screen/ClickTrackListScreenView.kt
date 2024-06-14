@@ -50,7 +50,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.rememberReorderableLazyColumnState
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun ClickTrackListScreenView(viewModel: ClickTrackListViewModel, modifier: Modifier = Modifier) {
@@ -74,7 +74,7 @@ private fun Content(viewModel: ClickTrackListViewModel) {
 
     val numberOfNonDraggableItems = 1
     val lazyListState = rememberLazyListState()
-    val reorderableLazyListState = rememberReorderableLazyColumnState(lazyListState) { from, to ->
+    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         viewModel.onItemMove(from.index - numberOfNonDraggableItems, to.index - numberOfNonDraggableItems)
     }
 
@@ -87,8 +87,8 @@ private fun Content(viewModel: ClickTrackListViewModel) {
             Spacer(Modifier.height(1.dp))
         }
 
-        items(items = state.items, key = { Json.Default.encodeToString(it.id) }) { clickTrack ->
-            ReorderableItem(reorderableLazyListState = reorderableLazyListState, key = clickTrack.id) { isDragging ->
+        items(items = state.items, key = { Json.encodeToString(it.id) }) { clickTrack ->
+            ReorderableItem(state = reorderableLazyListState, key = Json.encodeToString(clickTrack.id)) { isDragging ->
                 ClickTrackListItem(
                     viewModel = viewModel,
                     clickTrack = clickTrack,
