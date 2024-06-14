@@ -53,10 +53,7 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyColumnState
 
 @Composable
-fun ClickTrackListScreenView(
-    viewModel: ClickTrackListViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun ClickTrackListScreenView(viewModel: ClickTrackListViewModel, modifier: Modifier = Modifier) {
     Scaffold(
         topBar = { TopBar(viewModel) },
         floatingActionButtonPosition = FabPosition.Center,
@@ -175,33 +172,29 @@ private fun ClickTrackListItem(
 
 @ScreenPreview
 @Composable
-fun ClickTrackListPreview() =
-    ClickTrackTheme {
-        ClickTrackListScreenView(
-            viewModel = object : ClickTrackListViewModel {
-                override val state: StateFlow<ClickTrackListState> = MutableStateFlow(
-                    ClickTrackListState(
-                        listOf(
-                            PREVIEW_CLICK_TRACK_1,
-                            PREVIEW_CLICK_TRACK_2,
-                        ),
+fun ClickTrackListPreview() = ClickTrackTheme {
+    ClickTrackListScreenView(
+        viewModel = object : ClickTrackListViewModel {
+            override val state: StateFlow<ClickTrackListState> = MutableStateFlow(
+                ClickTrackListState(
+                    listOf(
+                        PREVIEW_CLICK_TRACK_1,
+                        PREVIEW_CLICK_TRACK_2,
                     ),
-                )
+                ),
+            )
 
-                override fun onAddClick() = Unit
+            override fun onAddClick() = Unit
 
-                override fun onItemClick(id: ClickTrackId.Database) = Unit
+            override fun onItemClick(id: ClickTrackId.Database) = Unit
 
-                override fun onItemRemove(id: ClickTrackId.Database) = Unit
+            override fun onItemRemove(id: ClickTrackId.Database) = Unit
 
-                override fun onMenuClick() = Unit
+            override fun onMenuClick() = Unit
 
-                override fun onItemMove(
-                    from: Int,
-                    to: Int,
-                ) = Unit
+            override fun onItemMove(from: Int, to: Int) = Unit
 
-                override fun onItemMoveFinished() = Unit
-            },
-        )
-    }
+            override fun onItemMoveFinished() = Unit
+        },
+    )
+}

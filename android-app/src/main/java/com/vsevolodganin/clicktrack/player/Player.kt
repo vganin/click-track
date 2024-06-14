@@ -78,11 +78,7 @@ class Player(
         pausedState.value = false
     }
 
-    private suspend fun play(
-        id: PlayableId,
-        startAtProgress: Double?,
-        soundsId: ClickSoundsId?,
-    ) {
+    private suspend fun play(id: PlayableId, startAtProgress: Double?, soundsId: ClickSoundsId?) {
         when (id) {
             is ClickTrackId -> {
                 playableContentProvider.clickTrackFlow(id)
@@ -107,10 +103,7 @@ class Player(
         }
     }
 
-    private suspend inline fun pausable(
-        startAt: Double?,
-        crossinline play: suspend (startAt: Double?) -> Unit,
-    ) {
+    private suspend inline fun pausable(startAt: Double?, crossinline play: suspend (startAt: Double?) -> Unit) {
         var savedProgress: Double? = startAt
         pausedState.collectLatest { isPaused ->
             if (isPaused) {
@@ -121,67 +114,62 @@ class Player(
         }
     }
 
-    private suspend fun play(
-        id: ClickTrackId,
-        clickTrack: ClickTrack,
-        atProgress: Double?,
-        soundsId: ClickSoundsId?,
-    ) = withContext(playerDispatcher) {
-        val duration = clickTrack.durationInTime
+    private suspend fun play(id: ClickTrackId, clickTrack: ClickTrack, atProgress: Double?, soundsId: ClickSoundsId?) {
+        withContext(playerDispatcher) {
+            val duration = clickTrack.durationInTime
 
-        if (duration == Duration.ZERO) {
-            logger.logError(TAG, "Tried to play track with zero duration, exiting")
-            return@withContext
+            if (duration == Duration.ZERO) {
+                logger.logError(TAG, "Tried to play track with zero duration, exiting")
+                return@withContext
+            }
+
+            val currentPlayback = playbackState.value
+            val progress = atProgress
+                ?: grabIf(id == currentPlayback?.id) { currentPlayback?.realProgress }
+                ?: 0.0
+            val startAt = duration * progress
+
+            clickTrack.play(
+                startAt = startAt,
+                reportProgress = {
+                    playbackState.value = InternalPlaybackState(
+                        id = id,
+                        duration = duration,
+                        position = it,
+                    )
+                },
+                soundSourceProvider = soundSourceProvider(soundsId),
+            )
         }
-
-        val currentPlayback = playbackState.value
-        val progress = atProgress
-            ?: grabIf(id == currentPlayback?.id) { currentPlayback?.realProgress }
-            ?: 0.0
-        val startAt = duration * progress
-
-        clickTrack.play(
-            startAt = startAt,
-            reportProgress = {
-                playbackState.value = InternalPlaybackState(
-                    id = id,
-                    duration = duration,
-                    position = it,
-                )
-            },
-            soundSourceProvider = soundSourceProvider(soundsId),
-        )
     }
 
-    private suspend fun play(
-        twoLayerPolyrhythm: TwoLayerPolyrhythm,
-        atProgress: Double?,
-        soundsId: ClickSoundsId?,
-    ) = withContext(playerDispatcher) {
-        val duration = twoLayerPolyrhythm.durationInTime
+    private suspend fun play(twoLayerPolyrhythm: TwoLayerPolyrhythm, atProgress: Double?, soundsId: ClickSoundsId?) {
+        withContext(playerDispatcher) {
+            val duration = twoLayerPolyrhythm.durationInTime
 
-        if (duration == Duration.ZERO) {
-            logger.logError(TAG, "Tried to play polyrhythm with zero duration, exiting")
-            return@withContext
+            if (duration == Duration.ZERO) {
+                logger.logError(TAG, "Tried to play polyrhythm with zero duration, exiting")
+                return@withContext
+            }
+
+            val currentPlayback = playbackState.value
+            val progress = atProgress
+                ?: grabIf(TwoLayerPolyrhythmId == currentPlayback?.id) { currentPlayback?.realProgress }
+                ?: 0.0
+            val startAt = duration * progress
+
+            twoLayerPolyrhythm.play(
+                startAt = startAt,
+                reportProgress = {
+                    playbackState.value = InternalPlaybackState(
+                        id = TwoLayerPolyrhythmId,
+                        duration = duration,
+                        position = it,
+                    )
+                },
+                soundSourceProvider = soundSourceProvider(soundsId),
+            )
         }
-
-        val currentPlayback = playbackState.value
-        val progress = atProgress
-            ?: grabIf(TwoLayerPolyrhythmId == currentPlayback?.id) { currentPlayback?.realProgress }
-            ?: 0.0
-        val startAt = duration * progress
-
-        twoLayerPolyrhythm.play(
-            startAt = startAt,
-            reportProgress = {
-                playbackState.value = InternalPlaybackState(
-                    id = TwoLayerPolyrhythmId,
-                    duration = duration,
-                    position = it,
-                )
-            },
-            soundSourceProvider = soundSourceProvider(soundsId),
-        )
     }
 
     fun playbackState(): Flow<PlaybackState?> = externalPlaybackState
@@ -210,11 +198,7 @@ class Player(
         }
         .shareIn(GlobalScope, SharingStarted.Eagerly, 1)
 
-    private suspend fun ClickTrack.play(
-        startAt: Duration,
-        reportProgress: (Duration) -> Unit,
-        soundSourceProvider: SoundSourceProvider,
-    ) {
+    private suspend fun ClickTrack.play(startAt: Duration, reportProgress: (Duration) -> Unit, soundSourceProvider: SoundSourceProvider) {
         val durationInTime = durationInTime
         val startingAt = if (startAt >= durationInTime) {
             if (loop) Duration.ZERO else return

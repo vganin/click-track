@@ -25,10 +25,7 @@ import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.widthInByText
 
 @Composable
-fun CueSummaryView(
-    cue: Cue,
-    tempoOffset: BeatsPerMinuteOffset,
-) {
+fun CueSummaryView(cue: Cue, tempoOffset: BeatsPerMinuteOffset) {
     val cueName = cue.name
     if (cueName.isNullOrBlank()) {
         BriefSummary(cue, tempoOffset)
@@ -38,10 +35,7 @@ fun CueSummaryView(
 }
 
 @Composable
-private fun BriefSummary(
-    cue: Cue,
-    tempoOffset: BeatsPerMinuteOffset,
-) {
+private fun BriefSummary(cue: Cue, tempoOffset: BeatsPerMinuteOffset) {
     Row {
         Text(
             text = tempoToText(cue.bpm, tempoOffset),
@@ -59,11 +53,7 @@ private fun BriefSummary(
 }
 
 @Composable
-private fun DetailedSummary(
-    title: String,
-    cue: Cue,
-    tempoOffset: BeatsPerMinuteOffset,
-) {
+private fun DetailedSummary(title: String, cue: Cue, tempoOffset: BeatsPerMinuteOffset) {
     Column {
         val textStyle = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.SemiBold)
         Text(
@@ -77,10 +67,7 @@ private fun DetailedSummary(
     }
 }
 
-private fun tempoToText(
-    tempo: BeatsPerMinute,
-    tempoOffset: BeatsPerMinuteOffset,
-): String {
+private fun tempoToText(tempo: BeatsPerMinute, tempoOffset: BeatsPerMinuteOffset): String {
     return StringBuilder().apply {
         append((tempo + tempoOffset).value)
         if (tempoOffset.value != 0) append('*')

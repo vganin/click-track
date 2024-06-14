@@ -179,10 +179,7 @@ private data class DesktopDropdownMenuPositionProvider(
     }
 }
 
-private fun calculateTransformOrigin(
-    parentBounds: IntRect,
-    menuBounds: IntRect,
-): TransformOrigin {
+private fun calculateTransformOrigin(parentBounds: IntRect, menuBounds: IntRect): TransformOrigin {
     val pivotX = when {
         menuBounds.left >= parentBounds.right -> 0f
         menuBounds.right <= parentBounds.left -> 1f
@@ -192,7 +189,7 @@ private fun calculateTransformOrigin(
                 (
                     max(parentBounds.left, menuBounds.left) +
                         min(parentBounds.right, menuBounds.right)
-                ) / 2
+                    ) / 2
             (intersectionCenter - menuBounds.left).toFloat() / menuBounds.width
         }
     }
@@ -205,7 +202,7 @@ private fun calculateTransformOrigin(
                 (
                     max(parentBounds.top, menuBounds.top) +
                         min(parentBounds.bottom, menuBounds.bottom)
-                ) / 2
+                    ) / 2
             (intersectionCenter - menuBounds.top).toFloat() / menuBounds.height
         }
     }
@@ -333,5 +330,9 @@ private val DropdownMenuItemDefaultMaxWidth = 280.dp
 private val DropdownMenuItemDefaultMinHeight = 48.dp
 
 // Menu open/close animation.
+
+@Suppress("ktlint:standard:property-naming")
 private const val InTransitionDuration = 120
+
+@Suppress("ktlint:standard:property-naming")
 private const val OutTransitionDuration = 75

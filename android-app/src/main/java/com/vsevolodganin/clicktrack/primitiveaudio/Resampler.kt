@@ -21,31 +21,19 @@ class Resampler(
         quality.ordinal,
     )
 
-    fun resample(samples: FloatArray): FloatArray =
-        resampleNative(
-            nativePtr,
-            samples,
-            channelCount,
-            inputRate,
-            outputRate,
-        )
+    fun resample(samples: FloatArray): FloatArray = resampleNative(
+        nativePtr,
+        samples,
+        channelCount,
+        inputRate,
+        outputRate,
+    )
 
     protected fun finalize() = destroyNative(nativePtr)
 
-    private external fun createNative(
-        channelCount: Int,
-        inputRate: Int,
-        outputRate: Int,
-        quality: Int,
-    ): Long
+    private external fun createNative(channelCount: Int, inputRate: Int, outputRate: Int, quality: Int): Long
 
-    private external fun resampleNative(
-        ptr: Long,
-        samples: FloatArray,
-        channelCount: Int,
-        inputRate: Int,
-        outputRate: Int,
-    ): FloatArray
+    private external fun resampleNative(ptr: Long, samples: FloatArray, channelCount: Int, inputRate: Int, outputRate: Int): FloatArray
 
     private external fun destroyNative(ptr: Long)
 }

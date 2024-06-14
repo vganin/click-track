@@ -47,10 +47,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.DurationUnit
 
 @Composable
-fun PolyrhythmsScreenView(
-    viewModel: PolyrhythmsViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun PolyrhythmsScreenView(viewModel: PolyrhythmsViewModel, modifier: Modifier = Modifier) {
     val state by viewModel.state.collectAsState()
     Scaffold(
         topBar = {
@@ -73,10 +70,7 @@ fun PolyrhythmsScreenView(
 }
 
 @Composable
-private fun Content(
-    viewModel: PolyrhythmsViewModel,
-    state: PolyrhythmsState,
-) {
+private fun Content(viewModel: PolyrhythmsViewModel, state: PolyrhythmsState) {
     Column(modifier = Modifier.padding(16.dp)) {
         Row {
             NumberChooser(
@@ -103,11 +97,7 @@ private fun Content(
 }
 
 @Composable
-private fun NumberChooser(
-    value: Int,
-    onValueChoose: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun NumberChooser(value: Int, onValueChoose: (Int) -> Unit, modifier: Modifier = Modifier) {
     Row(modifier = modifier) {
         IconButton(
             onClick = { onValueChoose(value - 1) },
@@ -134,13 +124,7 @@ private fun NumberChooser(
 }
 
 @Composable
-private fun PolyrhythmCircleWrapper(
-    layer1: Int,
-    layer2: Int,
-    progress: PlayProgress?,
-    totalDuration: Duration,
-    modifier: Modifier,
-) {
+private fun PolyrhythmCircleWrapper(layer1: Int, layer2: Int, progress: PlayProgress?, totalDuration: Duration, modifier: Modifier) {
     val progressAngle = progressAngle(progress, totalDuration)?.asState()
 
     PolyrhythmCircle(
@@ -153,10 +137,7 @@ private fun PolyrhythmCircleWrapper(
 }
 
 @Composable
-private fun progressAngle(
-    progress: PlayProgress?,
-    totalDuration: Duration,
-): AnimatableFloat? {
+private fun progressAngle(progress: PlayProgress?, totalDuration: Duration): AnimatableFloat? {
     progress ?: return null
 
     val animatableProgressAngle = remember {
@@ -196,29 +177,28 @@ private fun Duration.toAngle(totalDuration: Duration): Float {
 
 @ScreenPreview
 @Composable
-private fun Preview() =
-    ClickTrackTheme {
-        PolyrhythmsScreenView(
-            viewModel = object : PolyrhythmsViewModel {
-                override val state: StateFlow<PolyrhythmsState?> = MutableStateFlow(
-                    PolyrhythmsState(
-                        twoLayerPolyrhythm = TwoLayerPolyrhythm(
-                            bpm = 120.bpm,
-                            layer1 = 3,
-                            layer2 = 2,
-                        ),
-                        isPlaying = true,
-                        playableProgress = PlayProgress(100.milliseconds),
+private fun Preview() = ClickTrackTheme {
+    PolyrhythmsScreenView(
+        viewModel = object : PolyrhythmsViewModel {
+            override val state: StateFlow<PolyrhythmsState?> = MutableStateFlow(
+                PolyrhythmsState(
+                    twoLayerPolyrhythm = TwoLayerPolyrhythm(
+                        bpm = 120.bpm,
+                        layer1 = 3,
+                        layer2 = 2,
                     ),
-                )
+                    isPlaying = true,
+                    playableProgress = PlayProgress(100.milliseconds),
+                ),
+            )
 
-                override fun onBackClick() = Unit
+            override fun onBackClick() = Unit
 
-                override fun onTogglePlay() = Unit
+            override fun onTogglePlay() = Unit
 
-                override fun onLayer1Change(value: Int) = Unit
+            override fun onLayer1Change(value: Int) = Unit
 
-                override fun onLayer2Change(value: Int) = Unit
-            },
-        )
-    }
+            override fun onLayer2Change(value: Int) = Unit
+        },
+    )
+}

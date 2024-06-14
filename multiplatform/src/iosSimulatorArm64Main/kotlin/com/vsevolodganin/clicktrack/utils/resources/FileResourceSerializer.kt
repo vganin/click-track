@@ -27,7 +27,7 @@ actual class FileResourceSerializer : KSerializer<FileResource> {
                 extension = decodeString(),
                 bundle = decodeNullableSerializableValue(String.serializer())
                     ?.let(NSBundle.Companion::bundleWithIdentifier)
-                    ?: NSBundle.mainBundle
+                    ?: NSBundle.mainBundle,
             )
         }
     }

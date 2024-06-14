@@ -33,12 +33,7 @@ import com.vsevolodganin.clicktrack.generated.resources.MR
 import dev.icerock.moko.resources.compose.colorResource
 
 @Composable
-fun SwipeToDelete(
-    onDeleted: () -> Unit,
-    modifier: Modifier = Modifier,
-    contentPadding: Dp = 0.dp,
-    content: @Composable () -> Unit,
-) {
+fun SwipeToDelete(onDeleted: () -> Unit, modifier: Modifier = Modifier, contentPadding: Dp = 0.dp, content: @Composable () -> Unit) {
     val revealState = rememberSwipeableState(RevealValue.Hidden)
     val visibleState = remember { MutableTransitionState(true) }
 
@@ -73,11 +68,7 @@ fun SwipeToDelete(
 }
 
 @Composable
-private fun BoxScope.DeleteLayout(
-    state: SwipeableState<RevealValue>,
-    padding: Dp,
-    onDelete: () -> Unit,
-) {
+private fun BoxScope.DeleteLayout(state: SwipeableState<RevealValue>, padding: Dp, onDelete: () -> Unit) {
     val backgroundColor by animateColorAsState(
         when (state.targetValue) {
             RevealValue.Hidden -> Color.Transparent

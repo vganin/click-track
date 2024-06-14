@@ -56,10 +56,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun DurationPicker(
-    state: MutableState<Duration>,
-    modifier: Modifier = Modifier,
-) {
+fun DurationPicker(state: MutableState<Duration>, modifier: Modifier = Modifier) {
     DurationPicker(
         value = state.value,
         onValueChange = { state.value = it },
@@ -68,11 +65,7 @@ fun DurationPicker(
 }
 
 @Composable
-fun DurationPicker(
-    value: Duration,
-    onValueChange: (Duration) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun DurationPicker(value: Duration, onValueChange: (Duration) -> Unit, modifier: Modifier = Modifier) {
     /** Converts CharSequence in format "hhmmss" to Duration */
     fun CharSequence.toDuration(): Duration {
         val hoursSequence = subSequence(0, 2)

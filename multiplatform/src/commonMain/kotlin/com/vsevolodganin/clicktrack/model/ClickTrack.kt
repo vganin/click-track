@@ -9,7 +9,8 @@ data class ClickTrack(
     val name: String,
     val cues: List<Cue>,
     val loop: Boolean,
-    @SerialName("tempoDiff") // Legacy name
+    // For backward compatibility
+    @SerialName("tempoDiff")
     val tempoOffset: BeatsPerMinuteOffset = BeatsPerMinuteOffset.ZERO,
 ) {
     val durationInTime: Duration by lazy {

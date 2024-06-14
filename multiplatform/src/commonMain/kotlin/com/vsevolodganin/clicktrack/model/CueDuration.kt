@@ -52,10 +52,7 @@ sealed interface CueDuration {
     }
 }
 
-fun CueDuration.asTimeGiven(
-    tempo: BeatsPerMinute,
-    timeSignature: TimeSignature,
-): Duration {
+fun CueDuration.asTimeGiven(tempo: BeatsPerMinute, timeSignature: TimeSignature): Duration {
     return when (this) {
         is CueDuration.Time -> value
         is CueDuration.Beats -> tempo.interval * value

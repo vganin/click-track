@@ -29,12 +29,7 @@ class AnimatableRect(val bounds: Rect) {
     val value: Rect
         get() = Rect(left = left, top = top, right = right, bottom = bottom)
 
-    suspend fun animateTo(
-        newLeft: Float = left,
-        newTop: Float = top,
-        newRight: Float = right,
-        newBottom: Float = bottom,
-    ) = coroutineScope {
+    suspend fun animateTo(newLeft: Float = left, newTop: Float = top, newRight: Float = right, newBottom: Float = bottom) = coroutineScope {
         allowToDeform()
         launch { _left.animateTo(newLeft) }
         launch { _top.animateTo(newTop) }
@@ -42,12 +37,7 @@ class AnimatableRect(val bounds: Rect) {
         launch { _bottom.animateTo(newBottom) }
     }
 
-    suspend fun snapTo(
-        newLeft: Float = left,
-        newTop: Float = top,
-        newRight: Float = right,
-        newBottom: Float = bottom,
-    ) = coroutineScope {
+    suspend fun snapTo(newLeft: Float = left, newTop: Float = top, newRight: Float = right, newBottom: Float = bottom) = coroutineScope {
         allowToDeform()
         launch { _left.snapTo(newLeft) }
         launch { _top.snapTo(newTop) }
@@ -68,10 +58,7 @@ class AnimatableRect(val bounds: Rect) {
         launch { _bottom.animateDecay(initialVelocity.y, animationSpec) }
     }
 
-    private fun forbidToDeform(
-        width: Float,
-        height: Float,
-    ) {
+    private fun forbidToDeform(width: Float, height: Float) {
         _left.updateBounds(lowerBound = bounds.left, upperBound = (bounds.right - width).coerceAtLeast(bounds.left))
         _top.updateBounds(lowerBound = bounds.top, upperBound = (bounds.bottom - height).coerceAtLeast(bounds.top))
         _right.updateBounds(lowerBound = (bounds.left + width).coerceAtMost(bounds.right), upperBound = bounds.right)

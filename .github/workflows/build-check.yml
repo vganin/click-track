@@ -21,13 +21,10 @@ jobs:
           distribution: 'zulu'
           java-version: 17
           cache: 'gradle'
+      - name: Check code
+        run: ./gradlew check
       - name: Build Android app
-        run: >
-          ./gradlew -s
-          :android-app:bundleRelease 
-          :android-app:lintRelease
-          testReleaseUnitTest
-          :multiplatform:verifySqlDelightMigration
+        run: ./gradlew :android-app:bundleRelease
   ios:
     name: iOS
     runs-on: macos-14
@@ -44,7 +41,8 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '15.3'
-      # FIXME(https://youtrack.jetbrains.com/issue/KT-44380): Should generate dummy framework for cocoapods to configure pod correctly
+      - name: Check code
+        run: ./gradlew check
       - name: Generate dummy framework
         run: ./gradlew :multiplatform:generateDummyFramework
       - name: Install pods
@@ -52,7 +50,7 @@ jobs:
           cd ios-app
           pod install --repo-update
       - name: Build iOS app
-        run: > 
+        run: >
           xcodebuild
           -workspace ios-app/ClickTrack.xcworkspace
           -scheme ClickTrack

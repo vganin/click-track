@@ -3,6 +3,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 @Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
+    id("clicktrack.ktlint")
     alias(libs.plugins.jetbrains.compose) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.properties)

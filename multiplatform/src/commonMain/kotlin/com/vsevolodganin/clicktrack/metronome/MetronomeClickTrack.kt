@@ -7,11 +7,7 @@ import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
 
-fun metronomeClickTrack(
-    name: String,
-    bpm: BeatsPerMinute,
-    pattern: NotePattern,
-) = ClickTrack(
+fun metronomeClickTrack(name: String, bpm: BeatsPerMinute, pattern: NotePattern) = ClickTrack(
     name = name,
     cues = listOf(
         Cue(

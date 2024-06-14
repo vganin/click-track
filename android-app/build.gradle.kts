@@ -9,6 +9,7 @@ import java.util.Properties
 plugins {
     id("clicktrack.android.application")
     id("clicktrack.include-in-coverage")
+    id("clicktrack.ktlint")
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
@@ -108,10 +109,8 @@ android {
             "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
             "-opt-in=com.russhwolf.settings.ExperimentalSettingsApi",
             // https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/compiler-metrics.md
-            "-P",
-            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/reports/compose_metrics",
-            "-P",
-            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/reports/compose_metrics",
+            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/reports/compose_metrics",
+            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/reports/compose_metrics",
         )
     }
 
@@ -119,17 +118,6 @@ android {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
         }
-    }
-
-    lint {
-        disable += listOf(
-            // FIXME(https://issuetracker.google.com/issues/184830262)
-            "NullSafeMutableLiveData",
-            // FIXME(https://issuetracker.google.com/issues/189967522)
-            "DialogFragmentCallbacksDetector",
-            // Not used on purpose
-            "UnusedMaterialScaffoldPaddingParameter",
-        )
     }
 }
 

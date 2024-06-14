@@ -47,10 +47,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun AboutScreenView(
-    viewModel: AboutViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun AboutScreenView(viewModel: AboutViewModel, modifier: Modifier = Modifier) {
     Scaffold(
         topBar = {
             TopAppBarWithBack(

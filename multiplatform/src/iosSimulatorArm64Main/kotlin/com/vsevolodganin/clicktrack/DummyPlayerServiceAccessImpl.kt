@@ -12,11 +12,7 @@ import me.tatarka.inject.annotations.Inject
 @MainControllerScope
 @Inject
 class DummyPlayerServiceAccessImpl : PlayerServiceAccess {
-    override fun start(
-        id: PlayableId,
-        atProgress: Double?,
-        soundsId: ClickSoundsId?,
-    ) = Unit
+    override fun start(id: PlayableId, atProgress: Double?, soundsId: ClickSoundsId?) = Unit
 
     override fun pause() = Unit
 

@@ -32,32 +32,18 @@ val PrimitiveAudioData.bytesPerSample: Int
 
 val PrimitiveAudioData.samplesNumber: Int get() = bytes.size / bytesPerSample
 
-fun convertDurationToSamplesNumber(
-    duration: Duration,
-    sampleRate: Int,
-): Int {
+fun convertDurationToSamplesNumber(duration: Duration, sampleRate: Int): Int {
     return (duration.toDouble(DurationUnit.SECONDS) * sampleRate).roundToInt()
 }
 
-fun convertDurationToFramesNumber(
-    duration: Duration,
-    sampleRate: Int,
-    channelCount: Int,
-): Int {
+fun convertDurationToFramesNumber(duration: Duration, sampleRate: Int, channelCount: Int): Int {
     return (duration.toDouble(DurationUnit.SECONDS) / channelCount * sampleRate).roundToInt()
 }
 
-fun convertSamplesNumberToDuration(
-    samplesNumber: Int,
-    sampleRate: Int,
-): Duration {
+fun convertSamplesNumberToDuration(samplesNumber: Int, sampleRate: Int): Duration {
     return (samplesNumber.toDouble() / sampleRate).seconds
 }
 
-fun convertFramesNumberToDuration(
-    framesNumber: Int,
-    sampleRate: Int,
-    channelCount: Int,
-): Duration {
+fun convertFramesNumberToDuration(framesNumber: Int, sampleRate: Int, channelCount: Int): Duration {
     return (framesNumber.toDouble() / sampleRate * channelCount).seconds
 }

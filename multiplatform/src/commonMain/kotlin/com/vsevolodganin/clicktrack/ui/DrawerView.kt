@@ -114,13 +114,7 @@ fun DrawerView(viewModel: DrawerViewModel) {
 }
 
 @Composable
-private fun DrawerButton(
-    icon: Painter,
-    label: String,
-    isSelected: Boolean,
-    action: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun DrawerButton(icon: Painter, label: String, isSelected: Boolean, action: () -> Unit, modifier: Modifier = Modifier) {
     val colors = MaterialTheme.colors
     val textAndIconColor = if (isSelected) colors.secondary else colors.onSurface.copy(alpha = 0.9f)
     val backgroundColor = if (isSelected) colors.secondary.copy(alpha = 0.12f) else Color.Transparent
@@ -144,7 +138,7 @@ private fun DrawerButton(
             ) {
                 Icon(
                     painter = icon,
-                    contentDescription = null, // decorative
+                    contentDescription = null,
                     tint = textAndIconColor,
                     modifier = Modifier.size(24.dp),
                 )
@@ -161,32 +155,31 @@ private fun DrawerButton(
 
 @Preview
 @Composable
-private fun Preview() =
-    ClickTrackTheme {
-        DrawerView(
-            viewModel = object : DrawerViewModel {
-                override val state: StateFlow<DrawerState> = MutableStateFlow(
-                    DrawerState(
-                        isOpened = true,
-                        selectedItem = DrawerState.SelectedItem.METRONOME,
-                    ),
-                )
+private fun Preview() = ClickTrackTheme {
+    DrawerView(
+        viewModel = object : DrawerViewModel {
+            override val state: StateFlow<DrawerState> = MutableStateFlow(
+                DrawerState(
+                    isOpened = true,
+                    selectedItem = DrawerState.SelectedItem.METRONOME,
+                ),
+            )
 
-                override fun openDrawer() = Unit
+            override fun openDrawer() = Unit
 
-                override fun closeDrawer() = Unit
+            override fun closeDrawer() = Unit
 
-                override fun navigateToMetronome() = Unit
+            override fun navigateToMetronome() = Unit
 
-                override fun navigateToTraining() = Unit
+            override fun navigateToTraining() = Unit
 
-                override fun navigateToPolyrhythms() = Unit
+            override fun navigateToPolyrhythms() = Unit
 
-                override fun navigateToSoundLibrary() = Unit
+            override fun navigateToSoundLibrary() = Unit
 
-                override fun navigateToSettings() = Unit
+            override fun navigateToSettings() = Unit
 
-                override fun navigateToAbout() = Unit
-            },
-        )
-    }
+            override fun navigateToAbout() = Unit
+        },
+    )
+}

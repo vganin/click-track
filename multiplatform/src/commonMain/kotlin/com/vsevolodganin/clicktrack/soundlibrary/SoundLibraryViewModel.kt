@@ -15,10 +15,7 @@ interface SoundLibraryViewModel {
 
     fun onItemRemove(id: ClickSoundsId.Database)
 
-    fun onItemSoundSelect(
-        id: ClickSoundsId.Database,
-        type: ClickSoundType,
-    )
+    fun onItemSoundSelect(id: ClickSoundsId.Database, type: ClickSoundType)
 
     fun onItemSoundTestToggle(id: ClickSoundsId.Database)
 }

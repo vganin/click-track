@@ -28,11 +28,7 @@ class NotificationChannels(
         )
     }
 
-    private fun createChannel(
-        id: String,
-        @StringRes nameRes: Int,
-        importance: Int = NotificationManagerCompat.IMPORTANCE_DEFAULT,
-    ) {
+    private fun createChannel(id: String, @StringRes nameRes: Int, importance: Int = NotificationManagerCompat.IMPORTANCE_DEFAULT) {
         val channel = NotificationChannelCompat.Builder(id, importance)
             .setName(application.getString(nameRes))
             .setVibrationEnabled(false)

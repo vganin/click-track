@@ -30,10 +30,7 @@ class ScreenViewModelFactory(
     private val aboutViewModelFactory: (componentContext: ComponentContext) -> AboutViewModelImpl,
     private val polyrhythmsViewModelFactory: (componentContext: ComponentContext) -> PolyrhythmsViewModelImpl,
 ) {
-    fun create(
-        screenConfiguration: ScreenConfiguration,
-        componentContext: ComponentContext,
-    ): ScreenViewModel {
+    fun create(screenConfiguration: ScreenConfiguration, componentContext: ComponentContext): ScreenViewModel {
         return when (screenConfiguration) {
             ScreenConfiguration.ClickTrackList -> ScreenViewModel.ClickTrackList(
                 clickTrackListViewModelFactory.invoke(componentContext),

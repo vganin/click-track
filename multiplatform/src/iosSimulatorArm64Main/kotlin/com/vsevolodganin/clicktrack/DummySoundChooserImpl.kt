@@ -9,8 +9,5 @@ import me.tatarka.inject.annotations.Inject
 @MainControllerScope
 @Inject
 class DummySoundChooserImpl : SoundChooser {
-    override suspend fun launchFor(
-        id: ClickSoundsId.Database,
-        type: ClickSoundType,
-    ) = Unit
+    override suspend fun launchFor(id: ClickSoundsId.Database, type: ClickSoundType) = Unit
 }

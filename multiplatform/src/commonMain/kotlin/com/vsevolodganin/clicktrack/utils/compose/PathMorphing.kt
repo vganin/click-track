@@ -55,10 +55,7 @@ fun animatePathAsState(path: List<PathNode>): State<List<PathNode>> {
 }
 
 // Paths can morph if same size and same node types at same positions.
-fun canMorph(
-    from: List<PathNode>,
-    to: List<PathNode>,
-): Boolean {
+fun canMorph(from: List<PathNode>, to: List<PathNode>): Boolean {
     if (from.size != to.size) {
         return false
     }
@@ -73,22 +70,14 @@ fun canMorph(
 }
 
 // Assume paths can morph (see [canMorph]). If not, will throw.
-private fun lerp(
-    fromPath: List<PathNode>,
-    toPath: List<PathNode>,
-    fraction: Float,
-): List<PathNode> {
+private fun lerp(fromPath: List<PathNode>, toPath: List<PathNode>, fraction: Float): List<PathNode> {
     return fromPath.mapIndexed { i, from ->
         val to = toPath[i]
         lerp(from, to, fraction)
     }
 }
 
-private fun lerp(
-    from: PathNode,
-    to: PathNode,
-    fraction: Float,
-): PathNode {
+private fun lerp(from: PathNode, to: PathNode, fraction: Float): PathNode {
     return when (from) {
         PathNode.Close -> {
             to as PathNode.Close

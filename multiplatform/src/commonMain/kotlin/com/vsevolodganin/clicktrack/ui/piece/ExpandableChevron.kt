@@ -42,11 +42,7 @@ fun ExpandableChevron(
     )
 }
 
-private fun lerp(
-    fromPathNodes: List<PathNode>,
-    toPathNodes: List<PathNode>,
-    t: Float,
-): List<PathNode> {
+private fun lerp(fromPathNodes: List<PathNode>, toPathNodes: List<PathNode>, t: Float): List<PathNode> {
     return fromPathNodes.mapIndexed { i, from ->
         val to = toPathNodes[i]
         if (from is PathNode.MoveTo && to is PathNode.MoveTo) {

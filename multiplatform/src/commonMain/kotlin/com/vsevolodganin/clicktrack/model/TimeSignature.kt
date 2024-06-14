@@ -6,7 +6,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TimeSignature(
     val noteCount: Int,
-    @SerialName("noteDuration") // For backward compatibility
+    // For backward compatibility
+    @SerialName("noteDuration")
     val noteValue: Int,
 ) {
     init {

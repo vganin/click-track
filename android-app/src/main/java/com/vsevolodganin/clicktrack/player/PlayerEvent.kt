@@ -20,12 +20,9 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class PlayerEvent(
     val duration: Duration,
-    val soundType: ClickSoundType?, // Null is case of silent pause
+    val soundType: ClickSoundType?,
 ) {
-    fun copy(
-        duration: Duration = this.duration,
-        soundType: ClickSoundType? = this.soundType,
-    ) = PlayerEvent(
+    fun copy(duration: Duration = this.duration, soundType: ClickSoundType? = this.soundType) = PlayerEvent(
         duration = duration,
         soundType = soundType,
     )
@@ -144,10 +141,7 @@ private fun Sequence<PlayerEvent>.withDuration(duration: Duration): Sequence<Pla
     }
 }
 
-private fun soundEvent(
-    duration: Duration,
-    soundType: ClickSoundType,
-) = PlayerEvent(duration, soundType)
+private fun soundEvent(duration: Duration, soundType: ClickSoundType) = PlayerEvent(duration, soundType)
 
 private fun delayEvent(duration: Duration) = PlayerEvent(duration, null)
 

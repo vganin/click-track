@@ -54,42 +54,36 @@ fun ClickTrackTheme(content: @Composable () -> Unit) {
 }
 
 @Composable
-private fun lightPalette() =
-    lightColors(
-        primary = colorResource(MR.colors.primary),
-        primaryVariant = colorResource(MR.colors.primary_variant),
-        secondary = colorResource(MR.colors.secondary),
-        secondaryVariant = colorResource(MR.colors.secondary_variant),
-        background = colorResource(MR.colors.background),
-        surface = colorResource(MR.colors.surface),
-        onPrimary = colorResource(MR.colors.on_primary),
-        onSecondary = colorResource(MR.colors.on_secondary),
-        onBackground = colorResource(MR.colors.on_background),
-        onSurface = colorResource(MR.colors.on_surface),
-    )
+private fun lightPalette() = lightColors(
+    primary = colorResource(MR.colors.primary),
+    primaryVariant = colorResource(MR.colors.primary_variant),
+    secondary = colorResource(MR.colors.secondary),
+    secondaryVariant = colorResource(MR.colors.secondary_variant),
+    background = colorResource(MR.colors.background),
+    surface = colorResource(MR.colors.surface),
+    onPrimary = colorResource(MR.colors.on_primary),
+    onSecondary = colorResource(MR.colors.on_secondary),
+    onBackground = colorResource(MR.colors.on_background),
+    onSurface = colorResource(MR.colors.on_surface),
+)
 
 @Composable
-private fun darkPalette() =
-    darkColors(
-        primary = colorResource(MR.colors.primary),
-        primaryVariant = colorResource(MR.colors.primary_variant),
-        secondary = colorResource(MR.colors.secondary),
-        secondaryVariant = colorResource(MR.colors.secondary_variant),
-        background = colorResource(MR.colors.background),
-        surface = colorResource(MR.colors.surface),
-        onPrimary = colorResource(MR.colors.on_primary),
-        onSecondary = colorResource(MR.colors.on_secondary),
-        onBackground = colorResource(MR.colors.on_background),
-        onSurface = colorResource(MR.colors.on_surface),
-    )
+private fun darkPalette() = darkColors(
+    primary = colorResource(MR.colors.primary),
+    primaryVariant = colorResource(MR.colors.primary_variant),
+    secondary = colorResource(MR.colors.secondary),
+    secondaryVariant = colorResource(MR.colors.secondary_variant),
+    background = colorResource(MR.colors.background),
+    surface = colorResource(MR.colors.surface),
+    onPrimary = colorResource(MR.colors.on_primary),
+    onSecondary = colorResource(MR.colors.on_secondary),
+    onBackground = colorResource(MR.colors.on_background),
+    onSurface = colorResource(MR.colors.on_surface),
+)
 
 // Taken for Surface.kt
 @Composable
-private fun surfaceColorAtElevation(
-    color: Color,
-    elevationOverlay: ElevationOverlay?,
-    absoluteElevation: Dp,
-): Color {
+private fun surfaceColorAtElevation(color: Color, elevationOverlay: ElevationOverlay?, absoluteElevation: Dp): Color {
     return if (color == MaterialTheme.colors.surface && elevationOverlay != null) {
         elevationOverlay.apply(color, absoluteElevation)
     } else {

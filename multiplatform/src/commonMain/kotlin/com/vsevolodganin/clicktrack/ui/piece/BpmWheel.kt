@@ -36,11 +36,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 @Composable
-fun BpmWheel(
-    state: MutableState<BeatsPerMinute>,
-    modifier: Modifier = Modifier,
-    sensitivity: Float = 0.08f,
-) {
+fun BpmWheel(state: MutableState<BeatsPerMinute>, modifier: Modifier = Modifier, sensitivity: Float = 0.08f) {
     BpmWheel(
         value = state.value,
         onValueChange = { state.value = state.value + it },
@@ -73,10 +69,7 @@ fun BpmWheel(
 }
 
 @Composable
-private fun Wheel(
-    onAngleChange: (diff: Float) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Modifier) {
     var buttonAngle by remember { mutableStateOf(90f) }
 
     BoxWithConstraints(modifier) {

@@ -65,10 +65,7 @@ class SoundLibraryViewModelImpl(
         )
     }
 
-    private fun UserClickSounds.toItem(
-        selectedId: ClickSoundsId,
-        playingId: PlayableId?,
-    ): SelectableClickSoundsItem.UserDefined {
+    private fun UserClickSounds.toItem(selectedId: ClickSoundsId, playingId: PlayableId?): SelectableClickSoundsItem.UserDefined {
         return SelectableClickSoundsItem.UserDefined(
             id = id,
             strongBeatValue = value.strongBeat.toText(),
@@ -113,10 +110,7 @@ class SoundLibraryViewModelImpl(
         }
     }
 
-    override fun onItemSoundSelect(
-        id: ClickSoundsId.Database,
-        type: ClickSoundType,
-    ) {
+    override fun onItemSoundSelect(id: ClickSoundsId.Database, type: ClickSoundType) {
         scope.launch {
             soundChooser.launchFor(id, type)
         }

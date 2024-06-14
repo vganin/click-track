@@ -26,7 +26,7 @@
     <string name="edit_click_track_loop">Loop</string>
     <string name="edit_click_track_options">Options</string>
     <string name="edit_click_track_screen_title">Edit click track…</string>
-    <string name="edit_click_track_tempo_diff" translatable="false">%1$s%2$d bpm</string>
+    <string name="edit_click_track_tempo_diff">%1$s%2$d bpm</string>
     <string name="edit_click_track_title_hint">Name your click track…</string>
     <string name="general_cancel">Cancel</string>
     <string name="general_metronome_click_track_title">Metronome</string>
@@ -49,8 +49,8 @@
     <string name="settings_ignore_audio_focus_description">Turn off to automatically stop click track playback when other audio starts.</string>
     <string name="settings_language">Language</string>
     <string name="settings_language_system">System</string>
-    <string name="settings_language_system_english" translatable="false">English</string>
-    <string name="settings_language_system_russian" translatable="false">Русский</string>
+    <string name="settings_language_system_english">English</string>
+    <string name="settings_language_system_russian">Русский</string>
     <string name="settings_screen_title">Settings</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_auto">Auto</string>

@@ -4,7 +4,7 @@ import ClickTrackMultiplatform
 struct ContentView: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> some UIViewController {
-        return MainKt.MainViewController()
+        return MainKt.mainViewController()
     }
 
     func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {

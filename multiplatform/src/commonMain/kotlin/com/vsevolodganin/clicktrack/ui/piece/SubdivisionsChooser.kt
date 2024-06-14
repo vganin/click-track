@@ -979,11 +979,7 @@ private fun RowScope.SubdivisionItem(
 }
 
 @Composable
-private fun RowScope.SubdivisionItem(
-    onClick: () -> Unit,
-    isSelected: Boolean,
-    iconPainter: Painter,
-) {
+private fun RowScope.SubdivisionItem(onClick: () -> Unit, isSelected: Boolean, iconPainter: Painter) {
     Box(
         modifier = Modifier
             .weight(1f)
@@ -1001,10 +997,7 @@ private fun RowScope.SubdivisionItem(
 }
 
 @Composable
-private fun RowAnimatedVisibility(
-    visible: Boolean,
-    content: @Composable AnimatedVisibilityScope.() -> Unit,
-) {
+private fun RowAnimatedVisibility(visible: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) {
     AnimatedVisibility(
         visible = visible,
         enter = fadeIn() + expandVertically(),
