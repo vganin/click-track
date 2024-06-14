@@ -72,9 +72,9 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.ReorderableItemScope
-import sh.calvin.reorderable.rememberReorderableLazyColumnState
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.math.roundToInt
 
 @Composable
@@ -125,7 +125,7 @@ private fun Content(viewModel: EditClickTrackViewModel, state: EditClickTrackSta
     // This is a number of non draggable items before cues to offset indices correctly
     val numberOfNonDraggableItems = 3
 
-    val reorderableLazyColumnState = rememberReorderableLazyColumnState(listState) { from, to ->
+    val reorderableLazyColumnState = rememberReorderableLazyListState(listState) { from, to ->
         viewModel.onItemMove(from.index - numberOfNonDraggableItems, to.index - numberOfNonDraggableItems)
     }
 
@@ -161,7 +161,7 @@ private fun Content(viewModel: EditClickTrackViewModel, state: EditClickTrackSta
         }
 
         itemsIndexed(items = state.cues, key = { _, cue -> cue.id }) { index, cue ->
-            ReorderableItem(reorderableLazyListState = reorderableLazyColumnState, key = cue.id) { isDragging ->
+            ReorderableItem(state = reorderableLazyColumnState, key = cue.id) { isDragging ->
                 CueListItem(
                     viewModel = viewModel,
                     cue = cue,
@@ -277,7 +277,7 @@ private fun TempoOffsetItem(viewModel: EditClickTrackViewModel, tempoOffset: Bea
 }
 
 @Composable
-private fun ReorderableItemScope.CueListItem(
+private fun ReorderableCollectionItemScope.CueListItem(
     viewModel: EditClickTrackViewModel,
     cue: EditCueState,
     index: Int,

@@ -48,7 +48,7 @@ class PlayerService : Service() {
             val arguments = State(id, atProgress, soundsId, isPaused = false)
             val intent = serviceIntent(context).apply {
                 action = ACTION_START
-                putExtra(EXTRA_START_ARGUMENTS, Json.Default.encodeToString(arguments))
+                putExtra(EXTRA_START_ARGUMENTS, Json.encodeToString(arguments))
             }
             context.startService(intent)
         }

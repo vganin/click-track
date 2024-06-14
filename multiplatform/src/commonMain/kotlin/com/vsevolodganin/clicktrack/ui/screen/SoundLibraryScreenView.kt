@@ -79,7 +79,7 @@ fun SoundLibraryScreenView(viewModel: SoundLibraryViewModel, modifier: Modifier 
 @Composable
 private fun Content(viewModel: SoundLibraryViewModel, state: SoundLibraryState) {
     LazyColumn {
-        items(items = state.items, key = { Json.Default.encodeToString(it.id) }) { item ->
+        items(items = state.items, key = { Json.encodeToString(it.id) }) { item ->
             ClicksSoundsItem(viewModel, item)
         }
 
