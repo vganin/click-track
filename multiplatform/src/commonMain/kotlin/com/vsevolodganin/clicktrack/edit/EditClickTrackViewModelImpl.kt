@@ -60,56 +60,39 @@ class EditClickTrackViewModelImpl(
 
     override fun onForwardClick() = navigation.replaceCurrent(ScreenConfiguration.PlayClickTrack(config.id))
 
-    override fun onNameChange(name: String) =
-        reduceState {
-            copy(name = name)
-        }
+    override fun onNameChange(name: String) = reduceState {
+        copy(name = name)
+    }
 
-    override fun onLoopChange(loop: Boolean) =
-        reduceState {
-            copy(loop = loop)
-        }
+    override fun onLoopChange(loop: Boolean) = reduceState {
+        copy(loop = loop)
+    }
 
-    override fun onTempoOffsetChange(offset: Int) =
-        reduceState {
-            copy(tempoOffset = BeatsPerMinuteOffset(offset))
-        }
+    override fun onTempoOffsetChange(offset: Int) = reduceState {
+        copy(tempoOffset = BeatsPerMinuteOffset(offset))
+    }
 
-    override fun onAddNewCueClick() =
-        reduceState {
-            copy(cues = cues + DefaultCue.toEditState(index = cues.size))
-        }
+    override fun onAddNewCueClick() = reduceState {
+        copy(cues = cues + DefaultCue.toEditState(index = cues.size))
+    }
 
-    override fun onCueRemove(index: Int) =
-        reduceState {
-            copy(cues = cues.remove(index))
-        }
+    override fun onCueRemove(index: Int) = reduceState {
+        copy(cues = cues.remove(index))
+    }
 
-    override fun onCueNameChange(
-        index: Int,
-        name: String,
-    ) = reduceState {
+    override fun onCueNameChange(index: Int, name: String) = reduceState {
         copy(cues = cues.replace(index) { it.copy(name = name) })
     }
 
-    override fun onCueBpmChange(
-        index: Int,
-        bpm: Int,
-    ) = reduceState {
+    override fun onCueBpmChange(index: Int, bpm: Int) = reduceState {
         copy(cues = cues.replace(index) { it.copy(bpm = bpm) })
     }
 
-    override fun onCueTimeSignatureChange(
-        index: Int,
-        timeSignature: TimeSignature,
-    ) = reduceState {
+    override fun onCueTimeSignatureChange(index: Int, timeSignature: TimeSignature) = reduceState {
         copy(cues = cues.replace(index) { it.copy(timeSignature = timeSignature) })
     }
 
-    override fun onCueDurationChange(
-        index: Int,
-        duration: CueDuration,
-    ) = reduceState {
+    override fun onCueDurationChange(index: Int, duration: CueDuration) = reduceState {
         copy(
             cues = cues.replace(index) {
                 when (duration) {
@@ -121,17 +104,11 @@ class EditClickTrackViewModelImpl(
         )
     }
 
-    override fun onCueDurationTypeChange(
-        index: Int,
-        durationType: CueDuration.Type,
-    ) = reduceState {
+    override fun onCueDurationTypeChange(index: Int, durationType: CueDuration.Type) = reduceState {
         copy(cues = cues.replace(index) { it.copy(activeDurationType = durationType) })
     }
 
-    override fun onCuePatternChange(
-        index: Int,
-        pattern: NotePattern,
-    ) = reduceState {
+    override fun onCuePatternChange(index: Int, pattern: NotePattern) = reduceState {
         copy(cues = cues.replace(index) { it.copy(pattern = pattern) })
     }
 
@@ -157,10 +134,7 @@ class EditClickTrackViewModelImpl(
         }
     }
 
-    override fun onItemMove(
-        from: Int,
-        to: Int,
-    ) {
+    override fun onItemMove(from: Int, to: Int) {
         reduceState { copy(cues = cues.move(from, to)) }
     }
 

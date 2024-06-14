@@ -221,11 +221,7 @@ fun ClickTrackView(
 }
 
 @Composable
-private fun progressLinePosition(
-    progress: PlayProgress?,
-    totalDuration: Duration,
-    totalWidthPx: Float,
-): AnimatableFloat? {
+private fun progressLinePosition(progress: PlayProgress?, totalDuration: Duration, totalWidthPx: Float): AnimatableFloat? {
     progress ?: return null
 
     val animatableProgressLinePosition = remember { Animatable(0f) }.apply {
@@ -254,10 +250,7 @@ private fun progressLinePosition(
 }
 
 @Composable
-private fun progressLineWidth(
-    defaultWidth: Float,
-    isProgressCaptured: Boolean,
-): State<Float> {
+private fun progressLineWidth(defaultWidth: Float, isProgressCaptured: Boolean): State<Float> {
     val animatableWidth = remember { Animatable(defaultWidth) }
 
     LaunchedEffect(isProgressCaptured) {
@@ -290,10 +283,7 @@ private data class Mark(
 )
 
 @Composable
-private fun ClickTrack.asMarks(
-    width: Float,
-    drawAllBeatsMarks: Boolean,
-): List<Mark> {
+private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<Mark> {
     val primaryMarkColor = MaterialTheme.colors.onSurface
     val secondaryMarkColor = primaryMarkColor.copy(alpha = ContentAlpha.medium)
 
@@ -327,10 +317,7 @@ private fun ClickTrack.asMarks(
     }
 }
 
-private fun Duration.toX(
-    totalDuration: Duration,
-    viewWidth: Float,
-): Float {
+private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
     return if (totalDuration == Duration.ZERO || viewWidth == 0f) {
         0f
     } else {
@@ -347,130 +334,127 @@ private fun Modifier.clickTrackGestures(
     onGestureEnded: () -> Unit,
     onProgressDragStart: suspend (progress: AnimatableFloat) -> Unit,
     onProgressDrop: suspend (progress: AnimatableFloat) -> Unit,
-): Modifier =
-    composed {
-        if ((progressDragAndDropEnabled && progressPosition != null) || viewportZoomAndPanEnabled) {
-            val hapticFeedback = LocalHapticFeedback.current
-            val coroutineScope = rememberCoroutineScope()
-            var progressDragInProgress by remember { mutableStateOf(false) }
+): Modifier = composed {
+    if ((progressDragAndDropEnabled && progressPosition != null) || viewportZoomAndPanEnabled) {
+        val hapticFeedback = LocalHapticFeedback.current
+        val coroutineScope = rememberCoroutineScope()
+        var progressDragInProgress by remember { mutableStateOf(false) }
 
-            this
-                .pointerInput(Unit) {
-                    awaitEachGesture {
-                        awaitFirstDown(requireUnconsumed = false)
-                        onGestureStarted()
-                        @Suppress("ControlFlowWithEmptyBody") // Waiting for all pointers to go up
-                        while (awaitPointerEvent().changes.fastAny(PointerInputChange::pressed)
-                            );
-                        onGestureEnded()
-                    }
+        this
+            .pointerInput(Unit) {
+                awaitEachGesture {
+                    awaitFirstDown(requireUnconsumed = false)
+                    onGestureStarted()
+                    while (awaitPointerEvent().changes.fastAny(PointerInputChange::pressed)) Unit
+                    onGestureEnded()
                 }
-                .pointerInput(
-                    progressDragAndDropEnabled,
-                    progressPosition,
-                ) {
-                    if (progressDragAndDropEnabled && progressPosition != null) {
-                        detectDragGesturesAfterLongPress(
-                            onDragStart = {
-                                progressDragInProgress = true
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-                                coroutineScope.launch {
-                                    onProgressDragStart(progressPosition)
-                                }
-                            },
-                            onDragEnd = {
-                                progressDragInProgress = false
-                                coroutineScope.launch {
-                                    onProgressDrop(progressPosition)
-                                }
-                            },
-                            onDragCancel = {
-                                progressDragInProgress = false
-                                coroutineScope.launch {
-                                    onProgressDrop(progressPosition)
-                                }
-                            },
-                            onDrag = { _, dragAmount ->
-                                val currentViewportTransformations = viewportState.transformations
-                                val snapTo = progressPosition.value + dragAmount.x / currentViewportTransformations.scaleX
-                                coroutineScope.launch {
-                                    progressPosition.snapTo(snapTo)
-                                }
-                            },
-                        )
-                    }
+            }
+            .pointerInput(
+                progressDragAndDropEnabled,
+                progressPosition,
+            ) {
+                if (progressDragAndDropEnabled && progressPosition != null) {
+                    detectDragGesturesAfterLongPress(
+                        onDragStart = {
+                            progressDragInProgress = true
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+                            coroutineScope.launch {
+                                onProgressDragStart(progressPosition)
+                            }
+                        },
+                        onDragEnd = {
+                            progressDragInProgress = false
+                            coroutineScope.launch {
+                                onProgressDrop(progressPosition)
+                            }
+                        },
+                        onDragCancel = {
+                            progressDragInProgress = false
+                            coroutineScope.launch {
+                                onProgressDrop(progressPosition)
+                            }
+                        },
+                        onDrag = { _, dragAmount ->
+                            val currentViewportTransformations = viewportState.transformations
+                            val snapTo = progressPosition.value + dragAmount.x / currentViewportTransformations.scaleX
+                            coroutineScope.launch {
+                                progressPosition.snapTo(snapTo)
+                            }
+                        },
+                    )
                 }
-                .pointerInput(viewportZoomAndPanEnabled, progressDragInProgress) {
-                    if (viewportZoomAndPanEnabled && !progressDragInProgress) {
-                        detectTapGestures(
-                            onDoubleTap = { offset ->
-                                val currentViewportTransformations = viewportState.transformations
-                                val viewport = viewportState.value
-                                val bounds = viewportState.bounds
-                                val newScale = if (currentViewportTransformations.scaleX < DETAILED_SCALE) DETAILED_SCALE else BASE_SCALE
-                                val newWidth = bounds.width / newScale
-                                val newLeft = viewport.left - (newWidth - viewport.width) * (offset.x - bounds.left) / bounds.width
-                                val newRight = newLeft + newWidth
+            }
+            .pointerInput(viewportZoomAndPanEnabled, progressDragInProgress) {
+                if (viewportZoomAndPanEnabled && !progressDragInProgress) {
+                    detectTapGestures(
+                        onDoubleTap = { offset ->
+                            val currentViewportTransformations = viewportState.transformations
+                            val viewport = viewportState.value
+                            val bounds = viewportState.bounds
+                            val newScale = if (currentViewportTransformations.scaleX < DETAILED_SCALE) DETAILED_SCALE else BASE_SCALE
+                            val newWidth = bounds.width / newScale
+                            val newLeft = viewport.left - (newWidth - viewport.width) * (offset.x - bounds.left) / bounds.width
+                            val newRight = newLeft + newWidth
 
-                                coroutineScope.launch {
-                                    viewportState.animateTo(
-                                        newLeft = newLeft.coerceIn(bounds.left, bounds.right - newWidth),
-                                        newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
-                                    )
-                                }
-                            },
-                        )
-                    }
+                            coroutineScope.launch {
+                                viewportState.animateTo(
+                                    newLeft = newLeft.coerceIn(bounds.left, bounds.right - newWidth),
+                                    newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
+                                )
+                            }
+                        },
+                    )
                 }
-                .pointerInput(viewportZoomAndPanEnabled, progressDragInProgress) {
-                    if (viewportZoomAndPanEnabled && !progressDragInProgress) {
-                        val velocityTracker = VelocityTracker()
-                        detectTransformGesturesWithEndCallbacks(
-                            panZoomLock = false,
-                            onGesture = { centroid, pan, zoom, _ ->
-                                val currentViewportTransformations = viewportState.transformations
-                                val viewport = viewportState.value
-                                val bounds = viewportState.bounds
-                                val newWidth = (viewport.width / zoom).coerceAtMost(bounds.width)
-                                val newLeft = viewport.left -
-                                    (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width -
-                                    pan.x / currentViewportTransformations.scaleX
-                                val newRight = newLeft + newWidth
+            }
+            .pointerInput(viewportZoomAndPanEnabled, progressDragInProgress) {
+                if (viewportZoomAndPanEnabled && !progressDragInProgress) {
+                    val velocityTracker = VelocityTracker()
+                    detectTransformGesturesWithEndCallbacks(
+                        panZoomLock = false,
+                        onGesture = { centroid, pan, zoom, _ ->
+                            val currentViewportTransformations = viewportState.transformations
+                            val viewport = viewportState.value
+                            val bounds = viewportState.bounds
+                            val newWidth = (viewport.width / zoom).coerceAtMost(bounds.width)
+                            val newLeft = viewport.left -
+                                (newWidth - viewport.width) * (centroid.x - bounds.left) / bounds.width -
+                                pan.x / currentViewportTransformations.scaleX
+                            val newRight = newLeft + newWidth
 
-                                if (zoom == 1f) {
-                                    velocityTracker.addPosition(
-                                        timeMillis = Clock.System.now().toEpochMilliseconds(),
-                                        position = centroid,
-                                    )
-                                } else {
-                                    velocityTracker.resetTracking()
-                                }
-
-                                coroutineScope.launch {
-                                    viewportState.snapTo(
-                                        newLeft = newLeft.coerceIn(bounds.left, bounds.right - newWidth),
-                                        newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
-                                    )
-                                }
-                            },
-                            onGestureEnd = {
-                                val currentViewportTransformations = viewportState.transformations
-                                val velocity = -velocityTracker
-                                    .calculateVelocity()
-                                    .run { Offset(x, y) } / currentViewportTransformations.scaleX
+                            if (zoom == 1f) {
+                                velocityTracker.addPosition(
+                                    timeMillis = Clock.System.now().toEpochMilliseconds(),
+                                    position = centroid,
+                                )
+                            } else {
                                 velocityTracker.resetTracking()
+                            }
 
-                                coroutineScope.launch {
-                                    viewportState.animateDecay(velocity)
-                                }
-                            },
-                        )
-                    }
+                            coroutineScope.launch {
+                                viewportState.snapTo(
+                                    newLeft = newLeft.coerceIn(bounds.left, bounds.right - newWidth),
+                                    newRight = newRight.coerceIn(bounds.left + newWidth, bounds.right),
+                                )
+                            }
+                        },
+                        onGestureEnd = {
+                            val currentViewportTransformations = viewportState.transformations
+                            val velocity = -velocityTracker
+                                .calculateVelocity()
+                                .run { Offset(x, y) } / currentViewportTransformations.scaleX
+                            velocityTracker.resetTracking()
+
+                            coroutineScope.launch {
+                                viewportState.animateDecay(velocity)
+                            }
+                        },
+                    )
                 }
-        } else {
-            this
-        }
+            }
+    } else {
+        this
     }
+}
 
 @Composable
 private fun PlayTrackingModeImpl(
@@ -520,10 +504,7 @@ private val AnimatableRect.transformations
         }
     }
 
-private suspend fun AnimatableRect.animateTo(
-    left: Float,
-    scale: Float,
-) {
+private suspend fun AnimatableRect.animateTo(left: Float, scale: Float) {
     val newWidth = bounds.width / scale
     val newRight = left + newWidth
     animateTo(

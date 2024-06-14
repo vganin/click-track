@@ -78,10 +78,7 @@ import sh.calvin.reorderable.rememberReorderableLazyColumnState
 import kotlin.math.roundToInt
 
 @Composable
-fun EditClickTrackScreenView(
-    viewModel: EditClickTrackViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun EditClickTrackScreenView(viewModel: EditClickTrackViewModel, modifier: Modifier = Modifier) {
     val state by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
@@ -124,11 +121,7 @@ fun EditClickTrackScreenView(
 }
 
 @Composable
-private fun Content(
-    viewModel: EditClickTrackViewModel,
-    state: EditClickTrackState,
-    listState: LazyListState,
-) {
+private fun Content(viewModel: EditClickTrackViewModel, state: EditClickTrackState, listState: LazyListState) {
     // This is a number of non draggable items before cues to offset indices correctly
     val numberOfNonDraggableItems = 3
 
@@ -183,11 +176,7 @@ private fun Content(
 }
 
 @Composable
-private fun OptionsItem(
-    viewModel: EditClickTrackViewModel,
-    loop: Boolean,
-    tempoOffset: BeatsPerMinuteOffset,
-) {
+private fun OptionsItem(viewModel: EditClickTrackViewModel, loop: Boolean, tempoOffset: BeatsPerMinuteOffset) {
     var optionsExpanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
@@ -234,10 +223,7 @@ private fun OptionsItem(
 }
 
 @Composable
-private fun LoopItem(
-    viewModel: EditClickTrackViewModel,
-    loop: Boolean,
-) {
+private fun LoopItem(viewModel: EditClickTrackViewModel, loop: Boolean) {
     Row {
         Text(
             text = stringResource(MR.strings.edit_click_track_loop),
@@ -254,10 +240,7 @@ private fun LoopItem(
 }
 
 @Composable
-private fun TempoOffsetItem(
-    viewModel: EditClickTrackViewModel,
-    tempoOffset: BeatsPerMinuteOffset,
-) {
+private fun TempoOffsetItem(viewModel: EditClickTrackViewModel, tempoOffset: BeatsPerMinuteOffset) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = CenterVertically,
@@ -330,64 +313,42 @@ private val TEMPO_OFFSET_RANGE = -20..20
 
 @ScreenPreview
 @Composable
-private fun Preview() =
-    ClickTrackTheme {
-        EditClickTrackScreenView(
-            viewModel = object : EditClickTrackViewModel {
-                override val state: StateFlow<EditClickTrackState?> = MutableStateFlow(
-                    PREVIEW_CLICK_TRACK_1.toEditState(showForwardButton = true),
-                )
+private fun Preview() = ClickTrackTheme {
+    EditClickTrackScreenView(
+        viewModel = object : EditClickTrackViewModel {
+            override val state: StateFlow<EditClickTrackState?> = MutableStateFlow(
+                PREVIEW_CLICK_TRACK_1.toEditState(showForwardButton = true),
+            )
 
-                override fun onBackClick() = Unit
+            override fun onBackClick() = Unit
 
-                override fun onForwardClick() = Unit
+            override fun onForwardClick() = Unit
 
-                override fun onNameChange(name: String) = Unit
+            override fun onNameChange(name: String) = Unit
 
-                override fun onLoopChange(loop: Boolean) = Unit
+            override fun onLoopChange(loop: Boolean) = Unit
 
-                override fun onTempoOffsetChange(offset: Int) = Unit
+            override fun onTempoOffsetChange(offset: Int) = Unit
 
-                override fun onAddNewCueClick() = Unit
+            override fun onAddNewCueClick() = Unit
 
-                override fun onCueRemove(index: Int) = Unit
+            override fun onCueRemove(index: Int) = Unit
 
-                override fun onCueNameChange(
-                    index: Int,
-                    name: String,
-                ) = Unit
+            override fun onCueNameChange(index: Int, name: String) = Unit
 
-                override fun onCueBpmChange(
-                    index: Int,
-                    bpm: Int,
-                ) = Unit
+            override fun onCueBpmChange(index: Int, bpm: Int) = Unit
 
-                override fun onCueTimeSignatureChange(
-                    index: Int,
-                    timeSignature: TimeSignature,
-                ) = Unit
+            override fun onCueTimeSignatureChange(index: Int, timeSignature: TimeSignature) = Unit
 
-                override fun onCueDurationChange(
-                    index: Int,
-                    duration: CueDuration,
-                ) = Unit
+            override fun onCueDurationChange(index: Int, duration: CueDuration) = Unit
 
-                override fun onCueDurationTypeChange(
-                    index: Int,
-                    durationType: CueDuration.Type,
-                ) = Unit
+            override fun onCueDurationTypeChange(index: Int, durationType: CueDuration.Type) = Unit
 
-                override fun onCuePatternChange(
-                    index: Int,
-                    pattern: NotePattern,
-                ) = Unit
+            override fun onCuePatternChange(index: Int, pattern: NotePattern) = Unit
 
-                override fun onItemMove(
-                    from: Int,
-                    to: Int,
-                ) = Unit
+            override fun onItemMove(from: Int, to: Int) = Unit
 
-                override fun onItemMoveFinished() = Unit
-            },
-        )
-    }
+            override fun onItemMoveFinished() = Unit
+        },
+    )
+}

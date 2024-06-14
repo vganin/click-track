@@ -16,10 +16,7 @@ data class AbstractPolyrhythm internal constructor(val columns: List<Column>, va
     data class Column internal constructor(val indices: List<Int>, val untilNext: Rational)
 }
 
-fun AbstractPolyrhythm(
-    pattern1: List<NoteEvent>,
-    pattern2: List<NoteEvent>,
-): AbstractPolyrhythm {
+fun AbstractPolyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): AbstractPolyrhythm {
     val resultingPattern = mutableListOf<AbstractPolyrhythm.Column>()
 
     val commonLength = lcm(pattern1.length, pattern2.length)

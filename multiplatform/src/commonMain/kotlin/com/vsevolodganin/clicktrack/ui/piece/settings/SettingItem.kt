@@ -19,12 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SettingItem(
-    title: String,
-    modifier: Modifier = Modifier,
-    description: String? = null,
-    value: @Composable () -> Unit,
-) {
+fun SettingItem(title: String, modifier: Modifier = Modifier, description: String? = null, value: @Composable () -> Unit) {
     Row(
         modifier = modifier
             .defaultMinSize(minHeight = 56.dp)

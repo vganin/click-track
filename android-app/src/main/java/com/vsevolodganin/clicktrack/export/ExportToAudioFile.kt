@@ -33,10 +33,7 @@ class ExportToAudioFile(
 ) {
     private val primitiveAudioMonoRenderer = primitiveAudioMonoRendererFactory(SAMPLE_RATE)
 
-    suspend fun export(
-        clickTrack: ClickTrack,
-        reportProgress: suspend (Float) -> Unit,
-    ): File? {
+    suspend fun export(clickTrack: ClickTrack, reportProgress: suspend (Float) -> Unit): File? {
         val soundSourceProvider = SoundSourceProvider(userSelectedSounds.get())
 
         var muxer: MediaMuxer? = null

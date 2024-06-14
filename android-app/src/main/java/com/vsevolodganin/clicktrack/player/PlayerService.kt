@@ -44,12 +44,7 @@ import com.vsevolodganin.clicktrack.multiplatform.R as MR
 
 class PlayerService : Service() {
     companion object {
-        fun start(
-            context: Context,
-            id: PlayableId,
-            atProgress: Double?,
-            soundsId: ClickSoundsId?,
-        ) {
+        fun start(context: Context, id: PlayableId, atProgress: Double?, soundsId: ClickSoundsId?) {
             val arguments = State(id, atProgress, soundsId, isPaused = false)
             val intent = serviceIntent(context).apply {
                 action = ACTION_START
@@ -82,10 +77,7 @@ class PlayerService : Service() {
             )
         }
 
-        fun bind(
-            context: Context,
-            serviceConnection: ServiceConnection,
-        ) {
+        fun bind(context: Context, serviceConnection: ServiceConnection) {
             if (!context.bindService(serviceIntent(context), serviceConnection, BIND_AUTO_CREATE)) {
                 throw RuntimeException("Wasn't able to connect to player service")
             }
@@ -169,11 +161,7 @@ class PlayerService : Service() {
         component.latencyTracker.stop()
     }
 
-    override fun onStartCommand(
-        intent: Intent?,
-        flags: Int,
-        startId: Int,
-    ): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_START -> state.value = intent.getStringExtra(EXTRA_START_ARGUMENTS)?.let(Json.Default::decodeFromString)
                 ?: throw RuntimeException("No start arguments were supplied")
@@ -258,73 +246,68 @@ class PlayerService : Service() {
         }
     }
 
-    private suspend fun playbackComponent() =
-        coroutineScope {
-            launch {
-                state.map { it?.isPaused }.distinctUntilChanged().collectLatest { isPaused ->
-                    when (isPaused) {
-                        true -> {
-                            mediaSession.apply {
-                                isActive = true
-                                setPlaybackState(
-                                    mediaSessionPlaybackStateBuilder()
-                                        .setState(PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
-                                        .build(),
-                                )
-                            }
-                            component.player.pause()
+    private suspend fun playbackComponent() = coroutineScope {
+        launch {
+            state.map { it?.isPaused }.distinctUntilChanged().collectLatest { isPaused ->
+                when (isPaused) {
+                    true -> {
+                        mediaSession.apply {
+                            isActive = true
+                            setPlaybackState(
+                                mediaSessionPlaybackStateBuilder()
+                                    .setState(PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
+                                    .build(),
+                            )
                         }
-
-                        false -> {
-                            mediaSession.apply {
-                                isActive = true
-                                setPlaybackState(
-                                    mediaSessionPlaybackStateBuilder()
-                                        .setState(PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
-                                        .build(),
-                                )
-                            }
-                            component.player.resume()
-                        }
-
-                        null -> {
-                            mediaSession.apply {
-                                isActive = false
-                                setPlaybackState(
-                                    mediaSessionPlaybackStateBuilder()
-                                        .setState(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
-                                        .build(),
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            launch {
-                fun State.toPlayerInput() = Player.Input(id, startAtProgress, soundsId)
-
-                state.map { it != null }.distinctUntilChanged().collectLatest { startPlay ->
-                    if (startPlay && requestAudioFocus()) {
-                        component.player.play(
-                            state
-                                .filterNotNull()
-                                .map(State::toPlayerInput)
-                                .distinctUntilChanged(),
-                        )
+                        component.player.pause()
                     }
 
-                    component.audioFocusManager.releaseAudioFocus()
-                    state.emit(null)
+                    false -> {
+                        mediaSession.apply {
+                            isActive = true
+                            setPlaybackState(
+                                mediaSessionPlaybackStateBuilder()
+                                    .setState(PlaybackStateCompat.STATE_PLAYING, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
+                                    .build(),
+                            )
+                        }
+                        component.player.resume()
+                    }
+
+                    null -> {
+                        mediaSession.apply {
+                            isActive = false
+                            setPlaybackState(
+                                mediaSessionPlaybackStateBuilder()
+                                    .setState(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
+                                    .build(),
+                            )
+                        }
+                    }
                 }
             }
         }
 
-    private fun startForeground(
-        contentText: String,
-        tapIntent: Intent,
-        isPaused: Boolean,
-    ) {
+        launch {
+            fun State.toPlayerInput() = Player.Input(id, startAtProgress, soundsId)
+
+            state.map { it != null }.distinctUntilChanged().collectLatest { startPlay ->
+                if (startPlay && requestAudioFocus()) {
+                    component.player.play(
+                        state
+                            .filterNotNull()
+                            .map(State::toPlayerInput)
+                            .distinctUntilChanged(),
+                    )
+                }
+
+                component.audioFocusManager.releaseAudioFocus()
+                state.emit(null)
+            }
+        }
+    }
+
+    private fun startForeground(contentText: String, tapIntent: Intent, isPaused: Boolean) {
         val launchAppIntent = PendingIntent.getActivity(this, 0, tapIntent, pendingIntentFlags)
 
         val notificationBuilder = NotificationCompat.Builder(this, component.notificationChannels.playingNow)
@@ -351,7 +334,7 @@ class PlayerService : Service() {
                 MediaStyle()
                     .setShowCancelButton(true)
                     .setCancelButtonIntent(stopIntent)
-                    .setShowActionsInCompactView(0, 1)
+                    .setShowActionsInCompactView(0, 1),
             )
 
         if (isNotificationDisplayed) {

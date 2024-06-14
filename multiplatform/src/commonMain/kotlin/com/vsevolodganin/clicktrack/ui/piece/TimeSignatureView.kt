@@ -15,10 +15,7 @@ import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.utils.compose.Preview
 
 @Composable
-fun TimeSignatureView(
-    state: MutableState<TimeSignature>,
-    modifier: Modifier = Modifier,
-) {
+fun TimeSignatureView(state: MutableState<TimeSignature>, modifier: Modifier = Modifier) {
     TimeSignatureView(
         value = state.value,
         onValueChange = { state.value = it },
@@ -27,11 +24,7 @@ fun TimeSignatureView(
 }
 
 @Composable
-fun TimeSignatureView(
-    value: TimeSignature,
-    onValueChange: (TimeSignature) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun TimeSignatureView(value: TimeSignature, onValueChange: (TimeSignature) -> Unit, modifier: Modifier = Modifier) {
     Row(modifier = modifier) {
         val commonModifier = Modifier.align(Alignment.CenterVertically)
         val commonTextStyle = MaterialTheme.typography.subtitle1

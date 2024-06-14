@@ -8,10 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 
 @Composable
-fun SimpleSpacer(
-    width: Dp = Dp.Unspecified,
-    height: Dp = Dp.Unspecified,
-) {
+fun SimpleSpacer(width: Dp = Dp.Unspecified, height: Dp = Dp.Unspecified) {
     Spacer(
         modifier = Modifier
             .width(width)

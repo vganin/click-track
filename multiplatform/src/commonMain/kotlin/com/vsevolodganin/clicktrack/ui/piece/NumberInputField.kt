@@ -148,10 +148,7 @@ fun NumberInputField(
     )
 }
 
-private fun isIntermediateEditText(
-    text: String,
-    showSign: Boolean,
-): Boolean {
+private fun isIntermediateEditText(text: String, showSign: Boolean): Boolean {
     return text in if (showSign) {
         listOf("-", "+", "")
     } else {

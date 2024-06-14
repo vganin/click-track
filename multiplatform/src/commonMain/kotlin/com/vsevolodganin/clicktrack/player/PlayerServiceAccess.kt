@@ -5,11 +5,7 @@ import com.vsevolodganin.clicktrack.model.PlayableId
 import kotlinx.coroutines.flow.Flow
 
 interface PlayerServiceAccess {
-    fun start(
-        id: PlayableId,
-        atProgress: Double? = null,
-        soundsId: ClickSoundsId? = null,
-    )
+    fun start(id: PlayableId, atProgress: Double? = null, soundsId: ClickSoundsId? = null)
 
     fun pause()
 

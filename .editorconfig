@@ -6,11 +6,17 @@ indent_style = space
 insert_final_newline = true
 max_line_length = 140
 tab_width = 4
+ktlint_code_style = android_studio
 
 [{*.kt,*.kts}]
 ij_kotlin_line_break_after_multiline_when_entry = false
-ktlint_standard_multiline-expression-wrapping = disabled
-ktlint_standard_string-template-indent = disabled
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+ktlint_function_naming_ignore_when_annotated_with = Composable
+ktlint_standard_import-ordering = disabled
+
+[**/build/**]
+ktlint = disabled
 
 [{*.cpp,*.h}]
 ij_c_indent_namespace_members = 0

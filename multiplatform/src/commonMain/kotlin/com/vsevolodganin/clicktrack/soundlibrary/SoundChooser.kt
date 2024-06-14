@@ -4,8 +4,5 @@ import com.vsevolodganin.clicktrack.model.ClickSoundType
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 
 interface SoundChooser {
-    suspend fun launchFor(
-        id: ClickSoundsId.Database,
-        type: ClickSoundType,
-    )
+    suspend fun launchFor(id: ClickSoundsId.Database, type: ClickSoundType)
 }

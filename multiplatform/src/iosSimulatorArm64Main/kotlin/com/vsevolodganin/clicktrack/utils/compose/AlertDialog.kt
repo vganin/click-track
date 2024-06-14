@@ -105,10 +105,7 @@ private fun AlertDialog(
 }
 
 @Composable
-private fun AlertDialog(
-    onDismissRequest: () -> Unit,
-    content: @Composable () -> Unit,
-) {
+private fun AlertDialog(onDismissRequest: () -> Unit, content: @Composable () -> Unit) {
     Popup(
         popupPositionProvider = object : PopupPositionProvider {
             override fun calculatePosition(
@@ -184,10 +181,7 @@ private fun AlertDialogContent(
 }
 
 @Composable
-private fun ColumnScope.AlertDialogBaselineLayout(
-    title: @Composable (() -> Unit)?,
-    text: @Composable (() -> Unit)?,
-) {
+private fun ColumnScope.AlertDialogBaselineLayout(title: @Composable (() -> Unit)?, text: @Composable (() -> Unit)?) {
     Layout(
         {
             title?.let { title ->
@@ -275,11 +269,7 @@ private fun ColumnScope.AlertDialogBaselineLayout(
 }
 
 @Composable
-private fun AlertDialogFlowRow(
-    mainAxisSpacing: Dp,
-    crossAxisSpacing: Dp,
-    content: @Composable () -> Unit,
-) {
+private fun AlertDialogFlowRow(mainAxisSpacing: Dp, crossAxisSpacing: Dp, content: @Composable () -> Unit) {
     Layout(content) { measurables, constraints ->
         val sequences = mutableListOf<List<Placeable>>()
         val crossAxisSizes = mutableListOf<Int>()
@@ -295,9 +285,8 @@ private fun AlertDialogFlowRow(
         val childConstraints = Constraints(maxWidth = constraints.maxWidth)
 
         // Return whether the placeable can be added to the current sequence.
-        fun canAddToCurrentSequence(placeable: Placeable) =
-            currentSequence.isEmpty() || currentMainAxisSize + mainAxisSpacing.roundToPx() +
-                placeable.width <= constraints.maxWidth
+        fun canAddToCurrentSequence(placeable: Placeable) = currentSequence.isEmpty() || currentMainAxisSize + mainAxisSpacing.roundToPx() +
+            placeable.width <= constraints.maxWidth
 
         // Store current sequence information and start a new sequence.
         fun startNewSequence() {

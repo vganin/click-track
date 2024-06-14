@@ -14,10 +14,7 @@ interface ClickTrackListViewModel {
 
     fun onMenuClick()
 
-    fun onItemMove(
-        from: Int,
-        to: Int,
-    )
+    fun onItemMove(from: Int, to: Int)
 
     fun onItemMoveFinished()
 }

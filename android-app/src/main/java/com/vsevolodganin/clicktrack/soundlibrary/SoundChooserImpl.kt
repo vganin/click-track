@@ -17,7 +17,6 @@ import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.serializer
 import me.tatarka.inject.annotations.Inject
 
@@ -47,19 +46,13 @@ class SoundChooserImpl(
         }
     }
 
-    override suspend fun launchFor(
-        id: ClickSoundsId.Database,
-        type: ClickSoundType,
-    ) {
+    override suspend fun launchFor(id: ClickSoundsId.Database, type: ClickSoundType) {
         val initialUri = getInitialUri(id, type)
         pendingRequestState.value = OpenAudioRequest(id, type)
         launcher.launch(initialUri)
     }
 
-    private suspend fun getInitialUri(
-        id: ClickSoundsId,
-        type: ClickSoundType,
-    ): Uri? {
+    private suspend fun getInitialUri(id: ClickSoundsId, type: ClickSoundType): Uri? {
         return when (id) {
             is ClickSoundsId.Builtin -> null
             is ClickSoundsId.Database -> clickSoundsRepository.getById(id).firstOrNull()?.value?.beatByType(type)?.value
@@ -82,10 +75,7 @@ class SoundChooserImpl(
     }
 
     private class OpenAudio : ActivityResultContract<Uri?, Uri?>() {
-        override fun createIntent(
-            context: Context,
-            input: Uri?,
-        ): Intent {
+        override fun createIntent(context: Context, input: Uri?): Intent {
             return Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                 type = "audio/*"
                 addCategory(Intent.CATEGORY_OPENABLE)
@@ -95,16 +85,10 @@ class SoundChooserImpl(
             }
         }
 
-        override fun parseResult(
-            resultCode: Int,
-            intent: Intent?,
-        ): Uri? {
+        override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
             return intent?.takeIf { resultCode == Activity.RESULT_OK }?.data
         }
 
-        override fun getSynchronousResult(
-            context: Context,
-            input: Uri?,
-        ): SynchronousResult<Uri?>? = null
+        override fun getSynchronousResult(context: Context, input: Uri?): SynchronousResult<Uri?>? = null
     }
 }

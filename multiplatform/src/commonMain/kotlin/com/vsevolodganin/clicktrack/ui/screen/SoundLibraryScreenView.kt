@@ -55,10 +55,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Composable
-fun SoundLibraryScreenView(
-    viewModel: SoundLibraryViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun SoundLibraryScreenView(viewModel: SoundLibraryViewModel, modifier: Modifier = Modifier) {
     Scaffold(
         topBar = {
             TopAppBarWithBack(
@@ -80,10 +77,7 @@ fun SoundLibraryScreenView(
 }
 
 @Composable
-private fun Content(
-    viewModel: SoundLibraryViewModel,
-    state: SoundLibraryState,
-) {
+private fun Content(viewModel: SoundLibraryViewModel, state: SoundLibraryState) {
     LazyColumn {
         items(items = state.items, key = { Json.Default.encodeToString(it.id) }) { item ->
             ClicksSoundsItem(viewModel, item)
@@ -94,10 +88,7 @@ private fun Content(
 }
 
 @Composable
-private fun ClicksSoundsItem(
-    viewModel: SoundLibraryViewModel,
-    item: SelectableClickSoundsItem,
-) {
+private fun ClicksSoundsItem(viewModel: SoundLibraryViewModel, item: SelectableClickSoundsItem) {
     when (item) {
         is SelectableClickSoundsItem.Builtin -> BuiltinClickSoundsItem(viewModel, item)
         is SelectableClickSoundsItem.UserDefined -> UserDefinedSoundsItem(viewModel, item)
@@ -105,10 +96,7 @@ private fun ClicksSoundsItem(
 }
 
 @Composable
-private fun BuiltinClickSoundsItem(
-    viewModel: SoundLibraryViewModel,
-    item: SelectableClickSoundsItem.Builtin,
-) {
+private fun BuiltinClickSoundsItem(viewModel: SoundLibraryViewModel, item: SelectableClickSoundsItem.Builtin) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -135,10 +123,7 @@ private fun BuiltinClickSoundsItem(
 }
 
 @Composable
-private fun UserDefinedSoundsItem(
-    viewModel: SoundLibraryViewModel,
-    item: SelectableClickSoundsItem.UserDefined,
-) {
+private fun UserDefinedSoundsItem(viewModel: SoundLibraryViewModel, item: SelectableClickSoundsItem.UserDefined) {
     val contentPadding = 8.dp
 
     SwipeToDelete(
@@ -238,51 +223,47 @@ private fun UserDefinedSoundsItem(
 
 @ScreenPreview
 @Composable
-private fun Preview() =
-    ClickTrackTheme {
-        SoundLibraryScreenView(
-            viewModel = object : SoundLibraryViewModel {
-                override val state: StateFlow<SoundLibraryState?> = MutableStateFlow(
-                    SoundLibraryState(
-                        items = listOf(
-                            SelectableClickSoundsItem.Builtin(
-                                data = BuiltinClickSounds.BEEP,
-                                selected = true,
-                            ),
-                            SelectableClickSoundsItem.UserDefined(
-                                id = ClickSoundsId.Database(0L),
-                                strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
-                                weakBeatValue = "/audio/audio/audio/audio/weak.mp3",
-                                hasError = false,
-                                isPlaying = true,
-                                selected = false,
-                            ),
-                            SelectableClickSoundsItem.UserDefined(
-                                id = ClickSoundsId.Database(1L),
-                                strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
-                                weakBeatValue = "no_access.mp3",
-                                hasError = true,
-                                isPlaying = false,
-                                selected = false,
-                            ),
+private fun Preview() = ClickTrackTheme {
+    SoundLibraryScreenView(
+        viewModel = object : SoundLibraryViewModel {
+            override val state: StateFlow<SoundLibraryState?> = MutableStateFlow(
+                SoundLibraryState(
+                    items = listOf(
+                        SelectableClickSoundsItem.Builtin(
+                            data = BuiltinClickSounds.BEEP,
+                            selected = true,
+                        ),
+                        SelectableClickSoundsItem.UserDefined(
+                            id = ClickSoundsId.Database(0L),
+                            strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
+                            weakBeatValue = "/audio/audio/audio/audio/weak.mp3",
+                            hasError = false,
+                            isPlaying = true,
+                            selected = false,
+                        ),
+                        SelectableClickSoundsItem.UserDefined(
+                            id = ClickSoundsId.Database(1L),
+                            strongBeatValue = "/audio/audio/audio/audio/strong.mp3",
+                            weakBeatValue = "no_access.mp3",
+                            hasError = true,
+                            isPlaying = false,
+                            selected = false,
                         ),
                     ),
-                )
+                ),
+            )
 
-                override fun onBackClick() = Unit
+            override fun onBackClick() = Unit
 
-                override fun onAddNewClick() = Unit
+            override fun onAddNewClick() = Unit
 
-                override fun onItemClick(id: ClickSoundsId) = Unit
+            override fun onItemClick(id: ClickSoundsId) = Unit
 
-                override fun onItemRemove(id: ClickSoundsId.Database) = Unit
+            override fun onItemRemove(id: ClickSoundsId.Database) = Unit
 
-                override fun onItemSoundSelect(
-                    id: ClickSoundsId.Database,
-                    type: ClickSoundType,
-                ) = Unit
+            override fun onItemSoundSelect(id: ClickSoundsId.Database, type: ClickSoundType) = Unit
 
-                override fun onItemSoundTestToggle(id: ClickSoundsId.Database) = Unit
-            },
-        )
-    }
+            override fun onItemSoundTestToggle(id: ClickSoundsId.Database) = Unit
+        },
+    )
+}

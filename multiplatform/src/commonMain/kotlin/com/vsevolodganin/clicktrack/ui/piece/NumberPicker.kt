@@ -155,10 +155,7 @@ fun NumberPicker(
 }
 
 @Composable
-private fun Label(
-    text: String,
-    modifier: Modifier,
-) {
+private fun Label(text: String, modifier: Modifier) {
     Text(
         text = text,
         modifier = modifier.pointerInput(Unit) {

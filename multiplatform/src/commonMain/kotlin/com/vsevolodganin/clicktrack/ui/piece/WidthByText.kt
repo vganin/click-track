@@ -12,28 +12,18 @@ import androidx.compose.ui.text.MultiParagraphIntrinsics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 
-fun Modifier.widthByText(
-    text: String,
-    style: TextStyle,
-) = composed {
+fun Modifier.widthByText(text: String, style: TextStyle) = composed {
     width(dpByText(text, style))
 }
 
-fun Modifier.widthInByText(
-    minText: String? = null,
-    maxText: String? = null,
-    style: TextStyle,
-) = composed {
+fun Modifier.widthInByText(minText: String? = null, maxText: String? = null, style: TextStyle) = composed {
     val min = minText?.let { dpByText(it, style) } ?: Dp.Unspecified
     val max = maxText?.let { dpByText(it, style) } ?: Dp.Unspecified
     this.widthIn(min = min, max = max)
 }
 
 @Composable
-private fun dpByText(
-    text: String,
-    style: TextStyle,
-): Dp {
+private fun dpByText(text: String, style: TextStyle): Dp {
     val maxIntrinsics = MultiParagraphIntrinsics(
         annotatedString = AnnotatedString(text),
         style = style,

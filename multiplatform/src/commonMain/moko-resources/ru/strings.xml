@@ -7,11 +7,13 @@
     <string name="about_open_source_note">Приложение теперь с [открытым исходным кодом](stub_link)</string>
     <string name="about_screen_title">О приложении</string>
     <string name="about_version">версия %1$s</string>
+    <string name="bpm_input_suffix">\ bpm</string>
     <string name="click_track_list_screen_title">Мои клик-треки</string>
     <string name="cue_duration_beats">Доли</string>
     <string name="cue_duration_measures">Такты</string>
     <string name="cue_duration_time">Время</string>
     <string name="cue_name_hint">Введите имя (необязательно)</string>
+    <string name="cue_position">%1$s</string>
     <string name="drawer_about">О приложении</string>
     <string name="drawer_metronome">Метроном</string>
     <string name="drawer_polyrhythms">Полиритмы</string>
@@ -25,9 +27,11 @@
     <string name="edit_click_track_loop">Повторять</string>
     <string name="edit_click_track_options">Настройки</string>
     <string name="edit_click_track_screen_title">Редактирование трека…</string>
+    <string name="edit_click_track_tempo_diff">%1$s%2$d bpm</string>
     <string name="edit_click_track_title_hint">Введите имя клик-трека…</string>
     <string name="general_cancel">Отмена</string>
     <string name="general_metronome_click_track_title">Метроном</string>
+    <string name="general_ok">Ok</string>
     <string name="general_unnamed_click_track_template">Безымянный клик-трек</string>
     <string name="general_unnamed_training_click_track_template">Тренировка</string>
     <string name="metronome_bpm_meter_tap">ТАП</string>
@@ -46,6 +50,8 @@
     <string name="settings_ignore_audio_focus_description">Выключите, чтобы автоматически остановить клик-трек, когда другое аудио начинает играть.</string>
     <string name="settings_language">Язык</string>
     <string name="settings_language_system">Системный</string>
+    <string name="settings_language_system_english">English</string>
+    <string name="settings_language_system_russian">Русский</string>
     <string name="settings_screen_title">Настройки</string>
     <string name="settings_theme">Тема</string>
     <string name="settings_theme_auto">Авто</string>

@@ -13,10 +13,7 @@ class PrimitiveAudioMonoRenderer(
 ) {
     private val preparedSamples = mutableMapOf<ClickSoundSource, AudioData?>()
 
-    fun renderToMonoSamples(
-        events: Sequence<PlayerEvent>,
-        soundSourceProvider: SoundSourceProvider,
-    ): Sequence<Float> {
+    fun renderToMonoSamples(events: Sequence<PlayerEvent>, soundSourceProvider: SoundSourceProvider): Sequence<Float> {
         return events
             .flatMap { playerEvent ->
                 val audioData = playerEvent.soundType

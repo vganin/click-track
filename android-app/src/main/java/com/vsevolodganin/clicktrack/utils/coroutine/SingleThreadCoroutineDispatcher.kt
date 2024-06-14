@@ -6,10 +6,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-fun createSingleThreadCoroutineDispatcher(
-    linuxThreadName: String,
-    linuxThreadPriority: Int,
-): CoroutineDispatcher {
+fun createSingleThreadCoroutineDispatcher(linuxThreadName: String, linuxThreadPriority: Int): CoroutineDispatcher {
     return Executors.newSingleThreadExecutor { runnable -> Thread(runnable, linuxThreadName) }
         .also { it.setThreadPriority(linuxThreadPriority) }
         .asCoroutineDispatcher()

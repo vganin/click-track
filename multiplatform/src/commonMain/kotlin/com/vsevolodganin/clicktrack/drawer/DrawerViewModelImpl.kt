@@ -3,8 +3,6 @@ package com.vsevolodganin.clicktrack.drawer
 import com.arkivanov.decompose.Cancellation
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.subscribe
-import com.arkivanov.essenty.lifecycle.Lifecycle
-import com.arkivanov.essenty.lifecycle.doOnCreate
 import com.arkivanov.essenty.lifecycle.doOnStart
 import com.arkivanov.essenty.lifecycle.doOnStop
 import com.vsevolodganin.clicktrack.ScreenConfiguration
@@ -39,7 +37,7 @@ class DrawerViewModelImpl(
     }
 
     init {
-        with (lifecycle) {
+        with(lifecycle) {
             var cancellation: Cancellation? = null
             doOnStart { cancellation = drawerNavigationSource.subscribe(::updateOpenedState) }
             doOnStop { cancellation?.cancel() }

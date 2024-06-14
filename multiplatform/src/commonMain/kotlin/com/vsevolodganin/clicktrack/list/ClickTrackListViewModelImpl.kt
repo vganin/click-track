@@ -76,10 +76,7 @@ class ClickTrackListViewModelImpl(
 
     override fun onMenuClick() = drawerNavigation.openDrawer()
 
-    override fun onItemMove(
-        from: Int,
-        to: Int,
-    ) {
+    override fun onItemMove(from: Int, to: Int) {
         _state.update {
             it.copy(items = it.items.move(from, to))
         }
@@ -89,10 +86,9 @@ class ClickTrackListViewModelImpl(
         clickTrackRepository.updateOrdering(_state.value.items.map(ClickTrackWithDatabaseId::id))
     }
 
-    private fun defaultNewClickTrack(suggestedNewClickTrackName: String) =
-        ClickTrack(
-            name = suggestedNewClickTrackName,
-            cues = listOf(DefaultCue),
-            loop = true,
-        )
+    private fun defaultNewClickTrack(suggestedNewClickTrackName: String) = ClickTrack(
+        name = suggestedNewClickTrackName,
+        cues = listOf(DefaultCue),
+        loop = true,
+    )
 }

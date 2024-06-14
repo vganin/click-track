@@ -11,16 +11,9 @@ import me.tatarka.inject.annotations.Inject
 class LoggerImpl(
     private val firebaseCrashlytics: FirebaseCrashlytics,
 ) : Logger {
-    override fun logError(
-        tag: String,
-        message: String,
-    ) = logError(tag, message, null)
+    override fun logError(tag: String, message: String) = logError(tag, message, null)
 
-    override fun logError(
-        tag: String,
-        message: String,
-        throwable: Throwable?,
-    ) {
+    override fun logError(tag: String, message: String, throwable: Throwable?) {
         firebaseCrashlytics.setCustomKey("Tag", tag)
         firebaseCrashlytics.recordException(NonFatalException(message, throwable))
 

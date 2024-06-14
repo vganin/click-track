@@ -13,7 +13,7 @@ import kotlin.time.DurationUnit
 @Deprecated(
     message = "This is not needed anymore, user [Duration.serializer()] instead",
     replaceWith = ReplaceWith("Duration.serializer()"),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.WARNING,
 )
 class LegacyDurationSerializer : KSerializer<Duration> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DurationSerializer", PrimitiveKind.DOUBLE)

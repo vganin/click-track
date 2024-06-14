@@ -34,9 +34,7 @@ class PrimitiveAudioProvider(
         }
     }
 
-    private fun load(
-        @RawRes resId: Int,
-    ): PrimitiveAudioData? {
+    private fun load(@RawRes resId: Int): PrimitiveAudioData? {
         return application.resources.openRawResourceFd(resId).use(::load)
     }
 

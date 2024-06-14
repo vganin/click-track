@@ -98,10 +98,7 @@ operator fun Int.div(value: Rational): Int {
     return value / this
 }
 
-fun min(
-    lhs: Rational,
-    rhs: Rational,
-): Rational {
+fun min(lhs: Rational, rhs: Rational): Rational {
     return if (lhs < rhs) lhs else rhs
 }
 

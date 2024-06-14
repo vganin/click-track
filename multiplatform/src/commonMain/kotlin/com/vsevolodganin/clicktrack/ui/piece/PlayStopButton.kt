@@ -21,12 +21,7 @@ import com.vsevolodganin.clicktrack.ui.piece.PlayStopIconState.STOP
 import com.vsevolodganin.clicktrack.utils.compose.Preview
 
 @Composable
-fun PlayStopButton(
-    isPlaying: Boolean,
-    onToggle: () -> Unit,
-    modifier: Modifier = Modifier,
-    enableInsets: Boolean = true,
-) {
+fun PlayStopButton(isPlaying: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier, enableInsets: Boolean = true) {
     FloatingActionButton(
         onClick = onToggle,
         modifier = modifier,
@@ -94,12 +89,7 @@ fun PlayStopIcon(isPlaying: Boolean) {
     )
 }
 
-private fun iconAsset(
-    a: Offset,
-    b: Offset,
-    c: Offset,
-    d: Offset,
-): ImageVector {
+private fun iconAsset(a: Offset, b: Offset, c: Offset, d: Offset): ImageVector {
     return ImageVector.Builder(defaultWidth = 24.dp, defaultHeight = 24.dp, viewportWidth = 24f, viewportHeight = 24f)
         .addPath(
             pathData = PathBuilder()

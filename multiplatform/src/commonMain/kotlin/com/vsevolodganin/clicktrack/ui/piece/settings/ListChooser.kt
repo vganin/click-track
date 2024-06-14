@@ -73,10 +73,7 @@ fun <T> ListChooser(
 }
 
 @Composable
-private fun <T> DialogContent(
-    variants: List<ListChooserItem<T>>,
-    onChoose: (T) -> Unit,
-) {
+private fun <T> DialogContent(variants: List<ListChooserItem<T>>, onChoose: (T) -> Unit) {
     Column {
         variants.forEachIndexed { index, item ->
             Column(

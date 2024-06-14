@@ -30,10 +30,7 @@ data class BeatsPerMinute(val value: Int) : Comparable<BeatsPerMinute> {
     operator fun minus(o: BeatsPerMinuteOffset): BeatsPerMinute = (value - o.value).bpm
 }
 
-fun BeatsPerMinute(
-    beatCount: Int,
-    timelapse: Duration,
-): BeatsPerMinute {
+fun BeatsPerMinute(beatCount: Int, timelapse: Duration): BeatsPerMinute {
     return (1.minutes / timelapse * beatCount).roundToInt().bpm
 }
 

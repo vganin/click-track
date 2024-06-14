@@ -53,10 +53,7 @@ fun RootView(viewModel: RootViewModel) {
 }
 
 @Composable
-private fun RootView(
-    viewModel: RootViewModel,
-    modifier: Modifier,
-) {
+private fun RootView(viewModel: RootViewModel, modifier: Modifier) {
     val screens by viewModel.screens.subscribeAsState()
 
     data class ActiveScreen(

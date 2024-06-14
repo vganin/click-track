@@ -24,9 +24,7 @@ class PrimitiveFloatAudioDataTest {
     }
 
     @Test
-    fun `given input PCM, when transcoding to float, then output is correctly encoded`(
-        @TestParameter input: Input,
-    ) {
+    fun `given input PCM, when transcoding to float, then output is correctly encoded`(@TestParameter input: Input) {
         val actual = PrimitiveFloatAudioData.from(
             PrimitiveAudioData(
                 bytes = ClassLoader.getSystemResourceAsStream("pcm/${input.resource}").use(InputStream::readBytes),

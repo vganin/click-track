@@ -69,12 +69,9 @@ fun CueDurationView(
 }
 
 @Composable
-private fun DurationTypeDropdown(
-    value: CueDuration.Type,
-    onValueChange: (CueDuration.Type) -> Unit,
-) {
+private fun DurationTypeDropdown(value: CueDuration.Type, onValueChange: (CueDuration.Type) -> Unit) {
     DropdownSelector(
-        items = CueDuration.Type.values().toList(),
+        items = CueDuration.Type.entries,
         selectedValue = value,
         onSelect = { selectedValue ->
             onValueChange(selectedValue)
@@ -85,11 +82,7 @@ private fun DurationTypeDropdown(
 }
 
 @Composable
-private fun EditBeatsView(
-    value: CueDuration.Beats,
-    onValueChange: (CueDuration) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun EditBeatsView(value: CueDuration.Beats, onValueChange: (CueDuration) -> Unit, modifier: Modifier = Modifier) {
     NumberInputField(
         value = value.value,
         onValueChange = { onValueChange(CueDuration.Beats(it)) },
@@ -98,11 +91,7 @@ private fun EditBeatsView(
 }
 
 @Composable
-private fun EditMeasuresView(
-    value: CueDuration.Measures,
-    onValueChange: (CueDuration) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun EditMeasuresView(value: CueDuration.Measures, onValueChange: (CueDuration) -> Unit, modifier: Modifier = Modifier) {
     NumberInputField(
         value = value.value,
         onValueChange = { onValueChange(CueDuration.Measures(it)) },
@@ -111,11 +100,7 @@ private fun EditMeasuresView(
 }
 
 @Composable
-private fun EditTimeView(
-    value: CueDuration.Time,
-    onValueChange: (CueDuration) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun EditTimeView(value: CueDuration.Time, onValueChange: (CueDuration) -> Unit, modifier: Modifier = Modifier) {
     DurationPicker(
         value = value.value,
         onValueChange = { onValueChange(CueDuration.Time(it)) },

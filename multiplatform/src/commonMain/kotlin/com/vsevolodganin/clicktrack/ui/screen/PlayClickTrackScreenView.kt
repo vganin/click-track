@@ -57,10 +57,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-fun PlayClickTrackScreenView(
-    viewModel: PlayClickTrackViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun PlayClickTrackScreenView(viewModel: PlayClickTrackViewModel, modifier: Modifier = Modifier) {
     val state by viewModel.state.collectAsState()
     val scaffoldState = rememberScaffoldState()
     Scaffold(
@@ -75,10 +72,7 @@ fun PlayClickTrackScreenView(
 }
 
 @Composable
-private fun Content(
-    viewModel: PlayClickTrackViewModel,
-    state: PlayClickTrackState,
-) {
+private fun Content(viewModel: PlayClickTrackViewModel, state: PlayClickTrackState) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -99,11 +93,7 @@ private fun Content(
 }
 
 @Composable
-private fun TopBar(
-    viewModel: PlayClickTrackViewModel,
-    state: PlayClickTrackState,
-    snackbarHostState: SnackbarHostState,
-) {
+private fun TopBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackState, snackbarHostState: SnackbarHostState) {
     TopAppBarWithBack(
         onBackClick = viewModel::onBackClick,
         title = { Text(text = state.clickTrack.value.name) },
@@ -159,11 +149,7 @@ private fun TopBar(
 }
 
 @Composable
-private fun OverflowMenu(
-    viewModel: PlayClickTrackViewModel,
-    state: PlayClickTrackState,
-    snackbarHostState: SnackbarHostState,
-) {
+private fun OverflowMenu(viewModel: PlayClickTrackViewModel, state: PlayClickTrackState, snackbarHostState: SnackbarHostState) {
     val coroutineScope = rememberCoroutineScope()
     var showDropdown by remember { mutableStateOf(false) }
 
@@ -195,10 +181,7 @@ private fun OverflowMenu(
 }
 
 @Composable
-private fun BottomBar(
-    viewModel: PlayClickTrackViewModel,
-    state: PlayClickTrackState,
-) {
+private fun BottomBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackState) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -230,37 +213,36 @@ private fun BottomBar(
 
 @ScreenPreview
 @Composable
-private fun Preview() =
-    ClickTrackTheme {
-        PlayClickTrackScreenView(
-            viewModel = object : PlayClickTrackViewModel {
-                override val state: StateFlow<PlayClickTrackState?> = MutableStateFlow(
-                    PlayClickTrackState(
-                        clickTrack = PREVIEW_CLICK_TRACK_1,
-                        playProgress = null,
-                        playTrackingMode = true,
-                    ),
-                )
+private fun Preview() = ClickTrackTheme {
+    PlayClickTrackScreenView(
+        viewModel = object : PlayClickTrackViewModel {
+            override val state: StateFlow<PlayClickTrackState?> = MutableStateFlow(
+                PlayClickTrackState(
+                    clickTrack = PREVIEW_CLICK_TRACK_1,
+                    playProgress = null,
+                    playTrackingMode = true,
+                ),
+            )
 
-                override fun onBackClick() = Unit
+            override fun onBackClick() = Unit
 
-                override fun onTogglePlayStop() = Unit
+            override fun onTogglePlayStop() = Unit
 
-                override fun onTogglePlayPause() = Unit
+            override fun onTogglePlayPause() = Unit
 
-                override fun onTogglePlayTrackingMode() = Unit
+            override fun onTogglePlayTrackingMode() = Unit
 
-                override fun onProgressDragStart() = Unit
+            override fun onProgressDragStart() = Unit
 
-                override fun onProgressDrop(progress: Double) = Unit
+            override fun onProgressDrop(progress: Double) = Unit
 
-                override fun onEditClick() = Unit
+            override fun onEditClick() = Unit
 
-                override fun onRemoveClick() = Unit
+            override fun onRemoveClick() = Unit
 
-                override fun onExportClick() = Unit
+            override fun onExportClick() = Unit
 
-                override fun onCancelExportClick() = Unit
-            },
-        )
-    }
+            override fun onCancelExportClick() = Unit
+        },
+    )
+}

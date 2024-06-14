@@ -25,10 +25,7 @@ class ClickTrackRepository(
     private val database: Database,
     private val json: Json,
 ) : CanMigrate {
-    override fun migrate(
-        fromVersion: Int,
-        toVersion: Int,
-    ) {
+    override fun migrate(fromVersion: Int, toVersion: Int) {
         if (fromVersion == UserPreferencesRepository.Const.NO_APP_VERSION_CODE) {
             for (clickTrack in PreMadeClickTracks.DATA) {
                 insert(clickTrack)
@@ -70,10 +67,7 @@ class ClickTrackRepository(
         }.let(ClickTrackId::Database)
     }
 
-    fun update(
-        id: ClickTrackId.Database,
-        clickTrack: ClickTrack,
-    ) {
+    fun update(id: ClickTrackId.Database, clickTrack: ClickTrack) {
         database.sqlClickTrackQueries.update(
             id = id.value,
             name = clickTrack.name,

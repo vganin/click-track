@@ -77,10 +77,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
         return Result.success()
     }
 
-    private fun foregroundInfo(
-        clickTrack: ClickTrackWithDatabaseId,
-        progress: Float,
-    ): ForegroundInfo {
+    private fun foregroundInfo(clickTrack: ClickTrackWithDatabaseId, progress: Float): ForegroundInfo {
         val tapIntent = component.intentFactory.navigateClickTrack(clickTrack.id)
 
         val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -115,10 +112,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
         )
     }
 
-    private fun notifyFinished(
-        clickTrack: ClickTrack,
-        accessUri: Uri,
-    ) {
+    private fun notifyFinished(clickTrack: ClickTrack, accessUri: Uri) {
         val tapIntent = Intent.createChooser(
             Intent(Intent.ACTION_VIEW).apply {
                 flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK

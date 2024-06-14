@@ -41,10 +41,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
-fun TrainingScreenView(
-    viewModel: TrainingViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun TrainingScreenView(viewModel: TrainingViewModel, modifier: Modifier = Modifier) {
     Scaffold(
         topBar = {
             TopAppBarWithBack(
@@ -76,12 +73,11 @@ private fun Content(viewModel: TrainingViewModel) {
         val state by viewModel.state.collectAsState()
 
         @Composable
-        fun FormRow(content: @Composable RowScope.() -> Unit) =
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                content = content,
-            )
+        fun FormRow(content: @Composable RowScope.() -> Unit) = Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            content = content,
+        )
 
         val rightColumnModifier = Modifier.width(140.dp)
 
@@ -187,43 +183,42 @@ private fun TrainingEndingKind.stringResource(mode: TrainingMode): String {
 
 @ScreenPreview
 @Composable
-private fun Preview() =
-    ClickTrackTheme {
-        TrainingScreenView(
-            viewModel = object : TrainingViewModel {
-                override val state: StateFlow<TrainingEditState> = MutableStateFlow(
-                    TrainingEditState(
-                        startingTempo = 120,
-                        mode = TrainingMode.INCREASE_TEMPO,
-                        activeSegmentLengthType = CueDuration.Type.MEASURES,
-                        segmentLengthBeats = DefaultBeatsDuration,
-                        segmentLengthMeasures = DefaultMeasuresDuration,
-                        segmentLengthTime = DefaultTimeDuration,
-                        tempoChange = 5,
-                        activeEndingKind = TrainingEndingKind.BY_TEMPO,
-                        endingByTempo = TrainingEditState.Ending.ByTempo(160),
-                        endingByTime = TrainingEditState.Ending.ByTime(5.minutes),
-                        errors = emptySet(),
-                    ),
-                )
+private fun Preview() = ClickTrackTheme {
+    TrainingScreenView(
+        viewModel = object : TrainingViewModel {
+            override val state: StateFlow<TrainingEditState> = MutableStateFlow(
+                TrainingEditState(
+                    startingTempo = 120,
+                    mode = TrainingMode.INCREASE_TEMPO,
+                    activeSegmentLengthType = CueDuration.Type.MEASURES,
+                    segmentLengthBeats = DefaultBeatsDuration,
+                    segmentLengthMeasures = DefaultMeasuresDuration,
+                    segmentLengthTime = DefaultTimeDuration,
+                    tempoChange = 5,
+                    activeEndingKind = TrainingEndingKind.BY_TEMPO,
+                    endingByTempo = TrainingEditState.Ending.ByTempo(160),
+                    endingByTime = TrainingEditState.Ending.ByTime(5.minutes),
+                    errors = emptySet(),
+                ),
+            )
 
-                override fun onBackClick() = Unit
+            override fun onBackClick() = Unit
 
-                override fun onAcceptClick() = Unit
+            override fun onAcceptClick() = Unit
 
-                override fun onStartingTempoChange(startingTempo: Int) = Unit
+            override fun onStartingTempoChange(startingTempo: Int) = Unit
 
-                override fun onModeSelect(mode: TrainingMode) = Unit
+            override fun onModeSelect(mode: TrainingMode) = Unit
 
-                override fun onSegmentLengthChange(segmentLength: CueDuration) = Unit
+            override fun onSegmentLengthChange(segmentLength: CueDuration) = Unit
 
-                override fun onSegmentLengthTypeChange(segmentLengthType: CueDuration.Type) = Unit
+            override fun onSegmentLengthTypeChange(segmentLengthType: CueDuration.Type) = Unit
 
-                override fun onTempoChangeChange(tempoChange: Int) = Unit
+            override fun onTempoChangeChange(tempoChange: Int) = Unit
 
-                override fun onEndingChange(ending: TrainingEditState.Ending) = Unit
+            override fun onEndingChange(ending: TrainingEditState.Ending) = Unit
 
-                override fun onEndingKindChange(endingKind: TrainingEndingKind) = Unit
-            },
-        )
-    }
+            override fun onEndingKindChange(endingKind: TrainingEndingKind) = Unit
+        },
+    )
+}

@@ -7,8 +7,7 @@ import me.tatarka.inject.annotations.Provides
 interface SerializationModule {
     @Provides
     @ApplicationScope
-    fun provideJson(): Json =
-        Json {
-            ignoreUnknownKeys = true
-        }
+    fun provideJson(): Json = Json {
+        ignoreUnknownKeys = true
+    }
 }

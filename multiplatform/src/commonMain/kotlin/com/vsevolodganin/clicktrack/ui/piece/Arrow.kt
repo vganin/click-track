@@ -25,11 +25,7 @@ enum class ArrowDirection {
 }
 
 @Composable
-fun Arrow(
-    direction: ArrowDirection,
-    modifier: Modifier = Modifier,
-    tint: Color = LocalContentColor.current,
-) {
+fun Arrow(direction: ArrowDirection, modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = arrowVectorResource(direction),
         contentDescription = null,

@@ -17,12 +17,7 @@ import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.animatePathAsState
 
 @Composable
-fun PlayPauseButton(
-    isPlaying: Boolean,
-    onToggle: () -> Unit,
-    modifier: Modifier = Modifier,
-    enableInsets: Boolean = true,
-) {
+fun PlayPauseButton(isPlaying: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier, enableInsets: Boolean = true) {
     FloatingActionButton(
         onClick = onToggle,
         modifier = modifier,
@@ -58,11 +53,10 @@ fun PlayPauseIcon(isPlaying: Boolean) {
 
 @Preview
 @Composable
-private fun Preview() =
-    ClickTrackTheme {
-        var isPlaying by remember { mutableStateOf(false) }
-        PlayPauseButton(
-            isPlaying = isPlaying,
-            onToggle = { isPlaying = !isPlaying },
-        )
-    }
+private fun Preview() = ClickTrackTheme {
+    var isPlaying by remember { mutableStateOf(false) }
+    PlayPauseButton(
+        isPlaying = isPlaying,
+        onToggle = { isPlaying = !isPlaying },
+    )
+}

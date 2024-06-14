@@ -133,7 +133,7 @@ class UserPreferencesRepository(
         private val toExternal: (TInternal) -> TExternal,
         private val toInternal: (TExternal) -> TInternal,
     ) : UserPropertyAccess<TExternal> {
-        private val _stateFlow = MutableStateFlow(
+        private val stateFlow = MutableStateFlow(
             runBlocking {
                 with(key) { settings.get() }?.let(toExternal) ?: defaultValue
             },
@@ -141,7 +141,7 @@ class UserPreferencesRepository(
 
         init {
             GlobalScope.launch(Dispatchers.Default, CoroutineStart.UNDISPATCHED) {
-                _stateFlow.drop(1).collect { value ->
+                stateFlow.drop(1).collect { value ->
                     with(key) {
                         settings.put(toInternal(value))
                     }
@@ -149,24 +149,24 @@ class UserPreferencesRepository(
             }
         }
 
-        override val flow: Flow<TExternal> = _stateFlow
+        override val flow: Flow<TExternal> = stateFlow
 
         override var value: TExternal
-            get() = _stateFlow.value
+            get() = stateFlow.value
             set(value) {
-                _stateFlow.value = value
+                stateFlow.value = value
             }
 
-        override fun edit(transform: (TExternal) -> TExternal) = _stateFlow.update(transform)
+        override fun edit(transform: (TExternal) -> TExternal) = stateFlow.update(transform)
     }
 
     private inner class UserPropertyAccessWithNoMapping<T>(
         key: PreferenceKey<T>,
         defaultValue: T,
     ) : UserPropertyAccessWithMapping<T, T>(
-            key = key,
-            defaultValue = defaultValue,
-            toExternal = { it },
-            toInternal = { it },
-        )
+        key = key,
+        defaultValue = defaultValue,
+        toExternal = { it },
+        toInternal = { it },
+    )
 }

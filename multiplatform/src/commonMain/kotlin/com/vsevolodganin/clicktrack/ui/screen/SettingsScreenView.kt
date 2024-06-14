@@ -32,10 +32,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun SettingsScreenView(
-    viewModel: SettingsViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun SettingsScreenView(viewModel: SettingsViewModel, modifier: Modifier = Modifier) {
     Scaffold(
         topBar = {
             TopAppBarWithBack(
@@ -118,60 +115,56 @@ private fun Content(viewModel: SettingsViewModel) {
 }
 
 @Composable
-private fun Theme.displayValue(): String =
-    when (this) {
-        Theme.LIGHT -> MR.strings.settings_theme_light
-        Theme.DARK -> MR.strings.settings_theme_dark
-        Theme.SYSTEM -> MR.strings.settings_theme_system
-        Theme.AUTO -> MR.strings.settings_theme_auto
-    }.let { stringResource(it) }
+private fun Theme.displayValue(): String = when (this) {
+    Theme.LIGHT -> MR.strings.settings_theme_light
+    Theme.DARK -> MR.strings.settings_theme_dark
+    Theme.SYSTEM -> MR.strings.settings_theme_system
+    Theme.AUTO -> MR.strings.settings_theme_auto
+}.let { stringResource(it) }
 
 @Composable
-private fun Theme.description(): String? =
-    when (this) {
-        Theme.LIGHT -> null
-        Theme.DARK -> null
-        Theme.SYSTEM -> MR.strings.settings_theme_system_description
-        Theme.AUTO -> MR.strings.settings_theme_auto_description
-    }?.let { stringResource(it) }
+private fun Theme.description(): String? = when (this) {
+    Theme.LIGHT -> null
+    Theme.DARK -> null
+    Theme.SYSTEM -> MR.strings.settings_theme_system_description
+    Theme.AUTO -> MR.strings.settings_theme_auto_description
+}?.let { stringResource(it) }
 
 @Composable
-private fun AppLanguage.displayValue(): String =
-    when (this) {
-        AppLanguage.SYSTEM -> MR.strings.settings_language_system
-        AppLanguage.ENGLISH -> MR.strings.settings_language_system_english
-        AppLanguage.RUSSIAN -> MR.strings.settings_language_system_russian
-    }.let { stringResource(it) }
+private fun AppLanguage.displayValue(): String = when (this) {
+    AppLanguage.SYSTEM -> MR.strings.settings_language_system
+    AppLanguage.ENGLISH -> MR.strings.settings_language_system_english
+    AppLanguage.RUSSIAN -> MR.strings.settings_language_system_russian
+}.let { stringResource(it) }
 
 @ScreenPreview
 @Composable
-private fun Preview() =
-    ClickTrackTheme {
-        SettingsScreenView(
-            viewModel = object : SettingsViewModel {
-                override val state: StateFlow<SettingsState> = MutableStateFlow(
-                    SettingsState(
-                        theme = Theme.SYSTEM,
-                        ignoreAudioFocus = false,
-                        language = AppLanguage.SYSTEM,
-                    ),
-                )
+private fun Preview() = ClickTrackTheme {
+    SettingsScreenView(
+        viewModel = object : SettingsViewModel {
+            override val state: StateFlow<SettingsState> = MutableStateFlow(
+                SettingsState(
+                    theme = Theme.SYSTEM,
+                    ignoreAudioFocus = false,
+                    language = AppLanguage.SYSTEM,
+                ),
+            )
 
-                override fun onBackClick() = Unit
+            override fun onBackClick() = Unit
 
-                override fun onThemeChange(theme: Theme) = Unit
+            override fun onThemeChange(theme: Theme) = Unit
 
-                override fun onLanguageChange(language: AppLanguage) = Unit
+            override fun onLanguageChange(language: AppLanguage) = Unit
 
-                override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
+            override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
 
-                override fun onKotlinExceptionClick() = Unit
+            override fun onKotlinExceptionClick() = Unit
 
-                override fun onNativeExceptionCrashClick() = Unit
+            override fun onNativeExceptionCrashClick() = Unit
 
-                override fun onNativeDanglingReferenceCrashClick() = Unit
+            override fun onNativeDanglingReferenceCrashClick() = Unit
 
-                override fun onNonFatalClick() = Unit
-            },
-        )
-    }
+            override fun onNonFatalClick() = Unit
+        },
+    )
+}

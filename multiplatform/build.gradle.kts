@@ -6,6 +6,7 @@ import org.jetbrains.compose.compose
 plugins {
     id("clicktrack.multiplatform")
     id("clicktrack.include-in-coverage")
+    id("clicktrack.ktlint")
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sqldelight)
@@ -45,7 +46,8 @@ kotlin {
                 api(compose.ui)
                 api(compose.material)
                 api(compose.materialIconsExtended)
-                api(compose("org.jetbrains.compose.ui:ui-util")) // FIXME(https://github.com/JetBrains/compose-jb/issues/1295): Replace with `org.jetbrains.compose.ComposePlugin.Dependencies` field when it's available
+                // FIXME(https://github.com/JetBrains/compose-jb/issues/1295): Replace with `org.jetbrains.compose.ComposePlugin.Dependencies` field when it's available
+                api(compose("org.jetbrains.compose.ui:ui-util"))
                 api(libs.simpleIcons)
                 api(libs.bundles.decompose)
                 api(libs.bundles.kotlinx.serialization)

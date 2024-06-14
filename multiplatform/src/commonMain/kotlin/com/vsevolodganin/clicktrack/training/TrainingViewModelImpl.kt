@@ -148,9 +148,8 @@ class TrainingViewModelImpl(
         )
     }
 
-    private fun TrainingValidState.Ending.toEditState(): TrainingEditState.Ending =
-        when (this) {
-            is TrainingValidState.Ending.ByTempo -> TrainingEditState.Ending.ByTempo(endingTempo.value)
-            is TrainingValidState.Ending.ByTime -> TrainingEditState.Ending.ByTime(duration)
-        }
+    private fun TrainingValidState.Ending.toEditState(): TrainingEditState.Ending = when (this) {
+        is TrainingValidState.Ending.ByTempo -> TrainingEditState.Ending.ByTempo(endingTempo.value)
+        is TrainingValidState.Ending.ByTime -> TrainingEditState.Ending.ByTime(duration)
+    }
 }

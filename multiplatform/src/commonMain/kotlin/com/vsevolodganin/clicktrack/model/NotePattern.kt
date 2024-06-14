@@ -57,10 +57,7 @@ private fun quintupletPattern(multiplier: Int) = filledPattern(multiplier, 4 ove
 
 private fun septupletPattern(multiplier: Int) = filledPattern(multiplier, 4 over 7)
 
-private fun filledPattern(
-    multiplier: Int,
-    length: Rational,
-) = mutableListOf<NoteEvent>().apply {
+private fun filledPattern(multiplier: Int, length: Rational) = mutableListOf<NoteEvent>().apply {
     val resultingLength = length.numerator over (length.denominator * multiplier)
     repeat(multiplier) {
         this += NoteEvent(
@@ -70,17 +67,16 @@ private fun filledPattern(
     }
 }
 
-private fun displacedPattern(multiplier: Int) =
-    mutableListOf<NoteEvent>().apply {
-        val resultingLength = 1 over (multiplier * 2)
-        repeat(multiplier) {
-            this += NoteEvent(
-                length = resultingLength,
-                type = NoteEvent.Type.REST,
-            )
-            this += NoteEvent(
-                length = resultingLength,
-                type = NoteEvent.Type.NOTE,
-            )
-        }
+private fun displacedPattern(multiplier: Int) = mutableListOf<NoteEvent>().apply {
+    val resultingLength = 1 over (multiplier * 2)
+    repeat(multiplier) {
+        this += NoteEvent(
+            length = resultingLength,
+            type = NoteEvent.Type.REST,
+        )
+        this += NoteEvent(
+            length = resultingLength,
+            type = NoteEvent.Type.NOTE,
+        )
     }
+}

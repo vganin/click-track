@@ -62,10 +62,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
-fun MetronomeScreenView(
-    viewModel: MetronomeViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun MetronomeScreenView(viewModel: MetronomeViewModel, modifier: Modifier = Modifier) {
     viewModel.state.collectAsState().value ?: return // FIXME: Otherwise crash in swipeable state
     BackdropScaffold(
         appBar = { AppBar(viewModel) },
@@ -231,33 +228,32 @@ private fun backdropState(viewModel: MetronomeViewModel): BackdropScaffoldState 
 
 @ScreenPreview
 @Composable
-private fun Preview() =
-    ClickTrackTheme {
-        MetronomeScreenView(
-            viewModel = object : MetronomeViewModel {
-                override val state: StateFlow<MetronomeState?> = MutableStateFlow(
-                    MetronomeState(
-                        bpm = 90.bpm,
-                        pattern = NotePattern.QUINTUPLET_X2,
-                        progress = PlayProgress(100.milliseconds),
-                        isPlaying = false,
-                        areOptionsExpanded = false,
-                    ),
-                )
+private fun Preview() = ClickTrackTheme {
+    MetronomeScreenView(
+        viewModel = object : MetronomeViewModel {
+            override val state: StateFlow<MetronomeState?> = MutableStateFlow(
+                MetronomeState(
+                    bpm = 90.bpm,
+                    pattern = NotePattern.QUINTUPLET_X2,
+                    progress = PlayProgress(100.milliseconds),
+                    isPlaying = false,
+                    areOptionsExpanded = false,
+                ),
+            )
 
-                override fun onBackClick() = Unit
+            override fun onBackClick() = Unit
 
-                override fun onToggleOptions() = Unit
+            override fun onToggleOptions() = Unit
 
-                override fun onOptionsExpandedChange(isOpened: Boolean) = Unit
+            override fun onOptionsExpandedChange(isOpened: Boolean) = Unit
 
-                override fun onPatternChoose(pattern: NotePattern) = Unit
+            override fun onPatternChoose(pattern: NotePattern) = Unit
 
-                override fun onBpmChange(bpmDiff: BeatsPerMinuteOffset) = Unit
+            override fun onBpmChange(bpmDiff: BeatsPerMinuteOffset) = Unit
 
-                override fun onTogglePlay() = Unit
+            override fun onTogglePlay() = Unit
 
-                override fun onBpmMeterClick() = Unit
-            },
-        )
-    }
+            override fun onBpmMeterClick() = Unit
+        },
+    )
+}

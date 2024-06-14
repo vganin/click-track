@@ -9,10 +9,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
 
-fun CoroutineScope(
-    context: CoroutineContext,
-    lifecycle: Lifecycle,
-): CoroutineScope {
+fun CoroutineScope(context: CoroutineContext, lifecycle: Lifecycle): CoroutineScope {
     val scope = CoroutineScope(context + SupervisorJob())
     lifecycle.doOnDestroy(scope::cancel)
     return scope
