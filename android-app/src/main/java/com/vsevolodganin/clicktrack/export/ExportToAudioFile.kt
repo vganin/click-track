@@ -78,7 +78,7 @@ class ExportToAudioFile(
                     val inputBufferIndex = codec.dequeueInputBuffer(0L)
                     if (inputBufferIndex >= 0) {
                         val inputBuffer = codec.getInputBuffer(inputBufferIndex)!!
-                        val presentationTimeUs = convertSamplesNumberToDuration(samplesWritten, SAMPLE_RATE).inWholeNanoseconds
+                        val presentationTimeUs = convertSamplesNumberToDuration(samplesWritten, SAMPLE_RATE).inWholeMicroseconds
 
                         val bytesWritten = when (outputFormat.pcmEncoding()) {
                             AudioFormat.ENCODING_PCM_FLOAT -> {
