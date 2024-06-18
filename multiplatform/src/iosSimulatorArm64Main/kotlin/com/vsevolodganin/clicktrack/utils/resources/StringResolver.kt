@@ -7,7 +7,7 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 @MainControllerScope
-actual class StringResolver() {
+actual class StringResolver {
     actual suspend fun resolve(resource: StringResource): String {
         return resource.desc().localized()
     }

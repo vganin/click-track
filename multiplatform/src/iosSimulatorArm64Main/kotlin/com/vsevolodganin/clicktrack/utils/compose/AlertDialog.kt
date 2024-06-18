@@ -285,7 +285,8 @@ private fun AlertDialogFlowRow(mainAxisSpacing: Dp, crossAxisSpacing: Dp, conten
         val childConstraints = Constraints(maxWidth = constraints.maxWidth)
 
         // Return whether the placeable can be added to the current sequence.
-        fun canAddToCurrentSequence(placeable: Placeable) = currentSequence.isEmpty() || currentMainAxisSize + mainAxisSpacing.roundToPx() +
+        fun canAddToCurrentSequence(placeable: Placeable) = currentSequence.isEmpty() ||
+            currentMainAxisSize + mainAxisSpacing.roundToPx() +
             placeable.width <= constraints.maxWidth
 
         // Store current sequence information and start a new sequence.

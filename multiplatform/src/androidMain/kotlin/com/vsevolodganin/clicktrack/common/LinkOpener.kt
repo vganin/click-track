@@ -10,9 +10,7 @@ import me.tatarka.inject.annotations.Inject
 
 @MainControllerScope
 @Inject
-actual class LinkOpener(
-    private val context: Activity,
-) {
+actual class LinkOpener(private val context: Activity) {
     actual fun url(url: String) {
         val uri: Uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
