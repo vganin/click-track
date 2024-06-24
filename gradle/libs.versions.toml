@@ -8,7 +8,7 @@ kotlinx-serialization = "1.7.0"
 kover = "0.8.1"
 ksp = "2.0.0-1.0.22"
 mockk = "1.13.11"
-moko-resources = "0.24.0"
+moko-resources = "0.24.1"
 multiplatformSettings = "1.1.1"
 sqldelight = "2.0.2"
 
