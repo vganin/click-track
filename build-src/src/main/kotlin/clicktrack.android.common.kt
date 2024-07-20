@@ -6,7 +6,7 @@ fun BaseExtension.applyAndroidCommon() {
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
     }
 
     compileOptions {
