@@ -24,9 +24,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
@@ -60,7 +60,7 @@ class Player(
 
     suspend fun play(input: Flow<Input>) {
         try {
-            input.collectLatest { (id, startAtProgress, soundsId) ->
+            input.collectLatestAndStopIfLatestIsFinished { (id, startAtProgress, soundsId) ->
                 play(id, startAtProgress, soundsId)
             }
         } finally {
@@ -83,7 +83,7 @@ class Player(
             is ClickTrackId -> {
                 playableContentProvider.clickTrackFlow(id)
                     .withIndex()
-                    .collectLatest inner@{ (index, clickTrack) ->
+                    .collectLatestAndStopIfLatestIsFinished inner@{ (index, clickTrack) ->
                         clickTrack ?: return@inner
                         pausable(if (index == 0) startAtProgress else null) { progress ->
                             play(id, clickTrack, progress, soundsId)
@@ -94,7 +94,7 @@ class Player(
             TwoLayerPolyrhythmId -> {
                 playableContentProvider.twoLayerPolyrhythmFlow()
                     .withIndex()
-                    .collectLatest { (index, polyrhythm) ->
+                    .collectLatestAndStopIfLatestIsFinished { (index, polyrhythm) ->
                         pausable(if (index == 0) startAtProgress else null) { progress ->
                             play(polyrhythm, progress, soundsId)
                         }
@@ -105,7 +105,7 @@ class Player(
 
     private suspend inline fun pausable(startAt: Double?, crossinline play: suspend (startAt: Double?) -> Unit) {
         var savedProgress: Double? = startAt
-        pausedState.collectLatest { isPaused ->
+        pausedState.collectLatestAndStopIfLatestIsFinished { isPaused ->
             if (isPaused) {
                 savedProgress = playbackState.value?.realProgress
             } else {
@@ -251,6 +251,10 @@ class Player(
             is ClickSoundsId.Builtin -> flowOf(soundsId.value.sounds)
             is ClickSoundsId.Database -> clickSoundsRepository.getById(soundsId).map { it?.value }
         }
+    }
+
+    private suspend fun <T> Flow<T>.collectLatestAndStopIfLatestIsFinished(block: suspend (T) -> Unit) {
+        mapLatest(block).firstOrNull()
     }
 
     private class InternalPlaybackState(
