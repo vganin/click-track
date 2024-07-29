@@ -15,7 +15,7 @@ sqldelight = "2.0.2"
 [libraries]
 accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 android-gradlePlugin = "com.android.tools.build:gradle:8.5.1"
-androidx-activity-compose = "androidx.activity:activity-compose:1.9.0"
+androidx-activity-compose = "androidx.activity:activity-compose:1.9.1"
 androidx-annotation = "androidx.annotation:annotation:1.8.0"
 androidx-appcompat = "androidx.appcompat:appcompat:1.7.0"
 androidx-constraintLayout-compose = "androidx.constraintlayout:constraintlayout-compose:1.0.1"
