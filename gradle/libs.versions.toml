@@ -52,7 +52,7 @@ moko-resources = { module = "dev.icerock.moko:resources-compose", version.ref = 
 moko-resources-gradlePlugin = { module = "dev.icerock.moko:resources-generator", version.ref = "moko-resources" }
 multiplatformSettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 multiplatformSettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
-reorderable = "sh.calvin.reorderable:reorderable:2.1.1"
+reorderable = "sh.calvin.reorderable:reorderable:2.3.3"
 simpleIcons = "br.com.devsrsouza.compose.icons:simple-icons:1.1.0"
 sqldelight-androidDriver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
