@@ -18,15 +18,17 @@ import com.vsevolodganin.clicktrack.soundlibrary.UserSelectedSounds
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.utils.grabIf
 import com.vsevolodganin.clicktrack.utils.log.Logger
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
@@ -35,6 +37,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -60,13 +63,15 @@ class Player(
 
     suspend fun play(input: Flow<Input>) {
         try {
-            input.collectLatestAndStopIfLatestIsFinished { (id, startAtProgress, soundsId) ->
-                play(id, startAtProgress, soundsId)
+            coroutineScope {
+                input.collectLatest { (id, startAtProgress, soundsId) ->
+                    play(id, startAtProgress, soundsId)
+                }
             }
+        } catch (_: CancellationException) {
+            // Cancelling from inside means normal playback end, hence ignore
         } finally {
-            withContext(NonCancellable) {
-                playbackState.value = null
-            }
+            playbackState.value = null
         }
     }
 
@@ -78,15 +83,16 @@ class Player(
         pausedState.value = false
     }
 
-    private suspend fun play(id: PlayableId, startAtProgress: Double?, soundsId: ClickSoundsId?) {
+    private suspend fun CoroutineScope.play(id: PlayableId, startAtProgress: Double?, soundsId: ClickSoundsId?) {
         when (id) {
             is ClickTrackId -> {
                 playableContentProvider.clickTrackFlow(id)
                     .withIndex()
-                    .collectLatestAndStopIfLatestIsFinished inner@{ (index, clickTrack) ->
+                    .collectLatest inner@{ (index, clickTrack) ->
                         clickTrack ?: return@inner
                         pausable(if (index == 0) startAtProgress else null) { progress ->
                             play(id, clickTrack, progress, soundsId)
+                            cancel()
                         }
                     }
             }
@@ -94,9 +100,10 @@ class Player(
             TwoLayerPolyrhythmId -> {
                 playableContentProvider.twoLayerPolyrhythmFlow()
                     .withIndex()
-                    .collectLatestAndStopIfLatestIsFinished { (index, polyrhythm) ->
+                    .collectLatest { (index, polyrhythm) ->
                         pausable(if (index == 0) startAtProgress else null) { progress ->
                             play(polyrhythm, progress, soundsId)
+                            cancel()
                         }
                     }
             }
@@ -105,7 +112,7 @@ class Player(
 
     private suspend inline fun pausable(startAt: Double?, crossinline play: suspend (startAt: Double?) -> Unit) {
         var savedProgress: Double? = startAt
-        pausedState.collectLatestAndStopIfLatestIsFinished { isPaused ->
+        pausedState.collectLatest { isPaused ->
             if (isPaused) {
                 savedProgress = playbackState.value?.realProgress
             } else {
@@ -251,10 +258,6 @@ class Player(
             is ClickSoundsId.Builtin -> flowOf(soundsId.value.sounds)
             is ClickSoundsId.Database -> clickSoundsRepository.getById(soundsId).map { it?.value }
         }
-    }
-
-    private suspend fun <T> Flow<T>.collectLatestAndStopIfLatestIsFinished(block: suspend (T) -> Unit) {
-        mapLatest(block).firstOrNull()
     }
 
     private class InternalPlaybackState(
