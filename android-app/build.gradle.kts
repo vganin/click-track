@@ -138,7 +138,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
-    implementation(libs.googlePlay.core)
+    implementation(libs.googlePlay.review)
     ksp(libs.kotlininject.compiler)
 
     testImplementation(kotlin("test"))
