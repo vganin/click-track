@@ -2,11 +2,11 @@ import com.android.build.gradle.BaseExtension
 import org.gradle.api.JavaVersion
 
 fun BaseExtension.applyAndroidCommon() {
-    compileSdkVersion(34)
+    compileSdkVersion(36)
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 34
+        targetSdk = 36
     }
 
     compileOptions {
