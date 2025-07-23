@@ -48,7 +48,7 @@ class SoundLibraryViewModelImpl(
     ) { selectedId, userItems, playingId ->
         SoundLibraryState(
             buildList {
-                this += BuiltinClickSounds.values().map { it.toItem(selectedId) }
+                this += BuiltinClickSounds.entries.map { it.toItem(selectedId) }
                 this += userItems.map { it.toItem(selectedId, playingId) }
             },
         )

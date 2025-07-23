@@ -12,8 +12,8 @@ import com.vsevolodganin.clicktrack.utils.math.plus
 /**
  * Polyrhythm is represented as a grid with the length equal to least common multiple of all input patterns.
  */
-data class AbstractPolyrhythm internal constructor(val columns: List<Column>, val untilFirst: Rational) {
-    data class Column internal constructor(val indices: List<Int>, val untilNext: Rational)
+data class AbstractPolyrhythm(val columns: List<Column>, val untilFirst: Rational) {
+    data class Column(val indices: List<Int>, val untilNext: Rational)
 }
 
 fun AbstractPolyrhythm(pattern1: List<NoteEvent>, pattern2: List<NoteEvent>): AbstractPolyrhythm {

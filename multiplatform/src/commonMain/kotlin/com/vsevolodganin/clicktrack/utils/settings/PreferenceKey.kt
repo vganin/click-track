@@ -1,9 +1,11 @@
 package com.vsevolodganin.clicktrack.utils.settings
 
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import kotlinx.coroutines.flow.Flow
 import kotlin.reflect.KSuspendFunction2
 
+@ExperimentalSettingsApi
 sealed interface PreferenceKey<T> {
     val name: kotlin.String
     val flow: FlowSettings.() -> Flow<T?>
@@ -35,6 +37,7 @@ sealed interface PreferenceKey<T> {
     }
 }
 
+@OptIn(ExperimentalSettingsApi::class)
 private suspend inline fun <reified T : Any> FlowSettings.removeOrPut(
     key: String,
     value: T?,

@@ -56,12 +56,6 @@ fun RootView(viewModel: RootViewModel) {
 private fun RootView(viewModel: RootViewModel, modifier: Modifier) {
     val screens by viewModel.screens.subscribeAsState()
 
-    data class ActiveScreen(
-        val config: ScreenConfiguration,
-        val viewModel: ScreenViewModel,
-        val position: Int,
-    )
-
     val activeScreen by remember {
         derivedStateOf {
             ActiveScreen(screens.active.configuration, screens.active.instance, screens.backStack.size)
@@ -97,6 +91,12 @@ private fun RootView(viewModel: RootViewModel, modifier: Modifier) {
         RootView(screen.viewModel)
     }
 }
+
+private data class ActiveScreen(
+    val config: ScreenConfiguration,
+    val viewModel: ScreenViewModel,
+    val position: Int,
+)
 
 @Composable
 private fun RootView(viewModel: ScreenViewModel) {

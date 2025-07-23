@@ -1,9 +1,10 @@
 package com.vsevolodganin.clicktrack.model
 
-import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
+import kotlin.time.ExperimentalTime
 import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 import kotlin.time.toDuration
@@ -38,4 +39,5 @@ object PlayableProgressTimeSource : TimeSource {
     }
 }
 
+@OptIn(ExperimentalTime::class)
 private fun elapsedRealtimeNanos(): Long = Clock.System.now().run { epochSeconds * 1_000_000_000L + nanosecondsOfSecond }

@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Chip
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FabPosition
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -47,9 +51,6 @@ import com.vsevolodganin.clicktrack.ui.piece.PlayButtons
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
-import com.vsevolodganin.clicktrack.utils.compose.AlertDialog
-import com.vsevolodganin.clicktrack.utils.compose.DropdownMenu
-import com.vsevolodganin.clicktrack.utils.compose.DropdownMenuItem
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -180,6 +181,7 @@ private fun OverflowMenu(viewModel: PlayClickTrackViewModel, state: PlayClickTra
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BottomBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackState) {
     Box(

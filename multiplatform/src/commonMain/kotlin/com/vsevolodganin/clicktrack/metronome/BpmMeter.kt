@@ -1,9 +1,10 @@
 package com.vsevolodganin.clicktrack.metronome
 
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
-import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.ExperimentalTime
 
 @Inject
 class BpmMeter {
@@ -33,6 +34,7 @@ class BpmMeter {
         )
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun now() = Clock.System.now().toEpochMilliseconds()
 }
 

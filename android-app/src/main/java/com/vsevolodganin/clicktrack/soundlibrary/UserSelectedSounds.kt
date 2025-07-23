@@ -5,6 +5,8 @@ import com.vsevolodganin.clicktrack.model.ClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,6 +23,7 @@ class UserSelectedSounds(
     userPreferencesRepository: UserPreferencesRepository,
     private val clickSoundsRepository: ClickSoundsRepository,
 ) {
+    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     private val cached = userPreferencesRepository.selectedSoundsId.flow
         .flatMapLatest(::soundsById)
         .stateIn(

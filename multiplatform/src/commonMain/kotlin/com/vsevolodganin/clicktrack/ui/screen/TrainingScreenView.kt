@@ -95,7 +95,7 @@ private fun Content(viewModel: TrainingViewModel) {
         }
 
         DropdownSelector(
-            items = TrainingMode.values().toList(),
+            items = TrainingMode.entries,
             selectedValue = state.mode,
             onSelect = viewModel::onModeSelect,
             toString = { it.stringResource() },
@@ -129,7 +129,7 @@ private fun Content(viewModel: TrainingViewModel) {
 
         FormRow {
             DropdownSelector(
-                items = TrainingEndingKind.values().toList(),
+                items = TrainingEndingKind.entries,
                 selectedValue = state.activeEndingKind,
                 onSelect = viewModel::onEndingKindChange,
                 toString = { it.stringResource(state.mode) },

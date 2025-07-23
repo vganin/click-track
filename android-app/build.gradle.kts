@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Properties
 
-@Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
     id("clicktrack.android.application")
     id("clicktrack.include-in-coverage")
@@ -83,35 +82,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-
-        freeCompilerArgs += listOf(
-            "-opt-in=kotlin.ExperimentalStdlibApi",
-            "-opt-in=kotlin.time.ExperimentalTime",
-            "-opt-in=kotlin.contracts.ExperimentalContracts",
-            "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi",
-            "-opt-in=kotlinx.coroutines.ObsoleteCoroutinesApi",
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-opt-in=kotlinx.coroutines.InternalCoroutinesApi",
-            "-opt-in=kotlinx.coroutines.FlowPreview",
-            "-opt-in=androidx.compose.foundation.ExperimentalFoundationApi",
-            "-opt-in=androidx.compose.ui.ExperimentalComposeUiApi",
-            "-opt-in=androidx.compose.animation.ExperimentalAnimationApi",
-            "-opt-in=androidx.compose.animation.core.InternalAnimationApi",
-            "-opt-in=androidx.compose.material.ExperimentalMaterialApi",
-            "-opt-in=com.russhwolf.settings.ExperimentalSettingsApi",
-            // https://github.com/androidx/androidx/blob/androidx-main/compose/compiler/design/compiler-metrics.md
-            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=$buildDir/reports/compose_metrics",
-            "-P", "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=$buildDir/reports/compose_metrics",
-        )
     }
 
     externalNativeBuild {

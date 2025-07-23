@@ -1,5 +1,6 @@
 package com.vsevolodganin.clicktrack.storage
 
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
@@ -16,6 +17,7 @@ import com.vsevolodganin.clicktrack.training.TrainingEditState.TrainingMode
 import com.vsevolodganin.clicktrack.training.TrainingValidState
 import com.vsevolodganin.clicktrack.utils.settings.PreferenceKey
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
@@ -24,10 +26,10 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 
+@OptIn(ExperimentalSettingsApi::class)
 @ApplicationScope
 @Inject
 class UserPreferencesRepository(
@@ -82,7 +84,7 @@ class UserPreferencesRepository(
         defaultValue = ClickSoundsId.Builtin(BuiltinClickSounds.BEEP),
         toExternal = { stringValue ->
             stringValue.toLongOrNull()?.let(ClickSoundsId::Database)
-                ?: BuiltinClickSounds.values().firstOrNull { it.storageKey == stringValue }?.let(ClickSoundsId::Builtin)
+                ?: BuiltinClickSounds.entries.firstOrNull { it.storageKey == stringValue }?.let(ClickSoundsId::Builtin)
                 ?: ClickSoundsId.Builtin(BuiltinClickSounds.BEEP)
         },
         toInternal = {
@@ -127,6 +129,7 @@ class UserPreferencesRepository(
         defaultValue = true,
     )
 
+    @OptIn(ExperimentalSettingsApi::class, DelicateCoroutinesApi::class)
     private open inner class UserPropertyAccessWithMapping<TInternal, TExternal>(
         private val key: PreferenceKey<TInternal>,
         private val defaultValue: TExternal,
