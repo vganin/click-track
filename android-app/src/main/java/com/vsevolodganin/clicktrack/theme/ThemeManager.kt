@@ -3,6 +3,7 @@ package com.vsevolodganin.clicktrack.theme
 import androidx.appcompat.app.AppCompatDelegate
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
@@ -14,6 +15,7 @@ import me.tatarka.inject.annotations.Inject
 class ThemeManager(
     private val userPreferences: UserPreferencesRepository,
 ) {
+    @OptIn(DelicateCoroutinesApi::class)
     fun start() {
         setTheme(userPreferences.theme.value)
         GlobalScope.launch(context = Dispatchers.Main) {

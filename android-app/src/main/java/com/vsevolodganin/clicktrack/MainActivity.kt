@@ -13,12 +13,14 @@ import com.arkivanov.decompose.defaultComponentContext
 import com.vsevolodganin.clicktrack.di.component.MainActivityComponent
 import com.vsevolodganin.clicktrack.di.component.create
 import com.vsevolodganin.clicktrack.ui.RootView
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var component: MainActivityComponent
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

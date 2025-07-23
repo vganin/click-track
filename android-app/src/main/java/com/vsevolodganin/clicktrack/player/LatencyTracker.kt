@@ -2,6 +2,7 @@ package com.vsevolodganin.clicktrack.player
 
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.primitiveaudio.PrimitiveAudioPlayer
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
@@ -25,6 +26,7 @@ class LatencyTracker(
     private val _latencyState = MutableStateFlow(Duration.ZERO)
     val latencyState: StateFlow<Duration> = _latencyState
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun start() {
         latencyMeasureJob?.cancel()
         latencyMeasureJob = GlobalScope.launch(Dispatchers.Main) {

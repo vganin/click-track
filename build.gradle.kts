@@ -1,7 +1,6 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import javax.xml.parsers.DocumentBuilderFactory
 
-@Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
     id("clicktrack.ktlint")
     alias(libs.plugins.jetbrains.compose) apply false
@@ -43,9 +42,11 @@ allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
         compilerOptions {
             val allKotlinWarningsAsErrors: String? by project
-            // FIXME: Flip back to default true when possible
             allWarningsAsErrors.set(allKotlinWarningsAsErrors?.toBoolean() ?: true)
             freeCompilerArgs.add("-Xexpect-actual-classes")
+
+            // FIXME: Need this because kotlin-inject generates code without opt-in
+            optIn.add("com.russhwolf.settings.ExperimentalSettingsApi")
         }
     }
 }

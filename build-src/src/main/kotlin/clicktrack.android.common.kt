@@ -5,14 +5,13 @@ fun BaseExtension.applyAndroidCommon() {
     compileSdkVersion(36)
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
     }
 
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
-
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }

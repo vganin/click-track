@@ -8,6 +8,7 @@ import com.vsevolodganin.clicktrack.analytics.AnalyticsLogger
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.log.Logger
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -24,6 +25,7 @@ class InAppReview(
     private val analyticsLogger: AnalyticsLogger,
     private val logger: Logger,
 ) {
+    @OptIn(DelicateCoroutinesApi::class)
     fun tryLaunchRequestReview() {
         GlobalScope.launch(Dispatchers.Main) {
             tryRequestReview()

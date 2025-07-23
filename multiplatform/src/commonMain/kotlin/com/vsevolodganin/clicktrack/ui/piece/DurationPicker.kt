@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION") // FIXME: Use PlatformTextInputModifierNode instead of TextInputSession
+
 package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.foundation.clickable
@@ -19,7 +21,6 @@ import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -228,11 +229,7 @@ private fun RowScope.CloseIcon(onClick: () -> Unit) {
         modifier = Modifier
             .align(Alignment.CenterVertically)
             .size(16.dp, 16.dp)
-            .clickable(
-                onClick = onClick,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = false),
-            ),
+            .clickable(onClick = onClick),
     ) {
         Icon(imageVector = Icons.Default.Close, contentDescription = null)
     }

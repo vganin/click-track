@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.offset
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SwipeableState
 import androidx.compose.material.swipeable
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ enum class RevealValue {
     Revealed,
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SwipeToReveal(
     state: SwipeableState<RevealValue>,

@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.generated.resources.MR
 import dev.icerock.moko.resources.compose.colorResource
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SwipeToDelete(onDeleted: () -> Unit, modifier: Modifier = Modifier, contentPadding: Dp = 0.dp, content: @Composable () -> Unit) {
     val revealState = rememberSwipeableState(RevealValue.Hidden)
@@ -67,6 +69,7 @@ fun SwipeToDelete(onDeleted: () -> Unit, modifier: Modifier = Modifier, contentP
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BoxScope.DeleteLayout(state: SwipeableState<RevealValue>, padding: Dp, onDelete: () -> Unit) {
     val backgroundColor by animateColorAsState(

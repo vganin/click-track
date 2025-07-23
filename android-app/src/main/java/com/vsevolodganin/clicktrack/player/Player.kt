@@ -19,6 +19,8 @@ import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.utils.grabIf
 import com.vsevolodganin.clicktrack.utils.log.Logger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
@@ -181,6 +183,7 @@ class Player(
 
     fun playbackState(): Flow<PlaybackState?> = externalPlaybackState
 
+    @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
     private val externalPlaybackState = combine(
         playbackState,
         pausedState,
@@ -247,6 +250,7 @@ class Player(
         )
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private suspend fun soundSourceProvider(soundsId: ClickSoundsId?): SoundSourceProvider {
         val soundsFlow = if (soundsId != null) soundsById(soundsId) else userSelectedSounds.get()
         val soundsState = soundsFlow.stateIn(GlobalScope)

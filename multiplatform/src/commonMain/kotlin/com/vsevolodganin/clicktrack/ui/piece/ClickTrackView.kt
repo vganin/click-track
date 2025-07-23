@@ -57,10 +57,11 @@ import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.detectTransformGesturesWithEndCallbacks
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlin.math.roundToInt
+import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun ClickTrackView(
@@ -325,6 +326,7 @@ private fun Duration.toX(totalDuration: Duration, viewWidth: Float): Float {
     }
 }
 
+@OptIn(ExperimentalTime::class)
 private fun Modifier.clickTrackGestures(
     viewportZoomAndPanEnabled: Boolean,
     progressDragAndDropEnabled: Boolean,
