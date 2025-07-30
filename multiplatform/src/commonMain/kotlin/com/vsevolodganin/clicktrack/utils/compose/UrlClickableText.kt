@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION") // FIXME: Use LinkAnnotatation.Url instead of UrlAnnotation
+
 package com.vsevolodganin.clicktrack.utils.compose
 
 import androidx.compose.foundation.text.InlineTextContent
@@ -7,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -20,6 +23,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 
+@OptIn(ExperimentalTextApi::class)
 @Composable
 fun UrlClickableText(
     textWithUrls: String,

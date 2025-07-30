@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.SharedPreferencesSettings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
@@ -12,7 +13,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Provides
 
+@OptIn(ExperimentalSettingsApi::class)
 interface UserPreferencesModule {
+
     @Provides
     fun provideUserPreferences(application: Application): FlowSettings {
         return SharedPreferencesSettings.Factory(application).create("user_preferences")

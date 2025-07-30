@@ -6,12 +6,14 @@ import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnResume
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+@OptIn(DelicateCoroutinesApi::class)
 @MainControllerScope
 @Inject
 class LanguageStoreImpl(lifecycleOwner: LifecycleOwner) : LanguageStore {

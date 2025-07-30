@@ -2,7 +2,6 @@
 
 import org.jetbrains.compose.compose
 
-@Suppress("DSL_SCOPE_VIOLATION") // FIXME(https://github.com/gradle/gradle/issues/22797)
 plugins {
     id("clicktrack.multiplatform")
     id("clicktrack.include-in-coverage")
@@ -18,27 +17,6 @@ plugins {
 
 kotlin {
     sourceSets {
-        all {
-            languageSettings {
-                optIn("androidx.compose.animation.ExperimentalAnimationApi")
-                optIn("androidx.compose.animation.core.InternalAnimationApi")
-                optIn("androidx.compose.foundation.ExperimentalFoundationApi")
-                optIn("androidx.compose.material.ExperimentalMaterialApi")
-                optIn("androidx.compose.ui.ExperimentalComposeUiApi")
-                optIn("androidx.compose.ui.text.ExperimentalTextApi")
-                optIn("com.russhwolf.settings.ExperimentalSettingsApi")
-                optIn("kotlin.ExperimentalStdlibApi")
-                optIn("kotlin.contracts.ExperimentalContracts")
-                optIn("kotlin.time.ExperimentalTime")
-                optIn("kotlinx.coroutines.DelicateCoroutinesApi")
-                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
-                optIn("kotlinx.coroutines.FlowPreview")
-                optIn("kotlinx.coroutines.InternalCoroutinesApi")
-                optIn("kotlinx.coroutines.ObsoleteCoroutinesApi")
-                optIn("kotlin.experimental.ExperimentalNativeApi")
-            }
-        }
-
         commonMain {
             dependencies {
                 api(compose.runtime)

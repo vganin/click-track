@@ -10,6 +10,4 @@ configure<KotlinMultiplatformExtension> {
 
     iosSimulatorArm64()
     androidTarget()
-
-    jvmToolchain(17)
 }

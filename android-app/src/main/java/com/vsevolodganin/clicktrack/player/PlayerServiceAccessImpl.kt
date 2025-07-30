@@ -9,6 +9,7 @@ import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -39,6 +40,7 @@ class PlayerServiceAccessImpl(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private val playbackState = binderState.flatMapLatest { it?.playbackState ?: flowOf(null) }
         .onStart {
             PlayerService.bind(activity, serviceConnection)
