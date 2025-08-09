@@ -42,6 +42,7 @@ import com.vsevolodganin.clicktrack.utils.compose.widthByText
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.DurationUnit
@@ -175,9 +176,9 @@ private fun Duration.toAngle(totalDuration: Duration): Float {
     }
 }
 
-@ScreenPreview
+@Preview
 @Composable
-private fun Preview() = ClickTrackTheme {
+internal fun PolyrhythmsScreenPreview() = ClickTrackTheme {
     PolyrhythmsScreenView(
         viewModel = object : PolyrhythmsViewModel {
             override val state: StateFlow<PolyrhythmsState?> = MutableStateFlow(

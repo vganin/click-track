@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.CueDuration
-import com.vsevolodganin.clicktrack.utils.compose.Preview
 import dev.icerock.moko.resources.compose.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration.Companion.minutes
 
 @Composable

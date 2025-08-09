@@ -15,7 +15,7 @@ import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.DOWN
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.LEFT
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.RIGHT
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.UP
-import com.vsevolodganin.clicktrack.utils.compose.Preview
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 enum class ArrowDirection {
     UP,

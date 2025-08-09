@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun animatePathAsState(path: String): State<List<PathNode>> {

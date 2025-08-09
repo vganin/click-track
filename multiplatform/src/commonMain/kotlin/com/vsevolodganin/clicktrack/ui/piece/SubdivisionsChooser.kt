@@ -37,8 +37,8 @@ import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.NotePatternGroup
 import com.vsevolodganin.clicktrack.model.TimeSignature
-import com.vsevolodganin.clicktrack.utils.compose.Preview
 import dev.icerock.moko.resources.compose.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SubdivisionsChooser(

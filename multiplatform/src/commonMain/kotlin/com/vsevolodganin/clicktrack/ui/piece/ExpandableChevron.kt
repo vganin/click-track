@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathNode
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.utils.compose.Preview
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun ExpandableChevron(

@@ -72,6 +72,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -311,9 +312,9 @@ private fun ReorderableCollectionItemScope.CueListItem(
 
 private val TEMPO_OFFSET_RANGE = -20..20
 
-@ScreenPreview
+@Preview
 @Composable
-private fun Preview() = ClickTrackTheme {
+internal fun EditClickTrackScreenPreview() = ClickTrackTheme {
     EditClickTrackScreenView(
         viewModel = object : EditClickTrackViewModel {
             override val state: StateFlow<EditClickTrackState?> = MutableStateFlow(

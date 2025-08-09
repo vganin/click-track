@@ -51,8 +51,8 @@ import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SoundLibraryScreenView(viewModel: SoundLibraryViewModel, modifier: Modifier = Modifier) {
@@ -221,9 +221,9 @@ private fun UserDefinedSoundsItem(viewModel: SoundLibraryViewModel, item: Select
     }
 }
 
-@ScreenPreview
+@Preview
 @Composable
-private fun Preview() = ClickTrackTheme {
+internal fun SoundLibraryScreenPreview() = ClickTrackTheme {
     SoundLibraryScreenView(
         viewModel = object : SoundLibraryViewModel {
             override val state: StateFlow<SoundLibraryState?> = MutableStateFlow(

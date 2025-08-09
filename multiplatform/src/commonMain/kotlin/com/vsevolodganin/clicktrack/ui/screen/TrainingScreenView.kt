@@ -38,6 +38,7 @@ import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
@@ -181,9 +182,9 @@ private fun TrainingEndingKind.stringResource(mode: TrainingMode): String {
     )
 }
 
-@ScreenPreview
+@Preview
 @Composable
-private fun Preview() = ClickTrackTheme {
+internal fun TrainingScreenPreview() = ClickTrackTheme {
     TrainingScreenView(
         viewModel = object : TrainingViewModel {
             override val state: StateFlow<TrainingEditState> = MutableStateFlow(

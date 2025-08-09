@@ -56,6 +56,7 @@ import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun PlayClickTrackScreenView(viewModel: PlayClickTrackViewModel, modifier: Modifier = Modifier) {
@@ -213,9 +214,9 @@ private fun BottomBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackS
     }
 }
 
-@ScreenPreview
+@Preview
 @Composable
-private fun Preview() = ClickTrackTheme {
+internal fun PlayClickTrackScreenPreview() = ClickTrackTheme {
     PlayClickTrackScreenView(
         viewModel = object : PlayClickTrackViewModel {
             override val state: StateFlow<PlayClickTrackState?> = MutableStateFlow(

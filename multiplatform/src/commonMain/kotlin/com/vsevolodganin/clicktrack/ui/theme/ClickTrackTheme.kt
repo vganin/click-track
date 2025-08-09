@@ -18,8 +18,7 @@ import androidx.compose.ui.unit.Dp
 import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.ui.piece.SystemUiSetup
 import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
-import com.vsevolodganin.clicktrack.utils.compose.DarkPreview
-import com.vsevolodganin.clicktrack.utils.compose.LightPreview
+import com.vsevolodganin.clicktrack.ui.screen.ClickTrackListScreenPreview
 import com.vsevolodganin.clicktrack.utils.compose.isSystemInLandscape
 import com.vsevolodganin.clicktrack.utils.compose.navigationBars
 import dev.icerock.moko.resources.compose.colorResource
@@ -91,22 +90,9 @@ private fun surfaceColorAtElevation(color: Color, elevationOverlay: ElevationOve
     }
 }
 
-@LightPreview
 @Composable
-private fun LightThemePreview() {
-    ThemePreview()
-}
-
-@DarkPreview
-@Composable
-private fun DarkThemePreview() {
-    ThemePreview()
-}
-
-@Composable
-private fun ThemePreview() {
+internal fun ClickTrackThemePreview() {
     ClickTrackTheme {
-        // TODO: Uncomment after porting ClickTrackListPreview
-//        ClickTrackListPreview()
+        ClickTrackListScreenPreview()
     }
 }

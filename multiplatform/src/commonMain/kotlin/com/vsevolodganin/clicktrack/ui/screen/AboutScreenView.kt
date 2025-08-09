@@ -35,6 +35,7 @@ import com.vsevolodganin.clicktrack.about.AboutState
 import com.vsevolodganin.clicktrack.about.AboutViewModel
 import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.UrlClickableText
 import com.vsevolodganin.clicktrack.utils.compose.isSystemInLandscape
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
@@ -45,6 +46,7 @@ import dev.icerock.moko.resources.compose.painterResource
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun AboutScreenView(viewModel: AboutViewModel, modifier: Modifier = Modifier) {
@@ -148,9 +150,9 @@ private fun Content(viewModel: AboutViewModel) {
     }
 }
 
-@ScreenPreview
+@Preview
 @Composable
-private fun Preview() {
+internal fun AboutScreenPreview() = ClickTrackTheme {
     AboutScreenView(
         viewModel = object : AboutViewModel {
             override val state: StateFlow<AboutState> = MutableStateFlow(

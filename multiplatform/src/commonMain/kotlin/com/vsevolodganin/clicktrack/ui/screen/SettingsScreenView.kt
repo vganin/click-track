@@ -30,6 +30,7 @@ import com.vsevolodganin.clicktrack.utils.platform.isDebug
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SettingsScreenView(viewModel: SettingsViewModel, modifier: Modifier = Modifier) {
@@ -137,9 +138,9 @@ private fun AppLanguage.displayValue(): String = when (this) {
     AppLanguage.RUSSIAN -> MR.strings.settings_language_system_russian
 }.let { stringResource(it) }
 
-@ScreenPreview
+@Preview
 @Composable
-private fun Preview() = ClickTrackTheme {
+internal fun SettingsScreenPreview() = ClickTrackTheme {
     SettingsScreenView(
         viewModel = object : SettingsViewModel {
             override val state: StateFlow<SettingsState> = MutableStateFlow(

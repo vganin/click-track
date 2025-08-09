@@ -12,7 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.vsevolodganin.clicktrack.model.TimeSignature
-import com.vsevolodganin.clicktrack.utils.compose.Preview
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun TimeSignatureView(state: MutableState<TimeSignature>, modifier: Modifier = Modifier) {
