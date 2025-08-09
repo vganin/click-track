@@ -38,18 +38,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.metronome.MetronomeState
-import com.vsevolodganin.clicktrack.metronome.MetronomeTimeSignature
 import com.vsevolodganin.clicktrack.metronome.MetronomeViewModel
 import com.vsevolodganin.clicktrack.metronome.metronomeClickTrack
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteOffset
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.PlayProgress
+import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.model.bpm
 import com.vsevolodganin.clicktrack.ui.piece.BpmWheel
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
 import com.vsevolodganin.clicktrack.ui.piece.SubdivisionsChooser
+import com.vsevolodganin.clicktrack.ui.piece.TimeSignatureView
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
 import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
 import com.vsevolodganin.clicktrack.ui.piece.onDarkAppBarSurface
@@ -114,11 +115,12 @@ private fun Content(viewModel: MetronomeViewModel) {
             elevation = 8.dp,
         ) {
             val metronomeClickTrackName = stringResource(MR.strings.general_metronome_click_track_title)
-            val metronomeClickTrack = remember(state.bpm, state.pattern) {
+            val metronomeClickTrack = remember(state.bpm, state.pattern, state.timeSignature) {
                 metronomeClickTrack(
                     name = metronomeClickTrackName,
                     bpm = state.bpm,
                     pattern = state.pattern,
+                    timeSignature = state.timeSignature,
                 )
             }
 
@@ -192,14 +194,23 @@ private fun Content(viewModel: MetronomeViewModel) {
 
 @Composable
 private fun Options(viewModel: MetronomeViewModel) {
-    val pattern = viewModel.state.collectAsState().value?.pattern ?: return
-    SubdivisionsChooser(
-        pattern = pattern,
-        timeSignature = MetronomeTimeSignature,
-        onSubdivisionChoose = viewModel::onPatternChoose,
+    val state = viewModel.state.collectAsState().value ?: return
+    Column(
         modifier = Modifier.padding(8.dp),
-        alwaysExpanded = true,
-    )
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        TimeSignatureView(
+            value = state.timeSignature,
+            onValueChange = viewModel::onTimeSignatureChange,
+        )
+        
+        SubdivisionsChooser(
+            pattern = state.pattern,
+            timeSignature = state.timeSignature,
+            onSubdivisionChoose = viewModel::onPatternChoose,
+            alwaysExpanded = true,
+        )
+    }
 }
 
 @Composable
@@ -236,6 +247,7 @@ internal fun MetronomeScreenPreview() = ClickTrackTheme {
                 MetronomeState(
                     bpm = 90.bpm,
                     pattern = NotePattern.QUINTUPLET_X2,
+                    timeSignature = TimeSignature(4, 4),
                     progress = PlayProgress(100.milliseconds),
                     isPlaying = false,
                     areOptionsExpanded = false,
@@ -249,6 +261,8 @@ internal fun MetronomeScreenPreview() = ClickTrackTheme {
             override fun onOptionsExpandedChange(isOpened: Boolean) = Unit
 
             override fun onPatternChoose(pattern: NotePattern) = Unit
+
+            override fun onTimeSignatureChange(timeSignature: TimeSignature) = Unit
 
             override fun onBpmChange(bpmDiff: BeatsPerMinuteOffset) = Unit
 

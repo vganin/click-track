@@ -35,11 +35,13 @@ class PlayableContentProvider(
                 combine(
                     userPreferences.metronomeBpm.flow,
                     userPreferences.metronomePattern.flow,
-                ) { bpm, pattern ->
+                    userPreferences.metronomeTimeSignature.flow,
+                ) { bpm, pattern, timeSignature ->
                     metronomeClickTrack(
                         name = application.getString(MR.string.general_metronome_click_track_title),
                         bpm = bpm,
                         pattern = pattern,
+                        timeSignature = timeSignature,
                     )
                 }
             }
