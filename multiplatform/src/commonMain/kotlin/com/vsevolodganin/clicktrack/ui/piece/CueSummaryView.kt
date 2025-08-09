@@ -21,8 +21,8 @@ import com.vsevolodganin.clicktrack.model.Cue
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.model.bpm
-import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.widthInByText
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun CueSummaryView(cue: Cue, tempoOffset: BeatsPerMinuteOffset) {

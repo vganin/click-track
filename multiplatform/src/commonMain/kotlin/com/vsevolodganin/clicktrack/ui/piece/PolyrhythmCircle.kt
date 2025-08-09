@@ -37,9 +37,9 @@ import com.vsevolodganin.clicktrack.utils.compose.Angle
 import com.vsevolodganin.clicktrack.utils.compose.AngleSector
 import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
-import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.toRadians
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin

@@ -47,8 +47,8 @@ import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -170,9 +170,9 @@ private fun ClickTrackListItem(
     }
 }
 
-@ScreenPreview
+@Preview
 @Composable
-fun ClickTrackListPreview() = ClickTrackTheme {
+internal fun ClickTrackListScreenPreview() = ClickTrackTheme {
     ClickTrackListScreenView(
         viewModel = object : ClickTrackListViewModel {
             override val state: StateFlow<ClickTrackListState> = MutableStateFlow(

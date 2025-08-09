@@ -20,8 +20,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.generated.resources.MR
-import com.vsevolodganin.clicktrack.utils.compose.Preview
 import dev.icerock.moko.resources.compose.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 data class ListChooserItem<T>(
     val value: T,

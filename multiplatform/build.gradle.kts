@@ -24,6 +24,7 @@ kotlin {
                 api(compose.ui)
                 api(compose.material)
                 api(compose.materialIconsExtended)
+                api(compose.components.uiToolingPreview)
                 // FIXME(https://github.com/JetBrains/compose-jb/issues/1295): Replace with `org.jetbrains.compose.ComposePlugin.Dependencies` field when it's available
                 api(compose("org.jetbrains.compose.ui:ui-util"))
                 api(libs.simpleIcons)

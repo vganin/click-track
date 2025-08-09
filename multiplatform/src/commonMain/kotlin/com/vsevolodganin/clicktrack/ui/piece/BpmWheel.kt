@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteOffset
 import com.vsevolodganin.clicktrack.model.bpm
-import com.vsevolodganin.clicktrack.utils.compose.Preview
 import com.vsevolodganin.clicktrack.utils.compose.detectRadialDragGesture
 import com.vsevolodganin.clicktrack.utils.compose.toRadians
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.math.cos
 import kotlin.math.roundToInt
 import kotlin.math.sin

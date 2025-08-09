@@ -26,8 +26,8 @@ import com.vsevolodganin.clicktrack.model.DefaultMeasuresDuration
 import com.vsevolodganin.clicktrack.model.DefaultTimeDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
-import com.vsevolodganin.clicktrack.utils.compose.Preview
 import dev.icerock.moko.resources.compose.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun CueView(

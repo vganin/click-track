@@ -59,6 +59,7 @@ import com.vsevolodganin.clicktrack.utils.compose.statusBars
 import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -226,9 +227,9 @@ private fun backdropState(viewModel: MetronomeViewModel): BackdropScaffoldState 
     }
 }
 
-@ScreenPreview
+@Preview
 @Composable
-private fun Preview() = ClickTrackTheme {
+internal fun MetronomeScreenPreview() = ClickTrackTheme {
     MetronomeScreenView(
         viewModel = object : MetronomeViewModel {
             override val state: StateFlow<MetronomeState?> = MutableStateFlow(

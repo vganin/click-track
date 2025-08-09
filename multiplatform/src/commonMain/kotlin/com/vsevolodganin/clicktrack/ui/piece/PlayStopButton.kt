@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.vector.PathBuilder
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopIconState.PLAY
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopIconState.STOP
-import com.vsevolodganin.clicktrack.utils.compose.Preview
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun PlayStopButton(isPlaying: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier, enableInsets: Boolean = true) {
