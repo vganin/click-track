@@ -31,7 +31,7 @@ desugarJdkLibs = "com.android.tools:desugar_jdk_libs:2.1.5"
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = "com.google.firebase:firebase-bom:34.1.0"
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
-firebase-crashlytics-gradlePlugin = "com.google.firebase:firebase-crashlytics-gradle:3.0.5"
+firebase-crashlytics-gradlePlugin = "com.google.firebase:firebase-crashlytics-gradle:3.0.6"
 firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
 gms-gradlePlugin = "com.google.gms:google-services:4.4.3"
 googlePlay-review = "com.google.android.play:review-ktx:2.0.2"
