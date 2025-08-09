@@ -95,3 +95,28 @@ tasks.register("printLineCoverage") {
         println("%.1f".format(coveragePercent))
     }
 }
+
+tasks.register("checkAndroid") {
+    group = "verification"
+    description = "Runs all checks on Android code"
+    dependsOn(
+        ":android-app:check",
+        ":multiplatform:testDebugUnitTest",
+        project(":multiplatform").tasks.matching {
+            it.name.startsWith("ktlintCommon") || it.name.startsWith("ktlintAndroid")
+        },
+        ":multiplatform:verifyCommonMainDatabaseMigration",
+    )
+}
+
+tasks.register("checkIos") {
+    group = "verification"
+    description = "Runs all checks on iOS code"
+    dependsOn(
+        ":multiplatform:iosSimulatorArm64Test",
+        project(":multiplatform").tasks.matching {
+            it.name.startsWith("ktlintCommon") || it.name.startsWith("ktlintIos")
+        },
+        ":multiplatform:verifyCommonMainDatabaseMigration",
+    )
+}

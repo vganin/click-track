@@ -22,7 +22,7 @@ jobs:
           java-version: 21
           cache: 'gradle'
       - name: Check code
-        run: ./gradlew check
+        run: ./gradlew :checkAndroid
       - name: Build Android app
         run: ./gradlew :android-app:bundleRelease
   ios:
@@ -42,7 +42,7 @@ jobs:
         with:
           xcode-version: '16.3'
       - name: Check code
-        run: ./gradlew check
+        run: ./gradlew :checkIos
       - name: Generate dummy framework
         run: ./gradlew :multiplatform:generateDummyFramework
       - name: Install pods
