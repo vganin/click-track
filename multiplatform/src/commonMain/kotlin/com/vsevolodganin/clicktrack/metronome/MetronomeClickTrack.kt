@@ -19,6 +19,3 @@ fun metronomeClickTrack(name: String, bpm: BeatsPerMinute, pattern: NotePattern,
     ),
     loop = true,
 )
-
-val MetronomeTimeSignature = TimeSignature(4, 4)
-private val MetronomeDuration = CueDuration.Beats(4)

@@ -141,6 +141,11 @@ private fun Content(viewModel: MetronomeViewModel) {
             ),
         )
 
+        TimeSignatureView(
+            value = state.timeSignature,
+            onValueChange = viewModel::onTimeSignatureChange,
+        )
+
         Layout(
             content = {
                 Box(contentAlignment = Alignment.Center) {
@@ -195,22 +200,13 @@ private fun Content(viewModel: MetronomeViewModel) {
 @Composable
 private fun Options(viewModel: MetronomeViewModel) {
     val state = viewModel.state.collectAsState().value ?: return
-    Column(
+    SubdivisionsChooser(
+        pattern = state.pattern,
+        timeSignature = state.timeSignature,
+        onSubdivisionChoose = viewModel::onPatternChoose,
         modifier = Modifier.padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        TimeSignatureView(
-            value = state.timeSignature,
-            onValueChange = viewModel::onTimeSignatureChange,
-        )
-        
-        SubdivisionsChooser(
-            pattern = state.pattern,
-            timeSignature = state.timeSignature,
-            onSubdivisionChoose = viewModel::onPatternChoose,
-            alwaysExpanded = true,
-        )
-    }
+        alwaysExpanded = true,
+    )
 }
 
 @Composable
@@ -240,7 +236,7 @@ private fun backdropState(viewModel: MetronomeViewModel): BackdropScaffoldState 
 
 @Preview
 @Composable
-internal fun MetronomeScreenPreview() = ClickTrackTheme {
+internal fun MetronomeScreenPreview(expanded: Boolean = false) = ClickTrackTheme {
     MetronomeScreenView(
         viewModel = object : MetronomeViewModel {
             override val state: StateFlow<MetronomeState?> = MutableStateFlow(
@@ -250,7 +246,7 @@ internal fun MetronomeScreenPreview() = ClickTrackTheme {
                     timeSignature = TimeSignature(4, 4),
                     progress = PlayProgress(100.milliseconds),
                     isPlaying = false,
-                    areOptionsExpanded = false,
+                    areOptionsExpanded = expanded,
                 ),
             )
 
@@ -272,3 +268,7 @@ internal fun MetronomeScreenPreview() = ClickTrackTheme {
         },
     )
 }
+
+@Preview
+@Composable
+private fun ExpandedMetronomeScreenPreview() = MetronomeScreenPreview(expanded = true)
