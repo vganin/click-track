@@ -6,6 +6,7 @@ import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteOffset
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.NotePattern
+import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
@@ -44,12 +45,14 @@ class MetronomeViewModelImpl(
             areOptionsExpanded,
             userPreferences.metronomeBpm.flow,
             userPreferences.metronomePattern.flow,
+            userPreferences.metronomeTimeSignature.flow,
             playerServiceAccess.playbackState(),
-        ) { areOptionsExpanded, bpm, pattern, playbackState ->
+        ) { areOptionsExpanded, bpm, pattern, timeSignature, playbackState ->
             val isPlaying = playbackState?.id is ClickTrackId.Builtin.Metronome
             MetronomeState(
                 bpm = bpm,
                 pattern = pattern,
+                timeSignature = timeSignature,
                 isPlaying = isPlaying,
                 progress = grabIf(isPlaying) { playbackState?.progress },
                 areOptionsExpanded = areOptionsExpanded,
@@ -72,6 +75,10 @@ class MetronomeViewModelImpl(
     override fun onPatternChoose(pattern: NotePattern) {
         userPreferences.metronomePattern.value = pattern
         areOptionsExpanded.value = false
+    }
+
+    override fun onTimeSignatureChange(timeSignature: TimeSignature) {
+        userPreferences.metronomeTimeSignature.value = timeSignature
     }
 
     override fun onBpmChange(bpmDiff: BeatsPerMinuteOffset) {

@@ -8,6 +8,7 @@ import com.vsevolodganin.clicktrack.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
+import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythm
 import com.vsevolodganin.clicktrack.model.bpm
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository.Const.NO_APP_VERSION_CODE
@@ -70,6 +71,13 @@ class UserPreferencesRepository(
         defaultValue = NotePattern.STRAIGHT_X1,
         toExternal = { NotePattern.valueOf(it) },
         toInternal = { it.toString() },
+    )
+
+    val metronomeTimeSignature: UserPropertyAccess<TimeSignature> = UserPropertyAccessWithMapping(
+        key = PreferenceKey.String("metronome_time_signature"),
+        defaultValue = TimeSignature(4, 4),
+        toExternal = { json.decodeFromString(it) },
+        toInternal = { json.encodeToString(it) },
     )
 
     val theme: UserPropertyAccess<Theme> = UserPropertyAccessWithMapping(
