@@ -45,7 +45,7 @@ kotlinx-kover-gradlePlugin = { module = "org.jetbrains.kotlinx:kover-gradle-plug
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
-ktlint-gradlePlugin = "org.jlleitschuh.gradle:ktlint-gradle:12.1.1"
+ktlint-gradlePlugin = "org.jlleitschuh.gradle:ktlint-gradle:13.0.0"
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 moko-resources = { module = "dev.icerock.moko:resources-compose", version.ref = "moko-resources" }
