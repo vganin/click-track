@@ -24,7 +24,7 @@ androidx-dataStore = "androidx.datastore:datastore-preferences:1.1.7"
 androidx-fragment = "androidx.fragment:fragment-ktx:1.8.9"
 androidx-media = "androidx.media:media:1.7.1"
 androidx-splashScreen = "androidx.core:core-splashscreen:1.0.1"
-androidx-workManager = "androidx.work:work-runtime-ktx:2.10.3"
+androidx-workManager = "androidx.work:work-runtime-ktx:2.10.5"
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 decompose-core = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 desugarJdkLibs = "com.android.tools:desugar_jdk_libs:2.1.5"
