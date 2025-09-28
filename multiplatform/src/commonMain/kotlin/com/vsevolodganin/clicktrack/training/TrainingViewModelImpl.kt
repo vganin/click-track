@@ -6,7 +6,6 @@ import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.DefaultBeatsDuration
 import com.vsevolodganin.clicktrack.model.DefaultMeasuresDuration
@@ -61,9 +60,8 @@ class TrainingViewModelImpl(
         scope.launch {
             val trainingState = userPreferences.trainingState.flow.first()
             val suggestedName = newClickTrackNameSuggester.suggest(
-                withContext(Dispatchers.Main) {
-                    stringResolver.resolve(MR.strings.general_unnamed_training_click_track_template)
-                },
+                // TODO: Update StringResolver to work with compose resources
+                "Training", // was: stringResolver.resolve(MR.strings.general_unnamed_training_click_track_template)
             )
             val newClickTrack = trainingClickTrackGenerator.generate(trainingState, suggestedName)
             val newClickTrackId = clickTrackRepository.insert(newClickTrack)

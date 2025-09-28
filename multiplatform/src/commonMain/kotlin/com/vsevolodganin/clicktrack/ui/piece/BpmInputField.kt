@@ -5,9 +5,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
-import dev.icerock.moko.resources.compose.stringResource
+import org.jetbrains.compose.resources.stringResource
+import clicktrack.multiplatform.composeresources.generated.resources.Res
 
 @Composable
 fun BpmInputField(
@@ -19,7 +19,7 @@ fun BpmInputField(
     allowedNumbersRange: IntRange = BeatsPerMinute.VALID_TEMPO_RANGE,
     fallbackNumber: Int? = 1,
 ) {
-    val bpmSuffix = stringResource(MR.strings.bpm_input_suffix)
+    val bpmSuffix = stringResource(Res.string.bpm_input_suffix)
     NumberInputField(
         value = value,
         onValueChange = onValueChange,

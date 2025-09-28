@@ -5,7 +5,6 @@ import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
 import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
@@ -54,9 +53,8 @@ class ClickTrackListViewModelImpl(
     override fun onAddClick() {
         scope.launch {
             val suggestedNewClickTrackName = newClickTrackNameSuggester.suggest(
-                withContext(Dispatchers.Main) {
-                    stringResolver.resolve(MR.strings.general_unnamed_click_track_template)
-                },
+                // TODO: Update StringResolver to work with compose resources
+                "Unnamed click track", // was: stringResolver.resolve(MR.strings.general_unnamed_click_track_template)
             )
             val newClickTrack = defaultNewClickTrack(suggestedNewClickTrackName)
             val newClickTrackId = clickTrackRepository.insert(newClickTrack)

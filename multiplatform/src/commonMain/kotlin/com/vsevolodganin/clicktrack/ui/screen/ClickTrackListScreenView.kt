@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.list.ClickTrackListState
 import com.vsevolodganin.clicktrack.list.ClickTrackListViewModel
 import com.vsevolodganin.clicktrack.model.ClickTrackId
@@ -44,7 +43,8 @@ import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.ui.theme.commonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
-import dev.icerock.moko.resources.compose.stringResource
+import org.jetbrains.compose.resources.stringResource
+import clicktrack.multiplatform.composeresources.generated.resources.Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
@@ -108,7 +108,7 @@ private fun Content(viewModel: ClickTrackListViewModel) {
 private fun TopBar(viewModel: ClickTrackListViewModel) {
     TopAppBar(
         title = {
-            Text(text = stringResource(MR.strings.click_track_list_screen_title))
+            Text(text = stringResource(Res.string.click_track_list_screen_title))
         },
         navigationIcon = {
             IconButton(onClick = viewModel::onMenuClick) {

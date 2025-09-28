@@ -15,13 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.ui.piece.SystemUiSetup
 import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
 import com.vsevolodganin.clicktrack.ui.screen.ClickTrackListScreenPreview
 import com.vsevolodganin.clicktrack.utils.compose.isSystemInLandscape
 import com.vsevolodganin.clicktrack.utils.compose.navigationBars
-import dev.icerock.moko.resources.compose.colorResource
+import org.jetbrains.compose.resources.colorResource
+import clicktrack.multiplatform.composeresources.generated.resources.Res
 
 @Composable
 fun ClickTrackTheme(content: @Composable () -> Unit) {
@@ -54,30 +54,30 @@ fun ClickTrackTheme(content: @Composable () -> Unit) {
 
 @Composable
 private fun lightPalette() = lightColors(
-    primary = colorResource(MR.colors.primary),
-    primaryVariant = colorResource(MR.colors.primary_variant),
-    secondary = colorResource(MR.colors.secondary),
-    secondaryVariant = colorResource(MR.colors.secondary_variant),
-    background = colorResource(MR.colors.background),
-    surface = colorResource(MR.colors.surface),
-    onPrimary = colorResource(MR.colors.on_primary),
-    onSecondary = colorResource(MR.colors.on_secondary),
-    onBackground = colorResource(MR.colors.on_background),
-    onSurface = colorResource(MR.colors.on_surface),
+    primary = colorResource(Res.color.primary),
+    primaryVariant = colorResource(Res.color.primary_variant),
+    secondary = colorResource(Res.color.secondary),
+    secondaryVariant = colorResource(Res.color.secondary_variant),
+    background = colorResource(Res.color.background),
+    surface = colorResource(Res.color.surface),
+    onPrimary = colorResource(Res.color.on_primary),
+    onSecondary = colorResource(Res.color.on_secondary),
+    onBackground = colorResource(Res.color.on_background),
+    onSurface = colorResource(Res.color.on_surface),
 )
 
 @Composable
 private fun darkPalette() = darkColors(
-    primary = colorResource(MR.colors.primary),
-    primaryVariant = colorResource(MR.colors.primary_variant),
-    secondary = colorResource(MR.colors.secondary),
-    secondaryVariant = colorResource(MR.colors.secondary_variant),
-    background = colorResource(MR.colors.background),
-    surface = colorResource(MR.colors.surface),
-    onPrimary = colorResource(MR.colors.on_primary),
-    onSecondary = colorResource(MR.colors.on_secondary),
-    onBackground = colorResource(MR.colors.on_background),
-    onSurface = colorResource(MR.colors.on_surface),
+    primary = colorResource(Res.color.primary),
+    primaryVariant = colorResource(Res.color.primary_variant),
+    secondary = colorResource(Res.color.secondary),
+    secondaryVariant = colorResource(Res.color.secondary_variant),
+    background = colorResource(Res.color.background),
+    surface = colorResource(Res.color.surface),
+    onPrimary = colorResource(Res.color.on_primary),
+    onSecondary = colorResource(Res.color.on_secondary),
+    onBackground = colorResource(Res.color.on_background),
+    onSurface = colorResource(Res.color.on_surface),
 )
 
 // Taken for Surface.kt
