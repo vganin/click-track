@@ -9,5 +9,5 @@ updates:
     groups:
       kotlin:
         patterns:
-          - "org.jetbrains.kotlin*"
-          - "com.google.devtools.ksp*"
+          - "org.jetbrains.kotlin:*"
+          - "com.google.devtools.ksp"
