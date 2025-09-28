@@ -15,13 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.ui.piece.SystemUiSetup
 import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
 import com.vsevolodganin.clicktrack.ui.screen.ClickTrackListScreenPreview
 import com.vsevolodganin.clicktrack.utils.compose.isSystemInLandscape
 import com.vsevolodganin.clicktrack.utils.compose.navigationBars
-import dev.icerock.moko.resources.compose.colorResource
 
 @Composable
 fun ClickTrackTheme(content: @Composable () -> Unit) {
@@ -54,31 +52,36 @@ fun ClickTrackTheme(content: @Composable () -> Unit) {
 
 @Composable
 private fun lightPalette() = lightColors(
-    primary = colorResource(MR.colors.primary),
-    primaryVariant = colorResource(MR.colors.primary_variant),
-    secondary = colorResource(MR.colors.secondary),
-    secondaryVariant = colorResource(MR.colors.secondary_variant),
-    background = colorResource(MR.colors.background),
-    surface = colorResource(MR.colors.surface),
-    onPrimary = colorResource(MR.colors.on_primary),
-    onSecondary = colorResource(MR.colors.on_secondary),
-    onBackground = colorResource(MR.colors.on_background),
-    onSurface = colorResource(MR.colors.on_surface),
+    primary = Colors.Signature,
+    primaryVariant = Colors.SignatureAlternative,
+    secondary = Colors.Signature,
+    secondaryVariant = Colors.SignatureAlternative,
+    background = Color(0xFFEEEDED),
+    surface = Color.White,
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackground = Color.Black,
+    onSurface = Color.Black,
 )
 
 @Composable
 private fun darkPalette() = darkColors(
-    primary = colorResource(MR.colors.primary),
-    primaryVariant = colorResource(MR.colors.primary_variant),
-    secondary = colorResource(MR.colors.secondary),
-    secondaryVariant = colorResource(MR.colors.secondary_variant),
-    background = colorResource(MR.colors.background),
-    surface = colorResource(MR.colors.surface),
-    onPrimary = colorResource(MR.colors.on_primary),
-    onSecondary = colorResource(MR.colors.on_secondary),
-    onBackground = colorResource(MR.colors.on_background),
-    onSurface = colorResource(MR.colors.on_surface),
+    primary = Colors.Signature,
+    primaryVariant = Colors.SignatureAlternative,
+    secondary = Colors.Signature,
+    secondaryVariant = Colors.SignatureAlternative,
+    background = Color(0xFF121212),
+    surface = Color(0xFF121212),
+    onPrimary = Color.White,
+    onSecondary = Color.White,
+    onBackground = Color.White,
+    onSurface = Color.White,
 )
+
+private object Colors {
+    val Signature = Color(0xFFA53030)
+    val SignatureAlternative = Color(0xFF982D2D)
+}
 
 // Taken for Surface.kt
 @Composable

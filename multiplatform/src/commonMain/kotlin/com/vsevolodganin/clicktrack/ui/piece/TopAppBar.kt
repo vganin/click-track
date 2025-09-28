@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import com.vsevolodganin.clicktrack.generated.resources.MR
-import dev.icerock.moko.resources.compose.colorResource
 
 @Composable
 fun TopAppBar(
@@ -32,11 +30,11 @@ fun TopAppBar(
 
 val Colors.darkAppBar: Color
     @Composable
-    get() = if (isLight) colorResource(MR.colors.dark_app_bar) else surface
+    get() = if (isLight) Color(0xFF262525) else surface
 
 val Colors.onDarkAppBarSurface: Color
     @Composable
-    get() = if (isLight) colorResource(MR.colors.on_dark_app_bar) else onSurface
+    get() = if (isLight) Color.White else onSurface
 
 @Composable
 internal expect fun TopAppBar(

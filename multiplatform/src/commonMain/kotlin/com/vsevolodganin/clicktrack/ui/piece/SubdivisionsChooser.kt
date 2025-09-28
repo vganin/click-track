@@ -33,11 +33,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.generated.resources.MR
+import clicktrack.multiplatform.generated.resources.Res
+import clicktrack.multiplatform.generated.resources.displaced_eighth
+import clicktrack.multiplatform.generated.resources.displaced_half
+import clicktrack.multiplatform.generated.resources.displaced_quarter
+import clicktrack.multiplatform.generated.resources.displaced_sixteenth
+import clicktrack.multiplatform.generated.resources.displaced_thirty_second
+import clicktrack.multiplatform.generated.resources.eighth
+import clicktrack.multiplatform.generated.resources.eighth_quintuplet
+import clicktrack.multiplatform.generated.resources.eighth_septuplet
+import clicktrack.multiplatform.generated.resources.eighth_triplet
+import clicktrack.multiplatform.generated.resources.half
+import clicktrack.multiplatform.generated.resources.half_triplet
+import clicktrack.multiplatform.generated.resources.quarter
+import clicktrack.multiplatform.generated.resources.quarter_quintuplet
+import clicktrack.multiplatform.generated.resources.quarter_septuplet
+import clicktrack.multiplatform.generated.resources.quarter_triplet
+import clicktrack.multiplatform.generated.resources.sixteenth
+import clicktrack.multiplatform.generated.resources.sixteenth_quintuplet
+import clicktrack.multiplatform.generated.resources.sixteenth_septuplet
+import clicktrack.multiplatform.generated.resources.sixteenth_triplet
+import clicktrack.multiplatform.generated.resources.thirty_second
+import clicktrack.multiplatform.generated.resources.thirty_second_quintuplet
+import clicktrack.multiplatform.generated.resources.thirty_second_septuplet
+import clicktrack.multiplatform.generated.resources.thirty_second_triplet
+import clicktrack.multiplatform.generated.resources.whole
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.NotePatternGroup
 import com.vsevolodganin.clicktrack.model.TimeSignature
-import dev.icerock.moko.resources.compose.painterResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -111,37 +135,37 @@ private fun WholeNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.whole),
+                    iconPainter = painterResource(Res.drawable.whole),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.half),
+                    iconPainter = painterResource(Res.drawable.half),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter),
+                    iconPainter = painterResource(Res.drawable.quarter),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth),
+                    iconPainter = painterResource(Res.drawable.eighth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X16,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth),
+                    iconPainter = painterResource(Res.drawable.sixteenth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X32,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second),
+                    iconPainter = painterResource(Res.drawable.thirty_second),
                 )
             }
         }
@@ -155,31 +179,31 @@ private fun WholeNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.half_triplet),
+                    iconPainter = painterResource(Res.drawable.half_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter_triplet),
+                    iconPainter = painterResource(Res.drawable.quarter_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_triplet),
+                    iconPainter = painterResource(Res.drawable.eighth_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_triplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X16,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_triplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_triplet),
                 )
             }
         }
@@ -193,25 +217,25 @@ private fun WholeNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter_quintuplet),
+                    iconPainter = painterResource(Res.drawable.quarter_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_quintuplet),
+                    iconPainter = painterResource(Res.drawable.eighth_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_quintuplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_quintuplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_quintuplet),
                 )
             }
         }
@@ -225,25 +249,25 @@ private fun WholeNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter_septuplet),
+                    iconPainter = painterResource(Res.drawable.quarter_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_septuplet),
+                    iconPainter = painterResource(Res.drawable.eighth_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_septuplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_septuplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_septuplet),
                 )
             }
         }
@@ -257,31 +281,31 @@ private fun WholeNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_half),
+                    iconPainter = painterResource(Res.drawable.displaced_half),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_quarter),
+                    iconPainter = painterResource(Res.drawable.displaced_quarter),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_eighth),
+                    iconPainter = painterResource(Res.drawable.displaced_eighth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_sixteenth),
+                    iconPainter = painterResource(Res.drawable.displaced_sixteenth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X16,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_thirty_second),
+                    iconPainter = painterResource(Res.drawable.displaced_thirty_second),
                 )
             }
         }
@@ -311,31 +335,31 @@ private fun HalfNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.half),
+                    iconPainter = painterResource(Res.drawable.half),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter),
+                    iconPainter = painterResource(Res.drawable.quarter),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth),
+                    iconPainter = painterResource(Res.drawable.eighth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth),
+                    iconPainter = painterResource(Res.drawable.sixteenth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X16,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second),
+                    iconPainter = painterResource(Res.drawable.thirty_second),
                 )
             }
         }
@@ -349,31 +373,31 @@ private fun HalfNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.half_triplet),
+                    iconPainter = painterResource(Res.drawable.half_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter_triplet),
+                    iconPainter = painterResource(Res.drawable.quarter_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_triplet),
+                    iconPainter = painterResource(Res.drawable.eighth_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_triplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X16,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_triplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_triplet),
                 )
             }
         }
@@ -387,25 +411,25 @@ private fun HalfNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter_quintuplet),
+                    iconPainter = painterResource(Res.drawable.quarter_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_quintuplet),
+                    iconPainter = painterResource(Res.drawable.eighth_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_quintuplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_quintuplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_quintuplet),
                 )
             }
         }
@@ -419,25 +443,25 @@ private fun HalfNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter_septuplet),
+                    iconPainter = painterResource(Res.drawable.quarter_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_septuplet),
+                    iconPainter = painterResource(Res.drawable.eighth_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_septuplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_septuplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_septuplet),
                 )
             }
         }
@@ -451,31 +475,31 @@ private fun HalfNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_half),
+                    iconPainter = painterResource(Res.drawable.displaced_half),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_quarter),
+                    iconPainter = painterResource(Res.drawable.displaced_quarter),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_eighth),
+                    iconPainter = painterResource(Res.drawable.displaced_eighth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_sixteenth),
+                    iconPainter = painterResource(Res.drawable.displaced_sixteenth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X16,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_thirty_second),
+                    iconPainter = painterResource(Res.drawable.displaced_thirty_second),
                 )
             }
         }
@@ -505,25 +529,25 @@ private fun QuarterNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter),
+                    iconPainter = painterResource(Res.drawable.quarter),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth),
+                    iconPainter = painterResource(Res.drawable.eighth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth),
+                    iconPainter = painterResource(Res.drawable.sixteenth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second),
+                    iconPainter = painterResource(Res.drawable.thirty_second),
                 )
             }
         }
@@ -537,25 +561,25 @@ private fun QuarterNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter_triplet),
+                    iconPainter = painterResource(Res.drawable.quarter_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_triplet),
+                    iconPainter = painterResource(Res.drawable.eighth_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_triplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_triplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_triplet),
                 )
             }
         }
@@ -569,25 +593,25 @@ private fun QuarterNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter_quintuplet),
+                    iconPainter = painterResource(Res.drawable.quarter_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_quintuplet),
+                    iconPainter = painterResource(Res.drawable.eighth_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_quintuplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_quintuplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_quintuplet),
                 )
             }
         }
@@ -601,25 +625,25 @@ private fun QuarterNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.quarter_septuplet),
+                    iconPainter = painterResource(Res.drawable.quarter_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_septuplet),
+                    iconPainter = painterResource(Res.drawable.eighth_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_septuplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_septuplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_septuplet),
                 )
             }
         }
@@ -633,25 +657,25 @@ private fun QuarterNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_quarter),
+                    iconPainter = painterResource(Res.drawable.displaced_quarter),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_eighth),
+                    iconPainter = painterResource(Res.drawable.displaced_eighth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_sixteenth),
+                    iconPainter = painterResource(Res.drawable.displaced_sixteenth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X8,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_thirty_second),
+                    iconPainter = painterResource(Res.drawable.displaced_thirty_second),
                 )
             }
         }
@@ -681,19 +705,19 @@ private fun EighthNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth),
+                    iconPainter = painterResource(Res.drawable.eighth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth),
+                    iconPainter = painterResource(Res.drawable.sixteenth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second),
+                    iconPainter = painterResource(Res.drawable.thirty_second),
                 )
             }
         }
@@ -707,19 +731,19 @@ private fun EighthNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_triplet),
+                    iconPainter = painterResource(Res.drawable.eighth_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_triplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_triplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_triplet),
                 )
             }
         }
@@ -733,19 +757,19 @@ private fun EighthNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_quintuplet),
+                    iconPainter = painterResource(Res.drawable.eighth_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_quintuplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_quintuplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_quintuplet),
                 )
             }
         }
@@ -759,19 +783,19 @@ private fun EighthNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.eighth_septuplet),
+                    iconPainter = painterResource(Res.drawable.eighth_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_septuplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_septuplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_septuplet),
                 )
             }
         }
@@ -785,19 +809,19 @@ private fun EighthNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_eighth),
+                    iconPainter = painterResource(Res.drawable.displaced_eighth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_sixteenth),
+                    iconPainter = painterResource(Res.drawable.displaced_sixteenth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X4,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_thirty_second),
+                    iconPainter = painterResource(Res.drawable.displaced_thirty_second),
                 )
             }
         }
@@ -827,13 +851,13 @@ private fun SixteenthNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth),
+                    iconPainter = painterResource(Res.drawable.sixteenth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.STRAIGHT_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second),
+                    iconPainter = painterResource(Res.drawable.thirty_second),
                 )
             }
         }
@@ -847,13 +871,13 @@ private fun SixteenthNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_triplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_triplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.TRIPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_triplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_triplet),
                 )
             }
         }
@@ -867,13 +891,13 @@ private fun SixteenthNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_quintuplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_quintuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.QUINTUPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_quintuplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_quintuplet),
                 )
             }
         }
@@ -887,13 +911,13 @@ private fun SixteenthNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.sixteenth_septuplet),
+                    iconPainter = painterResource(Res.drawable.sixteenth_septuplet),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.SEPTUPLET_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.thirty_second_septuplet),
+                    iconPainter = painterResource(Res.drawable.thirty_second_septuplet),
                 )
             }
         }
@@ -907,13 +931,13 @@ private fun SixteenthNoteLayout(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X1,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_sixteenth),
+                    iconPainter = painterResource(Res.drawable.displaced_sixteenth),
                 )
                 SubdivisionItem(
                     actualPattern = pattern,
                     expectedPattern = NotePattern.DISPLACED_X2,
                     onSubdivisionChoose = onSubdivisionChoose,
-                    iconPainter = painterResource(MR.images.displaced_thirty_second),
+                    iconPainter = painterResource(Res.drawable.displaced_thirty_second),
                 )
             }
         }
@@ -935,31 +959,31 @@ private fun ThirtySecondNoteLayout(
             actualPattern = pattern,
             expectedPattern = NotePattern.STRAIGHT_X1,
             onSubdivisionChoose = onSubdivisionChoose,
-            iconPainter = painterResource(MR.images.thirty_second),
+            iconPainter = painterResource(Res.drawable.thirty_second),
         )
         SubdivisionItem(
             actualPattern = pattern,
             expectedPattern = NotePattern.TRIPLET_X1,
             onSubdivisionChoose = onSubdivisionChoose,
-            iconPainter = painterResource(MR.images.thirty_second_triplet),
+            iconPainter = painterResource(Res.drawable.thirty_second_triplet),
         )
         SubdivisionItem(
             actualPattern = pattern,
             expectedPattern = NotePattern.QUINTUPLET_X1,
             onSubdivisionChoose = onSubdivisionChoose,
-            iconPainter = painterResource(MR.images.thirty_second_quintuplet),
+            iconPainter = painterResource(Res.drawable.thirty_second_quintuplet),
         )
         SubdivisionItem(
             actualPattern = pattern,
             expectedPattern = NotePattern.SEPTUPLET_X1,
             onSubdivisionChoose = onSubdivisionChoose,
-            iconPainter = painterResource(MR.images.thirty_second_septuplet),
+            iconPainter = painterResource(Res.drawable.thirty_second_septuplet),
         )
         SubdivisionItem(
             actualPattern = pattern,
             expectedPattern = NotePattern.DISPLACED_X1,
             onSubdivisionChoose = onSubdivisionChoose,
-            iconPainter = painterResource(MR.images.displaced_thirty_second),
+            iconPainter = painterResource(Res.drawable.displaced_thirty_second),
         )
     }
 }

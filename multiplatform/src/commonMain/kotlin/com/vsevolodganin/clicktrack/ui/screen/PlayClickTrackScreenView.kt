@@ -40,7 +40,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.generated.resources.MR
+import clicktrack.multiplatform.generated.resources.Res
+import clicktrack.multiplatform.generated.resources.general_cancel
+import clicktrack.multiplatform.generated.resources.general_ok
+import clicktrack.multiplatform.generated.resources.play_click_track_delete_confirmation
+import clicktrack.multiplatform.generated.resources.play_click_track_export_to_audio_file
+import clicktrack.multiplatform.generated.resources.play_click_track_play_tracking_mode
+import clicktrack.multiplatform.generated.resources.play_click_track_started_export
 import com.vsevolodganin.clicktrack.play.PlayClickTrackState
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModel
 import com.vsevolodganin.clicktrack.play.isPaused
@@ -52,10 +58,10 @@ import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -126,14 +132,14 @@ private fun TopBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackStat
                 AlertDialog(
                     onDismissRequest = dismiss,
                     text = {
-                        Text(text = stringResource(MR.strings.play_click_track_delete_confirmation))
+                        Text(text = stringResource(Res.string.play_click_track_delete_confirmation))
                     },
                     confirmButton = {
                         TextButton(
                             onClick = viewModel::onRemoveClick,
                             shape = RectangleShape,
                         ) {
-                            Text(text = stringResource(MR.strings.general_ok).uppercase())
+                            Text(text = stringResource(Res.string.general_ok).uppercase())
                         }
                     },
                     dismissButton = {
@@ -141,7 +147,7 @@ private fun TopBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackStat
                             onClick = dismiss,
                             shape = RectangleShape,
                         ) {
-                            Text(text = stringResource(MR.strings.general_cancel).uppercase())
+                            Text(text = stringResource(Res.string.general_cancel).uppercase())
                         }
                     },
                 )
@@ -160,8 +166,8 @@ private fun OverflowMenu(viewModel: PlayClickTrackViewModel, state: PlayClickTra
     }
 
     DropdownMenu(expanded = showDropdown, onDismissRequest = { showDropdown = false }) {
-        val startedExportMessage = stringResource(MR.strings.play_click_track_started_export, state.clickTrack.value.name)
-        val cancelActionLabel = stringResource(MR.strings.general_cancel)
+        val startedExportMessage = stringResource(Res.string.play_click_track_started_export, state.clickTrack.value.name)
+        val cancelActionLabel = stringResource(Res.string.general_cancel)
 
         DropdownMenuItem(onClick = {
             viewModel.onExportClick()
@@ -177,7 +183,7 @@ private fun OverflowMenu(viewModel: PlayClickTrackViewModel, state: PlayClickTra
                 }
             }
         }) {
-            Text(stringResource(MR.strings.play_click_track_export_to_audio_file))
+            Text(stringResource(Res.string.play_click_track_export_to_audio_file))
         }
     }
 }
@@ -208,7 +214,7 @@ private fun BottomBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackS
             ) {
                 Checkbox(checked = state.playTrackingMode, onCheckedChange = null)
                 Spacer(Modifier.width(8.dp))
-                Text(text = stringResource(MR.strings.play_click_track_play_tracking_mode))
+                Text(text = stringResource(Res.string.play_click_track_play_tracking_mode))
             }
         }
     }

@@ -36,7 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vsevolodganin.clicktrack.generated.resources.MR
+import clicktrack.multiplatform.generated.resources.Res
+import clicktrack.multiplatform.generated.resources.general_metronome_click_track_title
+import clicktrack.multiplatform.generated.resources.metronome_bpm_meter_tap
+import clicktrack.multiplatform.generated.resources.metronome_screen_title
 import com.vsevolodganin.clicktrack.metronome.MetronomeState
 import com.vsevolodganin.clicktrack.metronome.MetronomeViewModel
 import com.vsevolodganin.clicktrack.metronome.metronomeClickTrack
@@ -57,9 +60,9 @@ import com.vsevolodganin.clicktrack.ui.piece.onDarkAppBarSurface
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import com.vsevolodganin.clicktrack.utils.compose.statusBars
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -81,7 +84,7 @@ fun MetronomeScreenView(viewModel: MetronomeViewModel, modifier: Modifier = Modi
 @Composable
 private fun AppBar(viewModel: MetronomeViewModel) {
     TopAppBar(
-        title = { Text(text = stringResource(MR.strings.metronome_screen_title)) },
+        title = { Text(text = stringResource(Res.string.metronome_screen_title)) },
         navigationIcon = {
             IconButton(onClick = viewModel::onBackClick) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
@@ -114,7 +117,7 @@ private fun Content(viewModel: MetronomeViewModel) {
                 .height(200.dp),
             elevation = 8.dp,
         ) {
-            val metronomeClickTrackName = stringResource(MR.strings.general_metronome_click_track_title)
+            val metronomeClickTrackName = stringResource(Res.string.general_metronome_click_track_title)
             val metronomeClickTrack = remember(state.bpm, state.pattern, state.timeSignature) {
                 metronomeClickTrack(
                     name = metronomeClickTrackName,
@@ -167,7 +170,7 @@ private fun Content(viewModel: MetronomeViewModel) {
                     enableInsets = false,
                 ) {
                     Text(
-                        text = stringResource(MR.strings.metronome_bpm_meter_tap),
+                        text = stringResource(Res.string.metronome_bpm_meter_tap),
                         style = LocalTextStyle.current.copy(
                             fontWeight = FontWeight.Black,
                             letterSpacing = 4.sp,

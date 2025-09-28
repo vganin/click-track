@@ -3,17 +3,14 @@ package com.vsevolodganin.clicktrack.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GenericClickSounds<T : ClickSoundSource>(
-    val strongBeat: T?,
-    val weakBeat: T?,
+data class ClickSounds(
+    val strongBeat: ClickSoundSource?,
+    val weakBeat: ClickSoundSource?,
 ) {
-    val asIterable: Iterable<T> get() = listOfNotNull(strongBeat, weakBeat)
+    val asIterable: Iterable<ClickSoundSource> get() = listOfNotNull(strongBeat, weakBeat)
 
     fun beatByType(type: ClickSoundType) = when (type) {
         ClickSoundType.STRONG -> strongBeat
         ClickSoundType.WEAK -> weakBeat
     }
 }
-
-typealias ClickSounds = GenericClickSounds<*>
-typealias UriClickSounds = GenericClickSounds<ClickSoundSource.Uri>

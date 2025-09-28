@@ -1,11 +1,12 @@
 package com.vsevolodganin.clicktrack.list
 
+import clicktrack.multiplatform.generated.resources.Res
+import clicktrack.multiplatform.generated.resources.general_unnamed_click_track_template
 import com.arkivanov.decompose.ComponentContext
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.NewClickTrackNameSuggester
 import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
@@ -16,7 +17,6 @@ import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.pushIfUnique
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
-import com.vsevolodganin.clicktrack.utils.resources.StringResolver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,11 +26,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.getString
 
 @Inject
 class ClickTrackListViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val stringResolver: StringResolver,
     private val navigation: ScreenStackNavigation,
     private val drawerNavigation: DrawerNavigation,
     private val clickTrackRepository: ClickTrackRepository,
@@ -55,7 +55,7 @@ class ClickTrackListViewModelImpl(
         scope.launch {
             val suggestedNewClickTrackName = newClickTrackNameSuggester.suggest(
                 withContext(Dispatchers.Main) {
-                    stringResolver.resolve(MR.strings.general_unnamed_click_track_template)
+                    getString(Res.string.general_unnamed_click_track_template)
                 },
             )
             val newClickTrack = defaultNewClickTrack(suggestedNewClickTrackName)

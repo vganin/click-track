@@ -1,7 +1,11 @@
 package com.vsevolodganin.clicktrack.model
 
-import com.vsevolodganin.clicktrack.generated.resources.MR
-import dev.icerock.moko.resources.StringResource
+import clicktrack.multiplatform.generated.resources.Res
+import clicktrack.multiplatform.generated.resources.sound_library_beep
+import clicktrack.multiplatform.generated.resources.sound_library_claves
+import clicktrack.multiplatform.generated.resources.sound_library_cowbell
+import clicktrack.multiplatform.generated.resources.sound_library_drum_kit
+import org.jetbrains.compose.resources.StringResource
 
 enum class BuiltinClickSounds(
     val nameResource: StringResource,
@@ -9,35 +13,35 @@ enum class BuiltinClickSounds(
     val sounds: ClickSounds,
 ) {
     BEEP(
-        nameResource = MR.strings.sound_library_beep,
+        nameResource = Res.string.sound_library_beep,
         storageKey = "beep",
-        sounds = GenericClickSounds(
-            strongBeat = ClickSoundSource.Bundled(MR.files.beep_strong_wav),
-            weakBeat = ClickSoundSource.Bundled(MR.files.beep_weak_wav),
+        sounds = ClickSounds(
+            strongBeat = ClickSoundSource(Res.getUri("files/beep_strong.wav")),
+            weakBeat = ClickSoundSource(Res.getUri("files/beep_weak.wav")),
         ),
     ),
     CLAVES(
-        nameResource = MR.strings.sound_library_claves,
+        nameResource = Res.string.sound_library_claves,
         storageKey = "claves",
-        sounds = GenericClickSounds(
-            strongBeat = ClickSoundSource.Bundled(MR.files.claves_strong_wav),
-            weakBeat = ClickSoundSource.Bundled(MR.files.claves_weak_wav),
+        sounds = ClickSounds(
+            strongBeat = ClickSoundSource(Res.getUri("files/claves_strong.wav")),
+            weakBeat = ClickSoundSource(Res.getUri("files/claves_weak.wav")),
         ),
     ),
     COWBELL(
-        nameResource = MR.strings.sound_library_cowbell,
+        nameResource = Res.string.sound_library_cowbell,
         storageKey = "cowbell",
-        sounds = GenericClickSounds(
-            strongBeat = ClickSoundSource.Bundled(MR.files.cowbell_strong_wav),
-            weakBeat = ClickSoundSource.Bundled(MR.files.cowbell_weak_wav),
+        sounds = ClickSounds(
+            strongBeat = ClickSoundSource(Res.getUri("files/cowbell_strong.wav")),
+            weakBeat = ClickSoundSource(Res.getUri("files/cowbell_weak.wav")),
         ),
     ),
     DRUMS(
-        nameResource = MR.strings.sound_library_drum_kit,
+        nameResource = Res.string.sound_library_drum_kit,
         storageKey = "drum kit",
-        sounds = GenericClickSounds(
-            strongBeat = ClickSoundSource.Bundled(MR.files.drumkit_base_wav),
-            weakBeat = ClickSoundSource.Bundled(MR.files.drumkit_hat_wav),
+        sounds = ClickSounds(
+            strongBeat = ClickSoundSource(Res.getUri("files/drumkit_base.wav")),
+            weakBeat = ClickSoundSource(Res.getUri("files/drumkit_hat.wav")),
         ),
     ),
 }
