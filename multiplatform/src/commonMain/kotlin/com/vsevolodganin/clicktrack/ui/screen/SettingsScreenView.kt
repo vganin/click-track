@@ -27,7 +27,6 @@ import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import com.vsevolodganin.clicktrack.utils.platform.isDebug
 import org.jetbrains.compose.resources.stringResource
-import Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -38,7 +37,7 @@ fun SettingsScreenView(viewModel: SettingsViewModel, modifier: Modifier = Modifi
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(Res.string.settings_screen_title)) },
+                title = { Text(stringResource("settings_screen_title")) },
             )
         },
         modifier = modifier,
@@ -52,7 +51,7 @@ private fun Content(viewModel: SettingsViewModel) {
     val state by viewModel.state.collectAsState()
     Column {
         ListChooser(
-            title = stringResource(Res.string.settings_theme),
+            title = stringResource("settings_theme"),
             value = state.theme.displayValue(),
             variants = Theme.entries.map {
                 ListChooserItem(
@@ -67,7 +66,7 @@ private fun Content(viewModel: SettingsViewModel) {
         Divider(modifier = Modifier.padding(start = 16.dp))
 
         ListChooser(
-            title = stringResource(Res.string.settings_language),
+            title = stringResource("settings_language"),
             value = state.language.displayValue(),
             variants = AppLanguage.entries.map {
                 ListChooserItem(
@@ -82,10 +81,10 @@ private fun Content(viewModel: SettingsViewModel) {
         Divider(modifier = Modifier.padding(start = 16.dp))
 
         BooleanChooser(
-            title = stringResource(Res.string.settings_ignore_audio_focus),
+            title = stringResource("settings_ignore_audio_focus"),
             value = state.ignoreAudioFocus,
             onCheckedChange = viewModel::onIgnoreAudioFocusChange,
-            description = stringResource(Res.string.settings_ignore_audio_focus_description),
+            description = stringResource("settings_ignore_audio_focus_description"),
         )
 
         if (isDebug()) {

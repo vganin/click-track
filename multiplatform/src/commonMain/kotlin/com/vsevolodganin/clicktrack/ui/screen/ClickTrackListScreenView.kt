@@ -44,7 +44,6 @@ import com.vsevolodganin.clicktrack.ui.theme.commonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import org.jetbrains.compose.resources.stringResource
-import Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
@@ -108,7 +107,7 @@ private fun Content(viewModel: ClickTrackListViewModel) {
 private fun TopBar(viewModel: ClickTrackListViewModel) {
     TopAppBar(
         title = {
-            Text(text = stringResource(Res.string.click_track_list_screen_title))
+            Text(text = stringResource("click_track_list_screen_title"))
         },
         navigationIcon = {
             IconButton(onClick = viewModel::onMenuClick) {

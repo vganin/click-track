@@ -20,8 +20,6 @@ import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
 import com.vsevolodganin.clicktrack.ui.screen.ClickTrackListScreenPreview
 import com.vsevolodganin.clicktrack.utils.compose.isSystemInLandscape
 import com.vsevolodganin.clicktrack.utils.compose.navigationBars
-import org.jetbrains.compose.resources.colorResource
-import Res
 
 @Composable
 fun ClickTrackTheme(content: @Composable () -> Unit) {
@@ -54,30 +52,30 @@ fun ClickTrackTheme(content: @Composable () -> Unit) {
 
 @Composable
 private fun lightPalette() = lightColors(
-    primary = colorResource(Res.color.primary),
-    primaryVariant = colorResource(Res.color.primary_variant),
-    secondary = colorResource(Res.color.secondary),
-    secondaryVariant = colorResource(Res.color.secondary_variant),
-    background = colorResource(Res.color.background),
-    surface = colorResource(Res.color.surface),
-    onPrimary = colorResource(Res.color.on_primary),
-    onSecondary = colorResource(Res.color.on_secondary),
-    onBackground = colorResource(Res.color.on_background),
-    onSurface = colorResource(Res.color.on_surface),
+    primary = Color(0xFFa53030), // signature
+    primaryVariant = Color(0xFF982d2d), // signature_dark
+    secondary = Color(0xFFa53030), // signature
+    secondaryVariant = Color(0xFF982d2d), // signature_dark
+    background = Color(0xFFeeeded), // light background
+    surface = Color(0xFFffffff), // white
+    onPrimary = Color(0xFFffffff), // white
+    onSecondary = Color(0xFFffffff), // white
+    onBackground = Color(0xFF000000), // black
+    onSurface = Color(0xFF000000), // black
 )
 
 @Composable
 private fun darkPalette() = darkColors(
-    primary = colorResource(Res.color.primary),
-    primaryVariant = colorResource(Res.color.primary_variant),
-    secondary = colorResource(Res.color.secondary),
-    secondaryVariant = colorResource(Res.color.secondary_variant),
-    background = colorResource(Res.color.background),
-    surface = colorResource(Res.color.surface),
-    onPrimary = colorResource(Res.color.on_primary),
-    onSecondary = colorResource(Res.color.on_secondary),
-    onBackground = colorResource(Res.color.on_background),
-    onSurface = colorResource(Res.color.on_surface),
+    primary = Color(0xFFa53030), // signature
+    primaryVariant = Color(0xFF982d2d), // signature_dark
+    secondary = Color(0xFFa53030), // signature  
+    secondaryVariant = Color(0xFF982d2d), // signature_dark
+    background = Color(0xFF121212), // dark background
+    surface = Color(0xFF121212), // dark surface
+    onPrimary = Color(0xFFffffff), // white
+    onSecondary = Color(0xFFffffff), // white
+    onBackground = Color(0xFFffffff), // white
+    onSurface = Color(0xFFffffff), // white
 )
 
 // Taken for Surface.kt

@@ -52,7 +52,6 @@ import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import org.jetbrains.compose.resources.stringResource
-import Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -126,14 +125,14 @@ private fun TopBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackStat
                 AlertDialog(
                     onDismissRequest = dismiss,
                     text = {
-                        Text(text = stringResource(Res.string.play_click_track_delete_confirmation))
+                        Text(text = stringResource("play_click_track_delete_confirmation"))
                     },
                     confirmButton = {
                         TextButton(
                             onClick = viewModel::onRemoveClick,
                             shape = RectangleShape,
                         ) {
-                            Text(text = stringResource(Res.string.general_ok).uppercase())
+                            Text(text = stringResource("general_ok").uppercase())
                         }
                     },
                     dismissButton = {
@@ -141,7 +140,7 @@ private fun TopBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackStat
                             onClick = dismiss,
                             shape = RectangleShape,
                         ) {
-                            Text(text = stringResource(Res.string.general_cancel).uppercase())
+                            Text(text = stringResource("general_cancel").uppercase())
                         }
                     },
                 )
@@ -160,8 +159,8 @@ private fun OverflowMenu(viewModel: PlayClickTrackViewModel, state: PlayClickTra
     }
 
     DropdownMenu(expanded = showDropdown, onDismissRequest = { showDropdown = false }) {
-        val startedExportMessage = stringResource(Res.string.play_click_track_started_export, state.clickTrack.value.name)
-        val cancelActionLabel = stringResource(Res.string.general_cancel)
+        val startedExportMessage = stringResource("play_click_track_started_export, state.clickTrack.value.name")
+        val cancelActionLabel = stringResource("general_cancel")
 
         DropdownMenuItem(onClick = {
             viewModel.onExportClick()
@@ -177,7 +176,7 @@ private fun OverflowMenu(viewModel: PlayClickTrackViewModel, state: PlayClickTra
                 }
             }
         }) {
-            Text(stringResource(Res.string.play_click_track_export_to_audio_file))
+            Text(stringResource("play_click_track_export_to_audio_file"))
         }
     }
 }
@@ -208,7 +207,7 @@ private fun BottomBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackS
             ) {
                 Checkbox(checked = state.playTrackingMode, onCheckedChange = null)
                 Spacer(Modifier.width(8.dp))
-                Text(text = stringResource(Res.string.play_click_track_play_tracking_mode))
+                Text(text = stringResource("play_click_track_play_tracking_mode"))
             }
         }
     }

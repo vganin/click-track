@@ -26,7 +26,6 @@ import com.vsevolodganin.clicktrack.model.DefaultTimeDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import org.jetbrains.compose.resources.stringResource
-import Res
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -53,7 +52,7 @@ fun CueView(
             )
 
             Text(
-                text = stringResource(Res.string.cue_position, value.displayPosition),
+                text = stringResource("cue_position, value.displayPosition"),
                 modifier = Modifier.align(Alignment.CenterVertically),
                 style = MaterialTheme.typography.h5,
             )
@@ -62,7 +61,7 @@ fun CueView(
                 value = value.name,
                 onValueChange = onNameChange,
                 placeholder = {
-                    Text(stringResource(Res.string.cue_name_hint))
+                    Text(stringResource("cue_name_hint"))
                 },
                 modifier = Modifier.weight(1f),
             )

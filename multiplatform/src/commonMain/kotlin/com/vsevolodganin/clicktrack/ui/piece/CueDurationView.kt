@@ -17,7 +17,6 @@ import com.vsevolodganin.clicktrack.model.CueDuration
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration.Companion.minutes
-import Res
 
 @Composable
 fun CueDurationView(

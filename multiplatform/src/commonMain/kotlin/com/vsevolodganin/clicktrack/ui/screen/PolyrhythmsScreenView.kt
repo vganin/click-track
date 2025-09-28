@@ -39,7 +39,6 @@ import com.vsevolodganin.clicktrack.utils.compose.AnimatableFloat
 import com.vsevolodganin.clicktrack.utils.compose.FULL_ANGLE_DEGREES
 import com.vsevolodganin.clicktrack.utils.compose.widthByText
 import org.jetbrains.compose.resources.stringResource
-import Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -54,7 +53,7 @@ fun PolyrhythmsScreenView(viewModel: PolyrhythmsViewModel, modifier: Modifier = 
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(Res.string.polyrhythms_screen_title)) },
+                title = { Text(stringResource("polyrhythms_screen_title")) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,

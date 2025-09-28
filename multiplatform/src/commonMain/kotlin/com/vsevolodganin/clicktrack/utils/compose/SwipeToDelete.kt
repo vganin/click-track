@@ -30,8 +30,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.colorResource
-import Res
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -75,7 +73,7 @@ private fun BoxScope.DeleteLayout(state: SwipeableState<RevealValue>, padding: D
     val backgroundColor by animateColorAsState(
         when (state.targetValue) {
             RevealValue.Hidden -> Color.Transparent
-            RevealValue.Revealed -> colorResource(Res.color.delete)
+            RevealValue.Revealed -> Color(0xFFAA3030) // delete color
         },
     )
 

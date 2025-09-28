@@ -43,7 +43,6 @@ import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import Res
 
 @Composable
 fun DrawerView(viewModel: DrawerViewModel) {
@@ -66,29 +65,29 @@ fun DrawerView(viewModel: DrawerViewModel) {
         Spacer(modifier = Modifier.height(12.dp))
 
         DrawerButton(
-            icon = painterResource(Res.drawable.metronome),
-            label = stringResource(Res.string.drawer_metronome),
+            icon = painterResource("metronome.svg"),
+            label = stringResource("drawer_metronome"),
             isSelected = state.selectedItem == DrawerState.SelectedItem.METRONOME,
             action = viewModel::navigateToMetronome,
         )
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.Filled.FitnessCenter),
-            label = stringResource(Res.string.drawer_training),
+            label = stringResource("drawer_training"),
             isSelected = state.selectedItem == DrawerState.SelectedItem.TRAINING,
             action = viewModel::navigateToTraining,
         )
 
         DrawerButton(
-            icon = painterResource(Res.drawable.polyrhythm),
-            label = stringResource(Res.string.drawer_polyrhythms),
+            icon = painterResource("polyrhythm.svg"),
+            label = stringResource("drawer_polyrhythms"),
             isSelected = state.selectedItem == DrawerState.SelectedItem.POLYRHYTHMS,
             action = viewModel::navigateToPolyrhythms,
         )
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.Filled.LibraryMusic),
-            label = stringResource(Res.string.drawer_sound_library),
+            label = stringResource("drawer_sound_library"),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SOUND_LIBRARY,
             action = viewModel::navigateToSoundLibrary,
         )
@@ -97,14 +96,14 @@ fun DrawerView(viewModel: DrawerViewModel) {
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.Filled.Settings),
-            label = stringResource(Res.string.drawer_settings),
+            label = stringResource("drawer_settings"),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SETTINGS,
             action = viewModel::navigateToSettings,
         )
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.AutoMirrored.Filled.ContactSupport),
-            label = stringResource(Res.string.drawer_about),
+            label = stringResource("drawer_about"),
             isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
             action = viewModel::navigateToAbout,
         )

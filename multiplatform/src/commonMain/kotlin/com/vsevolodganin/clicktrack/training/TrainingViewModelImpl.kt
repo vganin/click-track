@@ -14,7 +14,6 @@ import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.optionalCast
-import com.vsevolodganin.clicktrack.utils.resources.StringResolver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,7 +29,6 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class TrainingViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val stringResolver: StringResolver,
     private val navigation: ScreenStackNavigation,
     private val clickTrackRepository: ClickTrackRepository,
     private val userPreferences: UserPreferencesRepository,

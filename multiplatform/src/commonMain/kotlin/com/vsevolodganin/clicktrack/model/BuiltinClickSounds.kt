@@ -1,15 +1,12 @@
 package com.vsevolodganin.clicktrack.model
 
-import org.jetbrains.compose.resources.StringResource
-import Res
-
 enum class BuiltinClickSounds(
-    val nameResource: StringResource,
+    val nameResourceId: String, // Changed to String
     val storageKey: String,
     val sounds: ClickSounds,
 ) {
     BEEP(
-        nameResource = Res.string.sound_library_beep,
+        nameResourceId = "sound_library_beep",
         storageKey = "beep",
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled("files/beep_strong.wav"),
@@ -17,7 +14,7 @@ enum class BuiltinClickSounds(
         ),
     ),
     CLAVES(
-        nameResource = Res.string.sound_library_claves,
+        nameResourceId = "sound_library_claves",
         storageKey = "claves",
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled("files/claves_strong.wav"),
@@ -25,7 +22,7 @@ enum class BuiltinClickSounds(
         ),
     ),
     COWBELL(
-        nameResource = Res.string.sound_library_cowbell,
+        nameResourceId = "sound_library_cowbell",
         storageKey = "cowbell",
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled("files/cowbell_strong.wav"),
@@ -33,7 +30,7 @@ enum class BuiltinClickSounds(
         ),
     ),
     DRUMS(
-        nameResource = Res.string.sound_library_drum_kit,
+        nameResourceId = "sound_library_drum_kit",
         storageKey = "drum kit",
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled("files/drumkit_base.wav"),

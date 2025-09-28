@@ -44,7 +44,6 @@ import compose.icons.simpleicons.Twitter
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
-import Res
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -54,7 +53,7 @@ fun AboutScreenView(viewModel: AboutViewModel, modifier: Modifier = Modifier) {
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(Res.string.about_screen_title)) },
+                title = { Text(stringResource("about_screen_title")) },
             )
         },
         modifier = modifier,
@@ -82,7 +81,7 @@ private fun Content(viewModel: AboutViewModel) {
         ) {
             if (!isLandscape) {
                 Image(
-                    painter = painterResource(Res.drawable.myself),
+                    painter = painterResource("myself.jpg"),
                     contentDescription = null,
                     alignment = Alignment.TopEnd,
                     contentScale = ContentScale.Crop,
@@ -96,11 +95,11 @@ private fun Content(viewModel: AboutViewModel) {
             }
 
             Text(
-                text = stringResource(Res.string.about_developed_by),
+                text = stringResource("about_developed_by"),
                 style = MaterialTheme.typography.caption,
             )
             Text(
-                text = stringResource(Res.string.about_developer_name),
+                text = stringResource("about_developer_name"),
                 style = MaterialTheme.typography.h6,
             )
             Row {
@@ -118,11 +117,11 @@ private fun Content(viewModel: AboutViewModel) {
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = stringResource(Res.string.about_logo_by),
+                text = stringResource("about_logo_by"),
                 style = MaterialTheme.typography.caption,
             )
             Text(
-                text = stringResource(Res.string.about_logo_developer_name),
+                text = stringResource("about_logo_developer_name"),
                 style = MaterialTheme.typography.subtitle1,
             )
             IconButton(onClick = viewModel::onArtstationClick) {
@@ -132,7 +131,7 @@ private fun Content(viewModel: AboutViewModel) {
             Spacer(modifier = Modifier.height(24.dp))
 
             UrlClickableText(
-                textWithUrls = stringResource(Res.string.about_open_source_note),
+                textWithUrls = stringResource("about_open_source_note"),
                 onUrlClick = { viewModel.onProjectLinkClick() },
                 modifier = Modifier.padding(horizontal = 48.dp),
                 textAlign = TextAlign.Center,
@@ -140,7 +139,7 @@ private fun Content(viewModel: AboutViewModel) {
         }
 
         Text(
-            text = stringResource(Res.string.about_version, state.displayVersion),
+            text = stringResource("about_version, state.displayVersion"),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .alpha(ContentAlpha.medium)

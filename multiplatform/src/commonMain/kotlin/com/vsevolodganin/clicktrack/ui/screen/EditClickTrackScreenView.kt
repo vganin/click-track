@@ -68,7 +68,6 @@ import com.vsevolodganin.clicktrack.ui.theme.commonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import org.jetbrains.compose.resources.stringResource
-import Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -88,7 +87,7 @@ fun EditClickTrackScreenView(viewModel: EditClickTrackViewModel, modifier: Modif
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(Res.string.edit_click_track_screen_title)) },
+                title = { Text(stringResource("edit_click_track_screen_title")) },
                 actions = {
                     if (state?.showForwardButton == true) {
                         IconButton(onClick = viewModel::onForwardClick) {
@@ -142,7 +141,7 @@ private fun Content(viewModel: EditClickTrackViewModel, state: EditClickTrackSta
                     value = state.name,
                     onValueChange = viewModel::onNameChange,
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(text = stringResource(Res.string.edit_click_track_title_hint)) },
+                    placeholder = { Text(text = stringResource("edit_click_track_title_hint")) },
                     textStyle = MaterialTheme.typography.h6,
                     colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface),
                 )
@@ -195,7 +194,7 @@ private fun OptionsItem(viewModel: EditClickTrackViewModel, loop: Boolean, tempo
                 verticalAlignment = CenterVertically,
             ) {
                 Text(
-                    text = stringResource(Res.string.edit_click_track_options),
+                    text = stringResource("edit_click_track_options"),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.h6,
                 )
@@ -227,7 +226,7 @@ private fun OptionsItem(viewModel: EditClickTrackViewModel, loop: Boolean, tempo
 private fun LoopItem(viewModel: EditClickTrackViewModel, loop: Boolean) {
     Row {
         Text(
-            text = stringResource(Res.string.edit_click_track_loop),
+            text = stringResource("edit_click_track_loop"),
             modifier = Modifier
                 .align(CenterVertically)
                 .weight(1f),

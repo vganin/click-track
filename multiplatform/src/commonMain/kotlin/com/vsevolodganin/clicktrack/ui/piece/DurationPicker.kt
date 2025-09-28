@@ -48,7 +48,6 @@ import androidx.compose.ui.text.input.TextInputSession
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import Res
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
@@ -126,9 +125,9 @@ fun DurationPicker(value: Duration, onValueChange: (Duration) -> Unit, modifier:
 
     @Composable
     fun formatInternalState(): String {
-        val hoursString = stringResource(Res.string.duration_picker_hours)
-        val minutesString = stringResource(Res.string.duration_picker_minutes)
-        val secondsString = stringResource(Res.string.duration_picker_seconds)
+        val hoursString = stringResource("duration_picker_hours")
+        val minutesString = stringResource("duration_picker_minutes")
+        val secondsString = stringResource("duration_picker_seconds")
 
         return StringBuilder().apply {
             append(internalStringState.value.subSequence(0, 2))

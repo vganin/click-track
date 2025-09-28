@@ -15,7 +15,6 @@ import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.pushIfUnique
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
-import com.vsevolodganin.clicktrack.utils.resources.StringResolver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +28,6 @@ import me.tatarka.inject.annotations.Inject
 @Inject
 class ClickTrackListViewModelImpl(
     @Assisted componentContext: ComponentContext,
-    private val stringResolver: StringResolver,
     private val navigation: ScreenStackNavigation,
     private val drawerNavigation: DrawerNavigation,
     private val clickTrackRepository: ClickTrackRepository,

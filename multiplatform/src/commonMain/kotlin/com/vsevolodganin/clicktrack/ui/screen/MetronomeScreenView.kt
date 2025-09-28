@@ -57,7 +57,6 @@ import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import com.vsevolodganin.clicktrack.utils.compose.statusBars
 import org.jetbrains.compose.resources.stringResource
-import Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -81,7 +80,7 @@ fun MetronomeScreenView(viewModel: MetronomeViewModel, modifier: Modifier = Modi
 @Composable
 private fun AppBar(viewModel: MetronomeViewModel) {
     TopAppBar(
-        title = { Text(text = stringResource(Res.string.metronome_screen_title)) },
+        title = { Text(text = stringResource("metronome_screen_title")) },
         navigationIcon = {
             IconButton(onClick = viewModel::onBackClick) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
@@ -114,7 +113,7 @@ private fun Content(viewModel: MetronomeViewModel) {
                 .height(200.dp),
             elevation = 8.dp,
         ) {
-            val metronomeClickTrackName = stringResource(Res.string.general_metronome_click_track_title)
+            val metronomeClickTrackName = stringResource("general_metronome_click_track_title")
             val metronomeClickTrack = remember(state.bpm, state.pattern, state.timeSignature) {
                 metronomeClickTrack(
                     name = metronomeClickTrackName,
@@ -167,7 +166,7 @@ private fun Content(viewModel: MetronomeViewModel) {
                     enableInsets = false,
                 ) {
                     Text(
-                        text = stringResource(Res.string.metronome_bpm_meter_tap),
+                        text = stringResource("metronome_bpm_meter_tap"),
                         style = LocalTextStyle.current.copy(
                             fontWeight = FontWeight.Black,
                             letterSpacing = 4.sp,

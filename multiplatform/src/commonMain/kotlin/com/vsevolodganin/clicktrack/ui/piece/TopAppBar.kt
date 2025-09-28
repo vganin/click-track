@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import org.jetbrains.compose.resources.colorResource
-import Res
 
 @Composable
 fun TopAppBar(
@@ -32,11 +31,11 @@ fun TopAppBar(
 
 val Colors.darkAppBar: Color
     @Composable
-    get() = if (isLight) colorResource(Res.color.dark_app_bar) else surface
+    get() = if (isLight) colorResource("dark_app_bar") else surface
 
 val Colors.onDarkAppBarSurface: Color
     @Composable
-    get() = if (isLight) colorResource(Res.color.on_dark_app_bar) else onSurface
+    get() = if (isLight) colorResource("on_dark_app_bar") else onSurface
 
 @Composable
 internal expect fun TopAppBar(

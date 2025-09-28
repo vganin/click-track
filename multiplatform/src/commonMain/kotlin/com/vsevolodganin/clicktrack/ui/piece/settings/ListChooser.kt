@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
-import Res
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 data class ListChooserItem<T>(
@@ -56,7 +55,7 @@ fun <T> ListChooser(
                     onClick = { showChooser = false },
                     shape = RectangleShape,
                 ) {
-                    Text(text = stringResource(Res.string.general_cancel).uppercase())
+                    Text(text = stringResource("general_cancel").uppercase())
                 }
             },
             text = {

@@ -48,7 +48,6 @@ import com.vsevolodganin.clicktrack.ui.theme.CommonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import org.jetbrains.compose.resources.stringResource
-import Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
@@ -60,7 +59,7 @@ fun SoundLibraryScreenView(viewModel: SoundLibraryViewModel, modifier: Modifier 
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(Res.string.sound_library_screen_title)) },
+                title = { Text(stringResource("sound_library_screen_title")) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
