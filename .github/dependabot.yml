@@ -11,4 +11,3 @@ updates:
         patterns:
           - "org.jetbrains.kotlin*"
           - "com.google.devtools.ksp*"
-          - "me.tatarka.inject*"
