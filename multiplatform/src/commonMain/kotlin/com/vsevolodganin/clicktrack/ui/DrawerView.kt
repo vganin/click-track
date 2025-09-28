@@ -35,15 +35,15 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.drawer.DrawerState
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import com.vsevolodganin.clicktrack.utils.compose.statusBars
-import dev.icerock.moko.resources.compose.painterResource
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import clicktrack.multiplatform.composeresources.generated.resources.Res
 
 @Composable
 fun DrawerView(viewModel: DrawerViewModel) {
@@ -66,29 +66,29 @@ fun DrawerView(viewModel: DrawerViewModel) {
         Spacer(modifier = Modifier.height(12.dp))
 
         DrawerButton(
-            icon = painterResource(MR.images.metronome),
-            label = stringResource(MR.strings.drawer_metronome),
+            icon = painterResource(Res.drawable.metronome),
+            label = stringResource(Res.string.drawer_metronome),
             isSelected = state.selectedItem == DrawerState.SelectedItem.METRONOME,
             action = viewModel::navigateToMetronome,
         )
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.Filled.FitnessCenter),
-            label = stringResource(MR.strings.drawer_training),
+            label = stringResource(Res.string.drawer_training),
             isSelected = state.selectedItem == DrawerState.SelectedItem.TRAINING,
             action = viewModel::navigateToTraining,
         )
 
         DrawerButton(
-            icon = painterResource(MR.images.polyrhythm),
-            label = stringResource(MR.strings.drawer_polyrhythms),
+            icon = painterResource(Res.drawable.polyrhythm),
+            label = stringResource(Res.string.drawer_polyrhythms),
             isSelected = state.selectedItem == DrawerState.SelectedItem.POLYRHYTHMS,
             action = viewModel::navigateToPolyrhythms,
         )
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.Filled.LibraryMusic),
-            label = stringResource(MR.strings.drawer_sound_library),
+            label = stringResource(Res.string.drawer_sound_library),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SOUND_LIBRARY,
             action = viewModel::navigateToSoundLibrary,
         )
@@ -97,14 +97,14 @@ fun DrawerView(viewModel: DrawerViewModel) {
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.Filled.Settings),
-            label = stringResource(MR.strings.drawer_settings),
+            label = stringResource(Res.string.drawer_settings),
             isSelected = state.selectedItem == DrawerState.SelectedItem.SETTINGS,
             action = viewModel::navigateToSettings,
         )
 
         DrawerButton(
             icon = rememberVectorPainter(Icons.AutoMirrored.Filled.ContactSupport),
-            label = stringResource(MR.strings.drawer_about),
+            label = stringResource(Res.string.drawer_about),
             isSelected = state.selectedItem == DrawerState.SelectedItem.ABOUT,
             action = viewModel::navigateToAbout,
         )

@@ -12,7 +12,6 @@ plugins {
     alias(libs.plugins.ksp)
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
-    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 kotlin {
@@ -31,7 +30,6 @@ kotlin {
                 api(libs.bundles.decompose)
                 api(libs.bundles.kotlinx.serialization)
                 api(libs.kotlinx.datetime)
-                api(libs.moko.resources)
                 api(libs.uuid)
                 api(libs.kotlininject.runtime)
                 api(libs.sqldelight.runtime)
@@ -97,11 +95,6 @@ android {
     buildFeatures {
         compose = true
     }
-}
-
-multiplatformResources {
-    resourcesPackage.set("com.vsevolodganin.clicktrack.generated.resources")
-    resourcesClassName.set("MR")
 }
 
 sqldelight {
