@@ -6,3 +6,8 @@ updates:
       interval: "weekly"
       day: "saturday"
       time: "06:00"
+    groups:
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "com.google.devtools.ksp*"
