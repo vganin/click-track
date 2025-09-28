@@ -44,7 +44,7 @@ import compose.icons.simpleicons.Twitter
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
-import clicktrack.multiplatform.composeresources.generated.resources.Res
+import Res
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 

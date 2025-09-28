@@ -37,7 +37,7 @@ import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.NotePatternGroup
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import org.jetbrains.compose.resources.painterResource
-import clicktrack.multiplatform.composeresources.generated.resources.Res
+import Res
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable

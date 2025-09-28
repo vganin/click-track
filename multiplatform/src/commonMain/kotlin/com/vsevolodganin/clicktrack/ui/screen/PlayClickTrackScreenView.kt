@@ -52,7 +52,7 @@ import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import org.jetbrains.compose.resources.stringResource
-import clicktrack.multiplatform.composeresources.generated.resources.Res
+import Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

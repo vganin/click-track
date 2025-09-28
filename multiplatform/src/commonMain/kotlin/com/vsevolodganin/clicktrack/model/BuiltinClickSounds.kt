@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.model
 
 import org.jetbrains.compose.resources.StringResource
-import clicktrack.multiplatform.composeresources.generated.resources.Res
+import Res
 
 enum class BuiltinClickSounds(
     val nameResource: StringResource,

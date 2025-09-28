@@ -7,7 +7,7 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
 import org.jetbrains.compose.resources.stringResource
-import clicktrack.multiplatform.composeresources.generated.resources.Res
+import Res
 
 @Composable
 fun BpmInputField(

@@ -26,7 +26,7 @@ import com.vsevolodganin.clicktrack.model.DefaultTimeDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import org.jetbrains.compose.resources.stringResource
-import clicktrack.multiplatform.composeresources.generated.resources.Res
+import Res
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable

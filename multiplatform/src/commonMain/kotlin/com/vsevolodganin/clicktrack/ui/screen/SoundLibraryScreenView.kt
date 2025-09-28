@@ -48,7 +48,7 @@ import com.vsevolodganin.clicktrack.ui.theme.CommonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import org.jetbrains.compose.resources.stringResource
-import clicktrack.multiplatform.composeresources.generated.resources.Res
+import Res
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json

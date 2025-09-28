@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import clicktrack.multiplatform.composeresources.generated.resources.Res
+import Res
 
 @Composable
 fun DrawerView(viewModel: DrawerViewModel) {

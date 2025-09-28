@@ -40,7 +40,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration.Companion.minutes
-import clicktrack.multiplatform.composeresources.generated.resources.Res
+import Res
 
 @Composable
 fun TrainingScreenView(viewModel: TrainingViewModel, modifier: Modifier = Modifier) {

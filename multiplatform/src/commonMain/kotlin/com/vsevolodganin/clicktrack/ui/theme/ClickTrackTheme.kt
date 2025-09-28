@@ -21,7 +21,7 @@ import com.vsevolodganin.clicktrack.ui.screen.ClickTrackListScreenPreview
 import com.vsevolodganin.clicktrack.utils.compose.isSystemInLandscape
 import com.vsevolodganin.clicktrack.utils.compose.navigationBars
 import org.jetbrains.compose.resources.colorResource
-import clicktrack.multiplatform.composeresources.generated.resources.Res
+import Res
 
 @Composable
 fun ClickTrackTheme(content: @Composable () -> Unit) {
