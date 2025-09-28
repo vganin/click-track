@@ -13,11 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.CueDuration
-import dev.icerock.moko.resources.compose.stringResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration.Companion.minutes
+import clicktrack.multiplatform.composeresources.generated.resources.Res
 
 @Composable
 fun CueDurationView(
@@ -111,9 +111,9 @@ private fun EditTimeView(value: CueDuration.Time, onValueChange: (CueDuration) -
 @Composable
 private fun CueDuration.Type.stringResource(): String {
     return when (this) {
-        CueDuration.Type.BEATS -> MR.strings.cue_duration_beats
-        CueDuration.Type.MEASURES -> MR.strings.cue_duration_measures
-        CueDuration.Type.TIME -> MR.strings.cue_duration_time
+        CueDuration.Type.BEATS -> Res.string.cue_duration_beats
+        CueDuration.Type.MEASURES -> Res.string.cue_duration_measures
+        CueDuration.Type.TIME -> Res.string.cue_duration_time
     }.let { stringResource(it) }
 }
 

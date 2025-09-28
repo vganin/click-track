@@ -1,7 +1,8 @@
 package com.vsevolodganin.clicktrack.model
 
+import org.jetbrains.compose.resources.StringResource
+import clicktrack.multiplatform.composeresources.generated.resources.Res
 import com.vsevolodganin.clicktrack.generated.resources.MR
-import dev.icerock.moko.resources.StringResource
 
 enum class BuiltinClickSounds(
     val nameResource: StringResource,
@@ -9,7 +10,7 @@ enum class BuiltinClickSounds(
     val sounds: ClickSounds,
 ) {
     BEEP(
-        nameResource = MR.strings.sound_library_beep,
+        nameResource = Res.string.sound_library_beep,
         storageKey = "beep",
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled(MR.files.beep_strong_wav),
@@ -17,7 +18,7 @@ enum class BuiltinClickSounds(
         ),
     ),
     CLAVES(
-        nameResource = MR.strings.sound_library_claves,
+        nameResource = Res.string.sound_library_claves,
         storageKey = "claves",
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled(MR.files.claves_strong_wav),
@@ -25,7 +26,7 @@ enum class BuiltinClickSounds(
         ),
     ),
     COWBELL(
-        nameResource = MR.strings.sound_library_cowbell,
+        nameResource = Res.string.sound_library_cowbell,
         storageKey = "cowbell",
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled(MR.files.cowbell_strong_wav),
@@ -33,7 +34,7 @@ enum class BuiltinClickSounds(
         ),
     ),
     DRUMS(
-        nameResource = MR.strings.sound_library_drum_kit,
+        nameResource = Res.string.sound_library_drum_kit,
         storageKey = "drum kit",
         sounds = GenericClickSounds(
             strongBeat = ClickSoundSource.Bundled(MR.files.drumkit_base_wav),
