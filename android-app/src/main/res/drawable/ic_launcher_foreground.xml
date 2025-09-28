@@ -11,78 +11,78 @@
             android:strokeLineJoin="round"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature"
+            android:strokeColor="@color/signature"
             android:strokeLineCap="round" />
         <path
             android:pathData="M60.975,33C60.314,31 59.492,30.007 56.992,30"
             android:strokeLineJoin="round"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature"
+            android:strokeColor="@color/signature"
             android:strokeLineCap="round" />
         <path
             android:pathData="M60.975,33L69.937,72"
             android:strokeLineJoin="round"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature" />
+            android:strokeColor="@color/signature" />
         <path
             android:pathData="M64.958,77C67.933,77 70.433,75 69.937,72"
             android:strokeLineJoin="round"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature"
+            android:strokeColor="@color/signature"
             android:strokeLineCap="round" />
         <path
             android:pathData="M64.958,77H55"
             android:strokeLineJoin="round"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature"
+            android:strokeColor="@color/signature"
             android:strokeLineCap="round" />
         <path
             android:pathData="M55,30H53.008"
             android:strokeLineJoin="round"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature"
+            android:strokeColor="@color/signature"
             android:strokeLineCap="round" />
         <path
             android:pathData="M49.025,33C49.521,31 51.133,30.007 53.008,30"
             android:strokeLineJoin="round"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature"
+            android:strokeColor="@color/signature"
             android:strokeLineCap="round" />
         <path
             android:pathData="M49.025,33L40.063,72"
             android:strokeLineJoin="round"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature" />
+            android:strokeColor="@color/signature" />
         <path
             android:pathData="M45.042,77C42.105,77 39.565,75.5 40.063,72"
             android:strokeLineJoin="round"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature"
+            android:strokeColor="@color/signature"
             android:strokeLineCap="round" />
         <path
             android:pathData="M45.042,77H55"
             android:strokeLineJoin="round"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature"
+            android:strokeColor="@color/signature"
             android:strokeLineCap="round" />
         <path
             android:pathData="M61.971,63H48.029"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature" />
+            android:strokeColor="@color/signature" />
         <path
             android:pathData="M55,70L55,39"
             android:strokeWidth="4"
             android:fillColor="#00000000"
-            android:strokeColor="@color/debug_signature" />
+            android:strokeColor="@color/signature" />
     </group>
 </vector>

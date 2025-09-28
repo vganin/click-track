@@ -27,7 +27,6 @@ import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import kotlinx.coroutines.flow.firstOrNull
 import kotlin.math.roundToInt
-import com.vsevolodganin.clicktrack.multiplatform.R as MR
 
 class ExportWorker(private val appContext: Context, workerParams: WorkerParameters) : CoroutineWorker(appContext, workerParams) {
     companion object {
@@ -93,7 +92,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
             NotificationCompat.Builder(appContext, component.notificationChannels.export)
                 .setContentTitle(appContext.getString(R.string.export_worker_notification_in_process, clickTrack.value.name))
                 .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ResourcesCompat.getColor(appContext.resources, MR.color.debug_signature, null))
+                .setColor(ResourcesCompat.getColor(appContext.resources, R.color.signature, null))
                 .setOngoing(true)
                 .setContentIntent(PendingIntent.getActivity(appContext, 0, tapIntent, pendingIntentFlags))
                 .addAction(
@@ -135,7 +134,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
                     .setContentTitle(appContext.getString(R.string.export_worker_notification_finished, clickTrack.name))
                     .setContentText(appContext.getString(R.string.export_worker_notification_open))
                     .setSmallIcon(R.drawable.ic_notification)
-                    .setColor(ResourcesCompat.getColor(appContext.resources, MR.color.debug_signature, null))
+                    .setColor(ResourcesCompat.getColor(appContext.resources, R.color.signature, null))
                     .setContentIntent(PendingIntent.getActivity(appContext, 0, tapIntent, pendingIntentFlags))
                     .setGroup(NotificationGroups.EXPORT_FINISHED)
                     .build(),

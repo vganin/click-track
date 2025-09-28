@@ -19,7 +19,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.generated.resources.MR
+import clicktrack.multiplatform.generated.resources.Res
+import clicktrack.multiplatform.generated.resources.training_decrease_by
+import clicktrack.multiplatform.generated.resources.training_decrease_every
+import clicktrack.multiplatform.generated.resources.training_increase_by
+import clicktrack.multiplatform.generated.resources.training_increase_every
+import clicktrack.multiplatform.generated.resources.training_max_tempo
+import clicktrack.multiplatform.generated.resources.training_min_tempo
+import clicktrack.multiplatform.generated.resources.training_play_for
+import clicktrack.multiplatform.generated.resources.training_screen_title
+import clicktrack.multiplatform.generated.resources.training_starting_tempo
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.DefaultBeatsDuration
 import com.vsevolodganin.clicktrack.model.DefaultMeasuresDuration
@@ -35,9 +44,9 @@ import com.vsevolodganin.clicktrack.ui.piece.DurationPicker
 import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration.Companion.minutes
 
@@ -47,7 +56,7 @@ fun TrainingScreenView(viewModel: TrainingViewModel, modifier: Modifier = Modifi
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(MR.strings.training_screen_title)) },
+                title = { Text(stringResource(Res.string.training_screen_title)) },
             )
         },
         floatingActionButtonPosition = FabPosition.Center,
@@ -84,7 +93,7 @@ private fun Content(viewModel: TrainingViewModel) {
 
         FormRow {
             Text(
-                text = stringResource(MR.strings.training_starting_tempo),
+                text = stringResource(Res.string.training_starting_tempo),
                 modifier = Modifier.weight(1f),
             )
             BpmInputField(
@@ -114,8 +123,8 @@ private fun Content(viewModel: TrainingViewModel) {
             Text(
                 text = stringResource(
                     when (state.mode) {
-                        TrainingMode.INCREASE_TEMPO -> MR.strings.training_increase_by
-                        TrainingMode.DECREASE_TEMPO -> MR.strings.training_decrease_by
+                        TrainingMode.INCREASE_TEMPO -> Res.string.training_increase_by
+                        TrainingMode.DECREASE_TEMPO -> Res.string.training_decrease_by
                     },
                 ),
                 modifier = Modifier.weight(1f),
@@ -162,8 +171,8 @@ private fun Content(viewModel: TrainingViewModel) {
 private fun TrainingMode.stringResource(): String {
     return stringResource(
         when (this) {
-            TrainingMode.INCREASE_TEMPO -> MR.strings.training_increase_every
-            TrainingMode.DECREASE_TEMPO -> MR.strings.training_decrease_every
+            TrainingMode.INCREASE_TEMPO -> Res.string.training_increase_every
+            TrainingMode.DECREASE_TEMPO -> Res.string.training_decrease_every
         },
     )
 }
@@ -173,11 +182,11 @@ private fun TrainingEndingKind.stringResource(mode: TrainingMode): String {
     return stringResource(
         when (this) {
             TrainingEndingKind.BY_TEMPO -> when (mode) {
-                TrainingMode.INCREASE_TEMPO -> MR.strings.training_max_tempo
-                TrainingMode.DECREASE_TEMPO -> MR.strings.training_min_tempo
+                TrainingMode.INCREASE_TEMPO -> Res.string.training_max_tempo
+                TrainingMode.DECREASE_TEMPO -> Res.string.training_min_tempo
             }
 
-            TrainingEndingKind.BY_TIME -> MR.strings.training_play_for
+            TrainingEndingKind.BY_TIME -> Res.string.training_play_for
         },
     )
 }

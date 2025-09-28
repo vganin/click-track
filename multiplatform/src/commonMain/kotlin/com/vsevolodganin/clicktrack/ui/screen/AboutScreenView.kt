@@ -31,9 +31,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import clicktrack.multiplatform.generated.resources.Res
+import clicktrack.multiplatform.generated.resources.about_developed_by
+import clicktrack.multiplatform.generated.resources.about_developer_name
+import clicktrack.multiplatform.generated.resources.about_logo_by
+import clicktrack.multiplatform.generated.resources.about_logo_developer_name
+import clicktrack.multiplatform.generated.resources.about_open_source_note
+import clicktrack.multiplatform.generated.resources.about_screen_title
+import clicktrack.multiplatform.generated.resources.about_version
+import clicktrack.multiplatform.generated.resources.myself
 import com.vsevolodganin.clicktrack.about.AboutState
 import com.vsevolodganin.clicktrack.about.AboutViewModel
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.UrlClickableText
@@ -42,10 +50,10 @@ import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Artstation
 import compose.icons.simpleicons.Twitter
-import dev.icerock.moko.resources.compose.painterResource
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -54,7 +62,7 @@ fun AboutScreenView(viewModel: AboutViewModel, modifier: Modifier = Modifier) {
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(MR.strings.about_screen_title)) },
+                title = { Text(stringResource(Res.string.about_screen_title)) },
             )
         },
         modifier = modifier,
@@ -82,7 +90,7 @@ private fun Content(viewModel: AboutViewModel) {
         ) {
             if (!isLandscape) {
                 Image(
-                    painter = painterResource(MR.images.myself),
+                    painter = painterResource(Res.drawable.myself),
                     contentDescription = null,
                     alignment = Alignment.TopEnd,
                     contentScale = ContentScale.Crop,
@@ -96,11 +104,11 @@ private fun Content(viewModel: AboutViewModel) {
             }
 
             Text(
-                text = stringResource(MR.strings.about_developed_by),
+                text = stringResource(Res.string.about_developed_by),
                 style = MaterialTheme.typography.caption,
             )
             Text(
-                text = stringResource(MR.strings.about_developer_name),
+                text = stringResource(Res.string.about_developer_name),
                 style = MaterialTheme.typography.h6,
             )
             Row {
@@ -118,11 +126,11 @@ private fun Content(viewModel: AboutViewModel) {
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = stringResource(MR.strings.about_logo_by),
+                text = stringResource(Res.string.about_logo_by),
                 style = MaterialTheme.typography.caption,
             )
             Text(
-                text = stringResource(MR.strings.about_logo_developer_name),
+                text = stringResource(Res.string.about_logo_developer_name),
                 style = MaterialTheme.typography.subtitle1,
             )
             IconButton(onClick = viewModel::onArtstationClick) {
@@ -132,7 +140,7 @@ private fun Content(viewModel: AboutViewModel) {
             Spacer(modifier = Modifier.height(24.dp))
 
             UrlClickableText(
-                textWithUrls = stringResource(MR.strings.about_open_source_note),
+                textWithUrls = stringResource(Res.string.about_open_source_note),
                 onUrlClick = { viewModel.onProjectLinkClick() },
                 modifier = Modifier.padding(horizontal = 48.dp),
                 textAlign = TextAlign.Center,
@@ -140,7 +148,7 @@ private fun Content(viewModel: AboutViewModel) {
         }
 
         Text(
-            text = stringResource(MR.strings.about_version, state.displayVersion),
+            text = stringResource(Res.string.about_version, state.displayVersion),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .alpha(ContentAlpha.medium)

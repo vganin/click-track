@@ -42,7 +42,7 @@ class SoundChooserImpl(
         if (uri != null && request != null) {
             obtainPersistentPermissions(uri)
             pendingRequestState.value = null
-            clickSoundsRepository.update(request.id, request.type, ClickSoundSource.Uri(uri.toString()))
+            clickSoundsRepository.update(request.id, request.type, ClickSoundSource(uri.toString()))
         }
     }
 
@@ -55,7 +55,7 @@ class SoundChooserImpl(
     private suspend fun getInitialUri(id: ClickSoundsId, type: ClickSoundType): Uri? {
         return when (id) {
             is ClickSoundsId.Builtin -> null
-            is ClickSoundsId.Database -> clickSoundsRepository.getById(id).firstOrNull()?.value?.beatByType(type)?.value
+            is ClickSoundsId.Database -> clickSoundsRepository.getById(id).firstOrNull()?.value?.beatByType(type)?.uri
         }?.let(Uri::parse)
     }
 

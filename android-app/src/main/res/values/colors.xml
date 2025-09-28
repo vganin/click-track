@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="signature">#a53030</color>
+    <color name="signature_alternative">#982d2d</color>
+    <color name="splash_background">#0d0d0d</color>
+</resources>

@@ -12,7 +12,6 @@ plugins {
     alias(libs.plugins.ksp)
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
-    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 kotlin {
@@ -27,11 +26,11 @@ kotlin {
                 api(compose.components.uiToolingPreview)
                 // FIXME(https://github.com/JetBrains/compose-jb/issues/1295): Replace with `org.jetbrains.compose.ComposePlugin.Dependencies` field when it's available
                 api(compose("org.jetbrains.compose.ui:ui-util"))
+                api(compose.components.resources)
                 api(libs.simpleIcons)
                 api(libs.bundles.decompose)
                 api(libs.bundles.kotlinx.serialization)
                 api(libs.kotlinx.datetime)
-                api(libs.moko.resources)
                 api(libs.uuid)
                 api(libs.kotlininject.runtime)
                 api(libs.sqldelight.runtime)
@@ -99,11 +98,6 @@ android {
     }
 }
 
-multiplatformResources {
-    resourcesPackage.set("com.vsevolodganin.clicktrack.generated.resources")
-    resourcesClassName.set("MR")
-}
-
 sqldelight {
     databases {
         create("Database") {
@@ -111,6 +105,10 @@ sqldelight {
             schemaOutputDirectory = file("src/commonMain/sqldelight/schema")
         }
     }
+}
+
+compose.resources {
+    publicResClass = true
 }
 
 // FIXME(https://github.com/google/ksp/issues/567): Improve KSP declarations

@@ -19,6 +19,11 @@ import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.ServiceCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.media.app.NotificationCompat.MediaStyle
+import clicktrack.multiplatform.generated.resources.player_service_notification_pause
+import clicktrack.multiplatform.generated.resources.player_service_notification_playing_now
+import clicktrack.multiplatform.generated.resources.player_service_notification_polyrhythm_title
+import clicktrack.multiplatform.generated.resources.player_service_notification_resume
+import clicktrack.multiplatform.generated.resources.player_service_notification_stop
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.applicationComponent
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceComponent
@@ -27,6 +32,8 @@ import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
+import com.vsevolodganin.clicktrack.utils.MultiplatformRes
+import com.vsevolodganin.clicktrack.utils.string
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,9 +45,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import com.vsevolodganin.clicktrack.multiplatform.R as MR
+import org.jetbrains.compose.resources.getString
 
 class PlayerService : Service() {
     companion object {
@@ -230,7 +236,7 @@ class PlayerService : Service() {
                             .collectLatest { polyrhythm ->
                                 startForeground(
                                     contentText = getString(
-                                        MR.string.player_service_notification_polyrhythm_title,
+                                        MultiplatformRes.string.player_service_notification_polyrhythm_title,
                                         polyrhythm.layer1,
                                         polyrhythm.layer2,
                                     ),
@@ -307,14 +313,14 @@ class PlayerService : Service() {
         }
     }
 
-    private fun startForeground(contentText: String, tapIntent: Intent, isPaused: Boolean) {
+    private suspend fun startForeground(contentText: String, tapIntent: Intent, isPaused: Boolean) {
         val launchAppIntent = PendingIntent.getActivity(this, 0, tapIntent, pendingIntentFlags)
 
         val notificationBuilder = NotificationCompat.Builder(this, component.notificationChannels.playingNow)
             .setSmallIcon(R.drawable.ic_notification)
-            .setColor(ResourcesCompat.getColor(resources, MR.color.debug_signature, null))
+            .setColor(ResourcesCompat.getColor(resources, R.color.signature, null))
             .setColorized(true)
-            .setContentTitle(getString(MR.string.player_service_notification_playing_now))
+            .setContentTitle(getString(MultiplatformRes.string.player_service_notification_playing_now))
             .setContentText(contentText)
             .setContentIntent(launchAppIntent)
             .setDeleteIntent(stopIntent)
@@ -322,12 +328,20 @@ class PlayerService : Service() {
             .setVisibility(VISIBILITY_PUBLIC)
             .setForegroundServiceBehavior(FOREGROUND_SERVICE_IMMEDIATE)
             .setOngoing(true)
-            .addAction(R.drawable.ic_notification_stop, getString(MR.string.player_service_notification_stop), stopIntent)
+            .addAction(R.drawable.ic_notification_stop, getString(MultiplatformRes.string.player_service_notification_stop), stopIntent)
             .run {
                 if (isPaused) {
-                    addAction(R.drawable.ic_notification_play, getString(MR.string.player_service_notification_resume), resumeIntent)
+                    addAction(
+                        R.drawable.ic_notification_play,
+                        getString(MultiplatformRes.string.player_service_notification_resume),
+                        resumeIntent,
+                    )
                 } else {
-                    addAction(R.drawable.ic_notification_pause, getString(MR.string.player_service_notification_pause), pauseIntent)
+                    addAction(
+                        R.drawable.ic_notification_pause,
+                        getString(MultiplatformRes.string.player_service_notification_pause),
+                        pauseIntent,
+                    )
                 }
             }
             .setStyle(

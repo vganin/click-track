@@ -47,11 +47,15 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import clicktrack.multiplatform.generated.resources.Res
+import clicktrack.multiplatform.generated.resources.edit_click_track_loop
+import clicktrack.multiplatform.generated.resources.edit_click_track_options
+import clicktrack.multiplatform.generated.resources.edit_click_track_screen_title
+import clicktrack.multiplatform.generated.resources.edit_click_track_title_hint
 import com.vsevolodganin.clicktrack.edit.EditClickTrackState
 import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModel
 import com.vsevolodganin.clicktrack.edit.EditCueState
 import com.vsevolodganin.clicktrack.edit.toEditState
-import com.vsevolodganin.clicktrack.generated.resources.MR
 import com.vsevolodganin.clicktrack.model.BeatsPerMinuteOffset
 import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.NotePattern
@@ -68,10 +72,10 @@ import com.vsevolodganin.clicktrack.ui.theme.CommonCardElevation
 import com.vsevolodganin.clicktrack.ui.theme.commonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
 import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import sh.calvin.reorderable.ReorderableCollectionItemScope
 import sh.calvin.reorderable.ReorderableItem
@@ -88,7 +92,7 @@ fun EditClickTrackScreenView(viewModel: EditClickTrackViewModel, modifier: Modif
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(MR.strings.edit_click_track_screen_title)) },
+                title = { Text(stringResource(Res.string.edit_click_track_screen_title)) },
                 actions = {
                     if (state?.showForwardButton == true) {
                         IconButton(onClick = viewModel::onForwardClick) {
@@ -142,7 +146,7 @@ private fun Content(viewModel: EditClickTrackViewModel, state: EditClickTrackSta
                     value = state.name,
                     onValueChange = viewModel::onNameChange,
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = { Text(text = stringResource(MR.strings.edit_click_track_title_hint)) },
+                    placeholder = { Text(text = stringResource(Res.string.edit_click_track_title_hint)) },
                     textStyle = MaterialTheme.typography.h6,
                     colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface),
                 )
@@ -195,7 +199,7 @@ private fun OptionsItem(viewModel: EditClickTrackViewModel, loop: Boolean, tempo
                 verticalAlignment = CenterVertically,
             ) {
                 Text(
-                    text = stringResource(MR.strings.edit_click_track_options),
+                    text = stringResource(Res.string.edit_click_track_options),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.h6,
                 )
@@ -227,7 +231,7 @@ private fun OptionsItem(viewModel: EditClickTrackViewModel, loop: Boolean, tempo
 private fun LoopItem(viewModel: EditClickTrackViewModel, loop: Boolean) {
     Row {
         Text(
-            text = stringResource(MR.strings.edit_click_track_loop),
+            text = stringResource(Res.string.edit_click_track_loop),
             modifier = Modifier
                 .align(CenterVertically)
                 .weight(1f),

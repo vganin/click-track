@@ -7,10 +7,10 @@ import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.model.BuiltinClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType
+import com.vsevolodganin.clicktrack.model.ClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.PlayableId
-import com.vsevolodganin.clicktrack.model.UriClickSounds
 import com.vsevolodganin.clicktrack.model.UserClickSounds
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
@@ -89,7 +89,7 @@ class SoundLibraryViewModelImpl(
 
     override fun onAddNewClick() {
         scope.launch {
-            clickSoundsRepository.insert(UriClickSounds(null, null))
+            clickSoundsRepository.insert(ClickSounds(null, null))
         }
     }
 
@@ -130,16 +130,14 @@ class SoundLibraryViewModelImpl(
 
     private fun ClickSoundSource?.toText(): String {
         return when (this) {
-            is ClickSoundSource.Bundled -> ""
-            is ClickSoundSource.Uri -> documentMetadataHelper.getDisplayName(value) ?: value
+            is ClickSoundSource -> documentMetadataHelper.getDisplayName(uri) ?: uri
             null -> ""
         }
     }
 
     private fun ClickSoundSource?.hasError(): Boolean {
         return when (this) {
-            is ClickSoundSource.Bundled -> false
-            is ClickSoundSource.Uri -> !documentMetadataHelper.hasReadPermission(value) || !documentMetadataHelper.isAccessible(value)
+            is ClickSoundSource -> !documentMetadataHelper.hasReadPermission(uri) || !documentMetadataHelper.isAccessible(uri)
             null -> false
         }
     }

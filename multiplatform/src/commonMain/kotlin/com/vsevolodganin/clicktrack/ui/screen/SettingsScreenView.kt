@@ -15,7 +15,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.vsevolodganin.clicktrack.generated.resources.MR
+import clicktrack.multiplatform.generated.resources.Res
+import clicktrack.multiplatform.generated.resources.settings_ignore_audio_focus
+import clicktrack.multiplatform.generated.resources.settings_ignore_audio_focus_description
+import clicktrack.multiplatform.generated.resources.settings_language
+import clicktrack.multiplatform.generated.resources.settings_language_system
+import clicktrack.multiplatform.generated.resources.settings_language_system_english
+import clicktrack.multiplatform.generated.resources.settings_language_system_russian
+import clicktrack.multiplatform.generated.resources.settings_screen_title
+import clicktrack.multiplatform.generated.resources.settings_theme
+import clicktrack.multiplatform.generated.resources.settings_theme_auto
+import clicktrack.multiplatform.generated.resources.settings_theme_auto_description
+import clicktrack.multiplatform.generated.resources.settings_theme_dark
+import clicktrack.multiplatform.generated.resources.settings_theme_light
+import clicktrack.multiplatform.generated.resources.settings_theme_system
+import clicktrack.multiplatform.generated.resources.settings_theme_system_description
 import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.settings.SettingsState
 import com.vsevolodganin.clicktrack.settings.SettingsViewModel
@@ -27,9 +41,9 @@ import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooserItem
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import com.vsevolodganin.clicktrack.utils.platform.isDebug
-import dev.icerock.moko.resources.compose.stringResource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -38,7 +52,7 @@ fun SettingsScreenView(viewModel: SettingsViewModel, modifier: Modifier = Modifi
         topBar = {
             TopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
-                title = { Text(stringResource(MR.strings.settings_screen_title)) },
+                title = { Text(stringResource(Res.string.settings_screen_title)) },
             )
         },
         modifier = modifier,
@@ -52,7 +66,7 @@ private fun Content(viewModel: SettingsViewModel) {
     val state by viewModel.state.collectAsState()
     Column {
         ListChooser(
-            title = stringResource(MR.strings.settings_theme),
+            title = stringResource(Res.string.settings_theme),
             value = state.theme.displayValue(),
             variants = Theme.entries.map {
                 ListChooserItem(
@@ -67,7 +81,7 @@ private fun Content(viewModel: SettingsViewModel) {
         Divider(modifier = Modifier.padding(start = 16.dp))
 
         ListChooser(
-            title = stringResource(MR.strings.settings_language),
+            title = stringResource(Res.string.settings_language),
             value = state.language.displayValue(),
             variants = AppLanguage.entries.map {
                 ListChooserItem(
@@ -82,10 +96,10 @@ private fun Content(viewModel: SettingsViewModel) {
         Divider(modifier = Modifier.padding(start = 16.dp))
 
         BooleanChooser(
-            title = stringResource(MR.strings.settings_ignore_audio_focus),
+            title = stringResource(Res.string.settings_ignore_audio_focus),
             value = state.ignoreAudioFocus,
             onCheckedChange = viewModel::onIgnoreAudioFocusChange,
-            description = stringResource(MR.strings.settings_ignore_audio_focus_description),
+            description = stringResource(Res.string.settings_ignore_audio_focus_description),
         )
 
         if (isDebug()) {
@@ -117,25 +131,25 @@ private fun Content(viewModel: SettingsViewModel) {
 
 @Composable
 private fun Theme.displayValue(): String = when (this) {
-    Theme.LIGHT -> MR.strings.settings_theme_light
-    Theme.DARK -> MR.strings.settings_theme_dark
-    Theme.SYSTEM -> MR.strings.settings_theme_system
-    Theme.AUTO -> MR.strings.settings_theme_auto
+    Theme.LIGHT -> Res.string.settings_theme_light
+    Theme.DARK -> Res.string.settings_theme_dark
+    Theme.SYSTEM -> Res.string.settings_theme_system
+    Theme.AUTO -> Res.string.settings_theme_auto
 }.let { stringResource(it) }
 
 @Composable
 private fun Theme.description(): String? = when (this) {
     Theme.LIGHT -> null
     Theme.DARK -> null
-    Theme.SYSTEM -> MR.strings.settings_theme_system_description
-    Theme.AUTO -> MR.strings.settings_theme_auto_description
+    Theme.SYSTEM -> Res.string.settings_theme_system_description
+    Theme.AUTO -> Res.string.settings_theme_auto_description
 }?.let { stringResource(it) }
 
 @Composable
 private fun AppLanguage.displayValue(): String = when (this) {
-    AppLanguage.SYSTEM -> MR.strings.settings_language_system
-    AppLanguage.ENGLISH -> MR.strings.settings_language_system_english
-    AppLanguage.RUSSIAN -> MR.strings.settings_language_system_russian
+    AppLanguage.SYSTEM -> Res.string.settings_language_system
+    AppLanguage.ENGLISH -> Res.string.settings_language_system_english
+    AppLanguage.RUSSIAN -> Res.string.settings_language_system_russian
 }.let { stringResource(it) }
 
 @Preview
