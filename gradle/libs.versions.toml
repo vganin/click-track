@@ -71,4 +71,4 @@ kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 properties = "net.saliman.properties:1.6.0"
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
-versions = "com.github.ben-manes.versions:0.52.0"
+versions = "com.github.ben-manes.versions:0.53.0"
