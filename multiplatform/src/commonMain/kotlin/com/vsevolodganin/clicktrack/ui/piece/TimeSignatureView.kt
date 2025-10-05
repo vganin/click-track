@@ -1,15 +1,15 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Chip
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -23,30 +23,20 @@ fun TimeSignatureView(state: MutableState<TimeSignature>, modifier: Modifier = M
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TimeSignatureView(value: TimeSignature, onValueChange: (TimeSignature) -> Unit, modifier: Modifier = Modifier) {
-    Row(modifier = modifier) {
-        val commonModifier = Modifier.align(Alignment.CenterVertically)
-        val commonTextStyle = MaterialTheme.typography.subtitle1
-        val commonNumberRange = 1..64
-        NumberPicker(
-            value = value.noteCount,
-            onValueChange = { onValueChange(value.copy(noteCount = it)) },
-            modifier = commonModifier,
-            textStyle = commonTextStyle,
-            range = commonNumberRange,
-        )
-        Text(
-            text = "/",
-            style = commonTextStyle,
-            modifier = commonModifier,
-        )
-        NumberPicker(
-            value = value.noteValue,
-            onValueChange = { onValueChange(value.copy(noteValue = it)) },
-            modifier = commonModifier,
-            textStyle = commonTextStyle,
-            range = commonNumberRange,
+    var isEditDialogOpened by rememberSaveable { mutableStateOf(false) }
+
+    Chip(onClick = { isEditDialogOpened = !isEditDialogOpened }, modifier = modifier) {
+        Text(text = "${value.noteCount}/${value.noteValue}")
+    }
+
+    if (isEditDialogOpened) {
+        TimeSignatureEditDialog(
+            value = value,
+            onValueChange = onValueChange,
+            onDismissRequest = { isEditDialogOpened = false },
         )
     }
 }
@@ -54,10 +44,7 @@ fun TimeSignatureView(value: TimeSignature, onValueChange: (TimeSignature) -> Un
 @Preview
 @Composable
 private fun Preview() {
-    Box(modifier = Modifier.fillMaxSize()) {
-        TimeSignatureView(
-            state = remember { mutableStateOf(TimeSignature(4, 4)) },
-            modifier = Modifier.align(Alignment.Center),
-        )
-    }
+    TimeSignatureView(
+        state = remember { mutableStateOf(TimeSignature(4, 4)) },
+    )
 }
