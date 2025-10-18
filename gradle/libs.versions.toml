@@ -1,6 +1,6 @@
 [versions]
 accompanist = "0.36.0"
-decompose = "3.3.0"
+decompose = "3.4.0"
 kotlin = "2.2.20"
 kotlinInject = "0.7.2"
 kotlinx-coroutines = "1.10.2"
