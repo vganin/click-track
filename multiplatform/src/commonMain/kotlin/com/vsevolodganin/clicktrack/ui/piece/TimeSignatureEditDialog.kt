@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.LocalContentColor
@@ -116,12 +114,14 @@ private fun TimeSignatureViewDialogContent(
             onValueChange = {
                 onValueChange(value.copy(noteCount = it))
             },
+            modifier = Modifier.weight(1f),
         )
         NoteValueColumn(
             value = value.noteValue,
             onValueChange = {
                 onValueChange(value.copy(noteValue = it))
             },
+            modifier = Modifier.weight(1f),
         )
     }
 }
@@ -130,8 +130,10 @@ private fun TimeSignatureViewDialogContent(
 private fun NoteCountColumn(
     value: Int,
     onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.End,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -147,9 +149,7 @@ private fun NoteCountColumn(
                 .coerceIn(noteCounts.indices),
             items = noteCounts,
             onItemSelect = { _, item -> onValueChange(item) },
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(100.dp),
+            modifier = Modifier.fillMaxSize(),
         ) { index, item, isSelected, closenessToSelection ->
             WheelItem(
                 item = item.toString(),
@@ -165,8 +165,10 @@ private fun NoteCountColumn(
 private fun NoteValueColumn(
     value: Int,
     onValueChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
+        modifier = modifier,
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -192,9 +194,7 @@ private fun NoteValueColumn(
                 .coerceIn(possibleNoteValues.indices),
             items = possibleNoteValues.map { it.second },
             onItemSelect = { index, _ -> onValueChange(possibleNoteValues[index].first) },
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(100.dp),
+            modifier = Modifier.fillMaxSize(),
         ) { index, item, isSelected, closenessToSelection ->
             WheelItem(
                 item = stringResource(item),
