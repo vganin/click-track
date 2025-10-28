@@ -95,6 +95,7 @@ class PrimitiveAudioExtractor(
                         if (bufferInfo.flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0 ||
                             resultByteBuffer.remaining() == 0
                         ) {
+                            endOfInput = true
                             endOfOutput = true
                         }
 
