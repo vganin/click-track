@@ -108,7 +108,6 @@ dependencies {
     implementation(libs.androidx.workManager)
     implementation(libs.bundles.decompose)
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.review)

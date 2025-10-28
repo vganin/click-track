@@ -4,7 +4,6 @@ import android.app.Activity
 import com.google.android.play.core.ktx.launchReview
 import com.google.android.play.core.ktx.requestReview
 import com.google.android.play.core.review.ReviewManager
-import com.vsevolodganin.clicktrack.analytics.AnalyticsLogger
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.log.Logger
@@ -22,7 +21,6 @@ class InAppReview(
     private val reviewManagerProvider: () -> ReviewManager,
     private val activity: Activity,
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val analyticsLogger: AnalyticsLogger,
     private val logger: Logger,
 ) {
     @OptIn(DelicateCoroutinesApi::class)
@@ -39,7 +37,6 @@ class InAppReview(
                 val reviewInfo = reviewManager.requestReview()
                 reviewManager.launchReview(activity, reviewInfo)
                 userPreferencesRepository.reviewRequestTimestamp.value = nowMilliseconds()
-                analyticsLogger.logEvent("review_requested")
             }
         } catch (t: Throwable) {
             logger.logError(TAG, "Failed to request review", t)
