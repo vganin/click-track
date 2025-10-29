@@ -84,7 +84,7 @@ class ReplaceTest {
         val list = listOf(
             Person("Alice", 25),
             Person("Bob", 30),
-            Person("Charlie", 35)
+            Person("Charlie", 35),
         )
         val result = list.replace(1) { it.copy(age = it.age + 1) }
 
@@ -92,9 +92,9 @@ class ReplaceTest {
             listOf(
                 Person("Alice", 25),
                 Person("Bob", 31),
-                Person("Charlie", 35)
+                Person("Charlie", 35),
             ),
-            result
+            result,
         )
     }
 

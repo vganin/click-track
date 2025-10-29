@@ -90,14 +90,14 @@ class RoundRobinTest {
     fun `toRoundRobin on Iterable should create new iterator for each iteration`() {
         val source = listOf("a", "b", "c")
         val roundRobin = source.toRoundRobin()
-        
+
         val firstIterator = roundRobin.iterator()
         val firstResults = buildList {
             repeat(4) {
                 add(firstIterator.next())
             }
         }
-        
+
         val secondIterator = roundRobin.iterator()
         val secondResults = buildList {
             repeat(4) {
