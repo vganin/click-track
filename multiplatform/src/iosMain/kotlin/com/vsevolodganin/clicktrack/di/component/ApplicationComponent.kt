@@ -9,6 +9,7 @@ import com.vsevolodganin.clicktrack.utils.log.Logger
 import com.vsevolodganin.clicktrack.utils.log.LoggerImpl
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
+import kotlin.reflect.KClass
 
 @ApplicationScope
 @Component
@@ -22,3 +23,5 @@ abstract class ApplicationComponent :
     @get:Provides
     val LoggerImpl.binding: Logger get() = this
 }
+
+expect fun KClass<ApplicationComponent>.createKmp(): ApplicationComponent

@@ -19,6 +19,7 @@ import com.vsevolodganin.clicktrack.soundlibrary.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
+import kotlin.reflect.KClass
 
 @MainControllerScope
 @Component
@@ -37,3 +38,8 @@ abstract class MainViewControllerComponent(
     protected val DummyDocumentMetadataHelperImpl.binding: DocumentMetadataHelper @Provides get() = this
     protected val NativeCrashImpl.binding: NativeCrash @Provides get() = this
 }
+
+expect fun KClass<MainViewControllerComponent>.createKmp(
+    applicationComponent: ApplicationComponent,
+    componentContext: ComponentContext,
+): MainViewControllerComponent
