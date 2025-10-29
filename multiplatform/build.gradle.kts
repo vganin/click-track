@@ -118,6 +118,8 @@ dependencies {
     with(libs.kotlininject.compiler) {
         kspCommonMainMetadata(this)
         kspAndroid(this)
+        kspIosX64(this)
+        kspIosArm64(this)
         kspIosSimulatorArm64(this)
     }
 }

@@ -8,6 +8,9 @@ plugins {
 configure<KotlinMultiplatformExtension> {
     applyDefaultHierarchyTemplate()
 
-    iosSimulatorArm64()
     androidTarget()
+
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 }
