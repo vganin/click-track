@@ -24,7 +24,7 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(keystorePropertiesFile.inputStream())
 }
 
-val baseVersion = "1.3.0"
+val baseVersion = "1.3.1"
 val currentDate = SimpleDateFormat("yyyyMMdd").format(Date())!!
 
 android {

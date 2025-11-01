@@ -17,6 +17,7 @@ ktlint_standard_import-ordering = disabled
 ktlint_standard_function-expression-body = disabled
 ktlint_standard_function-signature = disabled
 ktlint_standard_class-signature = disabled
+ktlint_standard_value-parameter-comment = disabled
 
 [**/build/**]
 ktlint = disabled
