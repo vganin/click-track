@@ -2,7 +2,7 @@
 accompanist = "0.36.0"
 decompose = "3.4.0"
 kotlin = "2.2.21"
-kotlinInject = "0.7.2"
+kotlinInject = "0.8.0"
 kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.9.0"
 kover = "0.9.3"
