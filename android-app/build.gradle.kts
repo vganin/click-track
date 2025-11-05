@@ -1,8 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Properties
 
 plugins {
@@ -24,20 +22,17 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(keystorePropertiesFile.inputStream())
 }
 
-val baseVersion = "1.3.1"
-val currentDate = SimpleDateFormat("yyyyMMdd").format(Date())!!
-
 android {
     namespace = "com.vsevolodganin.clicktrack"
 
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
         versionCode = file("version-code").readText().trim().toInt()
-        versionName = "$baseVersion ($currentDate)"
+        versionName = "1.3.1"
 
         resourceConfigurations += setOf("en", "ru")
 
-        setProperty("archivesBaseName", "click-track-$baseVersion-$currentDate")
+        setProperty("archivesBaseName", "click-track-v$versionName")
 
         externalNativeBuild {
             cmake {
