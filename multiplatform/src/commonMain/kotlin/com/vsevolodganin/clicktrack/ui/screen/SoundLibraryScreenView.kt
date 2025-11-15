@@ -3,6 +3,7 @@ package com.vsevolodganin.clicktrack.ui.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,21 +12,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CenterFocusStrong
 import androidx.compose.material.icons.filled.CenterFocusWeak
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,13 +44,10 @@ import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.soundlibrary.SelectableClickSoundsItem
 import com.vsevolodganin.clicktrack.soundlibrary.SoundLibraryState
 import com.vsevolodganin.clicktrack.soundlibrary.SoundLibraryViewModel
-import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopIcon
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.theme.CommonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
-import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
@@ -71,20 +70,28 @@ fun SoundLibraryScreenView(viewModel: SoundLibraryViewModel, modifier: Modifier 
             }
         },
         modifier = modifier,
-    ) {
+    ) { paddingValues ->
         val state by viewModel.state.collectAsState()
-        Content(viewModel, state ?: return@Scaffold)
+        Content(
+            viewModel = viewModel,
+            state = state ?: return@Scaffold,
+            paddingValues = paddingValues,
+        )
     }
 }
 
 @Composable
-private fun Content(viewModel: SoundLibraryViewModel, state: SoundLibraryState) {
-    LazyColumn {
+private fun Content(
+    viewModel: SoundLibraryViewModel,
+    state: SoundLibraryState,
+    paddingValues: PaddingValues,
+) {
+    LazyColumn(
+        contentPadding = paddingValues,
+    ) {
         items(items = state.items, key = { Json.encodeToString(it.id) }) { item ->
             ClicksSoundsItem(viewModel, item)
         }
-
-        padWithFabSpace()
     }
 }
 
@@ -118,7 +125,7 @@ private fun BuiltinClickSoundsItem(viewModel: SoundLibraryViewModel, item: Selec
                 .fillMaxWidth()
                 .align(CenterVertically),
             textAlign = TextAlign.Start,
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.bodyLarge,
         )
     }
 }
@@ -136,7 +143,6 @@ private fun UserDefinedSoundsItem(viewModel: SoundLibraryViewModel, item: Select
                 .fillMaxWidth()
                 .padding(contentPadding)
                 .clickable(onClick = { viewModel.onItemClick(item.id) }),
-            elevation = CommonCardElevation.Normal,
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -164,7 +170,7 @@ private fun UserDefinedSoundsItem(viewModel: SoundLibraryViewModel, item: Select
                         OutlinedButton(
                             onClick = { viewModel.onItemSoundSelect(item.id, ClickSoundType.STRONG) },
                             modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.secondary),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.secondary),
                         ) {
                             Text(
                                 text = item.strongBeatValue,
@@ -186,7 +192,7 @@ private fun UserDefinedSoundsItem(viewModel: SoundLibraryViewModel, item: Select
                         OutlinedButton(
                             onClick = { viewModel.onItemSoundSelect(item.id, ClickSoundType.WEAK) },
                             modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colors.secondary),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.secondary),
                         ) {
                             Text(
                                 text = item.weakBeatValue,
@@ -206,7 +212,7 @@ private fun UserDefinedSoundsItem(viewModel: SoundLibraryViewModel, item: Select
                         Icon(
                             imageVector = Icons.Default.Error,
                             contentDescription = null,
-                            tint = MaterialTheme.colors.error,
+                            tint = MaterialTheme.colorScheme.error,
                         )
                     }
                 } else {

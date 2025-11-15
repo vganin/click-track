@@ -1,9 +1,8 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -20,7 +19,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun ExpandableChevron(
     isExpanded: Boolean,
     modifier: Modifier = Modifier,
-    tint: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
+    tint: Color = LocalContentColor.current,
 ) {
     val animatedProgress by animateFloatAsState(if (isExpanded) 1f else 0f)
 

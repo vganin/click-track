@@ -20,7 +20,6 @@ fun PlayButtons(
     onTogglePlayStop: () -> Unit,
     onTogglePlayPause: () -> Unit,
     modifier: Modifier = Modifier,
-    enableInsets: Boolean = true,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         AnimatedVisibility(
@@ -33,7 +32,6 @@ fun PlayButtons(
                     isPlaying = !isPaused,
                     onToggle = onTogglePlayPause,
                     modifier = Modifier.size(40.dp),
-                    enableInsets = enableInsets,
                 )
                 SimpleSpacer(height = 8.dp)
             }
@@ -42,7 +40,6 @@ fun PlayButtons(
         PlayStopButton(
             isPlaying = isPlaying,
             onToggle = onTogglePlayStop,
-            enableInsets = enableInsets,
         )
     }
 }

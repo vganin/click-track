@@ -19,9 +19,9 @@ import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -101,7 +101,7 @@ fun <T> WheelPicker(
 fun <T> LazyItemScope.DefaultWheelItemContent(item: T, isSelected: Boolean, closenessToSelection: Float) {
     val easedClosenessToSelection = EaseOutQuad.transform(closenessToSelection)
     val scale = lerp(0.0f, 1f, easedClosenessToSelection)
-    val color by animateColorAsState(if (isSelected) MaterialTheme.colors.primary else LocalContentColor.current)
+    val color by animateColorAsState(if (isSelected) MaterialTheme.colorScheme.primary else LocalContentColor.current)
 
     Text(
         text = item.toString(),
