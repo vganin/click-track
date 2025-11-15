@@ -1,7 +1,0 @@
-<resources>
-
-    <style name="SplashTheme" parent="BaseSplashTheme">
-        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo_vector</item>
-    </style>
-
-</resources>

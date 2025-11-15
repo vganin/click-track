@@ -1,8 +1,7 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import androidx.compose.material.Chip
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -23,14 +22,17 @@ fun TimeSignatureView(state: MutableState<TimeSignature>, modifier: Modifier = M
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TimeSignatureView(value: TimeSignature, onValueChange: (TimeSignature) -> Unit, modifier: Modifier = Modifier) {
     var isEditDialogOpened by rememberSaveable { mutableStateOf(false) }
 
-    Chip(onClick = { isEditDialogOpened = !isEditDialogOpened }, modifier = modifier) {
-        Text(text = "${value.noteCount}/${value.noteValue}")
-    }
+    SuggestionChip(
+        onClick = { isEditDialogOpened = !isEditDialogOpened },
+        label = {
+            Text(text = "${value.noteCount}/${value.noteValue}")
+        },
+        modifier = modifier,
+    )
 
     if (isEditDialogOpened) {
         TimeSignatureEditDialog(

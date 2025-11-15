@@ -2,13 +2,15 @@ package com.vsevolodganin.clicktrack
 
 import android.Manifest
 import android.content.Intent
+import android.graphics.Color
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
 import com.arkivanov.decompose.defaultComponentContext
 import com.vsevolodganin.clicktrack.di.component.MainActivityComponent
 import com.vsevolodganin.clicktrack.di.component.create
@@ -24,9 +26,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
         installSplashScreen()
+
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT),
+        )
 
         component = MainActivityComponent::class.create(
             applicationComponent = applicationComponent,

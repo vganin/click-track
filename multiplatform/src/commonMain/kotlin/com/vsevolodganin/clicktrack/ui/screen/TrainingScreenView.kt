@@ -7,12 +7,13 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,7 +42,6 @@ import com.vsevolodganin.clicktrack.ui.piece.BpmInputField
 import com.vsevolodganin.clicktrack.ui.piece.CueDurationView
 import com.vsevolodganin.clicktrack.ui.piece.DropdownSelector
 import com.vsevolodganin.clicktrack.ui.piece.DurationPicker
-import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,15 +69,21 @@ fun TrainingScreenView(viewModel: TrainingViewModel, modifier: Modifier = Modifi
             }
         },
         modifier = modifier,
-    ) {
-        Content(viewModel)
+    ) { paddingValues ->
+        Content(
+            viewModel = viewModel,
+            modifier = Modifier.padding(paddingValues),
+        )
     }
 }
 
 @Composable
-private fun Content(viewModel: TrainingViewModel) {
+private fun Content(
+    viewModel: TrainingViewModel,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier.padding(16.dp),
+        modifier = modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         val state by viewModel.state.collectAsState()
