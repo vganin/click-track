@@ -21,7 +21,7 @@ kotlin {
                 api(compose.runtime)
                 api(compose.foundation)
                 api(compose.ui)
-                api(compose.material)
+                api(compose.material3)
                 api(compose.materialIconsExtended)
                 api(compose.components.uiToolingPreview)
                 // FIXME(https://github.com/JetBrains/compose-jb/issues/1295): Replace with `org.jetbrains.compose.ComposePlugin.Dependencies` field when it's available
@@ -55,7 +55,6 @@ kotlin {
                 api(libs.androidx.activity.compose)
                 api(libs.androidx.constraintLayout.compose)
                 api(libs.androidx.dataStore)
-                api(libs.bundles.accompanist)
                 api(libs.sqldelight.androidDriver)
             }
         }

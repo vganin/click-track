@@ -1,8 +1,8 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,22 +12,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import clicktrack.multiplatform.generated.resources.Res
 import clicktrack.multiplatform.generated.resources.click_track_list_screen_title
@@ -36,15 +37,13 @@ import com.vsevolodganin.clicktrack.list.ClickTrackListViewModel
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
+import com.vsevolodganin.clicktrack.ui.piece.DarkTopAppBar
 import com.vsevolodganin.clicktrack.ui.piece.DragHandle
-import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
-import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_2
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.theme.commonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
-import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
+import com.vsevolodganin.clicktrack.utils.compose.withFabPadding
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.Json
@@ -59,18 +58,24 @@ fun ClickTrackListScreenView(viewModel: ClickTrackListViewModel, modifier: Modif
         topBar = { TopBar(viewModel) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.onAddClick() }) {
+            FloatingActionButton(
+                onClick = { viewModel.onAddClick() },
+                shape = CircleShape,
+            ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
         modifier = modifier,
-    ) {
-        Content(viewModel)
+    ) { paddingValues ->
+        Content(
+            viewModel = viewModel,
+            paddingValues = paddingValues,
+        )
     }
 }
 
 @Composable
-private fun Content(viewModel: ClickTrackListViewModel) {
+private fun Content(viewModel: ClickTrackListViewModel, paddingValues: PaddingValues) {
     val state by viewModel.state.collectAsState()
 
     val numberOfNonDraggableItems = 1
@@ -82,6 +87,7 @@ private fun Content(viewModel: ClickTrackListViewModel) {
     LazyColumn(
         state = lazyListState,
         modifier = Modifier.fillMaxSize(),
+        contentPadding = paddingValues.withFabPadding(),
     ) {
         item {
             // FIXME: Dummy item to workaround https://github.com/Calvin-LL/Reorderable/issues/4
@@ -96,18 +102,16 @@ private fun Content(viewModel: ClickTrackListViewModel) {
                     dragHandleModifier = Modifier.draggableHandle(
                         onDragStopped = { viewModel.onItemMoveFinished() },
                     ),
-                    elevation = commonCardElevation(isDragging),
                 )
             }
         }
-
-        padWithFabSpace()
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopBar(viewModel: ClickTrackListViewModel) {
-    TopAppBar(
+    DarkTopAppBar(
         title = {
             Text(text = stringResource(Res.string.click_track_list_screen_title))
         },
@@ -124,7 +128,6 @@ private fun ClickTrackListItem(
     viewModel: ClickTrackListViewModel,
     clickTrack: ClickTrackWithDatabaseId,
     dragHandleModifier: Modifier,
-    elevation: Dp,
 ) {
     val contentPadding = 8.dp
 
@@ -137,21 +140,13 @@ private fun ClickTrackListItem(
                 .padding(contentPadding)
                 .fillMaxWidth()
                 .height(100.dp),
-            elevation = elevation,
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 ClickTrackView(
                     clickTrack = clickTrack.value,
                     drawTextMarks = false,
                     modifier = Modifier
-                        .fillMaxSize()
                         .clickable(onClick = { viewModel.onItemClick(clickTrack.id) }),
-                )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = MaterialTheme.colors.surface.copy(alpha = 0.25f)),
                 )
 
                 Row(

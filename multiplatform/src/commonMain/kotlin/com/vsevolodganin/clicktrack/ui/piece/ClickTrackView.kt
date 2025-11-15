@@ -16,8 +16,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -77,7 +76,7 @@ fun ClickTrackView(
     viewportPanEnabled: Boolean = false,
     defaultLineWidth: Float = Stroke.HairlineWidth,
 ) {
-    BoxWithConstraints(modifier = modifier) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
         // Bounds
         val width = minWidth
         val height = minHeight
@@ -88,7 +87,7 @@ fun ClickTrackView(
         var isProgressCaptured by remember { mutableStateOf(false) }
         val progressLineWidth by progressLineWidth(defaultLineWidth, isProgressCaptured)
         val progressLinePosition = progressLinePosition(progress, clickTrack.durationInTime, widthPx)
-        val progressLineColor = MaterialTheme.colors.secondaryVariant
+        val progressLineColor = MaterialTheme.colorScheme.secondaryContainer
 
         // Camera
         val bounds = remember { Rect(0f, 0f, widthPx, heightPx) }
@@ -113,7 +112,11 @@ fun ClickTrackView(
         val marks = clickTrack.asMarks(widthPx, drawAllBeatsMarks)
 
         fun Float.transformXAndPixelAlign(): Float {
-            return ((this + translateX) * scaleX).roundToInt().toFloat()
+            return ((this + translateX) * scaleX)
+                .takeIf { !it.isNaN() }
+                ?.roundToInt()
+                ?.toFloat()
+                ?: 0f
         }
 
         val transformedAndPixelAlignedMarks = remember(marks, translateX, scaleX) {
@@ -285,8 +288,8 @@ private data class Mark(
 
 @Composable
 private fun ClickTrack.asMarks(width: Float, drawAllBeatsMarks: Boolean): List<Mark> {
-    val primaryMarkColor = MaterialTheme.colors.onSurface
-    val secondaryMarkColor = primaryMarkColor.copy(alpha = ContentAlpha.medium)
+    val primaryMarkColor = MaterialTheme.colorScheme.onSurface
+    val secondaryMarkColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     return remember(cues, width, drawAllBeatsMarks) {
         val result = mutableListOf<Mark>()
@@ -527,6 +530,5 @@ private fun Preview() {
         clickTrack = PREVIEW_CLICK_TRACK_1.value,
         drawTextMarks = true,
         progress = PlayProgress(1.seconds),
-        modifier = Modifier.fillMaxSize(),
     )
 }

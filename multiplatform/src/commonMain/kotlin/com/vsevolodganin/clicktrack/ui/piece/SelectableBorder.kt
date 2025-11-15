@@ -3,8 +3,7 @@ package com.vsevolodganin.clicktrack.ui.piece
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,10 +15,10 @@ import androidx.compose.ui.unit.dp
 fun Modifier.selectableBorder(
     isSelected: Boolean,
     isError: Boolean = false,
-    activeColor: Color = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.high),
-    inactiveColor: Color = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.disabled),
-    activeErrorColor: Color = MaterialTheme.colors.error.copy(alpha = ContentAlpha.high),
-    inactiveErrorColor: Color = MaterialTheme.colors.error.copy(alpha = ContentAlpha.disabled),
+    activeColor: Color = MaterialTheme.colorScheme.primary,
+    inactiveColor: Color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+    activeErrorColor: Color = MaterialTheme.colorScheme.error,
+    inactiveErrorColor: Color = MaterialTheme.colorScheme.error.copy(alpha = 0.5f),
 ): Modifier {
     val borderColor = when {
         isSelected -> when {

@@ -4,20 +4,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import clicktrack.multiplatform.generated.resources.Res
 import clicktrack.multiplatform.generated.resources.general_cancel
@@ -44,7 +41,7 @@ fun <T> ListChooser(
         title = title,
         modifier = modifier.clickable { showChooser = true },
     ) {
-        Text(text = value, modifier = Modifier.alpha(ContentAlpha.medium))
+        Text(text = value)
     }
 
     if (showChooser) {
@@ -53,10 +50,7 @@ fun <T> ListChooser(
             confirmButton = {},
             onDismissRequest = { showChooser = false },
             dismissButton = {
-                TextButton(
-                    onClick = { showChooser = false },
-                    shape = RectangleShape,
-                ) {
+                TextButton(onClick = { showChooser = false }) {
                     Text(text = stringResource(Res.string.general_cancel).uppercase())
                 }
             },
@@ -89,13 +83,13 @@ private fun <T> DialogContent(variants: List<ListChooserItem<T>>, onChoose: (T) 
                 if (item.description != null) {
                     Text(
                         text = item.description,
-                        style = MaterialTheme.typography.caption,
+                        style = MaterialTheme.typography.bodySmall,
                     )
                 }
             }
 
             if (index != variants.lastIndex) {
-                Divider()
+                HorizontalDivider()
             }
         }
     }

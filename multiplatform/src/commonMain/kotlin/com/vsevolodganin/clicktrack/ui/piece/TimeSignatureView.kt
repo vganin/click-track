@@ -1,8 +1,9 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import androidx.compose.material.Chip
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -11,7 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.model.TimeSignature
+import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -23,12 +26,16 @@ fun TimeSignatureView(state: MutableState<TimeSignature>, modifier: Modifier = M
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TimeSignatureView(value: TimeSignature, onValueChange: (TimeSignature) -> Unit, modifier: Modifier = Modifier) {
     var isEditDialogOpened by rememberSaveable { mutableStateOf(false) }
 
-    Chip(onClick = { isEditDialogOpened = !isEditDialogOpened }, modifier = modifier) {
+    Box(
+        modifier = modifier
+            .selectableBorder(isSelected = false)
+            .clickable { isEditDialogOpened = !isEditDialogOpened }
+            .padding(8.dp),
+    ) {
         Text(text = "${value.noteCount}/${value.noteValue}")
     }
 
@@ -43,7 +50,7 @@ fun TimeSignatureView(value: TimeSignature, onValueChange: (TimeSignature) -> Un
 
 @Preview
 @Composable
-private fun Preview() {
+private fun Preview() = ClickTrackTheme {
     TimeSignatureView(
         state = remember { mutableStateOf(TimeSignature(4, 4)) },
     )

@@ -7,11 +7,10 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.DrawerValue
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberDrawerState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,24 +35,26 @@ import com.vsevolodganin.clicktrack.ui.screen.SoundLibraryScreenView
 import com.vsevolodganin.clicktrack.ui.screen.TrainingScreenView
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.ForcedHapticFeedback
-import androidx.compose.material.DrawerState as ComposeDrawerState
+import androidx.compose.material3.DrawerState as ComposeDrawerState
 
 @Composable
 fun RootView(viewModel: RootViewModel) {
     ClickTrackTheme {
         ForcedHapticFeedback {
-            Scaffold(
-                scaffoldState = rememberScaffoldState(drawerState = drawerState(viewModel.drawer)),
+            ModalNavigationDrawer(
+                drawerState = drawerState(viewModel.drawer),
                 drawerContent = { DrawerView(viewModel.drawer) },
             ) {
-                RootView(viewModel, Modifier.padding(it))
+                Scaffold {
+                    RootViewContent(viewModel)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun RootView(viewModel: RootViewModel, modifier: Modifier) {
+private fun RootViewContent(viewModel: RootViewModel) {
     val screens by viewModel.screens.subscribeAsState()
 
     val activeScreen by remember {
@@ -63,7 +64,6 @@ private fun RootView(viewModel: RootViewModel, modifier: Modifier) {
     }
 
     updateTransition(targetState = activeScreen, label = "ContentView").AnimatedContent(
-        modifier = modifier,
         transitionSpec = {
             val animationSpec = spring(visibilityThreshold = IntOffset.VisibilityThreshold)
             val isPush = targetState.position >= initialState.position
@@ -88,7 +88,7 @@ private fun RootView(viewModel: RootViewModel, modifier: Modifier) {
         },
         contentKey = ActiveScreen::config,
     ) { screen ->
-        RootView(screen.viewModel)
+        RootViewContent(screen.viewModel)
     }
 }
 
@@ -99,7 +99,7 @@ private data class ActiveScreen(
 )
 
 @Composable
-private fun RootView(viewModel: ScreenViewModel) {
+private fun RootViewContent(viewModel: ScreenViewModel) {
     val modifier = Modifier.fillMaxSize()
     when (viewModel) {
         is ScreenViewModel.ClickTrackList -> ClickTrackListScreenView(viewModel.value, modifier)
@@ -116,27 +116,24 @@ private fun RootView(viewModel: ScreenViewModel) {
 
 @Composable
 private fun drawerState(drawerViewModel: DrawerViewModel): ComposeDrawerState {
-    val drawerState by drawerViewModel.state.collectAsState()
-    val drawerValue by remember {
-        derivedStateOf { if (drawerState.isOpened) DrawerValue.Open else DrawerValue.Closed }
-    }
-    return rememberDrawerState(
-        initialValue = drawerValue,
-        confirmStateChange = remember {
-            { newDrawerValue ->
-                when (newDrawerValue) {
-                    DrawerValue.Closed -> drawerViewModel.closeDrawer()
-                    DrawerValue.Open -> drawerViewModel.openDrawer()
-                }
-                true
-            }
-        },
-    ).apply {
-        LaunchedEffect(drawerValue) {
-            when (drawerValue) {
-                DrawerValue.Closed -> close()
-                DrawerValue.Open -> open()
-            }
+    val externalDrawerState by drawerViewModel.state.collectAsState()
+    val localDrawerState = rememberDrawerState(
+        initialValue = if (externalDrawerState.isOpened) DrawerValue.Open else DrawerValue.Closed,
+    )
+
+    // Sync the external state with the local state
+    LaunchedEffect(externalDrawerState.isOpened) {
+        when (externalDrawerState.isOpened) {
+            true -> localDrawerState.open()
+            false -> localDrawerState.close()
         }
     }
+    LaunchedEffect(localDrawerState.currentValue) {
+        when (localDrawerState.currentValue) {
+            DrawerValue.Closed -> drawerViewModel.closeDrawer()
+            DrawerValue.Open -> drawerViewModel.openDrawer()
+        }
+    }
+
+    return localDrawerState
 }

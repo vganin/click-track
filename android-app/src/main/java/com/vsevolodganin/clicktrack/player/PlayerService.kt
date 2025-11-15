@@ -318,7 +318,7 @@ class PlayerService : Service() {
 
         val notificationBuilder = NotificationCompat.Builder(this, component.notificationChannels.playingNow)
             .setSmallIcon(R.drawable.ic_notification)
-            .setColor(ResourcesCompat.getColor(resources, R.color.signature, null))
+            .setColor(ResourcesCompat.getColor(resources, R.color.blood_red, null))
             .setColorized(true)
             .setContentTitle(getString(MultiplatformRes.string.player_service_notification_playing_now))
             .setContentText(contentText)

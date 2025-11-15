@@ -3,27 +3,28 @@ package com.vsevolodganin.clicktrack.ui.screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.BackdropScaffold
-import androidx.compose.material.BackdropScaffoldDefaults
-import androidx.compose.material.BackdropScaffoldState
-import androidx.compose.material.BackdropValue
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.rememberBackdropScaffoldState
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,62 +51,52 @@ import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.model.bpm
 import com.vsevolodganin.clicktrack.ui.piece.BpmWheel
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
-import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
+import com.vsevolodganin.clicktrack.ui.piece.DarkTopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.PlayStopButton
 import com.vsevolodganin.clicktrack.ui.piece.SubdivisionsChooser
 import com.vsevolodganin.clicktrack.ui.piece.TimeSignatureView
-import com.vsevolodganin.clicktrack.ui.piece.TopAppBar
-import com.vsevolodganin.clicktrack.ui.piece.darkAppBar
-import com.vsevolodganin.clicktrack.ui.piece.onDarkAppBarSurface
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
-import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
-import com.vsevolodganin.clicktrack.utils.compose.statusBars
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration.Companion.milliseconds
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MetronomeScreenView(viewModel: MetronomeViewModel, modifier: Modifier = Modifier) {
-    viewModel.state.collectAsState().value ?: return // FIXME: Otherwise crash in swipeable state
-    BackdropScaffold(
-        appBar = { AppBar(viewModel) },
-        backLayerContent = { Options(viewModel) },
-        frontLayerContent = { Content(viewModel) },
+    Scaffold(
+        topBar = {
+            DarkTopAppBarWithBack(
+                onBackClick = viewModel::onBackClick,
+                title = { Text(text = stringResource(Res.string.metronome_screen_title)) },
+                actions = {
+                    IconButton(onClick = viewModel::onToggleOptions) {
+                        Icon(imageVector = Icons.Default.Tune, contentDescription = null)
+                    }
+                },
+            )
+        },
         modifier = modifier,
-        scaffoldState = backdropState(viewModel),
-        peekHeight = BackdropScaffoldDefaults.PeekHeight + WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
-        backLayerBackgroundColor = MaterialTheme.colors.darkAppBar,
-        backLayerContentColor = MaterialTheme.colors.onDarkAppBarSurface,
-    )
+    ) { paddingValues ->
+        Content(
+            viewModel = viewModel,
+            state = viewModel.state.collectAsState().value ?: return@Scaffold,
+            modifier = Modifier.padding(paddingValues),
+        )
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AppBar(viewModel: MetronomeViewModel) {
-    TopAppBar(
-        title = { Text(text = stringResource(Res.string.metronome_screen_title)) },
-        navigationIcon = {
-            IconButton(onClick = viewModel::onBackClick) {
-                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
-            }
-        },
-        actions = {
-            IconButton(onClick = viewModel::onToggleOptions) {
-                Icon(imageVector = Icons.Default.Tune, contentDescription = null)
-            }
-        },
-    )
-}
-
-@Composable
-private fun Content(viewModel: MetronomeViewModel) {
-    val state = viewModel.state.collectAsState().value ?: return
-
+private fun Content(
+    viewModel: MetronomeViewModel,
+    state: MetronomeState,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .navigationBarsPadding()
             .padding(bottom = 32.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -115,7 +106,6 @@ private fun Content(viewModel: MetronomeViewModel) {
                 .padding(8.dp)
                 .fillMaxWidth()
                 .height(200.dp),
-            elevation = 8.dp,
         ) {
             val metronomeClickTrackName = stringResource(Res.string.general_metronome_click_track_title)
             val metronomeClickTrack = remember(state.bpm, state.pattern, state.timeSignature) {
@@ -138,7 +128,7 @@ private fun Content(viewModel: MetronomeViewModel) {
 
         Text(
             text = state.bpm.value.toString(),
-            style = MaterialTheme.typography.h1.copy(
+            style = MaterialTheme.typography.displayLarge.copy(
                 fontWeight = FontWeight.Medium,
                 letterSpacing = 8.sp,
             ),
@@ -160,14 +150,13 @@ private fun Content(viewModel: MetronomeViewModel) {
                     PlayStopButton(
                         isPlaying = state.isPlaying,
                         onToggle = viewModel::onTogglePlay,
-                        enableInsets = false,
                     )
                 }
 
                 FloatingActionButton(
                     onClick = viewModel::onBpmMeterClick,
                     modifier = Modifier.size(64.dp),
-                    enableInsets = false,
+                    shape = CircleShape,
                 ) {
                     Text(
                         text = stringResource(Res.string.metronome_bpm_meter_tap),
@@ -198,6 +187,17 @@ private fun Content(viewModel: MetronomeViewModel) {
             }
         }
     }
+
+    val bottomSheetState = bottomSheetState(viewModel)
+    // FIXME: Checking both states to give animation an opportunity to finish
+    if (state.areOptionsExpanded || bottomSheetState.isVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { viewModel.onOptionsExpandedChange(false) },
+            sheetState = bottomSheetState,
+        ) {
+            Options(viewModel)
+        }
+    }
 }
 
 @Composable
@@ -207,34 +207,34 @@ private fun Options(viewModel: MetronomeViewModel) {
         pattern = state.pattern,
         timeSignature = state.timeSignature,
         onSubdivisionChoose = viewModel::onPatternChoose,
-        modifier = Modifier.padding(8.dp),
+        modifier = Modifier.padding(8.dp).navigationBarsPadding(),
         alwaysExpanded = true,
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun backdropState(viewModel: MetronomeViewModel): BackdropScaffoldState {
-    val areOptionsExpanded = viewModel.state.collectAsState().value?.areOptionsExpanded ?: false
-    val backdropValue = if (areOptionsExpanded) BackdropValue.Revealed else BackdropValue.Concealed
-    return rememberBackdropScaffoldState(
-        initialValue = backdropValue,
-        confirmStateChange = remember {
-            { newDrawerValue ->
-                when (newDrawerValue) {
-                    BackdropValue.Concealed -> viewModel.onOptionsExpandedChange(false)
-                    BackdropValue.Revealed -> viewModel.onOptionsExpandedChange(true)
-                }
-                true
-            }
-        },
-    ).apply {
-        LaunchedEffect(backdropValue) {
-            when (backdropValue) {
-                BackdropValue.Concealed -> conceal()
-                BackdropValue.Revealed -> reveal()
-            }
+private fun bottomSheetState(viewModel: MetronomeViewModel): SheetState {
+    val externalAreOptionsExpanded = viewModel.state.collectAsState().value?.areOptionsExpanded ?: false
+    val localBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    // Sync the external state with the local state
+    LaunchedEffect(externalAreOptionsExpanded) {
+        when (externalAreOptionsExpanded) {
+            true -> localBottomSheetState.expand()
+            false -> localBottomSheetState.hide()
         }
     }
+    LaunchedEffect(localBottomSheetState.currentValue) {
+        when (localBottomSheetState.currentValue) {
+            SheetValue.PartiallyExpanded,
+            SheetValue.Hidden,
+            -> viewModel.onOptionsExpandedChange(false)
+            SheetValue.Expanded -> viewModel.onOptionsExpandedChange(true)
+        }
+    }
+
+    return localBottomSheetState
 }
 
 @Preview

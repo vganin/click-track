@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -71,12 +71,15 @@ fun <T> DropdownSelector(
             onDismissRequest = { expanded = false },
             content = {
                 items.forEach { value ->
-                    DropdownMenuItem(onClick = {
-                        onSelect(value)
-                        expanded = false
-                    }) {
-                        Text(toString(value))
-                    }
+                    DropdownMenuItem(
+                        text = {
+                            Text(toString(value))
+                        },
+                        onClick = {
+                            onSelect(value)
+                            expanded = false
+                        },
+                    )
                 }
             },
         )

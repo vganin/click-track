@@ -1,35 +1,34 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Chip
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.SnackbarResult
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +37,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import clicktrack.multiplatform.generated.resources.Res
 import clicktrack.multiplatform.generated.resources.general_cancel
@@ -47,62 +46,69 @@ import clicktrack.multiplatform.generated.resources.play_click_track_delete_conf
 import clicktrack.multiplatform.generated.resources.play_click_track_export_to_audio_file
 import clicktrack.multiplatform.generated.resources.play_click_track_play_tracking_mode
 import clicktrack.multiplatform.generated.resources.play_click_track_started_export
+import com.vsevolodganin.clicktrack.model.PlayProgress
 import com.vsevolodganin.clicktrack.play.PlayClickTrackState
 import com.vsevolodganin.clicktrack.play.PlayClickTrackViewModel
 import com.vsevolodganin.clicktrack.play.isPaused
 import com.vsevolodganin.clicktrack.play.isPlaying
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
 import com.vsevolodganin.clicktrack.ui.piece.ClickTrackView
+import com.vsevolodganin.clicktrack.ui.piece.DarkTopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.PlayButtons
-import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
-import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
+import com.vsevolodganin.clicktrack.utils.compose.copy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun PlayClickTrackScreenView(viewModel: PlayClickTrackViewModel, modifier: Modifier = Modifier) {
     val state by viewModel.state.collectAsState()
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
     Scaffold(
-        scaffoldState = scaffoldState,
-        topBar = { TopBar(viewModel, state ?: return@Scaffold, scaffoldState.snackbarHostState) },
+        topBar = { TopBar(viewModel, state ?: return@Scaffold, snackbarHostState) },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = { BottomBar(viewModel, state ?: return@Scaffold) },
         modifier = modifier,
-    ) {
-        Content(viewModel, state ?: return@Scaffold)
-    }
-}
-
-@Composable
-private fun Content(viewModel: PlayClickTrackViewModel, state: PlayClickTrackState) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.surface),
-    ) {
-        ClickTrackView(
-            clickTrack = state.clickTrack.value,
-            playTrackingMode = state.playTrackingMode,
-            drawTextMarks = true,
-            progress = state.playProgress,
-            progressDragAndDropEnabled = true,
-            onProgressDragStart = viewModel::onProgressDragStart,
-            onProgressDrop = viewModel::onProgressDrop,
-            viewportPanEnabled = true,
-            modifier = Modifier.fillMaxSize(),
+    ) { paddingValues ->
+        Content(
+            viewModel = viewModel,
+            state = state ?: return@Scaffold,
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface)
+                .padding(paddingValues.copy(bottom = 0.dp)),
         )
     }
 }
 
 @Composable
+private fun Content(
+    viewModel: PlayClickTrackViewModel,
+    state: PlayClickTrackState,
+    modifier: Modifier,
+) {
+    ClickTrackView(
+        clickTrack = state.clickTrack.value,
+        playTrackingMode = state.playTrackingMode,
+        drawTextMarks = true,
+        progress = state.playProgress,
+        progressDragAndDropEnabled = true,
+        onProgressDragStart = viewModel::onProgressDragStart,
+        onProgressDrop = viewModel::onProgressDrop,
+        viewportPanEnabled = true,
+        modifier = modifier,
+    )
+}
+
+@Composable
 private fun TopBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackState, snackbarHostState: SnackbarHostState) {
-    TopAppBarWithBack(
+    DarkTopAppBarWithBack(
         onBackClick = viewModel::onBackClick,
         title = { Text(text = state.clickTrack.value.name) },
         actions = {
@@ -135,18 +141,12 @@ private fun TopBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackStat
                         Text(text = stringResource(Res.string.play_click_track_delete_confirmation))
                     },
                     confirmButton = {
-                        TextButton(
-                            onClick = viewModel::onRemoveClick,
-                            shape = RectangleShape,
-                        ) {
+                        TextButton(onClick = viewModel::onRemoveClick) {
                             Text(text = stringResource(Res.string.general_ok).uppercase())
                         }
                     },
                     dismissButton = {
-                        TextButton(
-                            onClick = dismiss,
-                            shape = RectangleShape,
-                        ) {
+                        TextButton(onClick = dismiss) {
                             Text(text = stringResource(Res.string.general_cancel).uppercase())
                         }
                     },
@@ -169,32 +169,33 @@ private fun OverflowMenu(viewModel: PlayClickTrackViewModel, state: PlayClickTra
         val startedExportMessage = stringResource(Res.string.play_click_track_started_export, state.clickTrack.value.name)
         val cancelActionLabel = stringResource(Res.string.general_cancel)
 
-        DropdownMenuItem(onClick = {
-            viewModel.onExportClick()
-            showDropdown = false
-            coroutineScope.launch {
-                val snackbarResult = snackbarHostState.showSnackbar(
-                    message = startedExportMessage,
-                    duration = SnackbarDuration.Short,
-                    actionLabel = cancelActionLabel,
-                )
-                if (snackbarResult == SnackbarResult.ActionPerformed) {
-                    viewModel.onCancelExportClick()
+        DropdownMenuItem(
+            onClick = {
+                viewModel.onExportClick()
+                showDropdown = false
+                coroutineScope.launch {
+                    val snackbarResult = snackbarHostState.showSnackbar(
+                        message = startedExportMessage,
+                        duration = SnackbarDuration.Short,
+                        actionLabel = cancelActionLabel,
+                    )
+                    if (snackbarResult == SnackbarResult.ActionPerformed) {
+                        viewModel.onCancelExportClick()
+                    }
                 }
-            }
-        }) {
-            Text(stringResource(Res.string.play_click_track_export_to_audio_file))
-        }
+            },
+            text = {
+                Text(stringResource(Res.string.play_click_track_export_to_audio_file))
+            },
+        )
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackState) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .navigationBarsPadding(),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         PlayButtons(
             isPlaying = state.isPlaying,
@@ -202,20 +203,19 @@ private fun BottomBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackS
             onTogglePlayStop = viewModel::onTogglePlayStop,
             onTogglePlayPause = viewModel::onTogglePlayPause,
             modifier = Modifier.align(Alignment.Center),
-            enableInsets = false,
         )
 
-        CompositionLocalProvider(LocalMinimumInteractiveComponentEnforcement provides false) {
-            Chip(
-                onClick = viewModel::onTogglePlayTrackingMode,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 8.dp),
-            ) {
-                Checkbox(checked = state.playTrackingMode, onCheckedChange = null)
-                Spacer(Modifier.width(8.dp))
-                Text(text = stringResource(Res.string.play_click_track_play_tracking_mode))
-            }
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .clickable(onClick = viewModel::onTogglePlayTrackingMode)
+                .padding(8.dp)
+                .align(Alignment.BottomStart),
+        ) {
+            Checkbox(checked = state.playTrackingMode, onCheckedChange = null)
+            Spacer(Modifier.width(8.dp))
+            Text(text = stringResource(Res.string.play_click_track_play_tracking_mode))
         }
     }
 }
@@ -228,7 +228,10 @@ internal fun PlayClickTrackScreenPreview() = ClickTrackTheme {
             override val state: StateFlow<PlayClickTrackState?> = MutableStateFlow(
                 PlayClickTrackState(
                     clickTrack = PREVIEW_CLICK_TRACK_1,
-                    playProgress = null,
+                    playProgress = PlayProgress(
+                        position = 4.seconds,
+                        isPaused = true,
+                    ),
                     playTrackingMode = true,
                 ),
             )

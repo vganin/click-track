@@ -1,7 +1,6 @@
 package com.vsevolodganin.clicktrack.ui.screen
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,22 +10,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Public
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
@@ -42,11 +38,10 @@ import clicktrack.multiplatform.generated.resources.about_version
 import clicktrack.multiplatform.generated.resources.myself
 import com.vsevolodganin.clicktrack.about.AboutState
 import com.vsevolodganin.clicktrack.about.AboutViewModel
-import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.DarkTopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import com.vsevolodganin.clicktrack.utils.compose.UrlClickableText
 import com.vsevolodganin.clicktrack.utils.compose.isSystemInLandscape
-import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Artstation
 import compose.icons.simpleicons.Twitter
@@ -60,100 +55,95 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun AboutScreenView(viewModel: AboutViewModel, modifier: Modifier = Modifier) {
     Scaffold(
         topBar = {
-            TopAppBarWithBack(
+            DarkTopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
                 title = { Text(stringResource(Res.string.about_screen_title)) },
             )
         },
         modifier = modifier,
-    ) {
-        Content(viewModel)
+    ) { paddingValues ->
+        Content(
+            viewModel = viewModel,
+            modifier = Modifier.padding(paddingValues),
+        )
     }
 }
 
 @Composable
-private fun Content(viewModel: AboutViewModel) {
+private fun Content(
+    viewModel: AboutViewModel,
+    modifier: Modifier = Modifier,
+) {
     val state by viewModel.state.collectAsState()
     val isLandscape = isSystemInLandscape()
 
-    Box(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize(),
+    Column(
+        modifier = modifier.padding(16.dp).fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(
-            modifier = Modifier
-                .run {
-                    if (isLandscape) align(Center) else this
-                },
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            if (!isLandscape) {
-                Image(
-                    painter = painterResource(Res.drawable.myself),
-                    contentDescription = null,
-                    alignment = Alignment.TopEnd,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.4f)
-                        .clip(RoundedCornerShape(8.dp)),
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
-            Text(
-                text = stringResource(Res.string.about_developed_by),
-                style = MaterialTheme.typography.caption,
+        if (!isLandscape) {
+            Image(
+                painter = painterResource(Res.drawable.myself),
+                contentDescription = null,
+                alignment = Alignment.TopEnd,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.4f)
+                    .clip(RoundedCornerShape(8.dp)),
             )
-            Text(
-                text = stringResource(Res.string.about_developer_name),
-                style = MaterialTheme.typography.h6,
-            )
-            Row {
-                IconButton(onClick = viewModel::onHomeClick) {
-                    Icon(imageVector = Icons.Default.Public, contentDescription = null)
-                }
-                IconButton(onClick = viewModel::onTwitterClick) {
-                    Icon(imageVector = SimpleIcons.Twitter, contentDescription = null)
-                }
-                IconButton(onClick = viewModel::onEmailClick) {
-                    Icon(imageVector = Icons.Default.Email, contentDescription = null)
-                }
-            }
 
             Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = stringResource(Res.string.about_logo_by),
-                style = MaterialTheme.typography.caption,
-            )
-            Text(
-                text = stringResource(Res.string.about_logo_developer_name),
-                style = MaterialTheme.typography.subtitle1,
-            )
-            IconButton(onClick = viewModel::onArtstationClick) {
-                Icon(imageVector = SimpleIcons.Artstation, contentDescription = null)
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            UrlClickableText(
-                textWithUrls = stringResource(Res.string.about_open_source_note),
-                onUrlClick = { viewModel.onProjectLinkClick() },
-                modifier = Modifier.padding(horizontal = 48.dp),
-                textAlign = TextAlign.Center,
-            )
         }
 
         Text(
+            text = stringResource(Res.string.about_developed_by),
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Text(
+            text = stringResource(Res.string.about_developer_name),
+            style = MaterialTheme.typography.headlineSmall,
+        )
+        Row {
+            IconButton(onClick = viewModel::onHomeClick) {
+                Icon(imageVector = Icons.Default.Public, contentDescription = null)
+            }
+            IconButton(onClick = viewModel::onTwitterClick) {
+                Icon(imageVector = SimpleIcons.Twitter, contentDescription = null)
+            }
+            IconButton(onClick = viewModel::onEmailClick) {
+                Icon(imageVector = Icons.Default.Email, contentDescription = null)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = stringResource(Res.string.about_logo_by),
+            style = MaterialTheme.typography.bodySmall,
+        )
+        Text(
+            text = stringResource(Res.string.about_logo_developer_name),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        IconButton(onClick = viewModel::onArtstationClick) {
+            Icon(imageVector = SimpleIcons.Artstation, contentDescription = null)
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        UrlClickableText(
+            textWithUrls = stringResource(Res.string.about_open_source_note),
+            onUrlClick = { viewModel.onProjectLinkClick() },
+            modifier = Modifier.padding(horizontal = 48.dp),
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
             text = stringResource(Res.string.about_version, state.displayVersion),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .alpha(ContentAlpha.medium)
-                .navigationBarsPadding(),
-            style = MaterialTheme.typography.caption,
+            style = MaterialTheme.typography.bodySmall,
         )
     }
 }

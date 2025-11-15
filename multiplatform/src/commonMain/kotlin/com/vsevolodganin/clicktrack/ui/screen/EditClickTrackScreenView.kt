@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,22 +19,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
-import androidx.compose.material.FabPosition
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Slider
-import androidx.compose.material.SliderDefaults
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.contentColorFor
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Card
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import clicktrack.multiplatform.generated.resources.Res
 import clicktrack.multiplatform.generated.resources.edit_click_track_loop
@@ -63,15 +64,12 @@ import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.ui.piece.BpmInputField
 import com.vsevolodganin.clicktrack.ui.piece.Checkbox
 import com.vsevolodganin.clicktrack.ui.piece.CueView
+import com.vsevolodganin.clicktrack.ui.piece.DarkTopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.ExpandableChevron
-import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
-import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.preview.PREVIEW_CLICK_TRACK_1
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
-import com.vsevolodganin.clicktrack.ui.theme.CommonCardElevation
-import com.vsevolodganin.clicktrack.ui.theme.commonCardElevation
 import com.vsevolodganin.clicktrack.utils.compose.SwipeToDelete
-import com.vsevolodganin.clicktrack.utils.compose.padWithFabSpace
+import com.vsevolodganin.clicktrack.utils.compose.withFabPadding
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -90,7 +88,7 @@ fun EditClickTrackScreenView(viewModel: EditClickTrackViewModel, modifier: Modif
 
     Scaffold(
         topBar = {
-            TopAppBarWithBack(
+            DarkTopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
                 title = { Text(stringResource(Res.string.edit_click_track_screen_title)) },
                 actions = {
@@ -111,22 +109,29 @@ fun EditClickTrackScreenView(viewModel: EditClickTrackViewModel, modifier: Modif
                         listState.scrollToItem(listState.layoutInfo.totalItemsCount - 1)
                     }
                 },
+                shape = CircleShape,
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
         },
         modifier = modifier,
-    ) {
+    ) { paddingValues ->
         Content(
             viewModel = viewModel,
             state = state ?: return@Scaffold,
             listState = listState,
+            paddingValues = paddingValues,
         )
     }
 }
 
 @Composable
-private fun Content(viewModel: EditClickTrackViewModel, state: EditClickTrackState, listState: LazyListState) {
+private fun Content(
+    viewModel: EditClickTrackViewModel,
+    state: EditClickTrackState,
+    listState: LazyListState,
+    paddingValues: PaddingValues,
+) {
     // This is a number of non draggable items before cues to offset indices correctly
     val numberOfNonDraggableItems = 3
 
@@ -137,18 +142,16 @@ private fun Content(viewModel: EditClickTrackViewModel, state: EditClickTrackSta
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
+        contentPadding = paddingValues.withFabPadding(),
     ) {
         stickyHeader {
-            Surface(
-                elevation = CommonCardElevation.Normal,
-            ) {
+            Surface {
                 TextField(
                     value = state.name,
                     onValueChange = viewModel::onNameChange,
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = { Text(text = stringResource(Res.string.edit_click_track_title_hint)) },
-                    textStyle = MaterialTheme.typography.h6,
-                    colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface),
+                    textStyle = MaterialTheme.typography.headlineSmall,
                 )
             }
         }
@@ -171,12 +174,9 @@ private fun Content(viewModel: EditClickTrackViewModel, state: EditClickTrackSta
                     viewModel = viewModel,
                     cue = cue,
                     index = index,
-                    elevation = commonCardElevation(isDragging),
                 )
             }
         }
-
-        padWithFabSpace()
     }
 }
 
@@ -188,7 +188,6 @@ private fun OptionsItem(viewModel: EditClickTrackViewModel, loop: Boolean, tempo
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
-        elevation = CommonCardElevation.Normal,
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
@@ -201,7 +200,7 @@ private fun OptionsItem(viewModel: EditClickTrackViewModel, loop: Boolean, tempo
                 Text(
                     text = stringResource(Res.string.edit_click_track_options),
                     modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.headlineSmall,
                 )
 
                 IconButton(
@@ -262,10 +261,10 @@ private fun TempoOffsetItem(viewModel: EditClickTrackViewModel, tempoOffset: Bea
             steps = TEMPO_OFFSET_RANGE.count() - 2,
             onValueChangeFinished = { viewModel.onTempoOffsetChange(floatTempoOffset.roundToInt()) },
             colors = SliderDefaults.colors(
-                activeTrackColor = MaterialTheme.colors.primary,
-                inactiveTrackColor = MaterialTheme.colors.primary,
-                activeTickColor = contentColorFor(MaterialTheme.colors.primary).copy(alpha = SliderDefaults.TickAlpha),
-                inactiveTickColor = contentColorFor(MaterialTheme.colors.primary).copy(alpha = SliderDefaults.TickAlpha),
+                activeTrackColor = MaterialTheme.colorScheme.primary,
+                inactiveTrackColor = MaterialTheme.colorScheme.primary,
+                activeTickColor = contentColorFor(MaterialTheme.colorScheme.primary),
+                inactiveTickColor = contentColorFor(MaterialTheme.colorScheme.primary),
             ),
         )
 
@@ -286,7 +285,6 @@ private fun ReorderableCollectionItemScope.CueListItem(
     viewModel: EditClickTrackViewModel,
     cue: EditCueState,
     index: Int,
-    elevation: Dp,
     modifier: Modifier = Modifier,
 ) {
     SwipeToDelete(
@@ -296,7 +294,6 @@ private fun ReorderableCollectionItemScope.CueListItem(
     ) {
         Card(
             modifier = Modifier.padding(8.dp),
-            elevation = elevation,
         ) {
             CueView(
                 value = cue,

@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,12 +34,11 @@ import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.settings.SettingsState
 import com.vsevolodganin.clicktrack.settings.SettingsViewModel
 import com.vsevolodganin.clicktrack.theme.Theme
-import com.vsevolodganin.clicktrack.ui.piece.TopAppBarWithBack
+import com.vsevolodganin.clicktrack.ui.piece.DarkTopAppBarWithBack
 import com.vsevolodganin.clicktrack.ui.piece.settings.BooleanChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooserItem
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
-import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
 import com.vsevolodganin.clicktrack.utils.platform.isDebug
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -50,21 +49,28 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun SettingsScreenView(viewModel: SettingsViewModel, modifier: Modifier = Modifier) {
     Scaffold(
         topBar = {
-            TopAppBarWithBack(
+            DarkTopAppBarWithBack(
                 onBackClick = viewModel::onBackClick,
                 title = { Text(stringResource(Res.string.settings_screen_title)) },
             )
         },
         modifier = modifier,
-    ) {
-        Content(viewModel)
+    ) { paddingValues ->
+        Content(
+            viewModel = viewModel,
+            modifier = Modifier.padding(paddingValues),
+        )
     }
 }
 
 @Composable
-private fun Content(viewModel: SettingsViewModel) {
+private fun Content(
+    viewModel: SettingsViewModel,
+    modifier: Modifier,
+) {
     val state by viewModel.state.collectAsState()
-    Column {
+
+    Column(modifier = modifier) {
         ListChooser(
             title = stringResource(Res.string.settings_theme),
             value = state.theme.displayValue(),
@@ -78,7 +84,7 @@ private fun Content(viewModel: SettingsViewModel) {
             onChoose = viewModel::onThemeChange,
         )
 
-        Divider(modifier = Modifier.padding(start = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(start = 16.dp))
 
         ListChooser(
             title = stringResource(Res.string.settings_language),
@@ -93,7 +99,7 @@ private fun Content(viewModel: SettingsViewModel) {
             onChoose = viewModel::onLanguageChange,
         )
 
-        Divider(modifier = Modifier.padding(start = 16.dp))
+        HorizontalDivider(modifier = Modifier.padding(start = 16.dp))
 
         BooleanChooser(
             title = stringResource(Res.string.settings_ignore_audio_focus),
@@ -106,9 +112,7 @@ private fun Content(viewModel: SettingsViewModel) {
             Spacer(modifier = Modifier.weight(1f))
 
             Column(
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {

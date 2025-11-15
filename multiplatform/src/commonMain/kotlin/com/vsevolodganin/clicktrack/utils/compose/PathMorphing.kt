@@ -3,7 +3,8 @@ package com.vsevolodganin.clicktrack.utils.compose
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Icon
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -21,7 +22,6 @@ import androidx.compose.ui.graphics.vector.PathNode
 import androidx.compose.ui.graphics.vector.addPathNodes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import com.vsevolodganin.clicktrack.ui.piece.FloatingActionButton
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
