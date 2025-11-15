@@ -9,7 +9,7 @@ kover = "0.9.3"
 ksp = "2.3.2"
 mockk = "1.14.6"
 multiplatformSettings = "1.3.0"
-sqldelight = "2.1.0"
+sqldelight = "2.2.1"
 
 [libraries]
 accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
