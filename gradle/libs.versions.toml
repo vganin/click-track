@@ -27,7 +27,7 @@ androidx-workManager = "androidx.work:work-runtime-ktx:2.11.0"
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 decompose-core = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 desugarJdkLibs = "com.android.tools:desugar_jdk_libs:2.1.5"
-firebase-bom = "com.google.firebase:firebase-bom:34.5.0"
+firebase-bom = "com.google.firebase:firebase-bom:34.6.0"
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-crashlytics-gradlePlugin = "com.google.firebase:firebase-crashlytics-gradle:3.0.6"
 firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
