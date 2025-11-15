@@ -3,8 +3,8 @@
 package com.vsevolodganin.clicktrack.utils.compose
 
 import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -45,7 +45,7 @@ fun UrlClickableText(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current,
 ) {
-    val linkColor = MaterialTheme.colors.primary
+    val linkColor = MaterialTheme.colorScheme.primary
     val annotatedText = remember(textWithUrls) {
         buildAnnotatedString {
             var index = 0
