@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,7 +60,7 @@ fun TimeSignatureEditDialog(
         title = {
             Text(
                 text = stringResource(Res.string.time_signature_edit_dialog_title),
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.headlineSmall,
             )
         },
         text = {
@@ -70,7 +70,7 @@ fun TimeSignatureEditDialog(
                 modifier = Modifier.height(200.dp),
             )
         },
-        buttons = {
+        confirmButton = {
             Box(
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.BottomEnd,
@@ -139,7 +139,7 @@ private fun NoteCountColumn(
     ) {
         Text(
             text = stringResource(Res.string.time_signature_note_count_header),
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.bodyLarge,
         )
 
         val noteCounts = remember { (1..32).toList() }
@@ -174,7 +174,7 @@ private fun NoteValueColumn(
     ) {
         Text(
             text = stringResource(Res.string.time_signature_note_value_header),
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.bodyLarge,
         )
 
         val possibleNoteValues = remember {
@@ -215,7 +215,7 @@ private fun LazyItemScope.WheelItem(
 ) {
     val easedClosenessToSelection = EaseOutQuad.transform(closenessToSelection)
     val scale = lerp(0.3f, 1f, easedClosenessToSelection)
-    val color by animateColorAsState(if (isSelected) MaterialTheme.colors.primary else LocalContentColor.current)
+    val color by animateColorAsState(if (isSelected) MaterialTheme.colorScheme.primary else LocalContentColor.current)
 
     Text(
         text = item,
@@ -233,7 +233,7 @@ private fun LazyItemScope.WheelItem(
             .alpha(easedClosenessToSelection),
         color = color,
         textAlign = textAlign,
-        style = MaterialTheme.typography.subtitle1,
+        style = MaterialTheme.typography.bodyLarge,
     )
 }
 

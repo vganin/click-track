@@ -1,6 +1,8 @@
 package com.vsevolodganin.clicktrack.ui.piece
 
-import androidx.compose.material.Icon
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -17,11 +19,11 @@ import com.vsevolodganin.clicktrack.utils.compose.animatePathAsState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun PlayPauseButton(isPlaying: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier, enableInsets: Boolean = true) {
+fun PlayPauseButton(isPlaying: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
     FloatingActionButton(
         onClick = onToggle,
         modifier = modifier,
-        enableInsets = enableInsets,
+        shape = CircleShape,
     ) {
         PlayPauseIcon(isPlaying)
     }

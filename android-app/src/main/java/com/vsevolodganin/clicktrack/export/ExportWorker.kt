@@ -92,7 +92,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
             NotificationCompat.Builder(appContext, component.notificationChannels.export)
                 .setContentTitle(appContext.getString(R.string.export_worker_notification_in_process, clickTrack.value.name))
                 .setSmallIcon(R.drawable.ic_notification)
-                .setColor(ResourcesCompat.getColor(appContext.resources, R.color.signature, null))
+                .setColor(ResourcesCompat.getColor(appContext.resources, R.color.blood_red, null))
                 .setOngoing(true)
                 .setContentIntent(PendingIntent.getActivity(appContext, 0, tapIntent, pendingIntentFlags))
                 .addAction(
@@ -134,7 +134,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
                     .setContentTitle(appContext.getString(R.string.export_worker_notification_finished, clickTrack.name))
                     .setContentText(appContext.getString(R.string.export_worker_notification_open))
                     .setSmallIcon(R.drawable.ic_notification)
-                    .setColor(ResourcesCompat.getColor(appContext.resources, R.color.signature, null))
+                    .setColor(ResourcesCompat.getColor(appContext.resources, R.color.blood_red, null))
                     .setContentIntent(PendingIntent.getActivity(appContext, 0, tapIntent, pendingIntentFlags))
                     .setGroup(NotificationGroups.EXPORT_FINISHED)
                     .build(),

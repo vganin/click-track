@@ -6,7 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -53,8 +53,8 @@ fun PolyrhythmCircle(
     // Degrees per second
     progressVelocity: Float = 15f,
 ) {
-    val primaryColor = MaterialTheme.colors.primary
-    val secondaryColor = MaterialTheme.colors.secondary
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val secondaryColor = MaterialTheme.colorScheme.secondary
 
     val innerDots = dots(number = innerDotNumber)
     val outerDots = dots(number = outerDotNumber)

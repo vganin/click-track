@@ -5,7 +5,9 @@ import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.animateOffset
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.material.Icon
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -21,11 +23,11 @@ import com.vsevolodganin.clicktrack.ui.piece.PlayStopIconState.STOP
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun PlayStopButton(isPlaying: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier, enableInsets: Boolean = true) {
+fun PlayStopButton(isPlaying: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
     FloatingActionButton(
         onClick = onToggle,
         modifier = modifier,
-        enableInsets = enableInsets,
+        shape = CircleShape,
     ) {
         PlayStopIcon(isPlaying)
     }
