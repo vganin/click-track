@@ -7,7 +7,7 @@
     <string name="about_screen_title">About</string>
     <string name="about_version">version %1$s</string>
     <string name="bpm_input_suffix"> bpm</string>
-    <string name="click_track_list_screen_title">My click tracks</string>
+    <string name="click_track_list_screen_title">Click Tracks</string>
     <string name="cue_duration_beats">Beats</string>
     <string name="cue_duration_measures">Measures</string>
     <string name="cue_duration_time">Time</string>
@@ -25,9 +25,9 @@
     <string name="duration_picker_seconds">s</string>
     <string name="edit_click_track_loop">Loop</string>
     <string name="edit_click_track_options">Options</string>
-    <string name="edit_click_track_screen_title">Edit click track…</string>
+    <string name="edit_click_track_screen_title">Edit</string>
     <string name="edit_click_track_tempo_diff">%1$s%2$d bpm</string>
-    <string name="edit_click_track_title_hint">Name your click track…</string>
+    <string name="edit_click_track_title_hint">Name your click track</string>
     <string name="general_cancel">Cancel</string>
     <string name="general_metronome_click_track_title">Metronome</string>
     <string name="general_ok">Ok</string>
@@ -37,7 +37,7 @@
     <string name="metronome_screen_title">Metronome</string>
     <string name="play_click_track_delete_confirmation">Do you really want to delete this click track?</string>
     <string name="play_click_track_export_to_audio_file">Export as audio file</string>
-    <string name="play_click_track_play_tracking_mode">Play tracking</string>
+    <string name="play_click_track_play_tracking_mode">Follow playback</string>
     <string name="play_click_track_started_export">Started exporting "%1$s"</string>
     <string name="player_service_notification_pause">PAUSE</string>
     <string name="player_service_notification_playing_now">Playing now…</string>
@@ -54,7 +54,7 @@
     <string name="settings_screen_title">Settings</string>
     <string name="settings_theme">Theme</string>
     <string name="settings_theme_auto">Auto</string>
-    <string name="settings_theme_auto_description">Use a Dark Theme when the system's "Battery Saver" feature is enabled, otherwise use a Light Theme.</string>
+    <string name="settings_theme_auto_description">Use a Dark Theme when the system's Battery Saver feature is enabled, otherwise use a Light Theme.</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_system">System</string>
@@ -81,6 +81,6 @@
     <string name="training_max_tempo">Max. tempo</string>
     <string name="training_min_tempo">Min. tempo</string>
     <string name="training_play_for">Play for</string>
-    <string name="training_screen_title">Generate training track…</string>
+    <string name="training_screen_title">Generate Click Track</string>
     <string name="training_starting_tempo">Start with</string>
 </resources>
