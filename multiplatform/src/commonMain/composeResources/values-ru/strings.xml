@@ -7,7 +7,7 @@
     <string name="about_open_source_note">Приложение теперь с [открытым исходным кодом](stub_link)</string>
     <string name="about_screen_title">О приложении</string>
     <string name="about_version">версия %1$s</string>
-    <string name="bpm_input_suffix">\ bpm</string>
+    <string name="bpm_input_suffix"> bpm</string>
     <string name="click_track_list_screen_title">Мои клик-треки</string>
     <string name="cue_duration_beats">Доли</string>
     <string name="cue_duration_measures">Такты</string>
