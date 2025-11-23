@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -96,8 +96,8 @@ private fun Wheel(onAngleChange: (diff: Float) -> Unit, modifier: Modifier = Mod
             val wheelWidth = width * WHEEL_WIDTH_MULTIPLIER
             val wheelWidthPx = with(density) { wheelWidth.toPx() }
 
-            val wheelColor = MaterialTheme.colors.secondary
-            val controllerButtonColor = MaterialTheme.colors.onSecondary
+            val wheelColor = MaterialTheme.colorScheme.primaryContainer
+            val controllerButtonColor = MaterialTheme.colorScheme.onPrimaryContainer
 
             Canvas(
                 modifier = Modifier

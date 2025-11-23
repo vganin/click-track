@@ -4,26 +4,30 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsTopHeight
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ContactSupport
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.DrawerDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -45,8 +49,6 @@ import clicktrack.multiplatform.generated.resources.polyrhythm
 import com.vsevolodganin.clicktrack.drawer.DrawerState
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
-import com.vsevolodganin.clicktrack.utils.compose.navigationBarsPadding
-import com.vsevolodganin.clicktrack.utils.compose.statusBars
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.painterResource
@@ -55,18 +57,22 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun DrawerView(viewModel: DrawerViewModel) {
-    val state by viewModel.state.collectAsState()
+    val topInset = DrawerDefaults.windowInsets.only(WindowInsetsSides.Top)
+    ModalDrawerSheet(
+        windowInsets = DrawerDefaults.windowInsets.exclude(topInset),
+    ) {
+        val state by viewModel.state.collectAsState()
 
-    Column(modifier = Modifier.navigationBarsPadding()) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .windowInsetsTopHeight(WindowInsets.statusBars)
+                .windowInsetsTopHeight(topInset)
+                .consumeWindowInsets(topInset)
                 .background(
                     if (isSystemInDarkTheme()) {
                         Color.Transparent
                     } else {
-                        Color.Black.copy(alpha = 0.4f)
+                        Color.Black.copy(alpha = 0.25f)
                     },
                 ),
         )
@@ -123,7 +129,7 @@ fun DrawerView(viewModel: DrawerViewModel) {
 
 @Composable
 private fun DrawerButton(icon: Painter, label: String, isSelected: Boolean, action: () -> Unit, modifier: Modifier = Modifier) {
-    val colors = MaterialTheme.colors
+    val colors = MaterialTheme.colorScheme
     val textAndIconColor = if (isSelected) colors.secondary else colors.onSurface.copy(alpha = 0.9f)
     val backgroundColor = if (isSelected) colors.secondary.copy(alpha = 0.12f) else Color.Transparent
 
@@ -153,7 +159,7 @@ private fun DrawerButton(icon: Painter, label: String, isSelected: Boolean, acti
                 Spacer(Modifier.width(16.dp))
                 Text(
                     text = label,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = textAndIconColor,
                 )
             }

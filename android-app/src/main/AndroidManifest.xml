@@ -15,19 +15,20 @@
         android:name=".MainApplication"
         android:allowBackup="true"
         android:enableOnBackInvokedCallback="true"
+        android:gwpAsanMode="always"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/general_app_name"
         android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:gwpAsanMode="always"
+        android:theme="@style/SplashTheme"
+        android:windowSoftInputMode="adjustResize"
         tools:targetApi="tiramisu">
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleInstance"
-            android:theme="@style/SplashTheme">
+            android:launchMode="singleInstance">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

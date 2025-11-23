@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="signature">#a53030</color>
-    <color name="signature_alternative">#982d2d</color>
-    <color name="splash_background">#0d0d0d</color>
+    <color name="blood_red">#FFA53030</color>
+    <color name="ash_black">#FF1B1A1A</color>
 </resources>

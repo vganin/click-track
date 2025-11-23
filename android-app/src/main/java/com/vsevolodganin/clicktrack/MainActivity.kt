@@ -2,13 +2,17 @@ package com.vsevolodganin.clicktrack
 
 import android.Manifest
 import android.content.Intent
+import android.graphics.Color
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.DisposableEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
 import com.arkivanov.decompose.defaultComponentContext
 import com.vsevolodganin.clicktrack.di.component.MainActivityComponent
 import com.vsevolodganin.clicktrack.di.component.create
@@ -24,9 +28,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-
         installSplashScreen()
+
+        enableEdgeToEdge()
 
         component = MainActivityComponent::class.create(
             applicationComponent = applicationComponent,
@@ -41,6 +45,20 @@ class MainActivity : AppCompatActivity() {
         component.migrationManager.tryMigrate()
 
         setContent {
+            val isSystemInDarkTheme = isSystemInDarkTheme()
+
+            DisposableEffect(isSystemInDarkTheme) {
+                enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+                    navigationBarStyle = if (isSystemInDarkTheme) {
+                        SystemBarStyle.dark(Color.TRANSPARENT)
+                    } else {
+                        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                    },
+                )
+                onDispose {}
+            }
+
             RootView(component.rootViewModel)
         }
 

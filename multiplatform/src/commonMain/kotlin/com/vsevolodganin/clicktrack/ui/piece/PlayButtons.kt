@@ -10,8 +10,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.utils.compose.SimpleSpacer
+import kotlin.math.min
+
+val PlayStopButtonCenterLine = VerticalAlignmentLine(::min)
 
 @Composable
 fun PlayButtons(
@@ -20,7 +24,6 @@ fun PlayButtons(
     onTogglePlayStop: () -> Unit,
     onTogglePlayPause: () -> Unit,
     modifier: Modifier = Modifier,
-    enableInsets: Boolean = true,
 ) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         AnimatedVisibility(
@@ -33,7 +36,6 @@ fun PlayButtons(
                     isPlaying = !isPaused,
                     onToggle = onTogglePlayPause,
                     modifier = Modifier.size(40.dp),
-                    enableInsets = enableInsets,
                 )
                 SimpleSpacer(height = 8.dp)
             }
@@ -42,7 +44,6 @@ fun PlayButtons(
         PlayStopButton(
             isPlaying = isPlaying,
             onToggle = onTogglePlayStop,
-            enableInsets = enableInsets,
         )
     }
 }
