@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -44,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -193,18 +195,18 @@ private fun OptionsItem(viewModel: EditClickTrackViewModel, loop: Boolean, tempo
             modifier = Modifier.padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Row(
+            Box(
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = CenterVertically,
             ) {
                 Text(
                     text = stringResource(Res.string.edit_click_track_options),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.align(Alignment.Center),
                     style = MaterialTheme.typography.headlineSmall,
                 )
 
                 IconButton(
                     onClick = { optionsExpanded = !optionsExpanded },
+                    modifier = Modifier.align(Alignment.CenterEnd),
                 ) {
                     ExpandableChevron(isExpanded = optionsExpanded)
                 }
