@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -193,7 +194,6 @@ private fun OptionsItem(viewModel: EditClickTrackViewModel, loop: Boolean, tempo
     ) {
         Column(
             modifier = Modifier.padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -217,6 +217,8 @@ private fun OptionsItem(viewModel: EditClickTrackViewModel, loop: Boolean, tempo
                 enter = fadeIn() + expandVertically(expandFrom = Bottom),
                 exit = fadeOut() + shrinkVertically(shrinkTowards = Bottom),
             ) {
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
