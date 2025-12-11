@@ -150,7 +150,7 @@ private fun Content(
 
 @Preview
 @Composable
-internal fun AboutScreenPreview() = ClickTrackTheme {
+fun AboutScreenPreview() = ClickTrackTheme {
     AboutScreenView(
         viewModel = object : AboutViewModel {
             override val state: StateFlow<AboutState> = MutableStateFlow(

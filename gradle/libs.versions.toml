@@ -8,6 +8,7 @@ kover = "0.9.4"
 ksp = "2.3.3"
 mockk = "1.14.7"
 multiplatformSettings = "1.3.0"
+screenshot = "0.0.1-alpha12"
 sqldelight = "2.2.1"
 
 [libraries]
@@ -47,6 +48,7 @@ mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 multiplatformSettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 multiplatformSettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
 reorderable = "sh.calvin.reorderable:reorderable:2.5.1"
+screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "screenshot"}
 simpleIcons = "br.com.devsrsouza.compose.icons:simple-icons:1.1.1"
 sqldelight-androidDriver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
@@ -66,5 +68,6 @@ jetbrains-compose = "org.jetbrains.compose:1.9.3"
 kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 properties = "net.saliman.properties:1.6.0"
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot"}
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 versions = "com.github.ben-manes.versions:0.53.0"

@@ -319,7 +319,7 @@ private val TEMPO_OFFSET_RANGE = -20..20
 
 @Preview
 @Composable
-internal fun EditClickTrackScreenPreview() = ClickTrackTheme {
+fun EditClickTrackScreenPreview() = ClickTrackTheme {
     EditClickTrackScreenView(
         viewModel = object : EditClickTrackViewModel {
             override val state: StateFlow<EditClickTrackState?> = MutableStateFlow(

@@ -243,7 +243,7 @@ private fun FileField(text: String, onClick: () -> Unit) {
 
 @Preview
 @Composable
-internal fun SoundLibraryScreenPreview() = ClickTrackTheme {
+fun SoundLibraryScreenPreview() = ClickTrackTheme {
     SoundLibraryScreenView(
         viewModel = object : SoundLibraryViewModel {
             override val state: StateFlow<SoundLibraryState?> = MutableStateFlow(

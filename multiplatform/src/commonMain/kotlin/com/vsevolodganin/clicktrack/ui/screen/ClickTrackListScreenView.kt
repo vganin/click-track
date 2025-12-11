@@ -168,7 +168,7 @@ private fun ClickTrackListItem(
 
 @Preview
 @Composable
-internal fun ClickTrackListScreenPreview() = ClickTrackTheme {
+fun ClickTrackListScreenPreview() = ClickTrackTheme {
     ClickTrackListScreenView(
         viewModel = object : ClickTrackListViewModel {
             override val state: StateFlow<ClickTrackListState> = MutableStateFlow(

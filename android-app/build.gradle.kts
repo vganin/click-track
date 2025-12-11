@@ -14,6 +14,7 @@ plugins {
     kotlin("plugin.serialization")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    alias(libs.plugins.screenshot)
 }
 
 val keystorePropertiesFile = file("keystore.properties")
@@ -88,6 +89,8 @@ android {
             path = file("src/main/cpp/CMakeLists.txt")
         }
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -111,6 +114,9 @@ dependencies {
 
     testImplementation(kotlin("test"))
     testImplementation(libs.testParameterInjector)
+
+    screenshotTestImplementation(libs.screenshot.validation.api)
+    screenshotTestImplementation(compose.uiTooling)
 
     coreLibraryDesugaring(libs.desugarJdkLibs)
 }

@@ -222,7 +222,7 @@ private fun BottomBar(viewModel: PlayClickTrackViewModel, state: PlayClickTrackS
 
 @Preview
 @Composable
-internal fun PlayClickTrackScreenPreview() = ClickTrackTheme {
+fun PlayClickTrackScreenPreview() = ClickTrackTheme {
     PlayClickTrackScreenView(
         viewModel = object : PlayClickTrackViewModel {
             override val state: StateFlow<PlayClickTrackState?> = MutableStateFlow(
