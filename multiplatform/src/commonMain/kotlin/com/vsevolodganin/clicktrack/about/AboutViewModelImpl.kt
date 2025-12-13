@@ -5,18 +5,27 @@ import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.common.BuildConfig
 import com.vsevolodganin.clicktrack.common.LinkOpener
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.Inject
 
-@Inject
+@AssistedInject
 class AboutViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: ScreenStackNavigation,
     private val linkOpener: LinkOpener,
     buildConfig: BuildConfig,
 ) : AboutViewModel, ComponentContext by componentContext {
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            componentContext: ComponentContext,
+        ): AboutViewModelImpl
+    }
+
     override val state: StateFlow<AboutState> = MutableStateFlow(
         AboutState(displayVersion = buildConfig.versionName),
     )

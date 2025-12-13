@@ -19,60 +19,64 @@ import com.vsevolodganin.clicktrack.drawer.DrawerNavigationImpl
 import com.vsevolodganin.clicktrack.drawer.DrawerNavigationSource
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModelImpl
-import kotlinx.serialization.serializer
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
+import kotlinx.serialization.serializer
 
+@ContributesTo(MainControllerScope::class)
+@BindingContainer
 interface ViewModelModule {
 
-    @Provides
-    @MainControllerScope
-    fun provideRootViewModel(rootViewModelImpl: RootViewModelImpl): RootViewModel = rootViewModelImpl
+    @Binds
+    fun provideRootViewModel(rootViewModelImpl: RootViewModelImpl): RootViewModel
 
-    @Provides
-    @MainControllerScope
-    fun provideDrawerNavigationImpl(): DrawerNavigationImpl = DrawerNavigationImpl()
+    @Binds
+    fun provideLifecycleOwner(componentContext: ComponentContext): LifecycleOwner
 
-    @Provides
-    @MainControllerScope
-    fun provideLifecycleOwner(componentContext: ComponentContext): LifecycleOwner = componentContext
+    @Binds
+    fun provideStateKeeperOwner(componentContext: ComponentContext): StateKeeperOwner
 
-    @Provides
-    @MainControllerScope
-    fun provideStateKeeperOwner(componentContext: ComponentContext): StateKeeperOwner = componentContext
+    @Binds
+    fun provideInstanceKeeperOwner(componentContext: ComponentContext): InstanceKeeperOwner
 
-    @Provides
-    @MainControllerScope
-    fun provideInstanceKeeperOwner(componentContext: ComponentContext): InstanceKeeperOwner = componentContext
+    companion object {
+        @Provides
+        @SingleIn(MainControllerScope::class)
+        fun provideDrawerNavigationImpl(): DrawerNavigationImpl = DrawerNavigationImpl()
 
-    @Provides
-    @MainControllerScope
-    fun provideScreenStackNavigation(): ScreenStackNavigation = StackNavigation()
+        @Provides
+        @SingleIn(MainControllerScope::class)
+        fun provideScreenStackNavigation(): ScreenStackNavigation = StackNavigation()
 
-    @Provides
-    @MainControllerScope
-    fun provideDrawerNavigation(drawerNavigationImpl: DrawerNavigationImpl): DrawerNavigation = drawerNavigationImpl
+        @Provides
+        @SingleIn(MainControllerScope::class)
+        fun provideDrawerNavigation(drawerNavigationImpl: DrawerNavigationImpl): DrawerNavigation = drawerNavigationImpl
 
-    @Provides
-    @MainControllerScope
-    fun provideDrawerNavigationSource(drawerNavigationImpl: DrawerNavigationImpl): DrawerNavigationSource = drawerNavigationImpl
+        @Provides
+        @SingleIn(MainControllerScope::class)
+        fun provideDrawerNavigationSource(drawerNavigationImpl: DrawerNavigationImpl): DrawerNavigationSource = drawerNavigationImpl
 
-    @Provides
-    @MainControllerScope
-    fun provideScreenStackState(
-        componentContext: ComponentContext,
-        stackNavigation: ScreenStackNavigation,
-        screenViewModelFactory: ScreenViewModelFactory,
-    ): ScreenStackState = componentContext.childStack(
-        source = stackNavigation,
-        initialStack = { listOf(ScreenConfiguration.ClickTrackList) },
-        childFactory = screenViewModelFactory::create,
-        serializer = serializer(),
-    )
+        @Provides
+        @SingleIn(MainControllerScope::class)
+        fun provideScreenStackState(
+            componentContext: ComponentContext,
+            stackNavigation: ScreenStackNavigation,
+            screenViewModelFactory: ScreenViewModelFactory,
+        ): ScreenStackState = componentContext.childStack(
+            source = stackNavigation,
+            initialStack = { listOf(ScreenConfiguration.ClickTrackList) },
+            childFactory = screenViewModelFactory::create,
+            serializer = serializer(),
+        )
 
-    @Provides
-    @MainControllerScope
-    fun provideDrawerViewModel(
-        componentContext: ComponentContext,
-        drawerViewModelFactory: (ComponentContext) -> DrawerViewModelImpl,
-    ): DrawerViewModel = drawerViewModelFactory.invoke(componentContext.childContext("Drawer"))
+        @Provides
+        @SingleIn(MainControllerScope::class)
+        fun provideDrawerViewModel(
+            componentContext: ComponentContext,
+            drawerViewModelFactory: DrawerViewModelImpl.Factory,
+        ): DrawerViewModel = drawerViewModelFactory.create(componentContext.childContext("Drawer"))
+    }
 }

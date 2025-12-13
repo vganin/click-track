@@ -4,17 +4,20 @@ import android.app.Application
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.SharedPreferencesSettings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import dev.zacsweers.metro.Provides
 
-@OptIn(ExperimentalSettingsApi::class)
-interface UserPreferencesModule {
+@ContributesTo(ApplicationScope::class)
+@BindingContainer
+object UserPreferencesModule {
 
     @Provides
     fun provideUserPreferences(application: Application): FlowSettings {

@@ -14,58 +14,52 @@ import dev.zacsweers.metro.Inject
 
 @Inject
 class ScreenViewModelFactory(
-    private val clickTrackListViewModelFactory: (componentContext: ComponentContext) -> ClickTrackListViewModelImpl,
-    private val playClickTrackViewModelFactory: (
-        componentContext: ComponentContext,
-        config: ScreenConfiguration.PlayClickTrack,
-    ) -> PlayClickTrackViewModelImpl,
-    private val editClickTrackViewModelFactory: (
-        componentContext: ComponentContext,
-        config: ScreenConfiguration.EditClickTrack,
-    ) -> EditClickTrackViewModelImpl,
-    private val metronomeViewModelFactory: (componentContext: ComponentContext) -> MetronomeViewModelImpl,
-    private val settingsViewModelFactory: (componentContext: ComponentContext) -> SettingsViewModelImpl,
-    private val soundLibraryViewModelFactory: (componentContext: ComponentContext) -> SoundLibraryViewModelImpl,
-    private val trainingViewModelFactory: (componentContext: ComponentContext) -> TrainingViewModelImpl,
-    private val aboutViewModelFactory: (componentContext: ComponentContext) -> AboutViewModelImpl,
-    private val polyrhythmsViewModelFactory: (componentContext: ComponentContext) -> PolyrhythmsViewModelImpl,
+    private val clickTrackListViewModelFactory: ClickTrackListViewModelImpl.Factory,
+    private val playClickTrackViewModelFactory: PlayClickTrackViewModelImpl.Factory,
+    private val editClickTrackViewModelFactory: EditClickTrackViewModelImpl.Factory,
+    private val metronomeViewModelFactory: MetronomeViewModelImpl.Factory,
+    private val settingsViewModelFactory: SettingsViewModelImpl.Factory,
+    private val soundLibraryViewModelFactory: SoundLibraryViewModelImpl.Factory,
+    private val trainingViewModelFactory: TrainingViewModelImpl.Factory,
+    private val aboutViewModelFactory: AboutViewModelImpl.Factory,
+    private val polyrhythmsViewModelFactory: PolyrhythmsViewModelImpl.Factory,
 ) {
     fun create(screenConfiguration: ScreenConfiguration, componentContext: ComponentContext): ScreenViewModel {
         return when (screenConfiguration) {
             ScreenConfiguration.ClickTrackList -> ScreenViewModel.ClickTrackList(
-                clickTrackListViewModelFactory.invoke(componentContext),
+                clickTrackListViewModelFactory.create(componentContext),
             )
 
             is ScreenConfiguration.PlayClickTrack -> ScreenViewModel.PlayClickTrack(
-                playClickTrackViewModelFactory.invoke(componentContext, screenConfiguration),
+                playClickTrackViewModelFactory.create(componentContext, screenConfiguration),
             )
 
             is ScreenConfiguration.EditClickTrack -> ScreenViewModel.EditClickTrack(
-                editClickTrackViewModelFactory.invoke(componentContext, screenConfiguration),
+                editClickTrackViewModelFactory.create(componentContext, screenConfiguration),
             )
 
             ScreenConfiguration.Metronome -> ScreenViewModel.Metronome(
-                metronomeViewModelFactory.invoke(componentContext),
+                metronomeViewModelFactory.create(componentContext),
             )
 
             ScreenConfiguration.Training -> ScreenViewModel.Training(
-                trainingViewModelFactory.invoke(componentContext),
+                trainingViewModelFactory.create(componentContext),
             )
 
             ScreenConfiguration.Settings -> ScreenViewModel.Settings(
-                settingsViewModelFactory.invoke(componentContext),
+                settingsViewModelFactory.create(componentContext),
             )
 
             ScreenConfiguration.SoundLibrary -> ScreenViewModel.SoundLibrary(
-                soundLibraryViewModelFactory.invoke(componentContext),
+                soundLibraryViewModelFactory.create(componentContext),
             )
 
             ScreenConfiguration.About -> ScreenViewModel.About(
-                aboutViewModelFactory.invoke(componentContext),
+                aboutViewModelFactory.create(componentContext),
             )
 
             ScreenConfiguration.Polyrhythms -> ScreenViewModel.Polyrhythms(
-                polyrhythmsViewModelFactory.invoke(componentContext),
+                polyrhythmsViewModelFactory.create(componentContext),
             )
         }
     }

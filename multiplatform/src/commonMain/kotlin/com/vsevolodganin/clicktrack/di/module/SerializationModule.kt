@@ -1,12 +1,17 @@
 package com.vsevolodganin.clicktrack.di.module
 
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
 import kotlinx.serialization.json.Json
 import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 
-interface SerializationModule {
+@ContributesTo(ApplicationScope::class)
+@BindingContainer
+object SerializationModule {
     @Provides
-    @ApplicationScope
+    @SingleIn(ApplicationScope::class)
     fun provideJson(): Json = Json {
         ignoreUnknownKeys = true
     }

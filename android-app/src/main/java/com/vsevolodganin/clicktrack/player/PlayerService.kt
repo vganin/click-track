@@ -16,6 +16,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.FLAG_FOREGROUND_SERVICE
 import androidx.core.app.NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.media.app.NotificationCompat.MediaStyle
@@ -24,16 +25,20 @@ import clicktrack.multiplatform.generated.resources.player_service_notification_
 import clicktrack.multiplatform.generated.resources.player_service_notification_polyrhythm_title
 import clicktrack.multiplatform.generated.resources.player_service_notification_resume
 import clicktrack.multiplatform.generated.resources.player_service_notification_stop
+import com.vsevolodganin.clicktrack.IntentFactory
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.applicationComponent
-import com.vsevolodganin.clicktrack.di.component.PlayerServiceComponent
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
-import dev.zacsweers.metro.createGraphFactory
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
+import com.vsevolodganin.clicktrack.notification.NotificationChannels
+import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.MultiplatformRes
+import com.vsevolodganin.clicktrack.utils.log.Logger
 import com.vsevolodganin.clicktrack.utils.string
+import dev.zacsweers.metro.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -108,8 +113,6 @@ class PlayerService : Service() {
         val isPaused: Boolean,
     )
 
-    private lateinit var component: PlayerServiceComponent
-
     private lateinit var mediaSession: MediaSessionCompat
 
     private var isNotificationDisplayed = false
@@ -133,10 +136,42 @@ class PlayerService : Service() {
 
     private val state = MutableStateFlow<State?>(null)
 
+    @Inject
+    private lateinit var scope: CoroutineScope
+
+    @Inject
+    private lateinit var player: Player
+
+    @Inject
+    private lateinit var playableContentProvider: PlayableContentProvider
+
+    @Inject
+    private lateinit var userPreferences: UserPreferencesRepository
+
+    @Inject
+    private lateinit var intentFactory: IntentFactory
+
+    @Inject
+    private lateinit var notificationManager: NotificationManagerCompat
+
+    @Inject
+    private lateinit var notificationChannels: NotificationChannels
+
+    @Inject
+    private lateinit var audioFocusManager: AudioFocusManager
+
+    @Inject
+    private lateinit var latencyTracker: LatencyTracker
+
+    @Inject
+    private lateinit var logger: Logger
+
     override fun onCreate() {
         super.onCreate()
 
-        component = createGraphFactory<PlayerServiceComponent.Factory>().create(applicationComponent)
+        applicationComponent.playerServiceComponentFactory
+            .create()
+            .inject(this)
 
         mediaSession = MediaSessionCompat(this@PlayerService, "ClickTrackMediaSession").apply {
             setPlaybackState(mediaSessionPlaybackStateBuilder().build())
@@ -157,14 +192,14 @@ class PlayerService : Service() {
 
         initializePlayer()
 
-        component.latencyTracker.start()
+        latencyTracker.start()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mediaSession.release()
         disposePlayer()
-        component.latencyTracker.stop()
+        latencyTracker.stop()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -176,7 +211,7 @@ class PlayerService : Service() {
             ACTION_PAUSE -> state.update { it?.copy(isPaused = true) }
             ACTION_RESUME -> state.update { it?.copy(isPaused = false) }
             else -> {
-                component.logger.logError(TAG, "Undefined intent received = $intent, flags = $flags, startId = $startId")
+                logger.logError(TAG, "Undefined intent received = $intent, flags = $flags, startId = $startId")
                 state.value = null
             }
         }
@@ -184,22 +219,22 @@ class PlayerService : Service() {
         return START_NOT_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder = PlayerServiceBinder(component.player.playbackState())
+    override fun onBind(intent: Intent?): IBinder = PlayerServiceBinder(player.playbackState())
 
     private fun initializePlayer() {
-        component.scope.apply {
+        scope.apply {
             launch { audioFocusComponent() }
             launch { foregroundComponent() }
             launch { playbackComponent() }
         }
     }
 
-    private fun disposePlayer() = component.scope.cancel()
+    private fun disposePlayer() = scope.cancel()
 
     private suspend fun audioFocusComponent() {
         combine(
-            component.userPreferences.ignoreAudioFocus.flow,
-            component.audioFocusManager.hasFocus(),
+            userPreferences.ignoreAudioFocus.flow,
+            audioFocusManager.hasFocus(),
         ) { ignoreAudioFocus, hasFocus -> ignoreAudioFocus || hasFocus }
             .collect { isAllowedToPlay ->
                 if (!isAllowedToPlay) {
@@ -213,10 +248,10 @@ class PlayerService : Service() {
             if (args != null) {
                 when (val id = args.id) {
                     is ClickTrackId -> {
-                        when (val tapIntent = component.intentFactory.navigate(id)) {
+                        when (val tapIntent = intentFactory.navigate(id)) {
                             null -> stopForeground()
                             else -> {
-                                component.playableContentProvider.clickTrackFlow(id)
+                                playableContentProvider.clickTrackFlow(id)
                                     .filterNotNull()
                                     .map { it.name }
                                     .distinctUntilChanged()
@@ -232,7 +267,7 @@ class PlayerService : Service() {
                     }
 
                     TwoLayerPolyrhythmId -> {
-                        component.playableContentProvider.twoLayerPolyrhythmFlow()
+                        playableContentProvider.twoLayerPolyrhythmFlow()
                             .collectLatest { polyrhythm ->
                                 startForeground(
                                     contentText = getString(
@@ -240,7 +275,7 @@ class PlayerService : Service() {
                                         polyrhythm.layer1,
                                         polyrhythm.layer2,
                                     ),
-                                    tapIntent = component.intentFactory.navigatePolyrhythms(),
+                                    tapIntent = intentFactory.navigatePolyrhythms(),
                                     isPaused = args.isPaused,
                                 )
                             }
@@ -265,7 +300,7 @@ class PlayerService : Service() {
                                     .build(),
                             )
                         }
-                        component.player.pause()
+                        player.pause()
                     }
 
                     false -> {
@@ -277,7 +312,7 @@ class PlayerService : Service() {
                                     .build(),
                             )
                         }
-                        component.player.resume()
+                        player.resume()
                     }
 
                     null -> {
@@ -299,7 +334,7 @@ class PlayerService : Service() {
 
             state.map { it != null }.distinctUntilChanged().collectLatest { startPlay ->
                 if (startPlay && requestAudioFocus()) {
-                    component.player.play(
+                    player.play(
                         state
                             .filterNotNull()
                             .map(State::toPlayerInput)
@@ -307,7 +342,7 @@ class PlayerService : Service() {
                     )
                 }
 
-                component.audioFocusManager.releaseAudioFocus()
+                audioFocusManager.releaseAudioFocus()
                 state.emit(null)
             }
         }
@@ -316,7 +351,7 @@ class PlayerService : Service() {
     private suspend fun startForeground(contentText: String, tapIntent: Intent, isPaused: Boolean) {
         val launchAppIntent = PendingIntent.getActivity(this, 0, tapIntent, pendingIntentFlags)
 
-        val notificationBuilder = NotificationCompat.Builder(this, component.notificationChannels.playingNow)
+        val notificationBuilder = NotificationCompat.Builder(this, notificationChannels.playingNow)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ResourcesCompat.getColor(resources, R.color.blood_red, null))
             .setColorized(true)
@@ -356,7 +391,7 @@ class PlayerService : Service() {
                 .build()
                 .apply { flags = flags or FLAG_FOREGROUND_SERVICE }
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                component.notificationManager.notify(R.id.notification_playing_now, notification)
+                notificationManager.notify(R.id.notification_playing_now, notification)
             }
         } else {
             val notification = notificationBuilder.build()
@@ -371,7 +406,7 @@ class PlayerService : Service() {
     }
 
     private fun requestAudioFocus(): Boolean {
-        return component.userPreferences.ignoreAudioFocus.value || component.audioFocusManager.requestAudioFocus()
+        return userPreferences.ignoreAudioFocus.value || audioFocusManager.requestAudioFocus()
     }
 
     private fun mediaSessionPlaybackStateBuilder(): PlaybackStateCompat.Builder {

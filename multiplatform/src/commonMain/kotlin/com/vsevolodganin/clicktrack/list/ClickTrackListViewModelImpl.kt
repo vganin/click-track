@@ -17,6 +17,9 @@ import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.pushIfUnique
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,11 +27,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.Inject
 import org.jetbrains.compose.resources.getString
 
-@Inject
+@AssistedInject
 class ClickTrackListViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: ScreenStackNavigation,
@@ -36,6 +37,14 @@ class ClickTrackListViewModelImpl(
     private val clickTrackRepository: ClickTrackRepository,
     private val newClickTrackNameSuggester: NewClickTrackNameSuggester,
 ) : ClickTrackListViewModel, ComponentContext by componentContext {
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            componentContext: ComponentContext,
+        ): ClickTrackListViewModelImpl
+    }
+
     private val scope = coroutineScope()
     private val _state: MutableStateFlow<ClickTrackListState> = MutableStateFlow(consumeSavedState() ?: ClickTrackListState(emptyList()))
 

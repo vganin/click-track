@@ -13,6 +13,9 @@ import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.pushIfUnique
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import com.vsevolodganin.clicktrack.utils.grabIf
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -21,10 +24,8 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.Inject
 
-@Inject
+@AssistedInject
 class PlayClickTrackViewModelImpl(
     @Assisted componentContext: ComponentContext,
     @Assisted private val config: ScreenConfiguration.PlayClickTrack,
@@ -34,6 +35,15 @@ class PlayClickTrackViewModelImpl(
     private val userPreferences: UserPreferencesRepository,
     private val exportWorkLauncher: ExportWorkLauncher,
 ) : PlayClickTrackViewModel, ComponentContext by componentContext {
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            componentContext: ComponentContext,
+            config: ScreenConfiguration.PlayClickTrack,
+        ): PlayClickTrackViewModelImpl
+    }
+
     private val scope = coroutineScope()
 
     override val state: StateFlow<PlayClickTrackState?> = combine(

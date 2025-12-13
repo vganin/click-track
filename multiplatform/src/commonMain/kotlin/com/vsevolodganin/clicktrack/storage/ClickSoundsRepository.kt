@@ -12,9 +12,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import com.vsevolodganin.clicktrack.storage.ClickSounds as StorageClickSounds
 
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class ClickSoundsRepository(
     private val database: Database,

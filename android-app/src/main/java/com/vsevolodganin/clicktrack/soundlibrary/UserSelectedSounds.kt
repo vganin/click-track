@@ -16,8 +16,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class UserSelectedSounds(
     userPreferencesRepository: UserPreferencesRepository,

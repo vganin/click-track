@@ -18,6 +18,9 @@ import com.vsevolodganin.clicktrack.utils.collection.immutable.replace
 import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -26,10 +29,8 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.Inject
 
-@Inject
+@AssistedInject
 class EditClickTrackViewModelImpl(
     @Assisted componentContext: ComponentContext,
     @Assisted private val config: ScreenConfiguration.EditClickTrack,
@@ -37,6 +38,15 @@ class EditClickTrackViewModelImpl(
     private val clickTrackRepository: ClickTrackRepository,
     private val clickTrackValidator: ClickTrackValidator,
 ) : EditClickTrackViewModel, ComponentContext by componentContext {
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            componentContext: ComponentContext,
+            config: ScreenConfiguration.EditClickTrack,
+        ): EditClickTrackViewModelImpl
+    }
+
     private val scope = coroutineScope()
     private val _state: MutableStateFlow<EditClickTrackState?> = MutableStateFlow(consumeSavedState())
 

@@ -2,10 +2,11 @@ package com.vsevolodganin.clicktrack.common
 
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import platform.Foundation.NSURL.Companion.URLWithString
 import platform.UIKit.UIApplication
 
-@MainControllerScope
+@SingleIn(MainControllerScope::class)
 @Inject
 actual class LinkOpener {
     actual fun url(url: String) {

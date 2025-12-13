@@ -5,16 +5,17 @@ import androidx.core.os.LocaleListCompat
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.lifecycle.doOnResume
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import dev.zacsweers.metro.Inject
 
 @OptIn(DelicateCoroutinesApi::class)
-@MainControllerScope
+@SingleIn(MainControllerScope::class)
 @Inject
 class LanguageStoreImpl(lifecycleOwner: LifecycleOwner) : LanguageStore {
     override val appLanguage: MutableStateFlow<AppLanguage> = MutableStateFlow(storedAppLanguage)

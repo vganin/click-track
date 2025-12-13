@@ -13,16 +13,17 @@ import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import com.vsevolodganin.clicktrack.utils.grabIf
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.Inject
 
-@Inject
+@AssistedInject
 class MetronomeViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: ScreenStackNavigation,
@@ -30,6 +31,14 @@ class MetronomeViewModelImpl(
     private val playerServiceAccess: PlayerServiceAccess,
     private val bpmMeter: BpmMeter,
 ) : MetronomeViewModel, ComponentContext by componentContext {
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            componentContext: ComponentContext,
+        ): MetronomeViewModelImpl
+    }
+
     private val scope = coroutineScope()
 
     private val areOptionsExpanded: MutableStateFlow<Boolean>

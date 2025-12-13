@@ -16,6 +16,9 @@ import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.optionalCast
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,11 +28,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.Inject
 import org.jetbrains.compose.resources.getString
 
-@Inject
+@AssistedInject
 class TrainingViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: ScreenStackNavigation,
@@ -39,6 +40,14 @@ class TrainingViewModelImpl(
     private val newClickTrackNameSuggester: NewClickTrackNameSuggester,
     private val trainingClickTrackGenerator: TrainingClickTrackGenerator,
 ) : TrainingViewModel, ComponentContext by componentContext {
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            componentContext: ComponentContext,
+        ): TrainingViewModelImpl
+    }
+
     private val scope = coroutineScope()
 
     private val _state: MutableStateFlow<TrainingEditState> = MutableStateFlow(

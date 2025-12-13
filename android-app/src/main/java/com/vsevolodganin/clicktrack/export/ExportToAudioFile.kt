@@ -16,22 +16,22 @@ import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
 import com.vsevolodganin.clicktrack.soundlibrary.UserSelectedSounds
 import com.vsevolodganin.clicktrack.utils.log.Logger
 import com.vsevolodganin.clicktrack.utils.media.pcmEncoding
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import dev.zacsweers.metro.Inject
 import java.io.File
 import java.nio.ByteOrder
 
 @Inject
 class ExportToAudioFile(
     private val application: Application,
-    primitiveAudioMonoRendererFactory: (targetSampleRate: Int) -> PrimitiveAudioMonoRenderer,
+    primitiveAudioMonoRendererFactory: PrimitiveAudioMonoRenderer.Factory,
     private val userSelectedSounds: UserSelectedSounds,
     private val logger: Logger,
 ) {
-    private val primitiveAudioMonoRenderer = primitiveAudioMonoRendererFactory(SAMPLE_RATE)
+    private val primitiveAudioMonoRenderer = primitiveAudioMonoRendererFactory.create(SAMPLE_RATE)
 
     suspend fun export(clickTrack: ClickTrack, reportProgress: suspend (Float) -> Unit): File? {
         val soundSourceProvider = SoundSourceProvider(userSelectedSounds.get())

@@ -14,13 +14,14 @@ import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
-import dev.zacsweers.metro.Inject
 
-@MainControllerScope
+@SingleIn(MainControllerScope::class)
 @Inject
 class SoundChooserImpl(
     private val activity: AppCompatActivity,

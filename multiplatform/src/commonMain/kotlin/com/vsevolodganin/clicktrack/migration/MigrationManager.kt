@@ -4,8 +4,9 @@ import com.vsevolodganin.clicktrack.common.BuildConfig
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@MainControllerScope
+@SingleIn(MainControllerScope::class)
 @Inject
 class MigrationManager(
     private val userPreferencesRepository: UserPreferencesRepository,

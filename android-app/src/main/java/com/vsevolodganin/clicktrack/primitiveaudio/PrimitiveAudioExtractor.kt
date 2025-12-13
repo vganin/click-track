@@ -13,10 +13,11 @@ import com.vsevolodganin.clicktrack.utils.media.channelCount
 import com.vsevolodganin.clicktrack.utils.media.pcmEncoding
 import com.vsevolodganin.clicktrack.utils.media.sampleRate
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import java.nio.ByteBuffer
 import kotlin.math.min
 
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class PrimitiveAudioExtractor(
     private val logger: Logger,

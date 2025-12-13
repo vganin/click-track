@@ -17,6 +17,8 @@ import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.training.TrainingEditState.TrainingMode
 import com.vsevolodganin.clicktrack.training.TrainingValidState
 import com.vsevolodganin.clicktrack.utils.settings.PreferenceKey
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -28,10 +30,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import dev.zacsweers.metro.Inject
 
 @OptIn(ExperimentalSettingsApi::class)
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class UserPreferencesRepository(
     private val settings: FlowSettings,

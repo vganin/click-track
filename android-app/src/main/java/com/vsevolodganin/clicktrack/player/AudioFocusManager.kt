@@ -7,11 +7,12 @@ import androidx.media.AudioAttributesCompat
 import androidx.media.AudioFocusRequestCompat
 import androidx.media.AudioManagerCompat
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import dev.zacsweers.metro.Inject
 
-@PlayerServiceScope
+@SingleIn(PlayerServiceScope::class)
 @Inject
 class AudioFocusManager(
     private val audioManager: AudioManager,

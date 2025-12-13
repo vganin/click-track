@@ -7,8 +7,6 @@ import com.vsevolodganin.clicktrack.DummyLanguageStoreImpl
 import com.vsevolodganin.clicktrack.DummyPlayerServiceAccessImpl
 import com.vsevolodganin.clicktrack.DummySoundChooserImpl
 import com.vsevolodganin.clicktrack.RootViewModel
-import com.vsevolodganin.clicktrack.di.module.MigrationModule
-import com.vsevolodganin.clicktrack.di.module.ViewModelModule
 import com.vsevolodganin.clicktrack.export.ExportWorkLauncher
 import com.vsevolodganin.clicktrack.language.LanguageStore
 import com.vsevolodganin.clicktrack.migration.MigrationManager
@@ -17,38 +15,36 @@ import com.vsevolodganin.clicktrack.settings.debug.NativeCrash
 import com.vsevolodganin.clicktrack.settings.debug.NativeCrashImpl
 import com.vsevolodganin.clicktrack.soundlibrary.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
-import dev.zacsweers.metro.DependencyGraph
-import dev.zacsweers.metro.Includes
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.GraphExtension
 import dev.zacsweers.metro.Provides
-import kotlin.reflect.KClass
 
-@MainControllerScope
-@DependencyGraph
-abstract class MainViewControllerComponent(
-    @Includes protected val applicationComponent: ApplicationComponent,
-    @get:Provides protected val componentContext: ComponentContext,
-) : ViewModelModule,
-    MigrationModule {
-    abstract val rootViewModel: RootViewModel
-    abstract val migrationManager: MigrationManager
+@GraphExtension(MainControllerScope::class)
+interface MainViewControllerComponent {
 
-    protected val DummyPlayerServiceAccessImpl.binding: PlayerServiceAccess @Provides get() = this
-    protected val DummyExportWorkLauncherImpl.binding: ExportWorkLauncher @Provides get() = this
-    protected val DummyLanguageStoreImpl.binding: LanguageStore @Provides get() = this
-    protected val DummySoundChooserImpl.binding: SoundChooser @Provides get() = this
-    protected val DummyDocumentMetadataHelperImpl.binding: DocumentMetadataHelper @Provides get() = this
-    protected val NativeCrashImpl.binding: NativeCrash @Provides get() = this
+    val rootViewModel: RootViewModel
+    val migrationManager: MigrationManager
 
-    @DependencyGraph.Factory
+    @Binds
+    val DummyPlayerServiceAccessImpl.binding: PlayerServiceAccess
+
+    @Binds
+    val DummyExportWorkLauncherImpl.binding: ExportWorkLauncher
+
+    @Binds
+    val DummyLanguageStoreImpl.binding: LanguageStore
+
+    @Binds
+    val DummySoundChooserImpl.binding: SoundChooser
+
+    @Binds
+    val DummyDocumentMetadataHelperImpl.binding: DocumentMetadataHelper
+
+    @Binds
+    val NativeCrashImpl.binding: NativeCrash
+
+    @GraphExtension.Factory
     fun interface Factory {
-        fun create(
-            applicationComponent: ApplicationComponent,
-            componentContext: ComponentContext,
-        ): MainViewControllerComponent
+        fun create(@Provides componentContext: ComponentContext): MainViewControllerComponent
     }
 }
-
-expect fun KClass<MainViewControllerComponent>.createKmp(
-    applicationComponent: ApplicationComponent,
-    componentContext: ComponentContext,
-): MainViewControllerComponent

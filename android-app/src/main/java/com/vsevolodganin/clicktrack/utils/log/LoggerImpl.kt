@@ -5,8 +5,9 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.vsevolodganin.clicktrack.BuildConfig
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class LoggerImpl(
     private val firebaseCrashlytics: FirebaseCrashlytics,

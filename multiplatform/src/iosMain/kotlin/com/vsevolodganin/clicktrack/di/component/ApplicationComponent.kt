@@ -2,31 +2,19 @@ package com.vsevolodganin.clicktrack.di.component
 
 import com.vsevolodganin.clicktrack.common.BuildConfig
 import com.vsevolodganin.clicktrack.common.BuildConfigImpl
-import com.vsevolodganin.clicktrack.di.module.DatabaseModule
-import com.vsevolodganin.clicktrack.di.module.SerializationModule
-import com.vsevolodganin.clicktrack.di.module.UserPreferencesModule
 import com.vsevolodganin.clicktrack.utils.log.Logger
 import com.vsevolodganin.clicktrack.utils.log.LoggerImpl
+import dev.zacsweers.metro.Binds
 import dev.zacsweers.metro.DependencyGraph
-import dev.zacsweers.metro.Provides
-import kotlin.reflect.KClass
 
-@ApplicationScope
-@DependencyGraph
-abstract class ApplicationComponent :
-    SerializationModule,
-    DatabaseModule,
-    UserPreferencesModule {
-    @get:Provides
-    val BuildConfigImpl.binding: BuildConfig get() = this
+@DependencyGraph(ApplicationScope::class)
+interface ApplicationComponent {
 
-    @get:Provides
-    val LoggerImpl.binding: Logger get() = this
+    val mainViewApplicationComponentFactory: MainViewControllerComponent.Factory
 
-    @DependencyGraph.Factory
-    fun interface Factory {
-        fun create(): ApplicationComponent
-    }
+    @Binds
+    val BuildConfigImpl.binding: BuildConfig
+
+    @Binds
+    val LoggerImpl.binding: Logger
 }
-
-expect fun KClass<ApplicationComponent>.createKmp(): ApplicationComponent

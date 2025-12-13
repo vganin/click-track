@@ -10,19 +10,28 @@ import com.vsevolodganin.clicktrack.ScreenStack
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.ScreenStackState
 import com.vsevolodganin.clicktrack.utils.decompose.resetTo
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import dev.zacsweers.metro.Assisted
-import dev.zacsweers.metro.Inject
 
-@Inject
+@AssistedInject
 class DrawerViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val stackNavigation: ScreenStackNavigation,
     private val drawerNavigationSource: DrawerNavigationSource,
     screenStackState: ScreenStackState,
 ) : DrawerViewModel, ComponentContext by componentContext {
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            componentContext: ComponentContext,
+        ): DrawerViewModelImpl
+    }
+
     private val _state: MutableStateFlow<DrawerState> = MutableStateFlow(
         DrawerState(
             isOpened = false,

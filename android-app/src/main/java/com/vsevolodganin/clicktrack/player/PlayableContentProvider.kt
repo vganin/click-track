@@ -12,14 +12,15 @@ import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.MultiplatformRes
 import com.vsevolodganin.clicktrack.utils.string
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import dev.zacsweers.metro.Inject
 import org.jetbrains.compose.resources.getString
 
-@PlayerServiceScope
+@SingleIn(PlayerServiceScope::class)
 @Inject
 class PlayableContentProvider(
     private val application: Application,

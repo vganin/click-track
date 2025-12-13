@@ -7,8 +7,9 @@ import android.content.Intent
 import android.net.Uri
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@MainControllerScope
+@SingleIn(MainControllerScope::class)
 @Inject
 actual class LinkOpener(private val context: Activity) {
     actual fun url(url: String) {

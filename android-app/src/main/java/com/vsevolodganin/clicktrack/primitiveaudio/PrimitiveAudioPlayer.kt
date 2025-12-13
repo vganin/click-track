@@ -8,18 +8,19 @@ import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.player.PlayerEvent
 import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
 import com.vsevolodganin.clicktrack.utils.log.Logger
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.yield
-import dev.zacsweers.metro.Inject
 import kotlin.coroutines.resume
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 @Inject
-@PlayerServiceScope
+@SingleIn(PlayerServiceScope::class)
 class PrimitiveAudioPlayer(
-    primitiveAudioMonoRendererFactory: (targetSampleRate: Int) -> PrimitiveAudioMonoRenderer,
+    primitiveAudioMonoRendererFactory: PrimitiveAudioMonoRenderer.Factory,
     audioManager: AudioManager,
     private val logger: Logger,
 ) {
@@ -40,7 +41,7 @@ class PrimitiveAudioPlayer(
         audioSessionId,
     )
 
-    private val primitiveAudioMonoRenderer = primitiveAudioMonoRendererFactory(SAMPLE_RATE)
+    private val primitiveAudioMonoRenderer = primitiveAudioMonoRendererFactory.create(SAMPLE_RATE)
 
     suspend fun play(
         startingAt: Duration,

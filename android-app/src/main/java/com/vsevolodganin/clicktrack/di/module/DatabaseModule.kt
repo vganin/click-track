@@ -4,11 +4,17 @@ import android.app.Application
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.vsevolodganin.clicktrack.Database
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
 import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 
-interface DatabaseModule {
+@ContributesTo(ApplicationScope::class)
+@BindingContainer
+object DatabaseModule {
+
     @Provides
-    @ApplicationScope
+    @SingleIn(ApplicationScope::class)
     fun provideDatabase(application: Application): Database {
         return Database(
             AndroidSqliteDriver(

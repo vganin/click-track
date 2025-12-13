@@ -1,41 +1,32 @@
 package com.vsevolodganin.clicktrack.di.component
 
-import com.vsevolodganin.clicktrack.NativeLibraries
+import android.app.Application
+import com.vsevolodganin.clicktrack.MainApplication
 import com.vsevolodganin.clicktrack.common.BuildConfig
 import com.vsevolodganin.clicktrack.common.BuildConfigImpl
-import com.vsevolodganin.clicktrack.di.module.ApplicationModule
-import com.vsevolodganin.clicktrack.di.module.DatabaseModule
-import com.vsevolodganin.clicktrack.di.module.FirebaseModule
-import com.vsevolodganin.clicktrack.di.module.SerializationModule
-import com.vsevolodganin.clicktrack.di.module.UserPreferencesModule
-import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
-import com.vsevolodganin.clicktrack.theme.ThemeManager
 import com.vsevolodganin.clicktrack.utils.log.Logger
 import com.vsevolodganin.clicktrack.utils.log.LoggerImpl
+import dev.zacsweers.metro.Binds
 import dev.zacsweers.metro.DependencyGraph
 import dev.zacsweers.metro.Provides
 
-@ApplicationScope
-@DependencyGraph
-abstract class ApplicationComponent(
-    @get:Provides val application: android.app.Application,
-) : ApplicationModule,
-    SerializationModule,
-    DatabaseModule,
-    UserPreferencesModule,
-    FirebaseModule {
-    abstract val nativeLibraries: NativeLibraries
-    abstract val userPreferences: UserPreferencesRepository
-    abstract val themeManager: ThemeManager
+@DependencyGraph(ApplicationScope::class)
+interface ApplicationComponent {
 
-    @get:Provides
-    val BuildConfigImpl.binding: BuildConfig get() = this
+    fun inject(mainApplication: MainApplication)
 
-    @get:Provides
-    val LoggerImpl.binding: Logger get() = this
+    val mainActivityComponentFactory: MainActivityComponent.Factory
+    val exportWorkerComponentFactory: ExportWorkerComponent.Factory
+    val playerServiceComponentFactory: PlayerServiceComponent.Factory
+
+    @Binds
+    val BuildConfigImpl.binding: BuildConfig
+
+    @Binds
+    val LoggerImpl.binding: Logger
 
     @DependencyGraph.Factory
     fun interface Factory {
-        fun create(application: android.app.Application): ApplicationComponent
+        fun create(@Provides application: Application): ApplicationComponent
     }
 }

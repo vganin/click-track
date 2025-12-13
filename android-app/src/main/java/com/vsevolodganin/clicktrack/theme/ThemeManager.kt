@@ -9,8 +9,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class ThemeManager(
     private val userPreferences: UserPreferencesRepository,
