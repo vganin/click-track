@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.primitiveaudio
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.player.PlayerEvent
 import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
-import me.tatarka.inject.annotations.Assisted
+import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.Inject
 
 @Inject

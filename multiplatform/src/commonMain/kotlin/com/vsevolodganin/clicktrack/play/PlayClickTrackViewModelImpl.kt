@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Assisted
+import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.Inject
 
 @Inject

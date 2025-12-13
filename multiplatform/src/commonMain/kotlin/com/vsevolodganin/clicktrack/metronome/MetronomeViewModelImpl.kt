@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Assisted
+import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.Inject
 
 @Inject

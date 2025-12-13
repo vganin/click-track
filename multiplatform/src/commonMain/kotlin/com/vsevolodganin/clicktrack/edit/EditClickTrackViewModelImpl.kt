@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Assisted
+import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.Inject
 
 @Inject

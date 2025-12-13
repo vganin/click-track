@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.di.module
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.migration.CanMigrate
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
-import me.tatarka.inject.annotations.IntoSet
+import dev.zacsweers.metro.IntoSet
 import dev.zacsweers.metro.Provides
 
 interface MigrationModule {

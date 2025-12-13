@@ -7,7 +7,7 @@ import com.vsevolodganin.clicktrack.common.BuildConfig
 import com.vsevolodganin.clicktrack.common.LinkOpener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import me.tatarka.inject.annotations.Assisted
+import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.Inject
 
 @Inject
