@@ -158,7 +158,7 @@ private fun AppLanguage.displayValue(): String = when (this) {
 
 @Preview
 @Composable
-internal fun SettingsScreenPreview() = ClickTrackTheme {
+fun SettingsScreenPreview() = ClickTrackTheme {
     SettingsScreenView(
         viewModel = object : SettingsViewModel {
             override val state: StateFlow<SettingsState> = MutableStateFlow(

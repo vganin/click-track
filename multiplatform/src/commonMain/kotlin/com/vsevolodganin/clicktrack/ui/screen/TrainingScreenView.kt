@@ -203,7 +203,7 @@ private fun TrainingEndingKind.stringResource(mode: TrainingMode): String {
 
 @Preview
 @Composable
-internal fun TrainingScreenPreview() = ClickTrackTheme {
+fun TrainingScreenPreview() = ClickTrackTheme {
     TrainingScreenView(
         viewModel = object : TrainingViewModel {
             override val state: StateFlow<TrainingEditState> = MutableStateFlow(
