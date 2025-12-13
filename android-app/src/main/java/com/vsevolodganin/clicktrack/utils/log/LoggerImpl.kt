@@ -4,7 +4,7 @@ import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.vsevolodganin.clicktrack.BuildConfig
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @ApplicationScope
 @Inject

@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @OptIn(ExperimentalSettingsApi::class)
 @ApplicationScope

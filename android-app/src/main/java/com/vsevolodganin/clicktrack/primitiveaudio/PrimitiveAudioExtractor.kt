@@ -12,7 +12,7 @@ import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
 import com.vsevolodganin.clicktrack.utils.media.channelCount
 import com.vsevolodganin.clicktrack.utils.media.pcmEncoding
 import com.vsevolodganin.clicktrack.utils.media.sampleRate
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import java.nio.ByteBuffer
 import kotlin.math.min
 

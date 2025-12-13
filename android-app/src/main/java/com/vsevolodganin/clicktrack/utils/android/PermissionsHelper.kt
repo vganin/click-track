@@ -7,7 +7,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @MainControllerScope
 @Inject

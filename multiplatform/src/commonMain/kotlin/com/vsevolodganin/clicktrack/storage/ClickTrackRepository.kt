@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import com.vsevolodganin.clicktrack.storage.ClickTrack as StorageClickTrack
 
 @ApplicationScope

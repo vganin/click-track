@@ -7,11 +7,12 @@ import com.vsevolodganin.clicktrack.common.MediaStoreAccess
 import com.vsevolodganin.clicktrack.export.ExportToAudioFile
 import com.vsevolodganin.clicktrack.notification.NotificationChannels
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
-import me.tatarka.inject.annotations.Component
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Includes
 
-@Component
+@DependencyGraph
 abstract class ExportWorkerComponent(
-    @Component protected val applicationComponent: ApplicationComponent,
+    @Includes protected val applicationComponent: ApplicationComponent,
 ) {
     abstract val workManager: WorkManager
     abstract val clickTrackRepository: ClickTrackRepository

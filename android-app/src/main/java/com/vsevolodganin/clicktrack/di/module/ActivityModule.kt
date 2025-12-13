@@ -4,7 +4,7 @@ import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import com.vsevolodganin.clicktrack.MainActivity
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.Provides
 
 interface ActivityModule {
     @Provides

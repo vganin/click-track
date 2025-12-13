@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import org.jetbrains.compose.resources.getString
 
 @PlayerServiceScope

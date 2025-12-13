@@ -5,7 +5,7 @@ import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
 import kotlinx.coroutines.Dispatchers
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.Provides
 
 @OptIn(ExperimentalSettingsApi::class)
 interface UserPreferencesModule {

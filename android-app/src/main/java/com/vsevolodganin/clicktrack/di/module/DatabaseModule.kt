@@ -4,7 +4,7 @@ import android.app.Application
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.vsevolodganin.clicktrack.Database
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.Provides
 
 interface DatabaseModule {
     @Provides

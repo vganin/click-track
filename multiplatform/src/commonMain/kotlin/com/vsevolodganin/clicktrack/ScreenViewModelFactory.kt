@@ -10,7 +10,7 @@ import com.vsevolodganin.clicktrack.polyrhythm.PolyrhythmsViewModelImpl
 import com.vsevolodganin.clicktrack.settings.SettingsViewModelImpl
 import com.vsevolodganin.clicktrack.soundlibrary.SoundLibraryViewModelImpl
 import com.vsevolodganin.clicktrack.training.TrainingViewModelImpl
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 class ScreenViewModelFactory(

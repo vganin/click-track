@@ -20,7 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import java.io.File
 import java.nio.ByteOrder
 

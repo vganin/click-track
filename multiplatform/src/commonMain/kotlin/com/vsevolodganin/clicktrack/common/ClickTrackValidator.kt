@@ -5,7 +5,7 @@ import com.vsevolodganin.clicktrack.edit.EditCueState
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.Cue
 import com.vsevolodganin.clicktrack.model.CueDuration
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 class ClickTrackValidator(private val bpmValidator: BpmValidator) {

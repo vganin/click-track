@@ -11,7 +11,7 @@ import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @MainControllerScope
 @Inject

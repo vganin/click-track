@@ -11,7 +11,7 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.Provides
 
 @OptIn(ExperimentalSettingsApi::class)
 interface UserPreferencesModule {

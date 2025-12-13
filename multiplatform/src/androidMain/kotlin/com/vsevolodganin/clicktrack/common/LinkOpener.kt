@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @MainControllerScope
 @Inject

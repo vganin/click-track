@@ -6,7 +6,7 @@ import com.vsevolodganin.clicktrack.utils.coroutine.createSingleThreadCoroutineD
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.Provides
 
 typealias PlayerDispatcher = CoroutineDispatcher
 

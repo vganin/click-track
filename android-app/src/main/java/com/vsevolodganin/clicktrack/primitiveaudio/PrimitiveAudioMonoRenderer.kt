@@ -4,7 +4,7 @@ import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.player.PlayerEvent
 import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
 import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 class PrimitiveAudioMonoRenderer(

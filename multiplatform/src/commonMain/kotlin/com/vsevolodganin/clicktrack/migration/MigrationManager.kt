@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.migration
 import com.vsevolodganin.clicktrack.common.BuildConfig
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @MainControllerScope
 @Inject

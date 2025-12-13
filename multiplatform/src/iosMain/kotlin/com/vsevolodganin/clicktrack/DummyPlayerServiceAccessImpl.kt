@@ -7,7 +7,7 @@ import com.vsevolodganin.clicktrack.player.PlaybackState
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @MainControllerScope
 @Inject

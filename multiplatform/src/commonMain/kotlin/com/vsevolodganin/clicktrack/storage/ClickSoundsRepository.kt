@@ -11,7 +11,7 @@ import com.vsevolodganin.clicktrack.model.UserClickSounds
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import com.vsevolodganin.clicktrack.storage.ClickSounds as StorageClickSounds
 
 @ApplicationScope

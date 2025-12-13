@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.common
 
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @MainControllerScope
 @Inject

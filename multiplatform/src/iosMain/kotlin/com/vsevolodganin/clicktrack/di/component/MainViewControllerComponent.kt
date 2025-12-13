@@ -17,14 +17,15 @@ import com.vsevolodganin.clicktrack.settings.debug.NativeCrash
 import com.vsevolodganin.clicktrack.settings.debug.NativeCrashImpl
 import com.vsevolodganin.clicktrack.soundlibrary.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Includes
+import dev.zacsweers.metro.Provides
 import kotlin.reflect.KClass
 
 @MainControllerScope
-@Component
+@DependencyGraph
 abstract class MainViewControllerComponent(
-    @Component protected val applicationComponent: ApplicationComponent,
+    @Includes protected val applicationComponent: ApplicationComponent,
     @get:Provides protected val componentContext: ComponentContext,
 ) : ViewModelModule,
     MigrationModule {

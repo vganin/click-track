@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.di.module
 
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import kotlinx.serialization.json.Json
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.Provides
 
 interface SerializationModule {
     @Provides

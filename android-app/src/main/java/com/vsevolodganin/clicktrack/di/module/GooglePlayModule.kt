@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.di.module
 import android.app.Application
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.Provides
 
 interface GooglePlayModule {
     @Provides

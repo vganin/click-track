@@ -11,17 +11,18 @@ import com.vsevolodganin.clicktrack.player.Player
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.log.Logger
 import kotlinx.coroutines.CoroutineScope
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.Scope
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Includes
+import dev.zacsweers.metro.Scope
 
 @Scope
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
 annotation class PlayerServiceScope
 
 @PlayerServiceScope
-@Component
+@DependencyGraph
 abstract class PlayerServiceComponent(
-    @Component protected val applicationComponent: ApplicationComponent,
+    @Includes protected val applicationComponent: ApplicationComponent,
 ) : PlayerServiceModule {
     abstract val scope: CoroutineScope
     abstract val player: Player

@@ -20,7 +20,7 @@ import com.vsevolodganin.clicktrack.drawer.DrawerNavigationSource
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModelImpl
 import kotlinx.serialization.serializer
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.Provides
 
 interface ViewModelModule {
 

@@ -7,7 +7,7 @@ import android.media.AudioManager
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.WorkManager
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.Provides
 
 interface ApplicationModule {
     @Provides

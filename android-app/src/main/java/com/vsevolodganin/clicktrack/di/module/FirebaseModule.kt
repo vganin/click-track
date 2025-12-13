@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.di.module
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.Provides
 
 interface FirebaseModule {
 

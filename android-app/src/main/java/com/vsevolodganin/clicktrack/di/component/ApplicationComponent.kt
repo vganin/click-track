@@ -12,11 +12,11 @@ import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.ThemeManager
 import com.vsevolodganin.clicktrack.utils.log.Logger
 import com.vsevolodganin.clicktrack.utils.log.LoggerImpl
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Provides
 
 @ApplicationScope
-@Component
+@DependencyGraph
 abstract class ApplicationComponent(
     @get:Provides val application: android.app.Application,
 ) : ApplicationModule,

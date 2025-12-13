@@ -9,7 +9,7 @@ import androidx.media.AudioManagerCompat
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @PlayerServiceScope
 @Inject

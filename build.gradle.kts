@@ -44,7 +44,7 @@ allprojects {
             allWarningsAsErrors.set(allKotlinWarningsAsErrors?.toBoolean() ?: true)
             freeCompilerArgs.add("-Xexpect-actual-classes")
 
-            // FIXME: Need this because kotlin-inject generates code without opt-in
+            // FIXME: Need this because metro generates code without opt-in
             optIn.add("com.russhwolf.settings.ExperimentalSettingsApi")
         }
     }

@@ -23,13 +23,14 @@ import com.vsevolodganin.clicktrack.soundlibrary.DocumentMetadataHelperImpl
 import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
 import com.vsevolodganin.clicktrack.soundlibrary.SoundChooserImpl
 import com.vsevolodganin.clicktrack.utils.android.PermissionsHelper
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Includes
+import dev.zacsweers.metro.Provides
 
 @MainControllerScope
-@Component
+@DependencyGraph
 abstract class MainActivityComponent(
-    @Component protected val applicationComponent: ApplicationComponent,
+    @Includes protected val applicationComponent: ApplicationComponent,
     @get:Provides protected val activity: MainActivity,
     @get:Provides protected val componentContext: ComponentContext,
 ) : ActivityModule,

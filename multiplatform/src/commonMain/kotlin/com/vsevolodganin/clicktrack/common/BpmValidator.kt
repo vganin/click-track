@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack.common
 
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
 import com.vsevolodganin.clicktrack.model.bpm
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 class BpmValidator {

@@ -7,12 +7,12 @@ import com.vsevolodganin.clicktrack.di.module.SerializationModule
 import com.vsevolodganin.clicktrack.di.module.UserPreferencesModule
 import com.vsevolodganin.clicktrack.utils.log.Logger
 import com.vsevolodganin.clicktrack.utils.log.LoggerImpl
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Provides
 import kotlin.reflect.KClass
 
 @ApplicationScope
-@Component
+@DependencyGraph
 abstract class ApplicationComponent :
     SerializationModule,
     DatabaseModule,
