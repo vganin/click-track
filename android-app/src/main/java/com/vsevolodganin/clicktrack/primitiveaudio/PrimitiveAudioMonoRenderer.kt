@@ -3,14 +3,20 @@ package com.vsevolodganin.clicktrack.primitiveaudio
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.player.PlayerEvent
 import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 
-@Inject
+@AssistedInject
 class PrimitiveAudioMonoRenderer(
     @Assisted private val targetSampleRate: Int,
     private val primitiveAudioProvider: PrimitiveAudioProvider,
 ) {
+    @AssistedFactory
+    fun interface Factory {
+        fun create(targetSampleRate: Int): PrimitiveAudioMonoRenderer
+    }
+
     private val preparedSamples = mutableMapOf<ClickSoundSource, AudioData?>()
 
     fun renderToMonoSamples(events: Sequence<PlayerEvent>, soundSourceProvider: SoundSourceProvider): Sequence<Float> {

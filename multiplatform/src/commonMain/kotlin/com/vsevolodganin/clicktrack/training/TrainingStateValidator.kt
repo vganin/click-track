@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.training
 
 import com.vsevolodganin.clicktrack.common.BpmValidator
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 class TrainingStateValidator(

@@ -8,12 +8,13 @@ import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.drawer.DrawerNavigation
 import com.vsevolodganin.clicktrack.drawer.DrawerViewModel
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-@MainControllerScope
+@SingleIn(MainControllerScope::class)
 @Inject
 class RootViewModelImpl(
     private val componentContext: ComponentContext,

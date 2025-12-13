@@ -2,6 +2,8 @@ package com.vsevolodganin.clicktrack.player
 
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.primitiveaudio.PrimitiveAudioPlayer
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -11,12 +13,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-@PlayerServiceScope
+@SingleIn(PlayerServiceScope::class)
 @Inject
 class LatencyTracker(
     private val primitiveAudioPlayer: PrimitiveAudioPlayer,

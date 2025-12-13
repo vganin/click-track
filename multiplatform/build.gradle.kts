@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sqldelight)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.metro)
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
 }
@@ -32,7 +32,7 @@ kotlin {
                 api(libs.bundles.kotlinx.serialization)
                 api(libs.kotlinx.datetime)
                 api(libs.uuid)
-                api(libs.kotlininject.runtime)
+                api(libs.metro.runtime)
                 api(libs.sqldelight.runtime)
                 api(libs.sqldelight.coroutines)
                 api(libs.multiplatformSettings)
@@ -111,15 +111,6 @@ compose.resources {
     publicResClass = true
 }
 
-// FIXME(https://github.com/google/ksp/issues/567): Improve KSP declarations
 dependencies {
     coreLibraryDesugaring(libs.desugarJdkLibs)
-
-    with(libs.kotlininject.compiler) {
-        kspCommonMainMetadata(this)
-        kspAndroid(this)
-        kspIosX64(this)
-        kspIosArm64(this)
-        kspIosSimulatorArm64(this)
-    }
 }

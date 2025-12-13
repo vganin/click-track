@@ -9,7 +9,7 @@ plugins {
     id("clicktrack.ktlint")
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.metro)
     kotlin("android")
     kotlin("plugin.serialization")
     id("com.google.gms.google-services")
@@ -107,7 +107,6 @@ dependencies {
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.review)
-    ksp(libs.kotlininject.compiler)
 
     testImplementation(kotlin("test"))
     testImplementation(libs.testParameterInjector)

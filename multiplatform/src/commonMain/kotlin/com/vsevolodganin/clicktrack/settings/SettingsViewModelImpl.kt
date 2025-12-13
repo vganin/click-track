@@ -11,23 +11,33 @@ import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.log.Logger
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
+import dev.zacsweers.metro.Provider
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-@Inject
+@AssistedInject
 class SettingsViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: ScreenStackNavigation,
     private val userPreferences: UserPreferencesRepository,
     private val languageStore: LanguageStore,
-    private val kotlinCrashProvider: () -> KotlinCrash,
+    private val kotlinCrashProvider: Provider<KotlinCrash>,
     private val nativeCrashProvider: Lazy<NativeCrash>,
     private val logger: Logger,
 ) : SettingsViewModel, ComponentContext by componentContext {
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            componentContext: ComponentContext,
+        ): SettingsViewModelImpl
+    }
+
     private val scope = coroutineScope()
 
     override val state: StateFlow<SettingsState> = combine(

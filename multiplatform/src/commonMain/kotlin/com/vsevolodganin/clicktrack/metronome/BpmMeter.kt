@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack.metronome
 
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.ExperimentalTime

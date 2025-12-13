@@ -3,13 +3,14 @@ package com.vsevolodganin.clicktrack.utils.android
 import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.appcompat.app.AppCompatActivity
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
-import me.tatarka.inject.annotations.Inject
 
-@MainControllerScope
+@SingleIn(MainControllerScope::class)
 @Inject
 class PermissionsHelper(
     activity: AppCompatActivity,

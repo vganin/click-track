@@ -5,17 +5,15 @@ import androidx.compose.ui.window.ComposeUIViewController
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.vsevolodganin.clicktrack.di.component.ApplicationComponent
-import com.vsevolodganin.clicktrack.di.component.MainViewControllerComponent
-import com.vsevolodganin.clicktrack.di.component.createKmp
 import com.vsevolodganin.clicktrack.ui.RootView
+import dev.zacsweers.metro.createGraph
 
 // TODO: 🚧 Under heavy construction 🚧
 fun mainViewController() = ComposeUIViewController {
     val rootViewModel = remember {
-        MainViewControllerComponent::class.createKmp(
-            applicationComponent = ApplicationComponent::class.createKmp(),
-            componentContext = DefaultComponentContext(LifecycleRegistry()),
-        )
+        createGraph<ApplicationComponent>()
+            .mainViewApplicationComponentFactory
+            .create(DefaultComponentContext(LifecycleRegistry()))
             .also {
                 it.migrationManager.tryMigrate()
             }

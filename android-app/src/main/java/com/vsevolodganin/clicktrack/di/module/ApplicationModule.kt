@@ -7,29 +7,35 @@ import android.media.AudioManager
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.WorkManager
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
-import me.tatarka.inject.annotations.Provides
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 
-interface ApplicationModule {
+@ContributesTo(ApplicationScope::class)
+@BindingContainer
+object ApplicationModule {
+
     @Provides
-    @ApplicationScope
+    @SingleIn(ApplicationScope::class)
     fun provideAudioManager(application: Application): AudioManager {
         return application.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
 
     @Provides
-    @ApplicationScope
+    @SingleIn(ApplicationScope::class)
     fun provideContentResolver(application: Application): ContentResolver {
         return application.contentResolver
     }
 
     @Provides
-    @ApplicationScope
+    @SingleIn(ApplicationScope::class)
     fun provideWorkManager(application: Application): WorkManager {
         return WorkManager.getInstance(application)
     }
 
     @Provides
-    @ApplicationScope
+    @SingleIn(ApplicationScope::class)
     fun provideNotificationManager(application: Application): NotificationManagerCompat {
         return NotificationManagerCompat.from(application)
     }

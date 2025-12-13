@@ -1,7 +1,7 @@
 package com.vsevolodganin.clicktrack
 
 import com.vsevolodganin.clicktrack.soundlibrary.DocumentMetadataHelper
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 class DummyDocumentMetadataHelperImpl : DocumentMetadataHelper {

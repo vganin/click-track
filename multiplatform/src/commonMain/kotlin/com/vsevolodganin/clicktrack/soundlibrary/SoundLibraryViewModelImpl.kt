@@ -19,6 +19,9 @@ import com.vsevolodganin.clicktrack.utils.decompose.consumeSavedState
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.decompose.registerSaveStateFor
 import com.vsevolodganin.clicktrack.utils.optionalCast
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -26,10 +29,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Assisted
-import me.tatarka.inject.annotations.Inject
 
-@Inject
+@AssistedInject
 class SoundLibraryViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: ScreenStackNavigation,
@@ -39,6 +40,14 @@ class SoundLibraryViewModelImpl(
     private val playerServiceAccess: PlayerServiceAccess,
     private val soundChooser: SoundChooser,
 ) : SoundLibraryViewModel, ComponentContext by componentContext {
+
+    @AssistedFactory
+    fun interface Factory {
+        fun create(
+            componentContext: ComponentContext,
+        ): SoundLibraryViewModelImpl
+    }
+
     private val scope = coroutineScope()
 
     override val state: StateFlow<SoundLibraryState?> = combine(

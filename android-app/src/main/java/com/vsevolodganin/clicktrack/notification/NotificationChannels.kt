@@ -6,9 +6,10 @@ import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class NotificationChannels(
     private val application: Application,

@@ -10,16 +10,16 @@ import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import com.vsevolodganin.clicktrack.premade.PreMadeClickTracks
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import me.tatarka.inject.annotations.Inject
 import com.vsevolodganin.clicktrack.storage.ClickTrack as StorageClickTrack
 
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class ClickTrackRepository(
     private val database: Database,

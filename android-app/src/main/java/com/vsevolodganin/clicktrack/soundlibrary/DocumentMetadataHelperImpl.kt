@@ -4,7 +4,7 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
 import com.vsevolodganin.clicktrack.utils.log.Logger
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 class DocumentMetadataHelperImpl(

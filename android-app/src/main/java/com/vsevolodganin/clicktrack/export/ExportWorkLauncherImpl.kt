@@ -6,9 +6,9 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.utils.android.PermissionsHelper
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 class ExportWorkLauncherImpl(

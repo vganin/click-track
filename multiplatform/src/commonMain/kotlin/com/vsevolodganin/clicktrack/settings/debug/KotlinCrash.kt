@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.settings.debug
 
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 class KotlinCrash {

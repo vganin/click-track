@@ -5,6 +5,8 @@ import com.vsevolodganin.clicktrack.model.ClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -15,9 +17,8 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class UserSelectedSounds(
     userPreferencesRepository: UserPreferencesRepository,

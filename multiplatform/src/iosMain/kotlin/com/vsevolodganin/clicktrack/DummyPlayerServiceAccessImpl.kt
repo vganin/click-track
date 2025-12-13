@@ -5,11 +5,12 @@ import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.player.PlaybackState
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import me.tatarka.inject.annotations.Inject
 
-@MainControllerScope
+@SingleIn(MainControllerScope::class)
 @Inject
 class DummyPlayerServiceAccessImpl : PlayerServiceAccess {
     override fun start(id: PlayableId, atProgress: Double?, soundsId: ClickSoundsId?) = Unit

@@ -43,9 +43,6 @@ allprojects {
             val allKotlinWarningsAsErrors: String? by project
             allWarningsAsErrors.set(allKotlinWarningsAsErrors?.toBoolean() ?: true)
             freeCompilerArgs.add("-Xexpect-actual-classes")
-
-            // FIXME: Need this because kotlin-inject generates code without opt-in
-            optIn.add("com.russhwolf.settings.ExperimentalSettingsApi")
         }
     }
 }

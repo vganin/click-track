@@ -2,7 +2,7 @@ package com.vsevolodganin.clicktrack
 
 import com.vsevolodganin.clicktrack.export.ExportWorkLauncher
 import com.vsevolodganin.clicktrack.model.ClickTrackId
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 
 @Inject
 class DummyExportWorkLauncherImpl : ExportWorkLauncher {

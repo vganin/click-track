@@ -6,7 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import java.io.File
 
 @Inject

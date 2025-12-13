@@ -14,35 +14,53 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.arkivanov.decompose.defaultComponentContext
-import com.vsevolodganin.clicktrack.di.component.MainActivityComponent
-import com.vsevolodganin.clicktrack.di.component.create
+import com.vsevolodganin.clicktrack.common.InAppReview
+import com.vsevolodganin.clicktrack.migration.MigrationManager
+import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
 import com.vsevolodganin.clicktrack.ui.RootView
+import com.vsevolodganin.clicktrack.utils.android.PermissionsHelper
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var component: MainActivityComponent
+
+    @Suppress("unused") // FIXME: Initializing eagerly for proper registration of Activity Result API
+    @Inject
+    private lateinit var soundsChooser: SoundChooser
+
+    @Inject
+    private lateinit var permissionsHelper: PermissionsHelper
+
+    @Inject
+    private lateinit var migrationManager: MigrationManager
+
+    @Inject
+    private lateinit var rootViewModel: RootViewModel
+
+    @Inject
+    private lateinit var intentProcessor: IntentProcessor
+
+    @Inject
+    private lateinit var inAppReview: InAppReview
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        applicationComponent.mainActivityComponentFactory
+            .create(
+                activity = this,
+                componentContext = defaultComponentContext(),
+            )
+            .inject(this)
+
         installSplashScreen()
 
         enableEdgeToEdge()
 
-        component = MainActivityComponent::class.create(
-            applicationComponent = applicationComponent,
-            activity = this,
-            componentContext = defaultComponentContext(),
-        )
-
-        // FIXME: Initializing eagerly for proper registration of Activity Result API
-        component.soundChooser
-        component.permissionsHelper
-
-        component.migrationManager.tryMigrate()
+        migrationManager.tryMigrate()
 
         setContent {
             val isSystemInDarkTheme = isSystemInDarkTheme()
@@ -59,28 +77,28 @@ class MainActivity : AppCompatActivity() {
                 onDispose {}
             }
 
-            RootView(component.rootViewModel)
+            RootView(rootViewModel)
         }
 
         if (savedInstanceState == null) {
-            component.intentProcessor.process(intent)
+            intentProcessor.process(intent)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             GlobalScope.launch {
-                component.permissionsHelper.requestPermission(Manifest.permission.POST_NOTIFICATIONS)
+                permissionsHelper.requestPermission(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        component.intentProcessor.process(intent)
+        intentProcessor.process(intent)
     }
 
     override fun onResume() {
         super.onResume()
         volumeControlStream = AudioManager.STREAM_MUSIC
-        component.inAppReview.tryLaunchRequestReview()
+        inAppReview.tryLaunchRequestReview()
     }
 }

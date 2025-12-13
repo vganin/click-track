@@ -7,18 +7,20 @@ import com.google.android.play.core.review.ReviewManager
 import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.log.Logger
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provider
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
 
-@MainControllerScope
+@SingleIn(MainControllerScope::class)
 @Inject
 class InAppReview(
-    private val reviewManagerProvider: () -> ReviewManager,
+    private val reviewManagerProvider: Provider<ReviewManager>,
     private val activity: Activity,
     private val userPreferencesRepository: UserPreferencesRepository,
     private val logger: Logger,

@@ -7,9 +7,10 @@ import androidx.core.net.toUri
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.utils.log.Logger
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class PrimitiveAudioProvider(
     private val application: Application,

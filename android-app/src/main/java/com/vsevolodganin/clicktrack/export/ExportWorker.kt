@@ -10,21 +10,26 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.vsevolodganin.clicktrack.BuildConfig
+import com.vsevolodganin.clicktrack.IntentFactory
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.applicationComponent
-import com.vsevolodganin.clicktrack.di.component.ExportWorkerComponent
-import com.vsevolodganin.clicktrack.di.component.create
+import com.vsevolodganin.clicktrack.common.MediaStoreAccess
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
+import com.vsevolodganin.clicktrack.notification.NotificationChannels
+import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.firstOrNull
 import kotlin.math.roundToInt
 
@@ -41,10 +46,36 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
         }
     }
 
-    private val component = ExportWorkerComponent::class.create(appContext.applicationComponent)
-
     // Need unique id to show multiple progress notifications and we can't use string tags
     private val foregroundNotificationId = id.leastSignificantBits.toInt()
+
+    @Inject
+    private lateinit var workManager: WorkManager
+
+    @Inject
+    private lateinit var clickTrackRepository: ClickTrackRepository
+
+    @Inject
+    private lateinit var exportToAudioFile: ExportToAudioFile
+
+    @Inject
+    private lateinit var mediaStoreAccess: MediaStoreAccess
+
+    @Inject
+    private lateinit var notificationManager: NotificationManagerCompat
+
+    @Inject
+    private lateinit var notificationChannels: NotificationChannels
+
+    @Inject
+    private lateinit var intentFactory: IntentFactory
+
+    init {
+        appContext.applicationComponent
+            .exportWorkerComponentFactory
+            .create()
+            .inject(this)
+    }
 
     override suspend fun doWork(): Result {
         val clickTrackId = inputData.getLong(InputKeys.CLICK_TRACK_ID, -1)
@@ -52,32 +83,32 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
             ?.let(ClickTrackId::Database)
             ?: return Result.failure()
 
-        val clickTrack = component.clickTrackRepository.getById(clickTrackId).firstOrNull()
+        val clickTrack = clickTrackRepository.getById(clickTrackId).firstOrNull()
             ?: return Result.failure()
 
         setForeground(foregroundInfo(clickTrack, 0f))
 
-        val temporaryFile = component.exportToAudioFile.export(
+        val temporaryFile = exportToAudioFile.export(
             clickTrack = clickTrack.value,
             reportProgress = {
                 setForeground(foregroundInfo(clickTrack, it))
             },
         ) ?: return Result.failure()
 
-        val accessUri = component.mediaStoreAccess.addAudioFile(temporaryFile)
+        val accessUri = mediaStoreAccess.addAudioFile(temporaryFile)
             ?: return Result.failure()
 
         // Just speeding things up, this file will be deleted by system anyway
         temporaryFile.delete()
 
-        component.notificationManager.cancel(foregroundNotificationId)
+        notificationManager.cancel(foregroundNotificationId)
         notifyFinished(clickTrack.value, accessUri)
 
         return Result.success()
     }
 
     private fun foregroundInfo(clickTrack: ClickTrackWithDatabaseId, progress: Float): ForegroundInfo {
-        val tapIntent = component.intentFactory.navigateClickTrack(clickTrack.id)
+        val tapIntent = intentFactory.navigateClickTrack(clickTrack.id)
 
         val pendingIntentFlags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -89,7 +120,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
 
         return ForegroundInfo(
             foregroundNotificationId,
-            NotificationCompat.Builder(appContext, component.notificationChannels.export)
+            NotificationCompat.Builder(appContext, notificationChannels.export)
                 .setContentTitle(appContext.getString(R.string.export_worker_notification_in_process, clickTrack.value.name))
                 .setSmallIcon(R.drawable.ic_notification)
                 .setColor(ResourcesCompat.getColor(appContext.resources, R.color.blood_red, null))
@@ -98,7 +129,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
                 .addAction(
                     android.R.drawable.ic_delete,
                     appContext.getString(android.R.string.cancel),
-                    component.workManager.createCancelPendingIntent(id),
+                    workManager.createCancelPendingIntent(id),
                 )
                 .setGroup(NotificationGroups.EXPORTING)
                 .setProgress(progressResolution, (progress * progressResolution).roundToInt(), false)
@@ -127,10 +158,10 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
         }
 
         if (ActivityCompat.checkSelfPermission(appContext, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            component.notificationManager.notify(
+            notificationManager.notify(
                 clickTrack.name,
                 R.id.notification_export_finished,
-                NotificationCompat.Builder(appContext, component.notificationChannels.export)
+                NotificationCompat.Builder(appContext, notificationChannels.export)
                     .setContentTitle(appContext.getString(R.string.export_worker_notification_finished, clickTrack.name))
                     .setContentText(appContext.getString(R.string.export_worker_notification_open))
                     .setSmallIcon(R.drawable.ic_notification)

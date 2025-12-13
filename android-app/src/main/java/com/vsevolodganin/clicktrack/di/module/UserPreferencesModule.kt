@@ -8,14 +8,19 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.SharedPreferencesSettings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import me.tatarka.inject.annotations.Provides
 
-@OptIn(ExperimentalSettingsApi::class)
-interface UserPreferencesModule {
+@ContributesTo(ApplicationScope::class)
+@BindingContainer
+object UserPreferencesModule {
 
+    @OptIn(ExperimentalSettingsApi::class)
     @Provides
     fun provideUserPreferences(application: Application): FlowSettings {
         return SharedPreferencesSettings.Factory(application).create("user_preferences")
@@ -23,6 +28,7 @@ interface UserPreferencesModule {
             .also { it.runDataStoreMigration(application) }
     }
 
+    @OptIn(ExperimentalSettingsApi::class)
     private fun FlowSettings.runDataStoreMigration(application: Application) {
         val legacyDataStoreFile = application.preferencesDataStoreFile("user_preferences")
         if (legacyDataStoreFile.exists()) {

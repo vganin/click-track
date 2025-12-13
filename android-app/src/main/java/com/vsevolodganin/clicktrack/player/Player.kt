@@ -18,6 +18,8 @@ import com.vsevolodganin.clicktrack.soundlibrary.UserSelectedSounds
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
 import com.vsevolodganin.clicktrack.utils.grabIf
 import com.vsevolodganin.clicktrack.utils.log.Logger
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,12 +40,11 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-@PlayerServiceScope
+@SingleIn(PlayerServiceScope::class)
 @Inject
 class Player(
     private val playerDispatcher: PlayerDispatcher,

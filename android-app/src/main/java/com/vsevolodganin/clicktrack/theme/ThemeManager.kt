@@ -3,14 +3,15 @@ package com.vsevolodganin.clicktrack.theme
 import androidx.appcompat.app.AppCompatDelegate
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-@ApplicationScope
+@SingleIn(ApplicationScope::class)
 @Inject
 class ThemeManager(
     private val userPreferences: UserPreferencesRepository,

@@ -4,13 +4,20 @@ import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
+import com.vsevolodganin.clicktrack.di.component.ApplicationScope
+import dev.zacsweers.metro.BindingContainer
+import dev.zacsweers.metro.ContributesTo
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.Dispatchers
-import me.tatarka.inject.annotations.Provides
 
-@OptIn(ExperimentalSettingsApi::class)
-interface UserPreferencesModule {
+@ContributesTo(ApplicationScope::class)
+@BindingContainer
+object UserPreferencesModule {
 
+    @OptIn(ExperimentalSettingsApi::class)
     @Provides
+    @SingleIn(ApplicationScope::class)
     fun provideUserPreferences(): FlowSettings {
         return NSUserDefaultsSettings.Factory().create("user_preferences").toFlowSettings(Dispatchers.Default)
     }

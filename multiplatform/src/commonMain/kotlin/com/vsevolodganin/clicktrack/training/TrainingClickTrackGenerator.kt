@@ -7,7 +7,7 @@ import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.model.asTimeGiven
 import com.vsevolodganin.clicktrack.training.TrainingEditState.TrainingMode
-import me.tatarka.inject.annotations.Inject
+import dev.zacsweers.metro.Inject
 import kotlin.time.Duration
 
 @Inject
