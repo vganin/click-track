@@ -11,7 +11,7 @@ multiplatformSettings = "1.3.0"
 sqldelight = "2.2.1"
 
 [libraries]
-android-gradlePlugin = "com.android.tools.build:gradle:8.13.1"
+android-gradlePlugin = "com.android.tools.build:gradle:8.13.2"
 androidx-activity-compose = "androidx.activity:activity-compose:1.12.1"
 androidx-annotation = "androidx.annotation:annotation:1.9.1"
 androidx-appcompat = "androidx.appcompat:appcompat:1.7.1"
