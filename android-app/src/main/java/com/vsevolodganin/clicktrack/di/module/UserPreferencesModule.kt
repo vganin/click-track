@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.SharedPreferencesSettings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
@@ -19,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 @BindingContainer
 object UserPreferencesModule {
 
+    @OptIn(ExperimentalSettingsApi::class)
     @Provides
     fun provideUserPreferences(application: Application): FlowSettings {
         return SharedPreferencesSettings.Factory(application).create("user_preferences")
@@ -26,6 +28,7 @@ object UserPreferencesModule {
             .also { it.runDataStoreMigration(application) }
     }
 
+    @OptIn(ExperimentalSettingsApi::class)
     private fun FlowSettings.runDataStoreMigration(application: Application) {
         val legacyDataStoreFile = application.preferencesDataStoreFile("user_preferences")
         if (legacyDataStoreFile.exists()) {
