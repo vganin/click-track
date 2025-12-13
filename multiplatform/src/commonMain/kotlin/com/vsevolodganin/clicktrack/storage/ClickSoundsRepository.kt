@@ -8,11 +8,11 @@ import com.vsevolodganin.clicktrack.model.ClickSoundType
 import com.vsevolodganin.clicktrack.model.ClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.UserClickSounds
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
-import dev.zacsweers.metro.Inject
-import dev.zacsweers.metro.SingleIn
 import com.vsevolodganin.clicktrack.storage.ClickSounds as StorageClickSounds
 
 @SingleIn(ApplicationScope::class)
