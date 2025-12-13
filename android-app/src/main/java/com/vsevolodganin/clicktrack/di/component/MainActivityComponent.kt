@@ -50,4 +50,13 @@ abstract class MainActivityComponent(
     protected val SoundChooserImpl.binding: SoundChooser @Provides get() = this
     protected val DocumentMetadataHelperImpl.binding: DocumentMetadataHelper @Provides get() = this
     protected val NativeCrashImpl.binding: NativeCrash @Provides get() = this
+
+    @DependencyGraph.Factory
+    fun interface Factory {
+        fun create(
+            applicationComponent: ApplicationComponent,
+            activity: MainActivity,
+            componentContext: ComponentContext,
+        ): MainActivityComponent
+    }
 }

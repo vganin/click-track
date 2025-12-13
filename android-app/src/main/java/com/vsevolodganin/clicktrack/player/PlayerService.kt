@@ -27,8 +27,8 @@ import clicktrack.multiplatform.generated.resources.player_service_notification_
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.applicationComponent
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceComponent
-import com.vsevolodganin.clicktrack.di.component.create
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
+import dev.zacsweers.metro.createGraphFactory
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
@@ -136,7 +136,7 @@ class PlayerService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        component = PlayerServiceComponent::class.create(applicationComponent)
+        component = createGraphFactory<PlayerServiceComponent.Factory>().create(applicationComponent)
 
         mediaSession = MediaSessionCompat(this@PlayerService, "ClickTrackMediaSession").apply {
             setPlaybackState(mediaSessionPlaybackStateBuilder().build())

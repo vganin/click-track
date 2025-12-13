@@ -21,8 +21,8 @@ import com.vsevolodganin.clicktrack.BuildConfig
 import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.applicationComponent
 import com.vsevolodganin.clicktrack.di.component.ExportWorkerComponent
-import com.vsevolodganin.clicktrack.di.component.create
 import com.vsevolodganin.clicktrack.model.ClickTrack
+import dev.zacsweers.metro.createGraphFactory
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
 import kotlinx.coroutines.flow.firstOrNull
@@ -41,7 +41,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
         }
     }
 
-    private val component = ExportWorkerComponent::class.create(appContext.applicationComponent)
+    private val component = createGraphFactory<ExportWorkerComponent.Factory>().create(appContext.applicationComponent)
 
     // Need unique id to show multiple progress notifications and we can't use string tags
     private val foregroundNotificationId = id.leastSignificantBits.toInt()

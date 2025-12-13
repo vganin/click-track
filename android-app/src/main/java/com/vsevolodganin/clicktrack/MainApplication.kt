@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.os.StrictMode
 import com.vsevolodganin.clicktrack.di.component.ApplicationComponent
-import com.vsevolodganin.clicktrack.di.component.create
 import com.vsevolodganin.clicktrack.utils.cast
+import dev.zacsweers.metro.createGraphFactory
 
 class MainApplication : Application() {
     lateinit var component: ApplicationComponent
@@ -14,7 +14,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        component = ApplicationComponent::class.create(this)
+        component = createGraphFactory<ApplicationComponent.Factory>().create(this)
 
         if (BuildConfig.DEBUG) {
             strictMode()

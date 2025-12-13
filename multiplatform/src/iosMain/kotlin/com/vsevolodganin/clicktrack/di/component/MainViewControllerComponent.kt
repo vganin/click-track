@@ -38,6 +38,14 @@ abstract class MainViewControllerComponent(
     protected val DummySoundChooserImpl.binding: SoundChooser @Provides get() = this
     protected val DummyDocumentMetadataHelperImpl.binding: DocumentMetadataHelper @Provides get() = this
     protected val NativeCrashImpl.binding: NativeCrash @Provides get() = this
+
+    @DependencyGraph.Factory
+    fun interface Factory {
+        fun create(
+            applicationComponent: ApplicationComponent,
+            componentContext: ComponentContext,
+        ): MainViewControllerComponent
+    }
 }
 
 expect fun KClass<MainViewControllerComponent>.createKmp(

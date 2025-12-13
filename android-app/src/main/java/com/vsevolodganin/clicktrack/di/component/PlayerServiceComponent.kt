@@ -34,4 +34,9 @@ abstract class PlayerServiceComponent(
     abstract val audioFocusManager: AudioFocusManager
     abstract val latencyTracker: LatencyTracker
     abstract val logger: Logger
+
+    @DependencyGraph.Factory
+    fun interface Factory {
+        fun create(applicationComponent: ApplicationComponent): PlayerServiceComponent
+    }
 }

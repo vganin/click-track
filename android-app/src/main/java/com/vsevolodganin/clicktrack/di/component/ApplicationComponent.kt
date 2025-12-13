@@ -33,4 +33,9 @@ abstract class ApplicationComponent(
 
     @get:Provides
     val LoggerImpl.binding: Logger get() = this
+
+    @DependencyGraph.Factory
+    fun interface Factory {
+        fun create(application: android.app.Application): ApplicationComponent
+    }
 }

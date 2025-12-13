@@ -21,4 +21,9 @@ abstract class ExportWorkerComponent(
     abstract val notificationManager: NotificationManagerCompat
     abstract val notificationChannels: NotificationChannels
     abstract val intentFactory: IntentFactory
+
+    @DependencyGraph.Factory
+    fun interface Factory {
+        fun create(applicationComponent: ApplicationComponent): ExportWorkerComponent
+    }
 }

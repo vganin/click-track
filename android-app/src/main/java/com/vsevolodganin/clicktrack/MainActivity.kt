@@ -15,8 +15,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.arkivanov.decompose.defaultComponentContext
 import com.vsevolodganin.clicktrack.di.component.MainActivityComponent
-import com.vsevolodganin.clicktrack.di.component.create
 import com.vsevolodganin.clicktrack.ui.RootView
+import dev.zacsweers.metro.createGraphFactory
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         enableEdgeToEdge()
 
-        component = MainActivityComponent::class.create(
+        component = createGraphFactory<MainActivityComponent.Factory>().create(
             applicationComponent = applicationComponent,
             activity = this,
             componentContext = defaultComponentContext(),

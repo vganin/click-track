@@ -22,6 +22,11 @@ abstract class ApplicationComponent :
 
     @get:Provides
     val LoggerImpl.binding: Logger get() = this
+
+    @DependencyGraph.Factory
+    fun interface Factory {
+        fun create(): ApplicationComponent
+    }
 }
 
 expect fun KClass<ApplicationComponent>.createKmp(): ApplicationComponent
