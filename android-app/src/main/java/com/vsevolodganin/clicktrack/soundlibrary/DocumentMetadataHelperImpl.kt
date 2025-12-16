@@ -3,9 +3,12 @@ package com.vsevolodganin.clicktrack.soundlibrary
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
+import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.utils.log.Logger
+import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 
+@ContributesBinding(MainControllerScope::class)
 @Inject
 class DocumentMetadataHelperImpl(
     private val contentResolver: ContentResolver,
