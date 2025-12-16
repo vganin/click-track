@@ -6,11 +6,11 @@ import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.language.LanguageStore
 import com.vsevolodganin.clicktrack.settings.debug.KotlinCrash
-import com.vsevolodganin.clicktrack.settings.debug.NativeCrash
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.log.Logger
+import com.vsevolodganin.clicktrack.utils.platform.isDebug
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -27,7 +27,6 @@ class SettingsViewModelImpl(
     private val userPreferences: UserPreferencesRepository,
     private val languageStore: LanguageStore,
     private val kotlinCrashProvider: Provider<KotlinCrash>,
-    private val nativeCrashProvider: Lazy<NativeCrash>,
     private val logger: Logger,
 ) : SettingsViewModel, ComponentContext by componentContext {
 
@@ -40,6 +39,8 @@ class SettingsViewModelImpl(
 
     private val scope = coroutineScope()
 
+    private val isDebug = isDebug()
+
     override val state: StateFlow<SettingsState> = combine(
         userPreferences.theme.flow,
         userPreferences.ignoreAudioFocus.flow,
@@ -49,6 +50,7 @@ class SettingsViewModelImpl(
             theme = theme,
             ignoreAudioFocus = ignoreAudioFocus,
             language = language,
+            showCrashSimulationButtons = isDebug,
         )
     }.stateIn(
         scope = scope,
@@ -57,6 +59,7 @@ class SettingsViewModelImpl(
             theme = userPreferences.theme.value,
             ignoreAudioFocus = userPreferences.ignoreAudioFocus.value,
             language = languageStore.appLanguage.value,
+            showCrashSimulationButtons = isDebug,
         ),
     )
 
@@ -76,14 +79,6 @@ class SettingsViewModelImpl(
 
     override fun onKotlinExceptionClick() {
         kotlinCrashProvider()()
-    }
-
-    override fun onNativeExceptionCrashClick() {
-        nativeCrashProvider.value.exception()
-    }
-
-    override fun onNativeDanglingReferenceCrashClick() {
-        nativeCrashProvider.value.danglingReference()
     }
 
     override fun onNonFatalClick() {

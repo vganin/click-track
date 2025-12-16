@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import java.util.Properties
 
 plugins {
@@ -33,15 +32,6 @@ android {
         resourceConfigurations += setOf("en", "ru")
 
         setProperty("archivesBaseName", "click-track-v$versionName")
-
-        externalNativeBuild {
-            cmake {
-                arguments += listOf(
-                    "-DANDROID_STL=c++_shared",
-                    "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
-                )
-            }
-        }
     }
 
     signingConfigs {
@@ -63,30 +53,16 @@ android {
             if (keystorePropertiesFile.exists()) {
                 signingConfig = signingConfigs.getByName("release")
             }
-
-            configure<CrashlyticsExtension> {
-                nativeSymbolUploadEnabled = true
-            }
         }
 
         debug {
             applicationIdSuffix = ".debug"
-
-            configure<CrashlyticsExtension> {
-                nativeSymbolUploadEnabled = true
-            }
         }
     }
 
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-        }
     }
 }
 
@@ -105,7 +81,6 @@ dependencies {
     implementation(libs.bundles.decompose)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.crashlytics.ndk)
     implementation(libs.googlePlay.review)
 
     testImplementation(kotlin("test"))

@@ -7,4 +7,5 @@ data class SettingsState(
     val theme: Theme,
     val language: AppLanguage,
     val ignoreAudioFocus: Boolean,
+    val showCrashSimulationButtons: Boolean,
 )

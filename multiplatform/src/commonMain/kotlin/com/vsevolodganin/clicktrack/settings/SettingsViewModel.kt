@@ -17,9 +17,5 @@ interface SettingsViewModel {
 
     fun onKotlinExceptionClick()
 
-    fun onNativeExceptionCrashClick()
-
-    fun onNativeDanglingReferenceCrashClick()
-
     fun onNonFatalClick()
 }
