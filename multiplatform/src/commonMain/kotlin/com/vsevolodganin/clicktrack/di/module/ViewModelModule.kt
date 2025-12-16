@@ -7,8 +7,6 @@ import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.essenty.instancekeeper.InstanceKeeperOwner
 import com.arkivanov.essenty.lifecycle.LifecycleOwner
 import com.arkivanov.essenty.statekeeper.StateKeeperOwner
-import com.vsevolodganin.clicktrack.RootViewModel
-import com.vsevolodganin.clicktrack.RootViewModelImpl
 import com.vsevolodganin.clicktrack.ScreenConfiguration
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
 import com.vsevolodganin.clicktrack.ScreenStackState
@@ -31,9 +29,6 @@ import kotlinx.serialization.serializer
 interface ViewModelModule {
 
     @Binds
-    fun provideRootViewModel(rootViewModelImpl: RootViewModelImpl): RootViewModel
-
-    @Binds
     fun provideLifecycleOwner(componentContext: ComponentContext): LifecycleOwner
 
     @Binds
@@ -41,6 +36,12 @@ interface ViewModelModule {
 
     @Binds
     fun provideInstanceKeeperOwner(componentContext: ComponentContext): InstanceKeeperOwner
+
+    @Binds
+    fun provideDrawerNavigation(drawerNavigationImpl: DrawerNavigationImpl): DrawerNavigation
+
+    @Binds
+    fun provideDrawerNavigationSource(drawerNavigationImpl: DrawerNavigationImpl): DrawerNavigationSource
 
     companion object {
         @Provides
@@ -50,14 +51,6 @@ interface ViewModelModule {
         @Provides
         @SingleIn(MainControllerScope::class)
         fun provideScreenStackNavigation(): ScreenStackNavigation = StackNavigation()
-
-        @Provides
-        @SingleIn(MainControllerScope::class)
-        fun provideDrawerNavigation(drawerNavigationImpl: DrawerNavigationImpl): DrawerNavigation = drawerNavigationImpl
-
-        @Provides
-        @SingleIn(MainControllerScope::class)
-        fun provideDrawerNavigationSource(drawerNavigationImpl: DrawerNavigationImpl): DrawerNavigationSource = drawerNavigationImpl
 
         @Provides
         @SingleIn(MainControllerScope::class)

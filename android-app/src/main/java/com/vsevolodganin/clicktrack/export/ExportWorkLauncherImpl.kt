@@ -4,12 +4,15 @@ import android.Manifest
 import android.os.Build
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
+import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.utils.android.PermissionsHelper
+import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+@ContributesBinding(MainControllerScope::class)
 @Inject
 class ExportWorkLauncherImpl(
     private val workManager: WorkManager,
