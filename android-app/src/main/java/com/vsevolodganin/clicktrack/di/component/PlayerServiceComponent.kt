@@ -2,10 +2,8 @@ package com.vsevolodganin.clicktrack.di.component
 
 import com.vsevolodganin.clicktrack.player.PlayerService
 import dev.zacsweers.metro.GraphExtension
-import dev.zacsweers.metro.Scope
 
-@Scope
-annotation class PlayerServiceScope
+abstract class PlayerServiceScope private constructor()
 
 @GraphExtension(PlayerServiceScope::class)
 interface PlayerServiceComponent {
