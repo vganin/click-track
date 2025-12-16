@@ -3,6 +3,7 @@ package com.vsevolodganin.clicktrack.primitiveaudio
 import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.player.PlayerEvent
 import com.vsevolodganin.clicktrack.soundlibrary.SoundSourceProvider
+import com.vsevolodganin.clicktrack.utils.resampler.MultiChannelResampler
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -57,11 +58,11 @@ class PrimitiveAudioMonoRenderer(
         return preparedSamples.getOrPut(soundSource) {
             val audioData = primitiveAudioProvider.get(soundSource) ?: return@getOrPut null
             AudioData(
-                samples = Resampler(
+                samples = MultiChannelResampler(
                     channelCount = audioData.channelCount,
                     inputRate = audioData.sampleRate,
                     outputRate = targetSampleRate,
-                    quality = Resampler.Quality.Medium,
+                    quality = MultiChannelResampler.Quality.Medium,
                 ).resample(audioData.samples),
                 channelCount = audioData.channelCount,
             )

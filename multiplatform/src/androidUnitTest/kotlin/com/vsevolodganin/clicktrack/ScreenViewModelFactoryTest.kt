@@ -1,8 +1,6 @@
-package clicktrack
+package com.vsevolodganin.clicktrack
 
 import com.arkivanov.decompose.ComponentContext
-import com.vsevolodganin.clicktrack.ScreenConfiguration
-import com.vsevolodganin.clicktrack.ScreenViewModelFactory
 import com.vsevolodganin.clicktrack.about.AboutViewModelImpl
 import com.vsevolodganin.clicktrack.edit.EditClickTrackViewModelImpl
 import com.vsevolodganin.clicktrack.list.ClickTrackListViewModelImpl

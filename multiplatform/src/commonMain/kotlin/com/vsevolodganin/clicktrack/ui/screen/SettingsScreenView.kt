@@ -39,7 +39,6 @@ import com.vsevolodganin.clicktrack.ui.piece.settings.BooleanChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooser
 import com.vsevolodganin.clicktrack.ui.piece.settings.ListChooserItem
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
-import com.vsevolodganin.clicktrack.utils.platform.isDebug
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.stringResource
@@ -108,7 +107,7 @@ private fun Content(
             description = stringResource(Res.string.settings_ignore_audio_focus_description),
         )
 
-        if (isDebug()) {
+        if (state.showCrashSimulationButtons) {
             Spacer(modifier = Modifier.weight(1f))
 
             Column(
@@ -118,12 +117,6 @@ private fun Content(
             ) {
                 Button(onClick = viewModel::onKotlinExceptionClick) {
                     Text("Kotlin exception crash")
-                }
-                Button(onClick = viewModel::onNativeExceptionCrashClick) {
-                    Text("Native exception crash")
-                }
-                Button(onClick = viewModel::onNativeDanglingReferenceCrashClick) {
-                    Text("Native dangling reference crash")
                 }
                 Button(onClick = viewModel::onNonFatalClick) {
                     Text("Non-fatal")
@@ -166,6 +159,7 @@ internal fun SettingsScreenPreview() = ClickTrackTheme {
                     theme = Theme.SYSTEM,
                     ignoreAudioFocus = false,
                     language = AppLanguage.SYSTEM,
+                    showCrashSimulationButtons = false,
                 ),
             )
 
@@ -178,10 +172,6 @@ internal fun SettingsScreenPreview() = ClickTrackTheme {
             override fun onIgnoreAudioFocusChange(ignoreAudioFocus: Boolean) = Unit
 
             override fun onKotlinExceptionClick() = Unit
-
-            override fun onNativeExceptionCrashClick() = Unit
-
-            override fun onNativeDanglingReferenceCrashClick() = Unit
 
             override fun onNonFatalClick() = Unit
         },

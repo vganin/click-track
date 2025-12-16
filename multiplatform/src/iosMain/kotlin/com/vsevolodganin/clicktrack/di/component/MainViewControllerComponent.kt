@@ -11,8 +11,6 @@ import com.vsevolodganin.clicktrack.export.ExportWorkLauncher
 import com.vsevolodganin.clicktrack.language.LanguageStore
 import com.vsevolodganin.clicktrack.migration.MigrationManager
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
-import com.vsevolodganin.clicktrack.settings.debug.NativeCrash
-import com.vsevolodganin.clicktrack.settings.debug.NativeCrashImpl
 import com.vsevolodganin.clicktrack.soundlibrary.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
 import dev.zacsweers.metro.Binds
@@ -39,9 +37,6 @@ interface MainViewControllerComponent {
 
     @Binds
     val DummyDocumentMetadataHelperImpl.binding: DocumentMetadataHelper
-
-    @Binds
-    val NativeCrashImpl.binding: NativeCrash
 
     @GraphExtension.Factory
     fun interface Factory {

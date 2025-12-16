@@ -15,9 +15,6 @@ class MainApplication : Application() {
         private set
 
     @Inject
-    private lateinit var nativeLibraries: NativeLibraries
-
-    @Inject
     private lateinit var themeManager: ThemeManager
 
     override fun onCreate() {
@@ -33,7 +30,6 @@ class MainApplication : Application() {
             strictMode()
         }
 
-        nativeLibraries.init()
         themeManager.start()
     }
 

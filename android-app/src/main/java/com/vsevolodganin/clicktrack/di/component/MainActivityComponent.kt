@@ -8,8 +8,6 @@ import com.vsevolodganin.clicktrack.language.LanguageStore
 import com.vsevolodganin.clicktrack.language.LanguageStoreImpl
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccess
 import com.vsevolodganin.clicktrack.player.PlayerServiceAccessImpl
-import com.vsevolodganin.clicktrack.settings.debug.NativeCrash
-import com.vsevolodganin.clicktrack.settings.debug.NativeCrashImpl
 import com.vsevolodganin.clicktrack.soundlibrary.DocumentMetadataHelper
 import com.vsevolodganin.clicktrack.soundlibrary.DocumentMetadataHelperImpl
 import com.vsevolodganin.clicktrack.soundlibrary.SoundChooser
@@ -37,9 +35,6 @@ interface MainActivityComponent {
 
     @Binds
     val DocumentMetadataHelperImpl.binding: DocumentMetadataHelper
-
-    @Binds
-    val NativeCrashImpl.binding: NativeCrash
 
     @GraphExtension.Factory
     fun interface Factory {
