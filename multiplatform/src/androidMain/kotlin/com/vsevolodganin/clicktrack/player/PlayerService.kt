@@ -26,12 +26,12 @@ import clicktrack.multiplatform.generated.resources.player_service_notification_
 import clicktrack.multiplatform.generated.resources.player_service_notification_resume
 import clicktrack.multiplatform.generated.resources.player_service_notification_stop
 import com.vsevolodganin.clicktrack.IntentFactory
-import com.vsevolodganin.clicktrack.multiplatform.R
 import com.vsevolodganin.clicktrack.applicationComponent
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.PlayableId
 import com.vsevolodganin.clicktrack.model.TwoLayerPolyrhythmId
+import com.vsevolodganin.clicktrack.multiplatform.R
 import com.vsevolodganin.clicktrack.notification.NotificationChannels
 import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.utils.MultiplatformRes
@@ -225,6 +225,7 @@ class PlayerService : Service() {
         scope.apply {
             launch { audioFocusComponent() }
             launch { foregroundComponent() }
+            launch { mediaSessionComponent() }
             launch { playbackComponent() }
         }
     }
@@ -287,7 +288,7 @@ class PlayerService : Service() {
         }
     }
 
-    private suspend fun playbackComponent() = coroutineScope {
+    private suspend fun mediaSessionComponent() = coroutineScope {
         launch {
             state.map { it?.isPaused }.distinctUntilChanged().collectLatest { isPaused ->
                 when (isPaused) {
@@ -300,7 +301,6 @@ class PlayerService : Service() {
                                     .build(),
                             )
                         }
-                        player.pause()
                     }
 
                     false -> {
@@ -312,7 +312,6 @@ class PlayerService : Service() {
                                     .build(),
                             )
                         }
-                        player.resume()
                     }
 
                     null -> {
@@ -325,6 +324,18 @@ class PlayerService : Service() {
                             )
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private suspend fun playbackComponent() = coroutineScope {
+        launch {
+            state.map { it?.isPaused }.distinctUntilChanged().collectLatest { isPaused ->
+                when (isPaused) {
+                    true -> player.pause()
+                    false -> player.resume()
+                    null -> Unit
                 }
             }
         }

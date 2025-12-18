@@ -1,7 +1,6 @@
 package com.vsevolodganin.clicktrack.player
 
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
-import com.vsevolodganin.clicktrack.di.module.PlayerDispatcher
 import com.vsevolodganin.clicktrack.model.ClickSounds
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.ClickTrack
