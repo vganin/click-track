@@ -3,7 +3,7 @@ package com.vsevolodganin.clicktrack.about
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
-import com.vsevolodganin.clicktrack.common.BuildConfig
+import com.vsevolodganin.clicktrack.common.ApplicationBuildConfig
 import com.vsevolodganin.clicktrack.common.LinkOpener
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
@@ -16,7 +16,7 @@ class AboutViewModelImpl(
     @Assisted componentContext: ComponentContext,
     private val navigation: ScreenStackNavigation,
     private val linkOpener: LinkOpener,
-    buildConfig: BuildConfig,
+    applicationBuildConfig: ApplicationBuildConfig,
 ) : AboutViewModel, ComponentContext by componentContext {
 
     @AssistedFactory
@@ -27,7 +27,7 @@ class AboutViewModelImpl(
     }
 
     override val state: StateFlow<AboutState> = MutableStateFlow(
-        AboutState(displayVersion = buildConfig.versionName),
+        AboutState(displayVersion = applicationBuildConfig.versionName),
     )
 
     override fun onBackClick() = navigation.pop()

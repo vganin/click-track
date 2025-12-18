@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage")
-
 import org.jetbrains.compose.compose
 
 plugins {
@@ -10,6 +8,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.metro)
+    alias(libs.plugins.buildconfig)
     kotlin("native.cocoapods")
     kotlin("plugin.serialization")
 }
@@ -18,26 +17,26 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                api(compose.runtime)
-                api(compose.foundation)
-                api(compose.ui)
-                api(compose.material3)
-                api(compose.materialIconsExtended)
-                api(compose.components.uiToolingPreview)
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.ui)
+                implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
+                implementation(compose.components.uiToolingPreview)
                 // FIXME(https://github.com/JetBrains/compose-jb/issues/1295): Replace with `org.jetbrains.compose.ComposePlugin.Dependencies` field when it's available
-                api(compose("org.jetbrains.compose.ui:ui-util"))
-                api(compose.components.resources)
-                api(libs.simpleIcons)
-                api(libs.bundles.decompose)
-                api(libs.bundles.kotlinx.serialization)
-                api(libs.kotlinx.datetime)
-                api(libs.uuid)
-                api(libs.metro.runtime)
-                api(libs.sqldelight.runtime)
-                api(libs.sqldelight.coroutines)
-                api(libs.multiplatformSettings)
-                api(libs.multiplatformSettings.coroutines)
-                api(libs.reorderable)
+                implementation(compose("org.jetbrains.compose.ui:ui-util"))
+                implementation(compose.components.resources)
+                implementation(libs.simpleIcons)
+                implementation(libs.bundles.decompose)
+                implementation(libs.bundles.kotlinx.serialization)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.uuid)
+                implementation(libs.metro.runtime)
+                implementation(libs.sqldelight.runtime)
+                implementation(libs.sqldelight.coroutines)
+                implementation(libs.multiplatformSettings)
+                implementation(libs.multiplatformSettings.coroutines)
+                implementation(libs.reorderable)
             }
         }
 
@@ -49,13 +48,21 @@ kotlin {
 
         androidMain {
             dependencies {
-                api(compose.uiTooling)
-                api(compose.preview)
-                api(libs.androidx.annotation)
-                api(libs.androidx.activity.compose)
-                api(libs.androidx.constraintLayout.compose)
-                api(libs.androidx.dataStore)
-                api(libs.sqldelight.androidDriver)
+                implementation(compose.uiTooling)
+                implementation(compose.preview)
+                implementation(libs.androidx.appcompat)
+                implementation(libs.androidx.annotation)
+                implementation(libs.androidx.activity.compose)
+                implementation(libs.androidx.fragment)
+                implementation(libs.androidx.constraintLayout.compose)
+                implementation(libs.androidx.dataStore)
+                implementation(libs.androidx.workManager)
+                implementation(libs.androidx.splashScreen)
+                implementation(libs.androidx.media)
+                implementation(libs.firebase.bom.let { project.dependencies.platform(it) })
+                implementation(libs.firebase.crashlytics)
+                implementation(libs.googlePlay.review)
+                implementation(libs.sqldelight.androidDriver)
             }
         }
 
@@ -63,12 +70,13 @@ kotlin {
             dependencies {
                 implementation(libs.mockk.android)
                 implementation(libs.mockk.agent)
+                implementation(libs.testParameterInjector)
             }
         }
 
         iosMain {
             dependencies {
-                api(libs.sqldelight.nativeDriver)
+                implementation(libs.sqldelight.nativeDriver)
             }
         }
     }
@@ -94,7 +102,6 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 
@@ -109,6 +116,23 @@ sqldelight {
 
 compose.resources {
     publicResClass = true
+}
+
+buildConfig {
+    packageName("com.vsevolodganin.clicktrack.multiplatform")
+
+    sourceSets.named("androidMain") {
+        buildConfigField("Int", "VERSION_CODE", "${providers.gradleProperty("clicktrack.android.versionCode").get().toInt()}")
+        buildConfigField("String", "VERSION_NAME", "\"${providers.gradleProperty("clicktrack.android.versionName").get()}\"")
+    }
+
+    sourceSets.named("androidDebug") {
+        buildConfigField("Boolean", "DEBUG", "true")
+    }
+
+    sourceSets.named("androidRelease") {
+        buildConfigField("Boolean", "DEBUG", "false")
+    }
 }
 
 dependencies {

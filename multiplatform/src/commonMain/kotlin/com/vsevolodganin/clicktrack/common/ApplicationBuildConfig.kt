@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.common
 
-interface BuildConfig {
+expect class ApplicationBuildConfig {
     val versionCode: Int
     val versionName: String
+    val isDebug: Boolean
 }

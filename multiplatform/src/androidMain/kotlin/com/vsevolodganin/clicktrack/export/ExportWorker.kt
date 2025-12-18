@@ -19,14 +19,13 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.vsevolodganin.clicktrack.BuildConfig
 import com.vsevolodganin.clicktrack.IntentFactory
-import com.vsevolodganin.clicktrack.R
 import com.vsevolodganin.clicktrack.applicationComponent
 import com.vsevolodganin.clicktrack.common.MediaStoreAccess
 import com.vsevolodganin.clicktrack.model.ClickTrack
 import com.vsevolodganin.clicktrack.model.ClickTrackId
 import com.vsevolodganin.clicktrack.model.ClickTrackWithDatabaseId
+import com.vsevolodganin.clicktrack.multiplatform.R
 import com.vsevolodganin.clicktrack.notification.NotificationChannels
 import com.vsevolodganin.clicktrack.storage.ClickTrackRepository
 import dev.zacsweers.metro.Inject
@@ -178,7 +177,7 @@ class ExportWorker(private val appContext: Context, workerParams: WorkerParamete
     }
 
     private object NotificationGroups {
-        const val EXPORTING = "${BuildConfig.APPLICATION_ID}.exporting"
-        const val EXPORT_FINISHED = "${BuildConfig.APPLICATION_ID}.export_finished"
+        const val EXPORTING = "com.vsevolodganin.clicktrack.exporting"
+        const val EXPORT_FINISHED = "com.vsevolodganin.clicktrack.export_finished"
     }
 }

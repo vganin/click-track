@@ -116,3 +116,17 @@ tasks.register("checkIos") {
         ":multiplatform:verifyCommonMainDatabaseMigration",
     )
 }
+
+tasks.register("incrementAndroidAppVersion") {
+    doLast {
+        val versionCodePropertyName = "clicktrack.android.versionCode"
+        val gradlePropertiesFile = rootProject.file("gradle.properties")
+        val currentGradleProperties = gradlePropertiesFile.readText()
+        val updatedGradleProperties = currentGradleProperties.replace("$versionCodePropertyName=(\\d+)".toRegex()) { matchResult ->
+            val currentVersionCode = matchResult.groupValues[1].toInt()
+            val nextVersionCode = currentVersionCode + 1
+            "$versionCodePropertyName=$nextVersionCode"
+        }
+        gradlePropertiesFile.writeText(updatedGradleProperties)
+    }
+}

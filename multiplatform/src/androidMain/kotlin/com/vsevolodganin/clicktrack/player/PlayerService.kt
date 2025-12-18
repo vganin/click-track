@@ -26,7 +26,7 @@ import clicktrack.multiplatform.generated.resources.player_service_notification_
 import clicktrack.multiplatform.generated.resources.player_service_notification_resume
 import clicktrack.multiplatform.generated.resources.player_service_notification_stop
 import com.vsevolodganin.clicktrack.IntentFactory
-import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.multiplatform.R
 import com.vsevolodganin.clicktrack.applicationComponent
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.model.ClickTrackId

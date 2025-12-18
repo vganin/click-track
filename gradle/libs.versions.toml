@@ -58,6 +58,7 @@ kotlinx-coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-android"]
 kotlinx-serialization = ["kotlinx-serialization-core", "kotlinx-serialization-json"]
 
 [plugins]
+buildconfig = "com.github.gmazzo.buildconfig:6.0.6"
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-compose = "org.jetbrains.compose:1.9.3"
 kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }

@@ -21,7 +21,7 @@ jobs:
           java-version: 21
           cache: 'gradle'
       - name: Bump Android app version code
-        run: echo $(( $(cat android-app/version-code) + 1 )) > android-app/version-code
+        run: ./gradlew :incrementAndroidAppVersion
       - name: Build Android app
         run: >
           ./gradlew -s

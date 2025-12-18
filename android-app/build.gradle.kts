@@ -6,11 +6,6 @@ plugins {
     id("clicktrack.android.application")
     id("clicktrack.include-in-coverage")
     id("clicktrack.ktlint")
-    alias(libs.plugins.jetbrains.compose)
-    alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.metro)
-    kotlin("android")
-    kotlin("plugin.serialization")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
 }
@@ -26,8 +21,8 @@ android {
 
     defaultConfig {
         applicationId = "com.vsevolodganin.clicktrack"
-        versionCode = file("version-code").readText().trim().toInt()
-        versionName = "1.4.0"
+        versionCode = providers.gradleProperty("clicktrack.android.versionCode").get().toInt()
+        versionName = providers.gradleProperty("clicktrack.android.versionName").get()
 
         resourceConfigurations += setOf("en", "ru")
 
@@ -59,32 +54,16 @@ android {
             applicationIdSuffix = ".debug"
         }
     }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-    }
 }
 
 dependencies {
     implementation(project(":multiplatform"))
 
-    implementation(libs.bundles.kotlinx.coroutines)
-    implementation(libs.bundles.kotlinx.serialization)
-    implementation(libs.androidx.core)
+    // Needed because androidx.appcompat.app.AppLocalesMetadataHolderService is declared in AndroidManifest.xml
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.annotation)
-    implementation(libs.androidx.splashScreen)
-    implementation(libs.androidx.fragment)
-    implementation(libs.androidx.media)
-    implementation(libs.androidx.workManager)
-    implementation(libs.bundles.decompose)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.googlePlay.review)
 
-    testImplementation(kotlin("test"))
-    testImplementation(libs.testParameterInjector)
+    // Needed because androidx.work.impl.foreground.SystemForegroundService is declared in AndroidManifest.xml
+    implementation(libs.androidx.workManager)
 
     coreLibraryDesugaring(libs.desugarJdkLibs)
 }
