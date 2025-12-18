@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationManagerCompat
-import com.vsevolodganin.clicktrack.R
+import com.vsevolodganin.clicktrack.multiplatform.R
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn

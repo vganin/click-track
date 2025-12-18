@@ -3,6 +3,7 @@ package com.vsevolodganin.clicktrack.settings
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.pop
 import com.vsevolodganin.clicktrack.ScreenStackNavigation
+import com.vsevolodganin.clicktrack.common.ApplicationBuildConfig
 import com.vsevolodganin.clicktrack.language.AppLanguage
 import com.vsevolodganin.clicktrack.language.LanguageStore
 import com.vsevolodganin.clicktrack.settings.debug.KotlinCrash
@@ -10,7 +11,6 @@ import com.vsevolodganin.clicktrack.storage.UserPreferencesRepository
 import com.vsevolodganin.clicktrack.theme.Theme
 import com.vsevolodganin.clicktrack.utils.decompose.coroutineScope
 import com.vsevolodganin.clicktrack.utils.log.Logger
-import com.vsevolodganin.clicktrack.utils.platform.isDebug
 import dev.zacsweers.metro.Assisted
 import dev.zacsweers.metro.AssistedFactory
 import dev.zacsweers.metro.AssistedInject
@@ -28,6 +28,7 @@ class SettingsViewModelImpl(
     private val languageStore: LanguageStore,
     private val kotlinCrashProvider: Provider<KotlinCrash>,
     private val logger: Logger,
+    private val applicationBuildConfig: ApplicationBuildConfig,
 ) : SettingsViewModel, ComponentContext by componentContext {
 
     @AssistedFactory
@@ -39,8 +40,6 @@ class SettingsViewModelImpl(
 
     private val scope = coroutineScope()
 
-    private val isDebug = isDebug()
-
     override val state: StateFlow<SettingsState> = combine(
         userPreferences.theme.flow,
         userPreferences.ignoreAudioFocus.flow,
@@ -50,7 +49,7 @@ class SettingsViewModelImpl(
             theme = theme,
             ignoreAudioFocus = ignoreAudioFocus,
             language = language,
-            showCrashSimulationButtons = isDebug,
+            showCrashSimulationButtons = applicationBuildConfig.isDebug,
         )
     }.stateIn(
         scope = scope,
@@ -59,7 +58,7 @@ class SettingsViewModelImpl(
             theme = userPreferences.theme.value,
             ignoreAudioFocus = userPreferences.ignoreAudioFocus.value,
             language = languageStore.appLanguage.value,
-            showCrashSimulationButtons = isDebug,
+            showCrashSimulationButtons = applicationBuildConfig.isDebug,
         ),
     )
 

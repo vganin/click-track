@@ -3,6 +3,7 @@ package com.vsevolodganin.clicktrack
 import android.app.Application
 import android.content.Context
 import android.os.StrictMode
+import com.vsevolodganin.clicktrack.common.ApplicationBuildConfig
 import com.vsevolodganin.clicktrack.di.component.ApplicationComponent
 import com.vsevolodganin.clicktrack.theme.ThemeManager
 import com.vsevolodganin.clicktrack.utils.cast
@@ -17,6 +18,9 @@ class MainApplication : Application() {
     @Inject
     private lateinit var themeManager: ThemeManager
 
+    @Inject
+    private lateinit var applicationBuildConfig: ApplicationBuildConfig
+
     override fun onCreate() {
         super.onCreate()
 
@@ -26,7 +30,7 @@ class MainApplication : Application() {
                 it.inject(this)
             }
 
-        if (BuildConfig.DEBUG) {
+        if (applicationBuildConfig.isDebug) {
             strictMode()
         }
 
