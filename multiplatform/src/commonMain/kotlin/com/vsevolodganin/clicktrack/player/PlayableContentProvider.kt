@@ -1,6 +1,5 @@
 package com.vsevolodganin.clicktrack.player
 
-import android.app.Application
 import clicktrack.multiplatform.generated.resources.general_metronome_click_track_title
 import com.vsevolodganin.clicktrack.di.component.PlayerServiceScope
 import com.vsevolodganin.clicktrack.metronome.metronomeClickTrack
@@ -23,7 +22,6 @@ import org.jetbrains.compose.resources.getString
 @SingleIn(PlayerServiceScope::class)
 @Inject
 class PlayableContentProvider(
-    private val application: Application,
     private val clickTrackRepository: ClickTrackRepository,
     private val userPreferences: UserPreferencesRepository,
 ) {

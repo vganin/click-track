@@ -3,8 +3,6 @@ package com.vsevolodganin.clicktrack.di.component
 import com.vsevolodganin.clicktrack.player.PlayerService
 import dev.zacsweers.metro.GraphExtension
 
-abstract class PlayerServiceScope private constructor()
-
 @GraphExtension(PlayerServiceScope::class)
 interface PlayerServiceComponent {
 

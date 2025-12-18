@@ -20,8 +20,8 @@ class PrimitiveAudioData(
     }
 }
 
-val PrimitiveAudioData.bytesPerSample: Int
-    get() = when (encoding) {
+val PrimitiveAudioData.Encoding.bytesPerSample: Int
+    get() = when (this) {
         PrimitiveAudioData.Encoding.PCM_UNSIGNED_8BIT -> 1
         PrimitiveAudioData.Encoding.PCM_SIGNED_16BIT_LITTLE_ENDIAN -> 2
         PrimitiveAudioData.Encoding.PCM_SIGNED_24BIT_LITTLE_ENDIAN -> 3
@@ -30,7 +30,7 @@ val PrimitiveAudioData.bytesPerSample: Int
         -> 4
     }
 
-val PrimitiveAudioData.samplesNumber: Int get() = bytes.size / bytesPerSample
+val PrimitiveAudioData.samplesNumber: Int get() = bytes.size / encoding.bytesPerSample
 
 fun convertDurationToSamplesNumber(duration: Duration, sampleRate: Int): Int {
     return (duration.toDouble(DurationUnit.SECONDS) * sampleRate).roundToInt()
