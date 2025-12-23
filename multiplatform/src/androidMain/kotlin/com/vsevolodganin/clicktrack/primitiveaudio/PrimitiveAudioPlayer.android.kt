@@ -19,7 +19,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @Inject
 @SingleIn(PlayerServiceScope::class)
-class PrimitiveAudioPlayer(
+actual class PrimitiveAudioPlayer(
     primitiveAudioMonoRendererFactory: PrimitiveAudioMonoRenderer.Factory,
     audioManager: AudioManager,
     private val logger: Logger,
@@ -43,7 +43,7 @@ class PrimitiveAudioPlayer(
 
     private val primitiveAudioMonoRenderer = primitiveAudioMonoRendererFactory.create(SAMPLE_RATE)
 
-    suspend fun play(
+    actual suspend fun play(
         startingAt: Duration,
         singleIterationDuration: Duration,
         playerEvents: Sequence<PlayerEvent>,
@@ -56,6 +56,9 @@ class PrimitiveAudioPlayer(
             reportProgress(startingAt)
 
             val samplesNumber = convertDurationToFramesNumber(singleIterationDuration)
+            val samplesChunks = primitiveAudioMonoRenderer.renderToMonoSamples(playerEvents, soundSourceProvider)
+                .chunked(BUFFER_LENGTH_IN_FRAMES, List<Float>::toFloatArray)
+
             audioTrack.notificationMarkerPosition = samplesNumber - convertDurationToFramesNumber(startingAt)
             audioTrack.setPlaybackPositionUpdateListener(
                 object : AudioTrack.OnPlaybackPositionUpdateListener {
@@ -68,37 +71,34 @@ class PrimitiveAudioPlayer(
                 },
             )
 
-            primitiveAudioMonoRenderer.renderToMonoSamples(playerEvents, soundSourceProvider)
-                .chunked(BUFFER_LENGTH_IN_FRAMES, List<Float>::toFloatArray)
-                .forEach { samples ->
-                    var samplesWritten = 0
-                    while (samplesWritten < samples.size) {
+            for (samplesChunk in samplesChunks) {
+                var samplesWritten = 0
+                while (samplesWritten < samplesChunk.size) {
+                    yield()
+
+                    val result = audioTrack.write(
+                        samplesChunk,
+                        samplesWritten,
+                        samplesChunk.size - samplesWritten,
+                        AudioTrack.WRITE_NON_BLOCKING,
+                    )
+
+                    if (result == 0) {
+                        delay(BUFFER_LENGTH_IN_SECONDS.seconds / 2)
+                    } else if (result > 0) {
                         yield()
-
-                        val result = audioTrack.write(
-                            samples,
-                            samplesWritten,
-                            samples.size - samplesWritten,
-                            AudioTrack.WRITE_NON_BLOCKING,
-                        )
-
-                        if (result == 0) {
-                            delay(BUFFER_LENGTH_IN_SECONDS.seconds / 2)
-                        } else if (result > 0) {
-                            yield()
-                            samplesWritten += result
-                        } else {
-                            logger.logError(TAG, "Got unexpected result: $result")
-                            return
-                        }
+                        samplesWritten += result
+                    } else {
+                        logger.logError(TAG, "Got unexpected result: $result")
+                        return
                     }
                 }
+            }
 
             suspendCancellableCoroutine { continuation ->
                 audioTrack.setPlaybackPositionUpdateListener(
                     object : AudioTrack.OnPlaybackPositionUpdateListener {
                         override fun onMarkerReached(track: AudioTrack) = continuation.resume(Unit)
-
                         override fun onPeriodicNotification(track: AudioTrack) = Unit
                     },
                 )
@@ -113,7 +113,7 @@ class PrimitiveAudioPlayer(
         }
     }
 
-    fun getLatencyMs(): Int {
+    actual fun getLatencyMs(): Int {
         try {
             val getLatencyMethod = AudioTrack::class.java.getMethod("getLatency")
             return getLatencyMethod.invoke(audioTrack) as Int - BUFFER_LENGTH_IN_SECONDS.seconds.inWholeMilliseconds.toInt()
