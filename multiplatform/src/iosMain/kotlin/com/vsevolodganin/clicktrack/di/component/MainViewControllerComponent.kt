@@ -6,7 +6,10 @@ import com.vsevolodganin.clicktrack.migration.MigrationManager
 import dev.zacsweers.metro.GraphExtension
 import dev.zacsweers.metro.Provides
 
-@GraphExtension(MainControllerScope::class)
+@GraphExtension(
+    scope = MainControllerScope::class,
+    additionalScopes = [PlayerServiceScope::class],
+)
 interface MainViewControllerComponent {
 
     val rootViewModel: RootViewModel

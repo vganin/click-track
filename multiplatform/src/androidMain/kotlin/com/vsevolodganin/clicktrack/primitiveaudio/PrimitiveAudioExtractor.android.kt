@@ -1,11 +1,14 @@
 package com.vsevolodganin.clicktrack.primitiveaudio
 
+import android.app.Application
+import android.content.ContentResolver
 import android.content.res.AssetFileDescriptor
 import android.media.AudioFormat
 import android.media.MediaCodec
 import android.media.MediaCodecList
 import android.media.MediaExtractor
 import android.media.MediaFormat
+import androidx.core.net.toUri
 import com.vsevolodganin.clicktrack.di.component.ApplicationScope
 import com.vsevolodganin.clicktrack.utils.log.Logger
 import com.vsevolodganin.clicktrack.utils.media.bytesPerSecond
@@ -19,14 +22,21 @@ import kotlin.math.min
 
 @SingleIn(ApplicationScope::class)
 @Inject
-class PrimitiveAudioExtractor(
+actual class PrimitiveAudioExtractor(
+    private val application: Application,
+    private val contentResolver: ContentResolver,
     private val logger: Logger,
 ) {
-    fun extract(afd: AssetFileDescriptor, maxSeconds: Int): PrimitiveAudioData? {
-        val mediaExtractor = MediaExtractor()
+    actual fun extract(uri: String, maxSeconds: Int): PrimitiveAudioData? {
+        var afd: AssetFileDescriptor? = null
+        var mediaExtractor: MediaExtractor? = null
 
         try {
+            afd = openAssetFileDescriptor(uri) ?: return null
+            mediaExtractor = MediaExtractor()
+
             mediaExtractor.setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
+
             for (trackIndex in 0 until mediaExtractor.trackCount) {
                 val trackFormat = mediaExtractor.getTrackFormat(trackIndex)
                 val trackMime = trackFormat.getString(MediaFormat.KEY_MIME) ?: continue
@@ -37,7 +47,8 @@ class PrimitiveAudioExtractor(
         } catch (t: Throwable) {
             logger.logError(TAG, "Failed to extract PCM", t)
         } finally {
-            mediaExtractor.release()
+            mediaExtractor?.release()
+            afd?.close()
         }
 
         return null
@@ -127,6 +138,14 @@ class PrimitiveAudioExtractor(
         }
     }
 
+    private fun openAssetFileDescriptor(uri: String): AssetFileDescriptor? {
+        return if (uri.startsWith(ASSET_PATH_PREFIX)) {
+            application.assets.openFd(uri.removePrefix(ASSET_PATH_PREFIX))
+        } else {
+            contentResolver.openAssetFileDescriptor(uri.toUri(), "r")
+        }
+    }
+
     private fun audioFormatEncodingToCommon(encoding: Int): PrimitiveAudioData.Encoding? = when (encoding) {
         AudioFormat.ENCODING_PCM_8BIT -> PrimitiveAudioData.Encoding.PCM_UNSIGNED_8BIT
         AudioFormat.ENCODING_PCM_16BIT -> PrimitiveAudioData.Encoding.PCM_SIGNED_16BIT_LITTLE_ENDIAN
@@ -141,5 +160,6 @@ class PrimitiveAudioExtractor(
 
     private companion object {
         const val TAG = "PrimitiveAudioExtractor"
+        const val ASSET_PATH_PREFIX = "file:///android_asset/"
     }
 }
