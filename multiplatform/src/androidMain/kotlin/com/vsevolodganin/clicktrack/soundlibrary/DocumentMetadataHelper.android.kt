@@ -3,18 +3,15 @@ package com.vsevolodganin.clicktrack.soundlibrary
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
-import com.vsevolodganin.clicktrack.di.component.MainControllerScope
 import com.vsevolodganin.clicktrack.utils.log.Logger
-import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 
-@ContributesBinding(MainControllerScope::class)
 @Inject
-class DocumentMetadataHelperImpl(
+actual class DocumentMetadataHelper(
     private val contentResolver: ContentResolver,
     private val logger: Logger,
-) : DocumentMetadataHelper {
-    override fun isAccessible(uri: String): Boolean {
+) {
+    actual fun isAccessible(uri: String): Boolean {
         return try {
             contentResolver.query(Uri.parse(uri), null, null, null, null, null)?.use {
                 it.moveToFirst()
@@ -24,13 +21,13 @@ class DocumentMetadataHelperImpl(
         }
     }
 
-    override fun hasReadPermission(uri: String): Boolean {
+    actual fun hasReadPermission(uri: String): Boolean {
         return contentResolver.persistedUriPermissions.any { permission ->
             permission.uri.toString() == uri && permission.isReadPermission
         }
     }
 
-    override fun getDisplayName(uri: String): String? {
+    actual fun getDisplayName(uri: String): String? {
         val parsedUri = Uri.parse(uri)
 
         return try {

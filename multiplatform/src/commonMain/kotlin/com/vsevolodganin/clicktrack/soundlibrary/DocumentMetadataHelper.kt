@@ -1,6 +1,6 @@
 package com.vsevolodganin.clicktrack.soundlibrary
 
-interface DocumentMetadataHelper {
+expect class DocumentMetadataHelper {
     fun isAccessible(uri: String): Boolean
 
     fun hasReadPermission(uri: String): Boolean

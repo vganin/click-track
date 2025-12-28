@@ -1,10 +1,9 @@
 package com.vsevolodganin.clicktrack.di.component
 
 import com.arkivanov.decompose.ComponentContext
-import com.vsevolodganin.clicktrack.RootViewModel
-import com.vsevolodganin.clicktrack.migration.MigrationManager
 import dev.zacsweers.metro.GraphExtension
 import dev.zacsweers.metro.Provides
+import platform.UIKit.UIViewController
 
 @GraphExtension(
     scope = MainControllerScope::class,
@@ -12,8 +11,7 @@ import dev.zacsweers.metro.Provides
 )
 interface MainViewControllerComponent {
 
-    val rootViewModel: RootViewModel
-    val migrationManager: MigrationManager
+    val mainViewController: UIViewController
 
     @GraphExtension.Factory
     fun interface Factory {
