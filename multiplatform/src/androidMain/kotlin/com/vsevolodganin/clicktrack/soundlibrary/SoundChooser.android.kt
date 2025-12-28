@@ -14,7 +14,6 @@ import com.vsevolodganin.clicktrack.model.ClickSoundSource
 import com.vsevolodganin.clicktrack.model.ClickSoundType
 import com.vsevolodganin.clicktrack.model.ClickSoundsId
 import com.vsevolodganin.clicktrack.storage.ClickSoundsRepository
-import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,13 +22,12 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
 
 @SingleIn(MainControllerScope::class)
-@ContributesBinding(MainControllerScope::class)
 @Inject
-class SoundChooserImpl(
+actual class SoundChooser(
     private val activity: AppCompatActivity,
     private val clickSoundsRepository: ClickSoundsRepository,
     stateKeeperOwner: StateKeeperOwner,
-) : SoundChooser {
+) {
     private val pendingRequestState = MutableStateFlow<OpenAudioRequest?>(
         stateKeeperOwner.stateKeeper.consume(OpenAudioRequest.SAVED_STATE_KEY, serializer()),
     )
@@ -49,7 +47,7 @@ class SoundChooserImpl(
         }
     }
 
-    override suspend fun launchFor(id: ClickSoundsId.Database, type: ClickSoundType) {
+    actual suspend fun launchFor(id: ClickSoundsId.Database, type: ClickSoundType) {
         val initialUri = getInitialUri(id, type)
         pendingRequestState.value = OpenAudioRequest(id, type)
         launcher.launch(initialUri)
