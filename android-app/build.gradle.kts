@@ -8,6 +8,7 @@ plugins {
     id("clicktrack.ktlint")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    alias(libs.plugins.screenshot)
 }
 
 val keystorePropertiesFile = file("keystore.properties")
@@ -54,6 +55,8 @@ android {
             applicationIdSuffix = ".debug"
         }
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -64,6 +67,9 @@ dependencies {
 
     // Needed because androidx.work.impl.foreground.SystemForegroundService is declared in AndroidManifest.xml
     implementation(libs.androidx.workManager)
+
+    screenshotTestImplementation(libs.screenshot.validation.api)
+    screenshotTestImplementation(compose.uiTooling)
 
     coreLibraryDesugaring(libs.desugarJdkLibs)
 }

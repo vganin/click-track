@@ -187,7 +187,7 @@ private fun Duration.toAngle(totalDuration: Duration): Float {
 
 @Preview
 @Composable
-internal fun PolyrhythmsScreenPreview() = ClickTrackTheme {
+fun PolyrhythmsScreenPreview() = ClickTrackTheme {
     PolyrhythmsScreenView(
         viewModel = object : PolyrhythmsViewModel {
             override val state: StateFlow<PolyrhythmsState?> = MutableStateFlow(

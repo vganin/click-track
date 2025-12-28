@@ -239,7 +239,7 @@ private fun bottomSheetState(viewModel: MetronomeViewModel): SheetState {
 
 @Preview
 @Composable
-internal fun MetronomeScreenPreview(expanded: Boolean = false) = ClickTrackTheme {
+fun MetronomeScreenPreview(expanded: Boolean = false) = ClickTrackTheme {
     MetronomeScreenView(
         viewModel = object : MetronomeViewModel {
             override val state: StateFlow<MetronomeState?> = MutableStateFlow(
