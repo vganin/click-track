@@ -13,6 +13,7 @@
 		4F3ABDA4293187EA00DB6023 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3ABDA3293187EA00DB6023 /* Preview Assets.xcassets */; };
 		4F5ED37F2F1421700038A196 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4F5ED37E2F1421700038A196 /* AppIcon.icon */; };
 		4FBD90C71BFC3F827448AC2F /* Pods_ClickTrack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1D53B0EA9F03701E67DF125 /* Pods_ClickTrack.framework */; };
+		4FDAC2312F0B0FC100888848 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4FDAC2302F0B0FC100888848 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		4F3ABDA3293187EA00DB6023 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4F5ED37E2F1421700038A196 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		4FC0878F29F2074600ECE7A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		4FDAC2302F0B0FC100888848 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		973DBEDB5C7BE0B4F40880B3 /* Pods-ClickTrack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClickTrack.debug.xcconfig"; path = "Target Support Files/Pods-ClickTrack/Pods-ClickTrack.debug.xcconfig"; sourceTree = "<group>"; };
 		C1D53B0EA9F03701E67DF125 /* Pods_ClickTrack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClickTrack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CADECB568532290FC852942B /* Pods-ClickTrack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClickTrack.release.xcconfig"; path = "Target Support Files/Pods-ClickTrack/Pods-ClickTrack.release.xcconfig"; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				4FC0878F29F2074600ECE7A7 /* Info.plist */,
+				4FDAC2302F0B0FC100888848 /* GoogleService-Info.plist */,
 				4F3ABD9C293187EA00DB6023 /* ClickTrackApp.swift */,
 				4F3ABD9E293187EA00DB6023 /* ContentView.swift */,
 				4F3ABDA0293187EA00DB6023 /* Assets.xcassets */,
@@ -109,6 +112,7 @@
 				89774DA68A362F87E297C2E6 /* [CP] Embed Pods Frameworks */,
 				0444A912D05438301350F401 /* Frameworks */,
 				3A4F6D87E60D21205A9161CB /* [CP] Copy Pods Resources */,
+				4FDAC2322F0B19C200888848 /* Upload Symbols To Crashlytics */,
 			);
 			buildRules = (
 			);
@@ -159,6 +163,7 @@
 			files = (
 				4F3ABDA4293187EA00DB6023 /* Preview Assets.xcassets in Resources */,
 				4F3ABDA1293187EA00DB6023 /* Assets.xcassets in Resources */,
+				4FDAC2312F0B0FC100888848 /* GoogleService-Info.plist in Resources */,
 				4F5ED37F2F1421700038A196 /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -182,6 +187,30 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ClickTrack/Pods-ClickTrack-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		4FDAC2322F0B19C200888848 /* Upload Symbols To Crashlytics */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Info.plist",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/GoogleService-Info.plist",
+				"$(TARGET_BUILD_DIR)/$(EXECUTABLE_PATH)",
+				"${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${PRODUCT_NAME}.debug.dylib",
+			);
+			name = "Upload Symbols To Crashlytics";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${CONFIGURATION}\" = \"Release\" ]; then\n    find \"${DWARF_DSYM_FOLDER_PATH}\" -name \"*.dSYM\" | xargs -I \\{\\} \"$PODS_ROOT/FirebaseCrashlytics/upload-symbols\" \\\n        -gsp \"${PROJECT_DIR}/ClickTrack/GoogleService-Info.plist\" \\\n        -p ios \\\n        \\{\\}\nfi\n";
 		};
 		89774DA68A362F87E297C2E6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;

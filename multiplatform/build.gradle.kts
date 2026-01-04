@@ -81,10 +81,14 @@ kotlin {
         summary = "Shared multiplatform code"
         homepage = "https://www.vsevolodganin.com/"
 
-        ios.deploymentTarget = "13.5"
+        ios.deploymentTarget = "15.0"
 
         framework {
             baseName = "ClickTrackMultiplatform"
+        }
+
+        pod("FirebaseCrashlytics") {
+            version = "12.8.0"
         }
 
         podfile = rootProject.file("ios-app/Podfile")
