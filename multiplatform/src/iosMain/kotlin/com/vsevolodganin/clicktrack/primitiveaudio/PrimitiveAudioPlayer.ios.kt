@@ -18,10 +18,7 @@ import platform.AVFAudio.AVAudioFormat
 import platform.AVFAudio.AVAudioPCMBuffer
 import platform.AVFAudio.AVAudioPlayerNode
 import platform.AVFAudio.AVAudioSession
-import platform.AVFAudio.AVAudioSessionCategoryPlayback
-import platform.AVFAudio.AVAudioSessionModeDefault
 import platform.AVFAudio.IOBufferDuration
-import platform.AVFAudio.setActive
 import platform.posix.memcpy
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -47,10 +44,6 @@ actual class PrimitiveAudioPlayer(
     )
 
     init {
-        with(audioSession) {
-            setCategory(AVAudioSessionCategoryPlayback, error = null)
-            setMode(AVAudioSessionModeDefault, error = null)
-        }
         with(audioEngine) {
             attachNode(audioPlayerNode)
             connect(audioPlayerNode, mainMixerNode, audioFormat)
@@ -66,7 +59,6 @@ actual class PrimitiveAudioPlayer(
         soundSourceProvider: SoundSourceProvider,
     ) {
         try {
-            audioSession.setActive(true, error = null)
             audioEngine.startAndReturnError(null)
             audioPlayerNode.play()
 
@@ -120,7 +112,6 @@ actual class PrimitiveAudioPlayer(
         } finally {
             audioPlayerNode.stop()
             audioEngine.stop()
-            audioSession.setActive(false, error = null)
         }
     }
 
