@@ -11,6 +11,7 @@
 		4F3ABD9F293187EA00DB6023 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3ABD9E293187EA00DB6023 /* ContentView.swift */; };
 		4F3ABDA1293187EA00DB6023 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3ABDA0293187EA00DB6023 /* Assets.xcassets */; };
 		4F3ABDA4293187EA00DB6023 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3ABDA3293187EA00DB6023 /* Preview Assets.xcassets */; };
+		4F5ED37F2F1421700038A196 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4F5ED37E2F1421700038A196 /* AppIcon.icon */; };
 		4FBD90C71BFC3F827448AC2F /* Pods_ClickTrack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1D53B0EA9F03701E67DF125 /* Pods_ClickTrack.framework */; };
 /* End PBXBuildFile section */
 
@@ -20,6 +21,7 @@
 		4F3ABD9E293187EA00DB6023 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4F3ABDA0293187EA00DB6023 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4F3ABDA3293187EA00DB6023 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4F5ED37E2F1421700038A196 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		4FC0878F29F2074600ECE7A7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		973DBEDB5C7BE0B4F40880B3 /* Pods-ClickTrack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClickTrack.debug.xcconfig"; path = "Target Support Files/Pods-ClickTrack/Pods-ClickTrack.debug.xcconfig"; sourceTree = "<group>"; };
 		C1D53B0EA9F03701E67DF125 /* Pods_ClickTrack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClickTrack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,6 +73,7 @@
 				4F3ABD9C293187EA00DB6023 /* ClickTrackApp.swift */,
 				4F3ABD9E293187EA00DB6023 /* ContentView.swift */,
 				4F3ABDA0293187EA00DB6023 /* Assets.xcassets */,
+				4F5ED37E2F1421700038A196 /* AppIcon.icon */,
 				4F3ABDA2293187EA00DB6023 /* Preview Content */,
 			);
 			path = ClickTrack;
@@ -156,6 +159,7 @@
 			files = (
 				4F3ABDA4293187EA00DB6023 /* Preview Assets.xcassets in Resources */,
 				4F3ABDA1293187EA00DB6023 /* Assets.xcassets in Resources */,
+				4F5ED37F2F1421700038A196 /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
