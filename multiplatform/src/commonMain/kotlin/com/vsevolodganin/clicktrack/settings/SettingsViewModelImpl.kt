@@ -81,6 +81,6 @@ class SettingsViewModelImpl(
     }
 
     override fun onNonFatalClick() {
-        logger.logError("TEST", "This is test non-fatal")
+        logger.logError("TEST", "This is test non-fatal", RuntimeException("This is test exception"))
     }
 }
