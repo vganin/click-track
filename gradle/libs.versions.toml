@@ -60,7 +60,7 @@ kotlinx-serialization = ["kotlinx-serialization-core", "kotlinx-serialization-js
 [plugins]
 buildconfig = "com.github.gmazzo.buildconfig:6.0.7"
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-jetbrains-compose = "org.jetbrains.compose:1.9.3"
+jetbrains-compose = "org.jetbrains.compose:1.10.0"
 kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 properties = "net.saliman.properties:1.6.0"
