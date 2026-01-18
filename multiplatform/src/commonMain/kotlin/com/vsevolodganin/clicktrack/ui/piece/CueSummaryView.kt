@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vsevolodganin.clicktrack.model.BeatsPerMinute
@@ -22,7 +23,6 @@ import com.vsevolodganin.clicktrack.model.CueDuration
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.model.bpm
 import com.vsevolodganin.clicktrack.utils.compose.widthInByText
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun CueSummaryView(cue: Cue, tempoOffset: BeatsPerMinuteOffset) {

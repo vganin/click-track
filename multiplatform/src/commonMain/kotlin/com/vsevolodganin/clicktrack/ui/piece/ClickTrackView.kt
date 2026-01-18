@@ -40,6 +40,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -55,7 +56,6 @@ import com.vsevolodganin.clicktrack.utils.compose.KeepScreenOn
 import com.vsevolodganin.clicktrack.utils.compose.detectTransformGesturesWithEndCallbacks
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.math.roundToInt
 import kotlin.time.Clock
 import kotlin.time.Duration

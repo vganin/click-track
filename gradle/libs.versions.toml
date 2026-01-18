@@ -1,7 +1,7 @@
 [versions]
 decompose = "3.4.0"
+jetbrains-compose = "1.10.0"
 kotlin = "2.3.0"
-kotlinx-coroutines = "1.10.2"
 kotlinx-serialization = "1.9.0"
 kover = "0.9.4"
 metro = "0.9.4"
@@ -15,7 +15,6 @@ androidx-activity-compose = "androidx.activity:activity-compose:1.12.2"
 androidx-annotation = "androidx.annotation:annotation:1.9.1"
 androidx-appcompat = "androidx.appcompat:appcompat:1.7.1"
 androidx-constraintLayout-compose = "androidx.constraintlayout:constraintlayout-compose:1.1.1"
-androidx-core = "androidx.core:core-ktx:1.17.0"
 androidx-dataStore = "androidx.datastore:datastore-preferences:1.2.0"
 androidx-fragment = "androidx.fragment:fragment-ktx:1.8.9"
 androidx-media = "androidx.media:media:1.7.1"
@@ -29,16 +28,21 @@ firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 firebase-crashlytics-gradlePlugin = "com.google.firebase:firebase-crashlytics-gradle:3.0.6"
 gms-gradlePlugin = "com.google.gms:google-services:4.4.4"
 googlePlay-review = "com.google.android.play:review-ktx:2.0.2"
+jetbrains-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "jetbrains-compose" }
+jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version = "1.9.0" }
+jetbrains-compose-materialIconsExtended = { module = "org.jetbrains.compose.material:material-icons-extended", version = "1.7.3" }
+jetbrains-compose-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "jetbrains-compose" }
+jetbrains-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "jetbrains-compose" }
+jetbrains-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "jetbrains-compose" }
+jetbrains-compose-uiToolingPreview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "jetbrains-compose" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-metro-runtime = { module = "dev.zacsweers.metro:runtime", version.ref = "metro" }
-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = "org.jetbrains.kotlinx:kotlinx-datetime:0.7.1"
 kotlinx-kover-gradlePlugin = { module = "org.jetbrains.kotlinx:kover-gradle-plugin", version.ref = "kover" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 ktlint-gradlePlugin = "org.jlleitschuh.gradle:ktlint-gradle:14.0.1"
+metro-runtime = { module = "dev.zacsweers.metro:runtime", version.ref = "metro" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 multiplatformSettings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
@@ -54,13 +58,12 @@ uuid = "com.benasher44:uuid:0.8.4"
 
 [bundles]
 decompose = ["decompose-core", "decompose-compose"]
-kotlinx-coroutines = ["kotlinx-coroutines-core", "kotlinx-coroutines-android"]
 kotlinx-serialization = ["kotlinx-serialization-core", "kotlinx-serialization-json"]
 
 [plugins]
 buildconfig = "com.github.gmazzo.buildconfig:6.0.7"
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-jetbrains-compose = "org.jetbrains.compose:1.10.0"
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 kotlinx-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
 properties = "net.saliman.properties:1.6.0"

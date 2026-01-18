@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import clicktrack.multiplatform.generated.resources.Res
@@ -44,7 +45,6 @@ import clicktrack.multiplatform.generated.resources.time_signature_reset_to_four
 import com.vsevolodganin.clicktrack.model.TimeSignature
 import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun TimeSignatureEditDialog(

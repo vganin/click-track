@@ -10,12 +10,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.PathBuilder
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.DOWN
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.LEFT
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.RIGHT
 import com.vsevolodganin.clicktrack.ui.piece.ArrowDirection.UP
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 enum class ArrowDirection {
     UP,
