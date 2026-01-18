@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import clicktrack.multiplatform.generated.resources.Res
 import clicktrack.multiplatform.generated.resources.polyrhythms_screen_title
@@ -43,7 +44,6 @@ import com.vsevolodganin.clicktrack.utils.compose.widthByText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.DurationUnit

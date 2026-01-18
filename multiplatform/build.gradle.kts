@@ -1,5 +1,3 @@
-import org.jetbrains.compose.compose
-
 plugins {
     id("clicktrack.multiplatform")
     id("clicktrack.include-in-coverage")
@@ -17,15 +15,13 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.ui)
-                implementation(compose.material3)
-                implementation(compose.materialIconsExtended)
-                implementation(compose.components.uiToolingPreview)
-                // FIXME(https://github.com/JetBrains/compose-jb/issues/1295): Replace with `org.jetbrains.compose.ComposePlugin.Dependencies` field when it's available
-                implementation(compose("org.jetbrains.compose.ui:ui-util"))
-                implementation(compose.components.resources)
+                implementation(libs.jetbrains.compose.runtime)
+                implementation(libs.jetbrains.compose.foundation)
+                implementation(libs.jetbrains.compose.ui)
+                implementation(libs.jetbrains.compose.material3)
+                implementation(libs.jetbrains.compose.materialIconsExtended)
+                implementation(libs.jetbrains.compose.uiToolingPreview)
+                implementation(libs.jetbrains.compose.resources)
                 implementation(libs.simpleIcons)
                 implementation(libs.bundles.decompose)
                 implementation(libs.bundles.kotlinx.serialization)
@@ -48,8 +44,6 @@ kotlin {
 
         androidMain {
             dependencies {
-                implementation(compose.uiTooling)
-                implementation(compose.preview)
                 implementation(libs.androidx.appcompat)
                 implementation(libs.androidx.annotation)
                 implementation(libs.androidx.activity.compose)

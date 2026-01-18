@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import clicktrack.multiplatform.generated.resources.Res
 import clicktrack.multiplatform.generated.resources.settings_ignore_audio_focus
@@ -42,7 +43,6 @@ import com.vsevolodganin.clicktrack.ui.theme.ClickTrackTheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SettingsScreenView(viewModel: SettingsViewModel, modifier: Modifier = Modifier) {

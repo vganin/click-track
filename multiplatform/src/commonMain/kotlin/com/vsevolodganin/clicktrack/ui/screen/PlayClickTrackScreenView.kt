@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import clicktrack.multiplatform.generated.resources.Res
 import clicktrack.multiplatform.generated.resources.general_cancel
@@ -62,7 +63,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
