@@ -1,5 +1,6 @@
 import SwiftUI
 import ClickTrackMultiplatform
+import FirebaseCore
 
 @main
 struct ClickTrackApp: App {
@@ -22,6 +23,14 @@ struct ClickTrackApp: App {
 class AppDelegate: NSObject, UIApplicationDelegate {
     
     var stateKeeper = StateKeeperUtilsKt.createStateKeeperDispatcher(savedState: nil)
+    
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
+    ) -> Bool {
+        FirebaseApp.configure()
+        return true
+      }
     
     func application(_ application: UIApplication, shouldSaveSecureApplicationState coder: NSCoder) -> Bool {
         StateKeeperUtilsKt.save(coder: coder, state: stateKeeper.save())

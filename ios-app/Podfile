@@ -1,6 +1,6 @@
 use_frameworks!
 
-platform :ios, '13.5'
+platform :ios, '15.0'
 
 target 'ClickTrack' do
     pod 'ClickTrackMultiplatform', :path => '../multiplatform'
