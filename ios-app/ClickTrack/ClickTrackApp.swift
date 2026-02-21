@@ -9,13 +9,18 @@ struct ClickTrackApp: App {
     var appDelegate: AppDelegate
     
     private let applicationComponent = MainKt.createApplicationComponent()
+    private let audioSessionNotification: any AudioSessionNotification = makeAudioSessionNotification()
     
     var body: some Scene {
         WindowGroup {
             ContentView(
                 applicationComponent: applicationComponent,
-                decomposeComponentContext: ComponentContextKt.createComponentContext(stateKeeper: appDelegate.stateKeeper)
+                decomposeComponentContext: ComponentContextKt.createComponentContext(stateKeeper: appDelegate.stateKeeper),
+                audioSessionNotification: audioSessionNotification
             )
+            .onOpenURL { url in
+                (audioSessionNotification as? PlayerURLHandler)?.handlePlayerURL(url)
+            }
         }
     }
 }
@@ -30,7 +35,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     ) -> Bool {
         FirebaseApp.configure()
         return true
-      }
+    }
     
     func application(_ application: UIApplication, shouldSaveSecureApplicationState coder: NSCoder) -> Bool {
         StateKeeperUtilsKt.save(coder: coder, state: stateKeeper.save())

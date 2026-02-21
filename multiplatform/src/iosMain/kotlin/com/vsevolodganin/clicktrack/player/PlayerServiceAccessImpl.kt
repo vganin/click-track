@@ -30,17 +30,6 @@ import platform.AVFAudio.AVAudioSession
 import platform.AVFAudio.AVAudioSessionCategoryPlayback
 import platform.AVFAudio.AVAudioSessionModeDefault
 import platform.AVFAudio.setActive
-import platform.MediaPlayer.MPMediaItemPropertyArtist
-import platform.MediaPlayer.MPMediaItemPropertyTitle
-import platform.MediaPlayer.MPNowPlayingInfoCenter
-import platform.MediaPlayer.MPNowPlayingInfoMediaTypeAudio
-import platform.MediaPlayer.MPNowPlayingInfoPropertyIsLiveStream
-import platform.MediaPlayer.MPNowPlayingInfoPropertyMediaType
-import platform.MediaPlayer.MPNowPlayingPlaybackStatePaused
-import platform.MediaPlayer.MPNowPlayingPlaybackStatePlaying
-import platform.MediaPlayer.MPNowPlayingPlaybackStateStopped
-import platform.MediaPlayer.MPRemoteCommandCenter
-import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
 
 @OptIn(ExperimentalForeignApi::class)
 @SingleIn(PlayerServiceScope::class)
@@ -51,6 +40,7 @@ class PlayerServiceAccessImpl(
     private val player: Player,
     latencyTracker: LatencyTracker,
     private val playableContentProvider: PlayableContentProvider,
+    private val audioSessionNotification: AudioSessionNotification,
 ) : PlayerServiceAccess {
 
     @Serializable
@@ -64,14 +54,17 @@ class PlayerServiceAccessImpl(
     private val state = MutableStateFlow<State?>(null)
 
     private val audioSession = AVAudioSession.sharedInstance()
-    private val nowPlayingInfoCenter = MPNowPlayingInfoCenter.defaultCenter()
-    private val remoteCommandCenter = MPRemoteCommandCenter.sharedCommandCenter()
 
     init {
         with(audioSession) {
             setCategory(AVAudioSessionCategoryPlayback, error = null)
             setMode(AVAudioSessionModeDefault, error = null)
         }
+        audioSessionNotification.setCallbacks(
+            onPause = ::pause,
+            onResume = ::resume,
+            onStop = ::stop,
+        )
         initializePlayer()
         latencyTracker.start()
     }
@@ -175,66 +168,15 @@ class PlayerServiceAccessImpl(
 
     private suspend fun activateAudioSession(contentText: String, isPaused: Boolean) {
         audioSession.setActive(true, null)
-
-        with(nowPlayingInfoCenter) {
-            nowPlayingInfo = mapOf(
-                MPMediaItemPropertyTitle to getString(Res.string.player_service_notification_playing_now),
-                MPMediaItemPropertyArtist to contentText,
-                MPNowPlayingInfoPropertyIsLiveStream to true,
-                MPNowPlayingInfoPropertyMediaType to MPNowPlayingInfoMediaTypeAudio,
-//                MPMediaItemPropertyArtwork to MPMediaItemArtwork(Res.drawable.player_notification.toUIImage()),
-            )
-            playbackState = if (isPaused) MPNowPlayingPlaybackStatePaused else MPNowPlayingPlaybackStatePlaying
-        }
-
-        with(remoteCommandCenter) {
-            // These commands are enabled by default, so we need to disable them before enabling the ones we want to use
-            arrayOf(previousTrackCommand, nextTrackCommand, skipBackwardCommand, skipForwardCommand).forEach {
-                it.setEnabled(false)
-            }
-
-            with(playCommand) {
-                setEnabled(true)
-                removeTarget(null)
-                addTargetWithHandler {
-                    resume()
-                    MPRemoteCommandHandlerStatusSuccess
-                }
-            }
-            with(pauseCommand) {
-                setEnabled(true)
-                removeTarget(null)
-                addTargetWithHandler {
-                    pause()
-                    MPRemoteCommandHandlerStatusSuccess
-                }
-            }
-            with(stopCommand) {
-                setEnabled(true)
-                removeTarget(null)
-                addTargetWithHandler {
-                    stop()
-                    MPRemoteCommandHandlerStatusSuccess
-                }
-            }
-        }
+        audioSessionNotification.show(
+            title = getString(Res.string.player_service_notification_playing_now),
+            contentText = contentText,
+            isPaused = isPaused,
+        )
     }
 
     private fun deactivateAudioSession() {
         audioSession.setActive(false, null)
-
-        with(nowPlayingInfoCenter) {
-            nowPlayingInfo = null
-            playbackState = MPNowPlayingPlaybackStateStopped
-        }
-
-        with(remoteCommandCenter) {
-            arrayOf(playCommand, pauseCommand, stopCommand).forEach {
-                with(it) {
-                    setEnabled(false)
-                    removeTarget(null)
-                }
-            }
-        }
+        audioSessionNotification.hide()
     }
 }
