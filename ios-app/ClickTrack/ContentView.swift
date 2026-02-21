@@ -5,11 +5,13 @@ struct ContentView: UIViewControllerRepresentable {
     
     let applicationComponent: ApplicationComponent
     let decomposeComponentContext: DecomposeComponentContext
+    let audioSessionNotification: any AudioSessionNotification
     
     func makeUIViewController(context: Context) -> some UIViewController {
         return MainKt.createMainViewController(
             applicationComponent: applicationComponent,
             componentContext: decomposeComponentContext,
+            audioSessionNotification: audioSessionNotification,
         )
     }
 

@@ -1,6 +1,7 @@
 package com.vsevolodganin.clicktrack.di.component
 
 import com.arkivanov.decompose.ComponentContext
+import com.vsevolodganin.clicktrack.player.AudioSessionNotification
 import dev.zacsweers.metro.GraphExtension
 import dev.zacsweers.metro.Provides
 import platform.UIKit.UIViewController
@@ -15,6 +16,9 @@ interface MainViewControllerComponent {
 
     @GraphExtension.Factory
     fun interface Factory {
-        fun create(@Provides componentContext: ComponentContext): MainViewControllerComponent
+        fun create(
+            @Provides componentContext: ComponentContext,
+            @Provides audioSessionNotification: AudioSessionNotification,
+        ): MainViewControllerComponent
     }
 }
