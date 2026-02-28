@@ -1,7 +1,7 @@
 [versions]
 decompose = "3.4.0"
 jetbrains-compose = "1.10.0"
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 kotlinx-serialization = "1.10.0"
 kover = "0.9.6"
 metro = "0.10.1"
