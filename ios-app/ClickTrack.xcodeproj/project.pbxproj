@@ -9,6 +9,13 @@
 /* Begin PBXBuildFile section */
 		4F3ABD9D293187EA00DB6023 /* ClickTrackApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3ABD9C293187EA00DB6023 /* ClickTrackApp.swift */; };
 		4F3ABD9F293187EA00DB6023 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F3ABD9E293187EA00DB6023 /* ContentView.swift */; };
+		AA000001000000000000001 /* LiveActivityBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001000000000000011 /* LiveActivityBridge.swift */; };
+		AA000001000000000000002 /* LiveActivityNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001000000000000012 /* LiveActivityNotification.swift */; };
+		AA000001000000000000003 /* ClickTrackActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001000000000000013 /* ClickTrackActivityAttributes.swift */; };
+		AA000001000000000000004 /* ClickTrackActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001000000000000013 /* ClickTrackActivityAttributes.swift */; };
+		AA000001000000000000005 /* ClickTrackLiveActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001000000000000014 /* ClickTrackLiveActivityView.swift */; };
+		AA000001000000000000007 /* ClickTrackLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001000000000000016 /* ClickTrackLiveActivityBundle.swift */; };
+		AA000001000000000000008 /* ClickTrackLiveActivityExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = AA000001000000000000020 /* ClickTrackLiveActivityExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		4F3ABDA1293187EA00DB6023 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3ABDA0293187EA00DB6023 /* Assets.xcassets */; };
 		4F3ABDA4293187EA00DB6023 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F3ABDA3293187EA00DB6023 /* Preview Assets.xcassets */; };
 		4F5ED37F2F1421700038A196 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 4F5ED37E2F1421700038A196 /* AppIcon.icon */; };
@@ -28,6 +35,13 @@
 		973DBEDB5C7BE0B4F40880B3 /* Pods-ClickTrack.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClickTrack.debug.xcconfig"; path = "Target Support Files/Pods-ClickTrack/Pods-ClickTrack.debug.xcconfig"; sourceTree = "<group>"; };
 		C1D53B0EA9F03701E67DF125 /* Pods_ClickTrack.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ClickTrack.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CADECB568532290FC852942B /* Pods-ClickTrack.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ClickTrack.release.xcconfig"; path = "Target Support Files/Pods-ClickTrack/Pods-ClickTrack.release.xcconfig"; sourceTree = "<group>"; };
+		AA000001000000000000011 /* LiveActivityBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityBridge.swift; sourceTree = "<group>"; };
+		AA000001000000000000012 /* LiveActivityNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityNotification.swift; sourceTree = "<group>"; };
+		AA000001000000000000013 /* ClickTrackActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickTrackActivityAttributes.swift; sourceTree = "<group>"; };
+		AA000001000000000000014 /* ClickTrackLiveActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickTrackLiveActivityView.swift; sourceTree = "<group>"; };
+		AA000001000000000000016 /* ClickTrackLiveActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickTrackLiveActivityBundle.swift; sourceTree = "<group>"; };
+		AA000001000000000000017 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		AA000001000000000000020 /* ClickTrackLiveActivityExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ClickTrackLiveActivityExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +50,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FBD90C71BFC3F827448AC2F /* Pods_ClickTrack.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA000001000000000000030 /* Frameworks (Extension) */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,6 +75,7 @@
 			isa = PBXGroup;
 			children = (
 				4F3ABD9B293187EA00DB6023 /* ClickTrack */,
+				AA000001000000000000040 /* ClickTrackLiveActivity */,
 				4F3ABD9A293187EA00DB6023 /* Products */,
 				E3F968F33D3ECA9CAB0FB4B9 /* Pods */,
 				299C411D90C319AB59B12A8C /* Frameworks */,
@@ -64,6 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				4F3ABD99293187EA00DB6023 /* ClickTrack.app */,
+				AA000001000000000000020 /* ClickTrackLiveActivityExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -75,11 +98,24 @@
 				4FDAC2302F0B0FC100888848 /* GoogleService-Info.plist */,
 				4F3ABD9C293187EA00DB6023 /* ClickTrackApp.swift */,
 				4F3ABD9E293187EA00DB6023 /* ContentView.swift */,
+				AA000001000000000000011 /* LiveActivityBridge.swift */,
+				AA000001000000000000012 /* LiveActivityNotification.swift */,
 				4F3ABDA0293187EA00DB6023 /* Assets.xcassets */,
 				4F5ED37E2F1421700038A196 /* AppIcon.icon */,
 				4F3ABDA2293187EA00DB6023 /* Preview Content */,
 			);
 			path = ClickTrack;
+			sourceTree = "<group>";
+		};
+		AA000001000000000000040 /* ClickTrackLiveActivity */ = {
+			isa = PBXGroup;
+			children = (
+				AA000001000000000000013 /* ClickTrackActivityAttributes.swift */,
+				AA000001000000000000014 /* ClickTrackLiveActivityView.swift */,
+				AA000001000000000000016 /* ClickTrackLiveActivityBundle.swift */,
+				AA000001000000000000017 /* Info.plist */,
+			);
+			path = ClickTrackLiveActivity;
 			sourceTree = "<group>";
 		};
 		4F3ABDA2293187EA00DB6023 /* Preview Content */ = {
@@ -112,16 +148,35 @@
 				89774DA68A362F87E297C2E6 /* [CP] Embed Pods Frameworks */,
 				0444A912D05438301350F401 /* Frameworks */,
 				3A4F6D87E60D21205A9161CB /* [CP] Copy Pods Resources */,
+				AA000001000000000000070 /* Embed App Extensions */,
 				4FDAC2322F0B19C200888848 /* Upload Symbols To Crashlytics */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				AA000001000000000000080 /* PBXTargetDependency */,
 			);
 			name = ClickTrack;
 			productName = ClickTrack;
 			productReference = 4F3ABD99293187EA00DB6023 /* ClickTrack.app */;
 			productType = "com.apple.product-type.application";
+		};
+		AA000001000000000000050 /* ClickTrackLiveActivityExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA000001000000000000060 /* Build configuration list for PBXNativeTarget "ClickTrackLiveActivityExtension" */;
+			buildPhases = (
+				AA000001000000000000031 /* Sources */,
+				AA000001000000000000032 /* Resources */,
+				AA000001000000000000030 /* Frameworks (Extension) */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ClickTrackLiveActivityExtension;
+			productName = ClickTrackLiveActivityExtension;
+			productReference = AA000001000000000000020 /* ClickTrackLiveActivityExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -134,6 +189,9 @@
 				LastUpgradeCheck = 1320;
 				TargetAttributes = {
 					4F3ABD98293187EA00DB6023 = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
+					AA000001000000000000050 = {
 						CreatedOnToolsVersion = 13.2.1;
 					};
 				};
@@ -152,6 +210,7 @@
 			projectRoot = "";
 			targets = (
 				4F3ABD98293187EA00DB6023 /* ClickTrack */,
+				AA000001000000000000050 /* ClickTrackLiveActivityExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -169,6 +228,38 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AA000001000000000000070 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AA000001000000000000008 /* ClickTrackLiveActivityExtension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA000001000000000000080 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA000001000000000000050 /* ClickTrackLiveActivityExtension */;
+			targetProxy = AA000001000000000000081 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXContainerItemProxy section */
+		AA000001000000000000081 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F3ABD91293187EA00DB6023 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA000001000000000000050;
+			remoteInfo = ClickTrackLiveActivityExtension;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		3A4F6D87E60D21205A9161CB /* [CP] Copy Pods Resources */ = {
@@ -253,6 +344,16 @@
 		};
 /* End PBXShellScriptBuildPhase section */
 
+/* Begin PBXResourcesBuildPhase section (Extension) */
+		AA000001000000000000032 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section (Extension) */
+
 /* Begin PBXSourcesBuildPhase section */
 		4F3ABD95293187EA00DB6023 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -260,6 +361,19 @@
 			files = (
 				4F3ABD9F293187EA00DB6023 /* ContentView.swift in Sources */,
 				4F3ABD9D293187EA00DB6023 /* ClickTrackApp.swift in Sources */,
+				AA000001000000000000001 /* LiveActivityBridge.swift in Sources */,
+				AA000001000000000000002 /* LiveActivityNotification.swift in Sources */,
+				AA000001000000000000003 /* ClickTrackActivityAttributes.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA000001000000000000031 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000001000000000000004 /* ClickTrackActivityAttributes.swift in Sources */,
+				AA000001000000000000005 /* ClickTrackLiveActivityView.swift in Sources */,
+				AA000001000000000000007 /* ClickTrackLiveActivityBundle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,6 +575,50 @@
 			};
 			name = Release;
 		};
+		AA000001000000000000061 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 655VV3W7RL;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ClickTrackLiveActivity/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vsevolodganin.clicktrack.liveactivity";
+				PRODUCT_NAME = ClickTrackLiveActivityExtension;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AA000001000000000000062 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 655VV3W7RL;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ClickTrackLiveActivity/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.vsevolodganin.clicktrack.liveactivity";
+				PRODUCT_NAME = ClickTrackLiveActivityExtension;
+				SKIP_INSTALL = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -478,6 +636,15 @@
 			buildConfigurations = (
 				4F3ABDA8293187EA00DB6023 /* Debug */,
 				4F3ABDA9293187EA00DB6023 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA000001000000000000060 /* Build configuration list for PBXNativeTarget "ClickTrackLiveActivityExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000001000000000000061 /* Debug */,
+				AA000001000000000000062 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
